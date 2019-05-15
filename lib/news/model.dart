@@ -1,11 +1,21 @@
 import 'package:flutter/foundation.dart';
 
+class Author {
+  String name;
+  String photoUrl;
+
+  Author({
+    @required this.name,
+    @required this.photoUrl,
+  });
+}
+
 @immutable
 class Article {
   final String title;
-  final String author;
+  final Author author;
   final DateTime published;
-  final String bannerText;
+  final String section;
   final String photoUrl;
   final String content;
 
@@ -13,7 +23,7 @@ class Article {
     @required this.title,
     @required this.author,
     @required this.published,
-    @required this.bannerText,
+    @required this.section,
     @required this.photoUrl,
     @required this.content,
   });

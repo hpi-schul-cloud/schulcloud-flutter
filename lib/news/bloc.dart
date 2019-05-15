@@ -13,9 +13,9 @@ class Bloc {
     return List.generate(10, (i) {
       return Article(
         title: 'Headline lorem ipsum dolor',
-        author: 'Mona Weitzenberg',
+        author: Author(name: 'Mona Weitzenberg', photoUrl: ''),
         published: DateTime.now().subtract(Duration(days: 3)),
-        bannerText: 'News Schultheater',
+        section: 'News Schultheater',
         photoUrl:
             'https://cdn.stockphotosecrets.com/wp-content/uploads/2018/09/stock-photo-meme.jpg',
         content: 'Lorem ipsum dolor sit amet, consetetur',
