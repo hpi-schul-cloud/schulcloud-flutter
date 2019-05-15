@@ -29,7 +29,10 @@ class ArticleList extends StatelessWidget {
             if (!snapshot.hasData) {
               return CircularProgressIndicator();
             }
-            return ArticlePreview(article: snapshot.data);
+            return Padding(
+              padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+              child: ArticlePreview(article: snapshot.data),
+            );
           },
         );
       },
