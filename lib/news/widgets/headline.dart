@@ -12,6 +12,8 @@ class Headline extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var theme = Theme.of(context);
+
     return ClipRRect(
       borderRadius: BorderRadius.only(
         topRight: Radius.circular(4),
@@ -28,9 +30,17 @@ class Headline extends StatelessWidget {
         padding: const EdgeInsets.all(32),
         child: Column(
           mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Text(published.toString(), style: TextStyle(color: Colors.white)),
-            Text(title, style: TextStyle(color: Colors.white)),
+            Text(
+              published.toString(),
+              style: TextStyle(color: Colors.white),
+            ),
+            SizedBox(height: 8),
+            Text(
+              title,
+              style: theme.textTheme.display2.copyWith(color: Colors.white),
+            ),
           ],
         ),
       ),
