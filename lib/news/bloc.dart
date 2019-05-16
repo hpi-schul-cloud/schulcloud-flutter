@@ -13,7 +13,11 @@ class Bloc {
     return List.generate(10, (i) {
       return Article(
         title: 'Headline lorem ipsum dolor',
-        author: Author(name: 'Mona Weitzenberg', photoUrl: ''),
+        author: Author(
+          name: 'Mona Weitzenberg',
+          photoUrl:
+              'https://avatars2.githubusercontent.com/u/8601189?s=460&v=4',
+        ),
         published: DateTime.now().subtract(Duration(days: 3)),
         section: 'News Schultheater',
         photoUrl:
