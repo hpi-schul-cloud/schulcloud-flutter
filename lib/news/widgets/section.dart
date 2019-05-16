@@ -19,7 +19,7 @@ class Section extends StatelessWidget {
             colors: [Color(0xff200e32), Color(0xff6d1541)],
           ),
         ),
-        padding: const EdgeInsets.all(8) + const EdgeInsets.only(right: 16),
+        padding: const EdgeInsets.fromLTRB(32, 8, 16, 8),
         child: Text(content, style: TextStyle(color: Colors.white)),
       ),
     );
