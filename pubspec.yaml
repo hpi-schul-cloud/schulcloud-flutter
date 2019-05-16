@@ -19,3 +19,14 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+
+  fonts:
+    - family: PT Sans
+      fonts:
+        - asset: assets/PT_Sans-Web-Regular.ttf
+    - family: PT Sans Narrow
+      fonts:
+        - asset: assets/PT_Sans-Narrow-Web-Regular.ttf
+          weight: 300
+        - asset: assets/PT_Sans-Narrow-Web-Bold.ttf
+          weight: 700
