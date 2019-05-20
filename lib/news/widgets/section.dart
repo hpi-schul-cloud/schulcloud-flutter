@@ -3,9 +3,11 @@ import 'package:flutter/material.dart';
 class Section extends StatelessWidget {
   Section({
     @required this.content,
+    @required this.padding,
   }) : assert(content != null);
 
   final String content;
+  final double padding;
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +21,7 @@ class Section extends StatelessWidget {
             colors: [Color(0xff200e32), Color(0xff6d1541)],
           ),
         ),
-        padding: const EdgeInsets.fromLTRB(32, 8, 16, 8),
+        padding: EdgeInsets.fromLTRB(padding, 8, 16, 8),
         child: Text(content, style: TextStyle(color: Colors.white)),
       ),
     );
