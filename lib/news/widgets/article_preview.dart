@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:schulcloud/news/widgets/article_screen.dart';
 
 import '../model.dart';
-import 'author.dart';
-import 'headline.dart';
-import 'section.dart';
+import 'article.dart';
 
 class ArticlePreview extends StatelessWidget {
   ArticlePreview({
@@ -24,19 +23,15 @@ class ArticlePreview extends StatelessWidget {
       elevation: 2,
       borderRadius: BorderRadius.circular(8),
       color: Colors.black12,
-      child: Container(
-        height: 300,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Section(content: article.section),
-            Headline(title: article.title, published: article.published),
-            Transform.translate(
-              offset: Offset(28, -13),
-              child: AuthorView(author: article.author),
-            ),
-            SizedBox(height: 8),
-          ],
+      child: InkWell(
+        onTap: () {
+          Navigator.of(context).push(MaterialPageRoute(
+            builder: (_) => ArticleScreen(article: article),
+          ));
+        },
+        child: Container(
+          height: 300,
+          child: ArticleView(article: article, isPreview: true),
         ),
       ),
     );
