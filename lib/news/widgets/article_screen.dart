@@ -19,8 +19,8 @@ class ArticleScreen extends StatelessWidget {
       body: LayoutBuilder(
         builder: (ctx, constraints) {
           var width = constraints.maxWidth;
-          var margin = width < 500 ? 0 : width * 0.08;
-          var padding = (width * 0.06).clamp(32.0, 64.0);
+          double margin = width < 500 ? 0 : width * 0.08;
+          double padding = (width * 0.06).clamp(32.0, 64.0);
 
           return ListView(
             padding: MediaQuery.of(context).padding +
@@ -62,7 +62,7 @@ class ArticleView extends StatelessWidget {
           ),
         ),
         Transform.translate(
-          offset: Offset(padding, -13),
+          offset: Offset(padding, -61),
           child: AuthorView(author: article.author),
         ),
         SizedBox(height: 8),

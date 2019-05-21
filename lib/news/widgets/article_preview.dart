@@ -36,8 +36,8 @@ class ArticlePreview extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              Section(content: article.section),
-              Headline(title: article.title, published: article.published),
+              Section(content: article.section, padding: 32),
+              Text(article.title),
               Transform.translate(
                 offset: Offset(28, -13),
                 child: AuthorView(author: article.author),
