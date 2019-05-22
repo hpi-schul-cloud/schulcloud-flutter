@@ -1,34 +1,39 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
+import 'theme.dart';
+
+/// A section banner that is usually displayed at the top of an article.
+///
+/// The colors and padding come from the enclosing [ArticleTheme].
 class Section extends StatelessWidget {
-  Section({
-    @required this.content,
-    @required this.padding,
-  }) : assert(content != null);
+  const Section({@required this.content}) : assert(content != null);
 
   final String content;
-  final double padding;
 
   @override
   Widget build(BuildContext context) {
+    var theme = Provider.of<ArticleTheme>(context);
+
     return ClipPath(
-      clipper: SectionClipper(),
+      clipper: _SectionClipper(),
       child: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.centerLeft,
             end: Alignment.centerRight,
-            colors: [Color(0xff200e32), Color(0xff6d1541)],
+            colors: [theme.lightColor, theme.darkColor],
           ),
         ),
-        padding: EdgeInsets.fromLTRB(padding, 8, 16, 8),
+        padding: EdgeInsets.fromLTRB(theme.padding, 8, 16, 8),
         child: Text(content, style: TextStyle(color: Colors.white)),
       ),
     );
   }
 }
 
-class SectionClipper extends CustomClipper<Path> {
+/// A custom clipper that clips the typical section shape.
+class _SectionClipper extends CustomClipper<Path> {
   @override
   Path getClip(Size size) {
     var width = size.width;
@@ -45,5 +50,5 @@ class SectionClipper extends CustomClipper<Path> {
   }
 
   @override
-  bool shouldReclip(SectionClipper oldClipper) => true;
+  bool shouldReclip(_SectionClipper oldClipper) => true;
 }

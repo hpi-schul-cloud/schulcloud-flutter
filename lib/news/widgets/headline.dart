@@ -1,24 +1,27 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
-class Headline extends StatelessWidget {
-  Headline({
+import 'theme.dart';
+
+/// A headline in a colored box.
+///
+/// The colors and padding come from the enclosing [ArticleTheme].
+class HeadlineBox extends StatelessWidget {
+  const HeadlineBox({
     @required this.title,
     @required this.published,
-    @required this.padding,
   })  : assert(title != null),
-        assert(published != null),
-        assert(padding != null);
+        assert(published != null);
 
   final String title;
   final DateTime published;
-  final double padding;
 
   @override
   Widget build(BuildContext context) {
-    var theme = Theme.of(context);
+    var theme = Provider.of<ArticleTheme>(context);
 
     return Padding(
-      padding: EdgeInsets.only(right: padding),
+      padding: EdgeInsets.only(right: theme.padding),
       child: ClipRRect(
         borderRadius: BorderRadius.only(
           topRight: Radius.circular(4),
@@ -29,22 +32,22 @@ class Headline extends StatelessWidget {
             gradient: LinearGradient(
               begin: Alignment.centerLeft,
               end: Alignment.centerRight,
-              colors: [Color(0xff441e66), Color(0xffdc2b83)],
+              colors: [theme.darkColor, theme.lightColor],
             ),
           ),
-          padding: EdgeInsets.fromLTRB(padding, 32, 32, 32),
+          padding: EdgeInsets.fromLTRB(theme.padding, 32, 32, 32),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              Text(
-                published.toString(),
-                style: TextStyle(color: Colors.white),
-              ),
+              Text(published.toString(), style: TextStyle(color: Colors.white)),
               SizedBox(height: 8),
               Text(
                 title,
-                style: theme.textTheme.display2.copyWith(color: Colors.white),
+                style: Theme.of(context)
+                    .textTheme
+                    .display2
+                    .copyWith(color: Colors.white),
               ),
             ],
           ),

@@ -2,10 +2,9 @@ import 'package:flutter/material.dart';
 
 import '../model.dart';
 
+/// Displays an author as an avatar next to its name.
 class AuthorView extends StatelessWidget {
-  AuthorView({
-    @required this.author,
-  }) : assert(author != null);
+  const AuthorView({@required this.author}) : assert(author != null);
 
   final Author author;
 

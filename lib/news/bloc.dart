@@ -1,3 +1,5 @@
+import 'package:flutter/widgets.dart';
+
 import '../app/paginated_loader.dart';
 import 'model.dart';
 
@@ -13,15 +15,18 @@ class Bloc {
     return List.generate(10, (i) {
       return Article(
         title: 'Headline lorem ipsum dolor',
-        author: Author(
+        author: const Author(
           name: 'Mona Weitzenberg',
           photoUrl:
               'https://avatars2.githubusercontent.com/u/8601189?s=460&v=4',
         ),
         published: DateTime.now().subtract(Duration(days: 3)),
         section: 'News Schultheater',
-        photoUrl:
-            'https://cdn.stockphotosecrets.com/wp-content/uploads/2018/09/stock-photo-meme.jpg',
+        image: const ArticleImage(
+          size: Size(840, 560),
+          url:
+              'https://cdn.stockphotosecrets.com/wp-content/uploads/2018/09/stock-photo-meme.jpg',
+        ),
         content:
             '''Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim. Aliquam lorem ante, dapibus in, viverra quis, feugiat a, tellus.
 
