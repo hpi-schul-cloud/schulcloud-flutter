@@ -7,9 +7,9 @@ import 'theme.dart';
 ///
 /// The colors and padding come from the enclosing [ArticleTheme].
 class Section extends StatelessWidget {
-  const Section({@required this.content}) : assert(content != null);
+  const Section({@required this.child}) : assert(child != null);
 
-  final String content;
+  final Widget child;
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +26,10 @@ class Section extends StatelessWidget {
           ),
         ),
         padding: EdgeInsets.fromLTRB(theme.padding, 8, 16, 8),
-        child: Text(content, style: TextStyle(color: Colors.white)),
+        child: DefaultTextStyle(
+          style: TextStyle(color: Colors.white),
+          child: child,
+        ),
       ),
     );
   }

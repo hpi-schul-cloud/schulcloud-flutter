@@ -9,12 +9,12 @@ import 'theme.dart';
 class HeadlineBox extends StatelessWidget {
   const HeadlineBox({
     @required this.title,
-    @required this.published,
+    @required this.smallText,
   })  : assert(title != null),
-        assert(published != null);
+        assert(smallText != null);
 
-  final String title;
-  final DateTime published;
+  final Widget title;
+  final Widget smallText;
 
   @override
   Widget build(BuildContext context) {
@@ -40,14 +40,17 @@ class HeadlineBox extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              Text(published.toString(), style: TextStyle(color: Colors.white)),
+              DefaultTextStyle(
+                style: TextStyle(color: Colors.white),
+                child: smallText,
+              ),
               SizedBox(height: 8),
-              Text(
-                title,
+              DefaultTextStyle(
                 style: Theme.of(context)
                     .textTheme
                     .display2
                     .copyWith(color: Colors.white),
+                child: title,
               ),
             ],
           ),

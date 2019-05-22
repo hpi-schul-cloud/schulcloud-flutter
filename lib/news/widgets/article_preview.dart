@@ -4,7 +4,6 @@ import 'package:provider/provider.dart';
 import '../model.dart';
 import 'article_screen.dart';
 import 'article_image.dart';
-import 'author.dart';
 import 'section.dart';
 import 'theme.dart';
 
@@ -13,9 +12,12 @@ class ArticlePreview extends StatelessWidget {
     @required this.article,
     this.showPicture = true,
     this.showDetailedDate = false,
-  })  : assert(article != null),
-        assert(showPicture != null),
+  })  : assert(showPicture != null),
         assert(showDetailedDate != null);
+
+  factory ArticlePreview.placeholder() {
+    return ArticlePreview(article: null, showPicture: false);
+  }
 
   final Article article;
   final bool showPicture;
@@ -30,22 +32,32 @@ class ArticlePreview extends StatelessWidget {
         borderRadius: BorderRadius.circular(8),
         color: Colors.white,
         child: InkWell(
-          onTap: () {
-            Navigator.of(context).push(MaterialPageRoute(
-              builder: (_) => ArticleScreen(article: article),
-            ));
-          },
+          onTap: article == null
+              ? null
+              : () {
+                  Navigator.of(context).push(MaterialPageRoute(
+                    builder: (_) => ArticleScreen(article: article),
+                  ));
+                },
           child: Container(
             padding: const EdgeInsets.all(16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                Section(content: article.section),
+                Section(child: Text(article.section)),
                 GradientArticleImageView(image: article.image),
-                Text(article.title),
-                Transform.translate(
-                  offset: Offset(28, -13),
-                  child: AuthorView(author: article.author),
+                SizedBox(height: 8),
+                Text(
+                  'vor 3 Tagen von ${article.author.name}',
+                  style: TextStyle(color: Colors.black54),
+                ),
+                Text(
+                  article.title,
+                  style: Theme.of(context).textTheme.display2,
+                ),
+                Text(
+                  '${article.content.substring(0, 200)}...',
+                  style: Theme.of(context).textTheme.body2,
                 ),
               ],
             ),

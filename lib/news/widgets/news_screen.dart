@@ -26,12 +26,11 @@ class ArticleList extends StatelessWidget {
             if (snapshot.hasError) {
               return Text(snapshot.error.toString());
             }
-            if (!snapshot.hasData) {
-              return CircularProgressIndicator();
-            }
             return Padding(
               padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
-              child: ArticlePreview(article: snapshot.data),
+              child: snapshot.hasData
+                  ? ArticlePreview(article: snapshot.data)
+                  : ArticlePreview.placeholder(),
             );
           },
         );

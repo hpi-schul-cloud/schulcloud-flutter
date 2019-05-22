@@ -62,13 +62,13 @@ class ArticleView extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        Section(content: article.section),
+        Section(child: Text(article.section)),
         ArticleImageView(image: article.image),
         Transform.translate(
           offset: Offset(0, -48),
           child: HeadlineBox(
-            title: article.title,
-            published: article.published,
+            title: Text(article.title),
+            smallText: Text(article.published.toString()),
           ),
         ),
         Transform.translate(
@@ -94,8 +94,11 @@ class ArticleView extends StatelessWidget {
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Section(content: article.section),
-            HeadlineBox(title: article.title, published: article.published),
+            Section(child: Text(article.section)),
+            HeadlineBox(
+              title: Text(article.title),
+              smallText: Text(article.published.toString()),
+            ),
             Transform.translate(
               offset: Offset(padding, -13.5),
               child: AuthorView(author: article.author),
