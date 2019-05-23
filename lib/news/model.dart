@@ -9,8 +9,7 @@ class Author {
   const Author({
     @required this.name,
     @required this.photoUrl,
-  })  : assert(name != null),
-        assert(photoUrl != null);
+  }) : assert(name != null);
 }
 
 @immutable
@@ -35,7 +34,6 @@ class Article {
         assert(author != null),
         assert(published != null),
         assert(section != null),
-        assert(image != null),
         assert(content != null);
 
   String get shortPublishedText => 'Published 3 days ago.';
