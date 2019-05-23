@@ -76,12 +76,15 @@ class _ArticlePreviewState extends State<ArticlePreview> {
   }
 
   Widget _buildImage() {
-    return isPlaceholder
-        ? GradientArticleImageView(image: article?.image)
-        : Hero(
-            tag: article,
-            child: GradientArticleImageView(image: article?.image),
-          );
+    if (isPlaceholder)
+      return GradientArticleImageView(image: null);
+    else if (article.image == null)
+      return Container();
+    else
+      return Hero(
+        tag: article,
+        child: GradientArticleImageView(image: article?.image),
+      );
   }
 
   Widget _buildSmallText() {
