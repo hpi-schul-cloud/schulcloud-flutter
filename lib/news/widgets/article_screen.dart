@@ -80,7 +80,7 @@ class _ArticleViewState extends State<ArticleView> {
           child: AuthorView(author: widget.article.author),
         ),
         Transform.translate(
-          offset: Offset(0, -48),
+          offset: Offset(0, -20),
           child: _buildContent(context),
         ),
       ],
