@@ -27,7 +27,7 @@ class Section extends StatelessWidget {
         ),
         padding: EdgeInsets.fromLTRB(theme.padding, 8, 16, 8),
         child: DefaultTextStyle(
-          style: TextStyle(color: Colors.white),
+          style: DefaultTextStyle.of(context).style.apply(color: Colors.white),
           child: child,
         ),
       ),
