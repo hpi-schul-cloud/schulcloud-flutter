@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 
 import 'theme.dart';
 
-/// A headline in a colored box.
+/// A headline and some small text in a colored box.
 ///
 /// The colors and padding come from the enclosing [ArticleTheme].
 class HeadlineBox extends StatelessWidget {

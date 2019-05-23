@@ -43,45 +43,81 @@ class ArticleScreen extends StatelessWidget {
   }
 }
 
-class ArticleView extends StatelessWidget {
+class ArticleView extends StatefulWidget {
   const ArticleView({@required this.article}) : assert(article != null);
 
   final Article article;
 
   @override
+  _ArticleViewState createState() => _ArticleViewState();
+}
+
+class _ArticleViewState extends State<ArticleView> {
+  @override
   Widget build(BuildContext context) {
-    if (article.image.size.aspectRatio >= 1) {
-      return _buildWithLargeImage(context);
+    if (widget.article.image == null) {
+      return _buildWithoutImage();
+    } else if (widget.article.image.size.aspectRatio >= 1) {
+      return _buildWithLandscapeImage();
     } else {
-      return _buildWithSmallImage(context);
+      return _buildWithPortraitImage();
     }
   }
 
-  Widget _buildWithLargeImage(BuildContext context) {
+  Widget _buildWithoutImage() {
     var padding = Provider.of<ArticleTheme>(context).padding;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        Section(child: Text(article.section)),
-        ArticleImageView(image: article.image),
+        Section(child: Text(widget.article.section)),
+        HeadlineBox(
+          title: Text(widget.article.title),
+          smallText: Text(widget.article.published.toString()),
+        ),
+        Transform.translate(
+          offset: Offset(padding, -12),
+          child: AuthorView(author: widget.article.author),
+        ),
         Transform.translate(
           offset: Offset(0, -48),
-          child: HeadlineBox(
-            title: Text(article.title),
-            smallText: Text(article.published.toString()),
-          ),
+          child: _buildContent(context),
         ),
-        Transform.translate(
-          offset: Offset(padding, -61),
-          child: AuthorView(author: article.author),
-        ),
-        _buildText(context),
       ],
     );
   }
 
-  Widget _buildWithSmallImage(BuildContext context) {
+  Widget _buildWithLandscapeImage() {
+    var padding = Provider.of<ArticleTheme>(context).padding;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Section(child: Text(widget.article.section)),
+        Hero(
+          tag: widget.article,
+          child: ArticleImageView(image: widget.article.image),
+        ),
+        Transform.translate(
+          offset: Offset(0, -48),
+          child: HeadlineBox(
+            title: Text(widget.article.title),
+            smallText: Text(widget.article.published.toString()),
+          ),
+        ),
+        Transform.translate(
+          offset: Offset(padding, -61),
+          child: AuthorView(author: widget.article.author),
+        ),
+        Transform.translate(
+          offset: Offset(0, -48),
+          child: _buildContent(context),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildWithPortraitImage() {
     var padding = Provider.of<ArticleTheme>(context).padding;
 
     return Stack(
@@ -90,35 +126,44 @@ class ArticleView extends StatelessWidget {
           top: 180,
           right: 0,
           width: 220,
-          child: ArticleImageView(image: article.image),
+          child: _buildImage(),
         ),
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Section(child: Text(article.section)),
+            Section(child: Text(widget.article.section)),
             HeadlineBox(
-              title: Text(article.title),
-              smallText: Text(article.published.toString()),
+              title: Text(widget.article.title),
+              smallText: Text(widget.article.published.toString()),
             ),
             Transform.translate(
               offset: Offset(padding, -13.5),
-              child: AuthorView(author: article.author),
+              child: AuthorView(author: widget.article.author),
             ),
             SizedBox(height: 8),
-            _buildText(context),
+            _buildContent(context),
           ],
         ),
       ],
     );
   }
 
-  Widget _buildText(BuildContext context) {
+  Widget _buildImage() {
+    return widget.article == null
+        ? ArticleImageView(image: null)
+        : Hero(
+            tag: widget.article,
+            child: ArticleImageView(image: widget.article?.image),
+          );
+  }
+
+  Widget _buildContent(BuildContext context) {
     var padding = Provider.of<ArticleTheme>(context).padding;
 
     return Padding(
       padding: EdgeInsets.fromLTRB(padding, 0, padding, 16),
       child: Text(
-        article.content,
+        widget.article.content,
         style: TextStyle(fontSize: 20),
         textAlign: TextAlign.justify,
       ),

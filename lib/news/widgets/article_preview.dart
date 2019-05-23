@@ -31,6 +31,7 @@ class ArticlePreview extends StatefulWidget {
 
 class _ArticlePreviewState extends State<ArticlePreview> {
   Article get article => widget.article;
+  bool get isPlaceholder => article == null;
 
   @override
   Widget build(BuildContext context) {
@@ -54,7 +55,7 @@ class _ArticlePreviewState extends State<ArticlePreview> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 _buildSection(),
-                GradientArticleImageView(image: article?.image),
+                _buildImage(),
                 SizedBox(height: 8),
                 _buildSmallText(),
                 _buildTitle(),
@@ -68,14 +69,23 @@ class _ArticlePreviewState extends State<ArticlePreview> {
   }
 
   Widget _buildSection() {
-    if (article == null)
+    if (isPlaceholder)
       return Section(child: PlaceholderText(color: Colors.white));
     else
       return Section(child: Text(article.section));
   }
 
+  Widget _buildImage() {
+    return isPlaceholder
+        ? GradientArticleImageView(image: article?.image)
+        : Hero(
+            tag: article,
+            child: GradientArticleImageView(image: article?.image),
+          );
+  }
+
   Widget _buildSmallText() {
-    if (article == null)
+    if (isPlaceholder)
       return PlaceholderText();
     else
       return Text(
@@ -87,7 +97,7 @@ class _ArticlePreviewState extends State<ArticlePreview> {
   Widget _buildTitle() {
     final style = Theme.of(context).textTheme.display2;
 
-    if (article == null)
+    if (isPlaceholder)
       return PlaceholderText(style: style);
     else
       return Text(article.title, style: style);
@@ -96,12 +106,13 @@ class _ArticlePreviewState extends State<ArticlePreview> {
   Widget _buildContent() {
     final style = Theme.of(context).textTheme.body2;
 
-    if (article == null)
+    if (isPlaceholder)
       return PlaceholderText(style: style, numLines: 3);
-    else
-      return Text(
-        '${article.content.substring(0, 200) ?? ''}...',
-        style: style,
-      );
+    else {
+      final text = article.content.length > 200
+          ? '${article.content.substring(0, 200)}...'
+          : article.content;
+      return Text(text, style: style);
+    }
   }
 }
