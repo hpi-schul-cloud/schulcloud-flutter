@@ -7,12 +7,14 @@ class PlaceholderText extends StatefulWidget {
     this.style,
     this.numLines = 1,
     this.color = Colors.black12,
+    this.showPadding = true,
   })  : assert(numLines != null),
         assert(color != null);
 
   final TextStyle style;
   final int numLines;
   final Color color;
+  final bool showPadding;
 
   @override
   _PlaceholderTextState createState() => _PlaceholderTextState();
@@ -46,7 +48,7 @@ class _PlaceholderTextState extends State<PlaceholderText> {
 
   Widget _buildPlaceholderBar(double width, double height) {
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 4),
+      padding: EdgeInsets.symmetric(vertical: widget.showPadding ? 4 : 0),
       child: Material(
         shape: StadiumBorder(),
         color: widget.color,
