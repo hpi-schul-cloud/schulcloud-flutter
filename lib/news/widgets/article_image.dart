@@ -6,24 +6,34 @@ import '../model.dart';
 import 'theme.dart';
 
 /// Displays an article image, which is faded in as its loaded.
+///
+/// If the [image] is [null], a placeholder is displayed.
 class ArticleImageView extends StatelessWidget {
   const ArticleImageView({
     @required this.image,
     this.placeholderColor = Colors.black12,
-  })  : assert(image != null),
-        assert(placeholderColor != null);
+  }) : assert(placeholderColor != null);
 
   final ArticleImage image;
   final Color placeholderColor;
 
+  bool get _showPlaceholder => image == null;
+
   @override
   Widget build(BuildContext context) {
+    if (_showPlaceholder) {
+      return AspectRatio(
+        aspectRatio: 2,
+        child: Container(color: placeholderColor),
+      );
+    }
+
     return AspectRatio(
       aspectRatio: image.size.aspectRatio,
       child: Container(
         color: placeholderColor,
         child: FadeInImage.memoryNetwork(
-          fadeInDuration: Duration(milliseconds: 100),
+          fadeInDuration: Duration(milliseconds: 500),
           fadeInCurve: Curves.easeInOutCubic,
           placeholder: kTransparentImage,
           image: image.url,
@@ -35,9 +45,10 @@ class ArticleImageView extends StatelessWidget {
 
 /// Displays an article image overlayed with a colored gradient.
 ///
+/// If the [image] is [null], a placeholder is displayed.
 /// The color comes from the enclosing [ArticleTheme].
 class GradientArticleImageView extends StatelessWidget {
-  GradientArticleImageView({@required this.image}) : assert(image != null);
+  GradientArticleImageView({@required this.image});
 
   final ArticleImage image;
 
