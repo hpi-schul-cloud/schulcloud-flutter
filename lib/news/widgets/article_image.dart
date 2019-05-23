@@ -57,8 +57,6 @@ class GradientArticleImageView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var color = Provider.of<ArticleTheme>(context).darkColor;
-
     return ClipRRect(
       borderRadius: BorderRadius.only(
         topRight: Radius.circular(8),
