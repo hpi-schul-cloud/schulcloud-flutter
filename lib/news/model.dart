@@ -8,7 +8,7 @@ class Author {
 
   const Author({
     @required this.name,
-    @required this.photoUrl,
+    this.photoUrl,
   }) : assert(name != null);
 }
 
@@ -28,7 +28,7 @@ class Article {
     @required this.author,
     @required this.published,
     @required this.section,
-    @required this.image,
+    this.image,
     @required this.content,
   })  : assert(title != null),
         assert(author != null),
