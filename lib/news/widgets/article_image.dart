@@ -46,11 +46,14 @@ class ArticleImageView extends StatelessWidget {
 /// Displays an article image overlayed with a colored gradient.
 ///
 /// If the [image] is [null], a placeholder is displayed.
-/// The color comes from the enclosing [ArticleTheme].
 class GradientArticleImageView extends StatelessWidget {
-  GradientArticleImageView({@required this.image});
+  GradientArticleImageView({
+    @required this.image,
+    this.color = Colors.purple,
+  });
 
   final ArticleImage image;
+  final Color color;
 
   @override
   Widget build(BuildContext context) {
