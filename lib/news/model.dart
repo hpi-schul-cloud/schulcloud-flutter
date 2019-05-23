@@ -35,9 +35,6 @@ class Article {
         assert(published != null),
         assert(section != null),
         assert(content != null);
-
-  String get shortPublishedText => 'Published 3 days ago.';
-  String get longPublishedText => '05.02.2019 um 18 Uhr';
 }
 
 @immutable
