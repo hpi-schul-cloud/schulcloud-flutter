@@ -8,9 +8,10 @@ import 'headline.dart';
 import 'section.dart';
 import 'theme.dart';
 
-/// Displays an article for the user to read. If there's no image, none is
-/// displayed. If it's a landscape image, it's displayed above the headline, if
-/// it's portrait, below the headline.
+/// Displays an article for the user to read.
+///
+/// If a landscape image is provided, it's displayed above the headline.
+/// If a portrait image is provided, it's displayed below it.
 class ArticleScreen extends StatelessWidget {
   ArticleScreen({@required this.article}) : assert(article != null);
 
