@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import 'package:schulcloud/utils/placeholder.dart';
+
 import '../model.dart';
-import 'article_screen.dart';
 import 'article_image.dart';
+import 'article_screen.dart';
 import 'section.dart';
 import 'theme.dart';
 
-class ArticlePreview extends StatelessWidget {
+class ArticlePreview extends StatefulWidget {
   ArticlePreview({
     @required this.article,
     this.showPicture = true,
@@ -22,6 +24,13 @@ class ArticlePreview extends StatelessWidget {
   final Article article;
   final bool showPicture;
   final bool showDetailedDate;
+
+  @override
+  _ArticlePreviewState createState() => _ArticlePreviewState();
+}
+
+class _ArticlePreviewState extends State<ArticlePreview> {
+  Article get article => widget.article;
 
   @override
   Widget build(BuildContext context) {
@@ -44,26 +53,55 @@ class ArticlePreview extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                Section(child: Text(article.section)),
-                GradientArticleImageView(image: article.image),
+                _buildSection(),
+                GradientArticleImageView(image: article?.image),
                 SizedBox(height: 8),
-                Text(
-                  'vor 3 Tagen von ${article.author.name}',
-                  style: TextStyle(color: Colors.black54),
-                ),
-                Text(
-                  article.title,
-                  style: Theme.of(context).textTheme.display2,
-                ),
-                Text(
-                  '${article.content.substring(0, 200)}...',
-                  style: Theme.of(context).textTheme.body2,
-                ),
+                _buildSmallText(),
+                _buildTitle(),
+                _buildContent(),
               ],
             ),
           ),
         ),
       ),
     );
+  }
+
+  Widget _buildSection() {
+    if (article == null)
+      return Section(child: PlaceholderText(color: Colors.white));
+    else
+      return Section(child: Text(article.section));
+  }
+
+  Widget _buildSmallText() {
+    if (article == null)
+      return PlaceholderText();
+    else
+      return Text(
+        'vor 3 Tagen von ${article.author.name == 'unbekannt'}',
+        style: TextStyle(color: Colors.black54),
+      );
+  }
+
+  Widget _buildTitle() {
+    final style = Theme.of(context).textTheme.display2;
+
+    if (article == null)
+      return PlaceholderText(style: style);
+    else
+      return Text(article.title, style: style);
+  }
+
+  Widget _buildContent() {
+    final style = Theme.of(context).textTheme.body2;
+
+    if (article == null)
+      return PlaceholderText(style: style, numLines: 3);
+    else
+      return Text(
+        '${article.content.substring(0, 200) ?? ''}...',
+        style: style,
+      );
   }
 }
