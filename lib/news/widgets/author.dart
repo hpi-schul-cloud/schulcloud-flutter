@@ -16,51 +16,54 @@ class AuthorView extends StatefulWidget {
 }
 
 class _AuthorViewState extends State<AuthorView> {
+  Author get author => widget.author;
+  bool get isPlaceholder => author == null;
+  bool get hasPhoto => author.photoUrl != null;
+
   @override
   Widget build(BuildContext context) {
-    if (widget.author == null) {
-      return Container(
-        height: 56,
-        alignment: Alignment.centerLeft,
-        child: PlaceholderText(),
-      );
-    }
-
-    return Stack(
-      children: <Widget>[
-        Container(
-          height: 56,
-          alignment: Alignment.centerLeft,
-          padding: const EdgeInsets.only(left: 28),
-          child: _buildText(),
-        ),
-        _buildAvatar(),
-      ],
-    );
-  }
-
-  Widget _buildText() {
     return Container(
-      color: Colors.white,
-      padding: const EdgeInsets.fromLTRB(8, 4, 8, 4),
-      child: Text(
-        'von ${widget.author.name}',
-        style: Theme.of(context).textTheme.caption.copyWith(fontSize: 16),
+      height: 56,
+      child: Stack(
+        children: <Widget>[
+          _buildName(),
+          if (hasPhoto) _buildAvatar(),
+        ],
       ),
     );
   }
 
   Widget _buildAvatar() {
-    return Container(
-      height: 56,
-      width: 56,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        border: Border.all(color: Colors.grey, width: 1.5),
+    return Align(
+      alignment: Alignment.centerLeft,
+      child: Container(
+        height: 56,
+        width: 56,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          border: Border.all(color: Colors.grey, width: 1.5),
+        ),
+        child: CircleAvatar(
+          backgroundColor: Colors.grey,
+          backgroundImage: NetworkImage(author.photoUrl),
+        ),
       ),
-      child: CircleAvatar(
-        backgroundColor: Colors.grey,
-        backgroundImage: NetworkImage(widget.author.photoUrl),
+    );
+  }
+
+  Widget _buildName() {
+    final style = Theme.of(context).textTheme.caption.copyWith(fontSize: 16);
+    final text = isPlaceholder
+        ? PlaceholderText(showPadding: false, style: style)
+        : Text('von ${author.name}', style: style);
+
+    return Container(
+      alignment: Alignment.centerLeft,
+      padding: EdgeInsets.only(left: hasPhoto ? 40 : 0),
+      child: Container(
+        color: Colors.white,
+        padding: EdgeInsets.fromLTRB(hasPhoto ? 28 : 0, 4, 8, 4),
+        child: text,
       ),
     );
   }
