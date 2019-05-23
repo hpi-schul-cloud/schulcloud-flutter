@@ -37,7 +37,7 @@ Vestibulum purus quam, scelerisque ut, mollis sed, nonummy id, metus. Nullam acc
       ),
       Article(
         id: 'article_${page}_marcel',
-        title: 'Beispielartikel',
+        title: 'Beispielartikel ohne Bild',
         author: Author(name: 'Marcel Garus'),
         published: DateTime.now().subtract(Duration(days: 2)),
         section: 'News Dingsbums',
