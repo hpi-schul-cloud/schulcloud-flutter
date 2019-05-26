@@ -9,6 +9,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_villains: ^1.2.0
   provider: ^2.0.1
   transparent_image: any
 
