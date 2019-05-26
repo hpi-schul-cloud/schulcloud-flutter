@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'news/news.dart';
+import 'login/login.dart';
 
 void main() => runApp(MyApp());
 
@@ -19,17 +19,20 @@ const _textTheme = const TextTheme(
   ),
 );
 
+const _mainColor = Color(0xffb10438);
+
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Schulcloud',
       theme: ThemeData(
-        primarySwatch: Colors.orange,
+        primaryColor: _mainColor,
+        buttonColor: _mainColor,
         fontFamily: 'PT Sans Narrow',
         textTheme: _textTheme,
       ),
-      home: NewsScreen(),
+      home: LoginScreen(),
     );
   }
 }
