@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:transparent_image/transparent_image.dart';
-import 'package:provider/provider.dart';
 
 import '../model.dart';
-import 'theme.dart';
 
 /// Displays an article image, which is faded in as its loaded.
 ///
