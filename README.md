@@ -1,12 +1,11 @@
-# schulcloud
+# A Flutter based mobile App for the HPI Schul-Cloud
 
-A new Flutter project.
+Check the wiki for more info.
+- [Wiki](https://github.com/schul-cloud/schulcloud-flutter/wiki)
 
-## Getting Started
+Feel free to contribute.
 
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
+For getting started with flutter check:
 
 - [Lab: Write your first Flutter app](https://flutter.io/docs/get-started/codelab)
 - [Cookbook: Useful Flutter samples](https://flutter.io/docs/cookbook)
