@@ -28,7 +28,7 @@ class AuthorDownloader extends Repository<AuthorDto> {
   }
 }
 
-Future<List<Article>> loadArticlePage(int page) async {
+/*Future<List<Article>> loadArticlePage(int page) async {
   await Future.delayed(Duration(seconds: 2));
   return [
     Article(
@@ -58,4 +58,4 @@ Vestibulum purus quam, scelerisque ut, mollis sed, nonummy id, metus. Nullam acc
       content: 'Ein ganz kurzer Beispieltext.',
     ),
   ];
-}
+}*/
