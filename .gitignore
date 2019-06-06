@@ -2,7 +2,7 @@
 local/
 
 # Generated dart files.
-.g.dart
+*.g.dart
 
 # Miscellaneous
 *.class
