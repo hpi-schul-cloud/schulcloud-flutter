@@ -1,6 +1,9 @@
 # Folder for design mockups and other resources that should remain local.
 local/
 
+# Generated dart files.
+.g.dart
+
 # Miscellaneous
 *.class
 *.log
