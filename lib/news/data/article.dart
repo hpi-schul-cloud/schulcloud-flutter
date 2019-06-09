@@ -36,3 +36,8 @@ class ArticleDto extends Dto<ArticleDto> {
       _$ArticleDtoFromJson(json);
   Map<String, dynamic> toJson() => _$ArticleDtoToJson(this);
 }
+
+class ArticleDtoSerializer extends Serializer<ArticleDto> {
+  @override
+  ArticleDto fromJson(Map<String, dynamic> json) => _$ArticleDtoFromJson(json);
+}

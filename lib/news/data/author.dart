@@ -22,3 +22,8 @@ class AuthorDto extends Dto<AuthorDto> {
       _$AuthorDtoFromJson(json);
   Map<String, dynamic> toJson() => _$AuthorDtoToJson(this);
 }
+
+class AuthorDtoSerializer extends Serializer<AuthorDto> {
+  @override
+  AuthorDto fromJson(Map<String, dynamic> json) => _$AuthorDtoFromJson(json);
+}
