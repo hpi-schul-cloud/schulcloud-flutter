@@ -1,5 +1,4 @@
 import 'package:schulcloud/core/data.dart';
-import 'package:schulcloud/core/storage.dart';
 
 import 'author.dart';
 import 'article.dart';
