@@ -8,18 +8,16 @@ import 'author.dart';
 part 'article.g.dart';
 
 @JsonSerializable()
-@immutable
-class ArticleDto extends Dto<ArticleDto> {
-  final Id<ArticleDto> id;
+class Article extends Entity<Article> {
   final String title;
-  final Id<AuthorDto> author;
+  final Author author;
   final DateTime published;
   final String section;
   final String imageUrl;
   final String content;
 
-  const ArticleDto({
-    @required this.id,
+  const Article({
+    @required Id<Article> id,
     @required this.title,
     @required this.author,
     @required this.published,
@@ -30,14 +28,11 @@ class ArticleDto extends Dto<ArticleDto> {
         assert(author != null),
         assert(published != null),
         assert(section != null),
-        assert(content != null);
-
-  factory ArticleDto.fromJson(Map<String, dynamic> json) =>
-      _$ArticleDtoFromJson(json);
-  Map<String, dynamic> toJson() => _$ArticleDtoToJson(this);
+        assert(content != null),
+        super(id);
 }
 
-class ArticleDtoSerializer extends Serializer<ArticleDto> {
-  @override
-  ArticleDto fromJson(Map<String, dynamic> json) => _$ArticleDtoFromJson(json);
+class ArticleSerializer extends Serializer<Article> {
+  const ArticleSerializer()
+      : super(fromJson: _$ArticleFromJson, toJson: _$ArticleToJson);
 }

@@ -6,24 +6,21 @@ import 'package:schulcloud/core/data.dart';
 part 'author.g.dart';
 
 @JsonSerializable()
-@immutable
-class AuthorDto extends Dto<AuthorDto> {
-  final Id<AuthorDto> id;
+class Author extends Entity<Author> {
   final String name;
   final String photoUrl;
 
-  const AuthorDto({
-    @required this.id,
+  const Author({
+    @required Id<Author> id,
     @required this.name,
     this.photoUrl,
-  }) : assert(name != null);
+  })  : assert(name != null),
+        super(id);
 
-  factory AuthorDto.fromJson(Map<String, dynamic> json) =>
-      _$AuthorDtoFromJson(json);
-  Map<String, dynamic> toJson() => _$AuthorDtoToJson(this);
+  factory Author.fromJson(json) => _$AuthorFromJson(json);
 }
 
-class AuthorDtoSerializer extends Serializer<AuthorDto> {
-  @override
-  AuthorDto fromJson(Map<String, dynamic> json) => _$AuthorDtoFromJson(json);
+class AuthorSerializer extends Serializer<Author> {
+  const AuthorSerializer()
+      : super(fromJson: _$AuthorFromJson, toJson: _$AuthorToJson);
 }
