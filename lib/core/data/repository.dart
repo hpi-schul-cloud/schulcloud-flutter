@@ -2,9 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 
-import 'id.dart';
-
-export 'id.dart';
+import 'entity.dart';
 
 /// Error that may be thrown by a repository if the item is not available yet.
 class NotLoadedYetError {}
@@ -47,11 +45,12 @@ abstract class Repository<Item> {
   // ...
   // if (isFinite) {
   //   final source = this.source as FiniteRepository;
+  //   source.fetchAll()....
   // }
   // ```
 
-  /// Whether this repository is finite. If set to true, the [fetchAllEntries] method
-  /// should be overriden.
+  /// Whether this repository is finite. If set to true, the [fetchAllEntries]
+  /// method should be overriden.
   final bool isFinite;
 
   /// Whether this repository is mutable. If set to true, the [update] method
@@ -59,9 +58,10 @@ abstract class Repository<Item> {
   final bool isMutable;
 
   const Repository({
-    this.isFinite,
-    this.isMutable,
-  });
+    this.isFinite = false,
+    this.isMutable = false,
+  })  : assert(isFinite != null),
+        assert(isMutable != null);
 
   /// Fetches a single item with the given [id].
   Stream<Item> fetch(Id<Item> id);
@@ -148,7 +148,7 @@ abstract class RepositoryWithSource<Item, SourceItem> extends Repository<Item> {
     _isFinite = isFinite ?? source?.isFinite ?? false;
   }
 
-  Stream<List<RepositoryEntry<Item>>> fetchSourceEntriesAndMap(
+  Stream<List<RepositoryEntry<Item>>> fetchSourceEntriesAndMapItems(
       Item Function(SourceItem source) itemTransformer) {
     return source
         .fetchAllEntries()
@@ -159,4 +159,16 @@ abstract class RepositoryWithSource<Item, SourceItem> extends Repository<Item> {
   }
 
   void dispose() => source?.dispose();
+}
+
+mixin SourceRepositoryForwarder<Item> on RepositoryWithSource<Item, Item> {
+  @override
+  Stream<Item> fetch(Id<Item> id) => source.fetch(id);
+
+  @override
+  Stream<List<RepositoryEntry<Item>>> fetchAllEntries() =>
+      source.fetchAllEntries();
+
+  @override
+  Future<void> update(Id<Item> id, Item item) => source.update(id, item);
 }
