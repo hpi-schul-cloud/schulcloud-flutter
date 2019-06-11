@@ -5,8 +5,12 @@ import 'package:flutter/foundation.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'dto.dart';
+import 'entity.dart';
+import 'json.dart';
 import 'repository.dart';
+
+Stream get _notLoadedYetStream =>
+    Stream.fromFuture(Future.error(NotLoadedYetError()));
 
 /// A wrapper to store strings in SharedPreferences.
 class SharedPreferencesStorage extends Repository<String> {
@@ -41,15 +45,27 @@ class SharedPreferencesStorage extends Repository<String> {
 
   @override
   Future<void> update(Id<String> id, String item) async {
-    _controllers.putIfAbsent(id.id, () => BehaviorSubject());
-    _controllers[id.id].add(item);
+    if (item == null) {
+      _controllers[id.id]?.close();
+      _controllers.remove(id.id);
+    } else {
+      _controllers.putIfAbsent(id.id, () => BehaviorSubject());
+      _controllers[id.id].add(item);
+    }
 
     _allEntriesController.add([
       for (var id in _controllers.keys)
         RepositoryEntry(id: Id(id), item: await _controllers[id].first),
     ]);
 
-    (await _prefs).setString('${this.keyPrefix}${id.id}', item);
+    final prefs = await _prefs;
+    final key = '${this.keyPrefix}${id.id}';
+
+    if (item == null) {
+      prefs.setString(key, item);
+    } else {
+      prefs.remove(key);
+    }
   }
 
   @override
@@ -81,35 +97,36 @@ class JsonToStringTransformer extends RepositoryWithSource<dynamic, String> {
 
 /// A storage that permanently stores objects by coverting them to JSON and
 /// passing that to a PermanentJsonStorage.
-class DtoToJsonTransformer<T extends Dto<T>>
-    extends RepositoryWithSource<T, dynamic> {
-  Serializer<T> serializer;
+class ObjectToJsonTransformer<Item>
+    extends RepositoryWithSource<Item, dynamic> {
+  Serializer<Item> serializer;
 
-  DtoToJsonTransformer({
+  ObjectToJsonTransformer({
     @required Repository<dynamic> source,
     @required this.serializer,
   })  : assert(serializer != null),
         super(source);
 
   @override
-  Stream<T> fetch(Id<T> id) => source.fetch(id).map(serializer.fromJson);
+  Stream<Item> fetch(Id<Item> id) => source.fetch(id).map(serializer.fromJson);
 
   @override
-  Stream<List<RepositoryEntry<T>>> fetchAllEntries() =>
+  Stream<List<RepositoryEntry<Item>>> fetchAllEntries() =>
       fetchSourceEntriesAndMapItems(serializer.fromJson);
 
   @override
-  Future<void> update(Id<T> id, T item) => source.update(id, item.toJson());
+  Future<void> update(Id<Item> id, Item item) =>
+      source.update(id, serializer.toJson(item));
 }
 
 /// A storage that tries to use the cache as much as possible and otherwise
 /// defaults to the source repository.
-class CachedRepository<T extends Dto<T>> extends RepositoryWithSource<T, T> {
+class CachedRepository<T> extends RepositoryWithSource<T, T> {
   final Repository<T> _cache;
 
   CachedRepository({
-    Repository<T> source,
-    Repository<T> cache,
+    @required Repository<T> source,
+    @required Repository<T> cache,
   })  : assert(cache != null),
         assert(
             !source.isFinite || cache.isFinite,
@@ -118,9 +135,6 @@ class CachedRepository<T extends Dto<T>> extends RepositoryWithSource<T, T> {
         assert(cache.isMutable, "Can't cache items if the cache is immutable."),
         _cache = cache,
         super(source);
-
-  Stream get _notLoadedYetStream =>
-      Stream.fromFuture(Future.error(NotLoadedYetError()));
 
   @override
   Stream<T> fetch(Id<T> id) async* {
@@ -156,9 +170,57 @@ class CachedRepository<T extends Dto<T>> extends RepositoryWithSource<T, T> {
     await _cache.update(id, value);
   }
 
+  Future<void> clearCache() async {
+    await Future.wait((await _cache.fetchAllIds().first)
+        .map((id) => _cache.update(id, null)));
+  }
+
   @override
   void dispose() {
     source.dispose();
     _cache.dispose();
+  }
+}
+
+/// A loader that loads pages of items.
+class PaginatedLoader<T> extends Repository<T> {
+  PaginatedLoader({
+    @required this.pageLoader,
+    @required this.idToIndex,
+    int Function(int index) indexToPage,
+    int Function(int page) firstIndexOfPage,
+    int itemsPerPage,
+  })  : assert(pageLoader != null),
+        assert(idToIndex != null),
+        assert(itemsPerPage != null ||
+            indexToPage != null && firstIndexOfPage != null),
+        this.indexToPage = indexToPage ?? ((index) => index ~/ itemsPerPage),
+        this.firstIndexOfPage =
+            firstIndexOfPage ?? ((page) => page * itemsPerPage);
+
+  final Future<List<T>> Function(int page) pageLoader;
+  final int Function(Id<T> id) idToIndex;
+  final int Function(int index) indexToPage;
+  final int Function(int page) firstIndexOfPage;
+
+  final _loaders = Map<int, Future<List<T>>>();
+
+  @override
+  Stream<T> fetch(Id<T> id) async* {
+    yield* _notLoadedYetStream;
+
+    yield await _loadItem(id);
+  }
+
+  /// Loads an item or just waits if the page the item is on is already loaded.
+  Future<T> _loadItem(Id id) async {
+    final index = idToIndex(id);
+    final page = indexToPage(index);
+
+    if (!_loaders.containsKey(page)) {
+      _loaders[page] = pageLoader(page);
+      _loaders[page].then((_) => _loaders.remove(page));
+    }
+    return (await _loaders[page])[index - firstIndexOfPage(page)];
   }
 }
