@@ -3,54 +3,22 @@ import 'package:schulcloud/core/data.dart';
 import 'author.dart';
 import 'article.dart';
 
-class AuthorRepository extends CachedStorage<AuthorDto> {
-  AuthorRepository()
-      : super(
-          id: 'news_authors',
-          source: AuthorDownloader(),
-          serializer: AuthorDtoSerializer(),
-        );
-}
-
-class AuthorDownloader extends Repository<AuthorDto> {
+class ArticleDownloader extends Repository<Article> {
   @override
-  Stream<AuthorDto> fetch(Id<AuthorDto> id) {
-    return Stream.fromFuture(() async {
-      await Future.delayed(Duration(seconds: 1));
-      if (id.id == 'marcel') {
-        return AuthorDto(id: id, name: 'Marcel Garus');
-      } else {
-        return AuthorDto(
-          id: id,
-          name: 'Mona Weitzenberg',
-          photoUrl: 'https://schul-cloud.org/images/team/Mona.png',
-        );
-      }
-    }());
-  }
-}
-
-class ArticleRepository extends CachedStorage<ArticleDto> {
-  ArticleRepository()
-      : super(
-          id: 'news_articles',
-          source: ArticleDownloader(),
-          serializer: ArticleDtoSerializer(),
-        );
-}
-
-class ArticleDownloader extends Repository<ArticleDto> {
-  @override
-  Stream<ArticleDto> fetch(Id<ArticleDto> id) {
+  Stream<Article> fetch(Id<Article> id) {
     // TODO: Here, the actual download should happen.
     return Stream.fromFuture(() async {
       await Future.delayed(Duration(seconds: 1));
       int index = int.parse(id.id.substring('article_'.length));
       if (index.isEven) {
-        return ArticleDto(
+        return Article(
           id: Id('article_${index}_mona'),
           title: 'Headline lorem ipsum dolor',
-          author: const Id('mona'),
+          author: Author(
+            id: Id('mona'),
+            name: 'Mona Weitzenberg',
+            photoUrl: 'https://schul-cloud.org/images/team/Mona.png',
+          ),
           published: DateTime.now().subtract(Duration(days: 3)),
           section: 'News Schultheater',
           imageUrl:
@@ -63,10 +31,10 @@ class ArticleDownloader extends Repository<ArticleDto> {
     Vestibulum purus quam, scelerisque ut, mollis sed, nonummy id, metus. Nullam accumsan lorem in dui. Cras ultricies mi eu turpis hendrerit fringilla. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; In ac dui quis mi consectetuer lacinia. Nam pretium turpis et arcu. Duis arcu tortor, suscipit eget, imperdiet nec, imperdiet iaculis, ipsum. Sed aliquam ultrices mauris. Integer ante arcu, accumsan a, consectetuer eget, posuere ut, mauris. Praesent adipiscing. Phasellus ullamcorper ipsum rutrum nunc. Nunc nonummy metus. Vestibulum volutpat pretium libero. Cras id dui. Aenean ut eros et nisl sagittis vestibulum. Nullam nulla eros, ultricies sit amet, nonummy id, imperdiet feugiat, pede. Sed lectus. Donec mollis hendrerit risus. Phasellus nec sem in justo pellentesque facilisis. Etiam imperdiet imperdiet orci. Nunc nec neque. Phasellus leo dolor, tempus non, auctor et, hendrerit quis, nisi. Curabitur ligula sapien, tincidunt non, euismod vitae, posuere imperdiet, leo. Maecenas malesuada. Praesent congue erat at massa. Sed cursus turpis vitae tortor. Donec posuere vulputate arcu. Phasellus accumsan cursus velit. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Sed aliquam, nisi quis porttitor congue, elit erat euismod orci, ac''',
         );
       } else {
-        return ArticleDto(
+        return Article(
           id: Id('article_${index}_marcel'),
           title: 'Beispielartikel ohne Bild',
-          author: const Id('marcel'),
+          author: Author(id: Id('marcel'), name: 'Marcel'),
           published: DateTime.now().subtract(Duration(days: 2)),
           section: 'News Dingsbums',
           content: 'Ein ganz kurzer Beispieltext.',
