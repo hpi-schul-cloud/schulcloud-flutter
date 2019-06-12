@@ -20,8 +20,8 @@ class ArticleList extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListView.builder(
       itemBuilder: (context, index) {
-        return FutureBuilder<Article>(
-          future: Provider.of<Bloc>(context).getArticleAtIndex(index),
+        return StreamBuilder<Article>(
+          stream: Provider.of<Bloc>(context).getArticleAtIndex(index),
           builder: (context, snapshot) {
             if (snapshot.hasError) {
               return Text(snapshot.error.toString());

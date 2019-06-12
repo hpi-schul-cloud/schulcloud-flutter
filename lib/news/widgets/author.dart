@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:schulcloud/utils/placeholder.dart';
+import 'package:schulcloud/core/widgets.dart';
 
-import '../model.dart';
+import '../entities.dart';
 
 /// Displays the author's name as well as an avatar, if available.
 ///

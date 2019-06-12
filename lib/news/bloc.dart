@@ -1,6 +1,9 @@
 import 'package:schulcloud/core/data.dart';
 
-import 'data.dart';
+import 'data/repository.dart';
+import 'entities.dart';
+
+export 'entities.dart';
 
 class Bloc {
   static final _articles = CachedRepository<Article>(
@@ -8,7 +11,7 @@ class Bloc {
     cache: ObjectToJsonTransformer(
       serializer: ArticleSerializer(),
       source: JsonToStringTransformer(
-        source: SharedPreferencesStorage(keyPrefix: 'articles'),
+        source: SharedPreferences(keyPrefix: 'articles'),
       ),
     ),
   );
