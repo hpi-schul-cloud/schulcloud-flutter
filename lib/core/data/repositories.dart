@@ -3,7 +3,7 @@ import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 import 'package:rxdart/rxdart.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:shared_preferences/shared_preferences.dart' as sp;
 
 import 'entity.dart';
 import 'json.dart';
@@ -12,14 +12,14 @@ import 'repository.dart';
 Stream get _notLoadedYetStream =>
     Stream.fromFuture(Future.error(NotLoadedYetError()));
 
-/// A wrapper to store strings in SharedPreferences.
-class SharedPreferencesStorage extends Repository<String> {
+/// A wrapper to store [String]s in the system's shared preferences.
+class SharedPreferences extends Repository<String> {
   final String keyPrefix;
   final Map<String, BehaviorSubject<String>> _controllers;
   final BehaviorSubject<List<RepositoryEntry<String>>> _allEntriesController;
-  Future<SharedPreferences> get _prefs => SharedPreferences.getInstance();
+  Future<sp.SharedPreferences> get _prefs => sp.SharedPreferences.getInstance();
 
-  SharedPreferencesStorage({@required this.keyPrefix})
+  SharedPreferences({@required this.keyPrefix})
       : assert(keyPrefix != null),
         _controllers = const {},
         _allEntriesController = BehaviorSubject(),
@@ -45,27 +45,25 @@ class SharedPreferencesStorage extends Repository<String> {
 
   @override
   Future<void> update(Id<String> id, String item) async {
-    if (item == null) {
-      _controllers[id.id]?.close();
-      _controllers.remove(id.id);
-    } else {
-      _controllers.putIfAbsent(id.id, () => BehaviorSubject());
-      _controllers[id.id].add(item);
-    }
-
-    _allEntriesController.add([
-      for (var id in _controllers.keys)
-        RepositoryEntry(id: Id(id), item: await _controllers[id].first),
-    ]);
-
     final prefs = await _prefs;
     final key = '${this.keyPrefix}${id.id}';
 
     if (item == null) {
-      prefs.setString(key, item);
-    } else {
       prefs.remove(key);
+      _controllers[id.id]?.close();
+      _controllers.remove(id.id);
+    } else {
+      prefs.setString(key, item);
+      _controllers.putIfAbsent(id.id, () => BehaviorSubject());
+      _controllers[id.id].add(item);
     }
+
+    var getEntryForId = (String id) async {
+      return RepositoryEntry<String>(
+          id: Id(id), item: await _controllers[id].first);
+    };
+    _allEntriesController
+        .add(await Future.wait(_controllers.keys.map(getEntryForId)));
   }
 
   @override
@@ -75,19 +73,17 @@ class SharedPreferencesStorage extends Repository<String> {
   }
 }
 
-/// A repository that allows to save json structures into a string repository.
+/// A repository that saves json structures into a [Repository<String>].
 class JsonToStringTransformer extends RepositoryWithSource<dynamic, String> {
   JsonToStringTransformer({@required source}) : super(source);
 
   @override
-  Stream<Map<String, dynamic>> fetch(Id<dynamic> id) {
-    return source.fetch(id.cast<String>()).map((s) => json.decode(s));
-  }
+  Stream<Map<String, dynamic>> fetch(Id<dynamic> id) =>
+      source.fetch(id.cast<String>()).map((s) => json.decode(s));
 
   @override
-  Stream<List<RepositoryEntry<dynamic>>> fetchAllEntries() {
-    return fetchSourceEntriesAndMapItems(json.decode);
-  }
+  Stream<List<RepositoryEntry<dynamic>>> fetchAllEntries() =>
+      fetchSourceEntriesAndMapItems(json.decode);
 
   @override
   Future<void> update(Id<dynamic> id, dynamic value) async {
@@ -95,8 +91,8 @@ class JsonToStringTransformer extends RepositoryWithSource<dynamic, String> {
   }
 }
 
-/// A storage that permanently stores objects by coverting them to JSON and
-/// passing that to a PermanentJsonStorage.
+/// A storage that saves objects into a [Repository<dynamic>] by serializing and
+/// deserializing them from and to json.
 class ObjectToJsonTransformer<Item>
     extends RepositoryWithSource<Item, dynamic> {
   Serializer<Item> serializer;
@@ -119,8 +115,10 @@ class ObjectToJsonTransformer<Item>
       source.update(id, serializer.toJson(item));
 }
 
-/// A storage that tries to use the cache as much as possible and otherwise
-/// defaults to the source repository.
+/// A repository that wraps a source repository. When items are fetched, they
+/// are saved in the cache and the next time the item is fetched, it first
+/// serves the item from the cache and only after that provides to source's
+/// item.
 class CachedRepository<T> extends RepositoryWithSource<T, T> {
   final Repository<T> _cache;
 
@@ -132,7 +130,8 @@ class CachedRepository<T> extends RepositoryWithSource<T, T> {
             !source.isFinite || cache.isFinite,
             "Provided source repository $source is finite but the cache $cache "
             "isn't."),
-        assert(cache.isMutable, "Can't cache items if the cache is immutable."),
+        assert(cache.isMutable,
+            "Can't cache items if the provided cache $cache is immutable."),
         _cache = cache,
         super(source);
 
