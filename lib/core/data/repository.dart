@@ -33,21 +33,26 @@ class RepositoryEntry<T> {
 abstract class Repository<Item> {
   // You may ask yourself why this is a single class instead of being split up
   // into smaller classes like a MutableRepository and FiniteRepository etc.
-  // that inherit from a base Repository class etc.
-  // When implementing repositories, they often accept a source repository and
-  // their [isFinite] and [isMutable] properties depend on the source
-  // repository's properties. So you would have to do many manual checks.
+  // that inherit from a base Repository class. "I'm losing my type safety!",
+  // you might think.
+  // Well, when implementing repositories, they often accept a source repository
+  // and their [isFinite] and [isMutable] properties depend on the source
+  // repository's properties. That leads to patterns like the following:
   //
-  // "But I'm losing my type safety!" Well, the pattern observed using a modular
-  // architecture included a lot of unsafe typecasting similar to the following:
   // ```dart
   // bool get isFinite => source.isFinite;
   // ...
-  // if (isFinite) {
-  //   final source = this.source as FiniteRepository;
-  //   source.fetchAll()....
+  // Stream<List<T>> fetchAll() {
+  //   if (isFinite) {
+  //     final source = this.source as FiniteRepository;
+  //     source.fetchAll()....
+  //   }
   // }
   // ```
+  //
+  // As you see, there's a lot of unsafe typecasting necessary to make it work.
+  // That's why I opted for the simpler alternative of condensing everything
+  // into a repository base class.
 
   /// Whether this repository is finite. If set to true, the [fetchAllEntries]
   /// method should be overriden.
@@ -68,17 +73,20 @@ abstract class Repository<Item> {
 
   /// Fetches multiple items with the given [ids].
   Stream<Iterable<Item>> fetchMultiple(Iterable<Id<Item>> ids) {
+    StreamController<Iterable<Item>> controller;
     Iterable<Stream<Item>> allStreams = ids.map(fetch);
 
-    StreamController<Iterable<Item>> controller;
+    // Helping method that takes a snapshot of every item and adds it the the
+    // controller.
+    final sendSnapshot = () async {
+      var snapshot =
+          await Future.wait(allStreams.map((stream) => stream.first));
+      controller.add(snapshot);
+    };
+
     controller = StreamController<Iterable<Item>>(
-      onListen: () {
-        allStreams.forEach((stream) => stream.listen((Item item) async {
-              var itemSnapshot =
-                  await Future.wait(allStreams.map((stream) => stream.first));
-              controller.add(itemSnapshot);
-            }));
-      },
+      onListen: () =>
+          allStreams.forEach((stream) => stream.listen((_) => sendSnapshot())),
       onCancel: () => controller.close(),
     );
 
@@ -90,8 +98,8 @@ abstract class Repository<Item> {
     if (isFinite) {
       throw UnimplementedError(
           "fetchAll was called on repository $this. It's finite, so that "
-          "should be possible. Make sure you implement the fetchAll method and "
-          "don't call the superclass's fetchAll method.");
+          "should be possible. Make sure you implement the fetchAll method of "
+          "${this.runtimeType} and don't call super.fetchAll.");
     } else {
       throw UnsupportedError(
           "fetchAll was called on repository $this, altough it's not finite. "
@@ -112,8 +120,8 @@ abstract class Repository<Item> {
     if (isMutable) {
       throw UnimplementedError(
           "update was called on repository $this. It's mutable, so that "
-          "should be possible. Make sure you implement the update method and "
-          "don't call the superclass's update method.");
+          "should be possible. Make sure you implement the update method of "
+          "${this.runtimeType} and don't call super.update.");
     } else {
       throw UnsupportedError(
           "update was called on repository $this, altough it's not mutable. "
@@ -137,13 +145,13 @@ abstract class RepositoryWithSource<Item, SourceItem> extends Repository<Item> {
   bool get isFinite => _isFinite;
   bool get isMutable => _isMutable;
 
-  /// If a [source] repository is provided, finitability and mutability are
-  /// equal to the [source]'s, unless overridden here.
+  /// Finitability and mutability are equal to the [source]'s, unless overridden
+  /// here.
   RepositoryWithSource(
     this.source, {
     bool isFinite,
     bool isMutable,
-  }) {
+  }) : assert(source != null) {
     _isMutable = isMutable ?? source?.isMutable ?? false;
     _isFinite = isFinite ?? source?.isFinite ?? false;
   }
