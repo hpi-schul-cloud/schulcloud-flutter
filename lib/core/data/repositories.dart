@@ -9,21 +9,21 @@ import 'entity.dart';
 import 'json.dart';
 import 'repository.dart';
 
-Stream get _notLoadedYetStream =>
-    Stream.fromFuture(Future.error(NotLoadedYetError()));
+Stream<T> _notLoadedYetStream<T>() =>
+    Stream<T>.fromFuture(Future.error(NotLoadedYetError())).asBroadcastStream();
 
 /// A wrapper to store [String]s in the system's shared preferences.
 class SharedPreferences extends Repository<String> {
   final String keyPrefix;
-  final Map<String, BehaviorSubject<String>> _controllers;
+  Map<String, BehaviorSubject<String>> _controllers;
   final BehaviorSubject<List<RepositoryEntry<String>>> _allEntriesController;
   Future<sp.SharedPreferences> get _prefs => sp.SharedPreferences.getInstance();
 
   SharedPreferences({@required this.keyPrefix})
       : assert(keyPrefix != null),
-        _controllers = const {},
         _allEntriesController = BehaviorSubject(),
         super(isFinite: true, isMutable: true) {
+    _controllers = Map<String, BehaviorSubject<String>>();
     _prefs.then((prefs) {
       // When starting up, load all existing values from SharedPreferences.
       // All the SharedPreferences properties managed by this repository have
@@ -37,7 +37,8 @@ class SharedPreferences extends Repository<String> {
   }
 
   @override
-  Stream<String> fetch(Id<String> id) => _controllers[id.id].stream;
+  Stream<String> fetch(Id<String> id) =>
+      _controllers[id.id]?.stream ?? Stream<String>.empty().asBroadcastStream();
 
   @override
   Stream<List<RepositoryEntry<String>>> fetchAllEntries() =>
@@ -74,7 +75,8 @@ class SharedPreferences extends Repository<String> {
 }
 
 /// A repository that saves json structures into a [Repository<String>].
-class JsonToStringTransformer extends RepositoryWithSource<dynamic, String> {
+class JsonToStringTransformer
+    extends RepositoryWithSource<Map<String, dynamic>, String> {
   JsonToStringTransformer({@required source}) : super(source);
 
   @override
@@ -82,29 +84,31 @@ class JsonToStringTransformer extends RepositoryWithSource<dynamic, String> {
       source.fetch(id.cast<String>()).map((s) => json.decode(s));
 
   @override
-  Stream<List<RepositoryEntry<dynamic>>> fetchAllEntries() =>
-      fetchSourceEntriesAndMapItems(json.decode);
+  Stream<List<RepositoryEntry<Map<String, dynamic>>>> fetchAllEntries() =>
+      fetchSourceEntriesAndMapItems(
+          (data) => json.decode(data) as Map<String, dynamic>);
 
   @override
-  Future<void> update(Id<dynamic> id, dynamic value) async {
+  Future<void> update(Id<dynamic> id, Map<String, dynamic> value) async {
     await source.update(id.cast<String>(), json.encode(value));
   }
 }
 
-/// A storage that saves objects into a [Repository<dynamic>] by serializing and
-/// deserializing them from and to json.
+/// A storage that saves objects into a [Repository<Map<<String, dynamic>>] by
+/// serializing and deserializing them from and to json.
 class ObjectToJsonTransformer<Item>
-    extends RepositoryWithSource<Item, dynamic> {
+    extends RepositoryWithSource<Item, Map<String, dynamic>> {
   Serializer<Item> serializer;
 
   ObjectToJsonTransformer({
-    @required Repository<dynamic> source,
+    @required Repository<Map<String, dynamic>> source,
     @required this.serializer,
   })  : assert(serializer != null),
         super(source);
 
   @override
-  Stream<Item> fetch(Id<Item> id) => source.fetch(id).map(serializer.fromJson);
+  Stream<Item> fetch(Id<Item> id) =>
+      source.fetch(id.cast<Map<String, dynamic>>()).map(serializer.fromJson);
 
   @override
   Stream<List<RepositoryEntry<Item>>> fetchAllEntries() =>
@@ -112,7 +116,7 @@ class ObjectToJsonTransformer<Item>
 
   @override
   Future<void> update(Id<Item> id, Item item) =>
-      source.update(id, serializer.toJson(item));
+      source.update(id.cast<Map<String, dynamic>>(), serializer.toJson(item));
 }
 
 /// A repository that wraps a source repository. When items are fetched, they
@@ -137,9 +141,10 @@ class CachedRepository<T> extends RepositoryWithSource<T, T> {
 
   @override
   Stream<T> fetch(Id<T> id) async* {
-    yield* _notLoadedYetStream;
+    yield* _notLoadedYetStream<T>();
 
-    var cached = await _cache.fetch(id).first;
+    var cached =
+        await _cache.fetch(id).firstWhere((a) => true, orElse: () => null);
     if (cached != null) yield cached;
 
     await for (final item in source.fetch(id)) {
@@ -150,9 +155,11 @@ class CachedRepository<T> extends RepositoryWithSource<T, T> {
 
   @override
   Stream<List<RepositoryEntry<T>>> fetchAllEntries() async* {
-    yield* _notLoadedYetStream;
+    yield* _notLoadedYetStream<List<RepositoryEntry<T>>>();
 
-    var cached = await _cache.fetchAllEntries().first;
+    var cached = await _cache
+        .fetchAllEntries()
+        .firstWhere((a) => true, orElse: () => null);
     if (cached != null) yield cached;
 
     await for (final entries in source.fetchAllEntries()) {
@@ -165,8 +172,10 @@ class CachedRepository<T> extends RepositoryWithSource<T, T> {
 
   @override
   Future<void> update(Id<T> id, T value) async {
-    await source.update(id, value);
-    await _cache.update(id, value);
+    await Future.wait([
+      source.update(id, value),
+      _cache.update(id, value),
+    ]);
   }
 
   Future<void> clearCache() async {
@@ -206,7 +215,7 @@ class PaginatedLoader<T> extends Repository<T> {
 
   @override
   Stream<T> fetch(Id<T> id) async* {
-    yield* _notLoadedYetStream;
+    yield* _notLoadedYetStream<T>();
 
     yield await _loadItem(id);
   }
