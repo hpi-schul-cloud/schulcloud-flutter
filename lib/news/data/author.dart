@@ -18,6 +18,7 @@ class Author extends Entity<Author> {
         super(id);
 
   factory Author.fromJson(json) => _$AuthorFromJson(json);
+  Map<String, dynamic> toJson() => _$AuthorToJson(this);
 }
 
 class AuthorSerializer extends Serializer<Author> {

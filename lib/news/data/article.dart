@@ -30,6 +30,10 @@ class Article extends Entity<Article> {
         assert(section != null),
         assert(content != null),
         super(id);
+
+  factory Article.fromJson(Map<String, dynamic> data) =>
+      _$ArticleFromJson(data);
+  Map<String, dynamic> toJson() => _$ArticleToJson(this);
 }
 
 class ArticleSerializer extends Serializer<Article> {
