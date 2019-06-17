@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:transparent_image/transparent_image.dart';
 
-import '../entities.dart';
-
 /// Displays an article image, which is faded in as its loaded.
 ///
 /// If the [image] is [null], a placeholder is displayed.
