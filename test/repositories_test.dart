@@ -49,11 +49,13 @@ class SampleUserCreator extends Repository<SampleUser> {
   }
 }
 
-Future<void> testRepository<T>({
+Future<void> testMutableRepository<T>({
   @required Repository<T> repository,
   @required T item,
   @required T otherItem,
 }) async {
+  assert(repository.isMutable);
+
   final repo = repository;
   final id = Id<T>("item");
 
@@ -78,7 +80,7 @@ Future<void> testRepository<T>({
 void main() {
   group("Repositories", () {
     test("InMemoryStorage", () async {
-      await testRepository<String>(
+      await testMutableRepository<String>(
         repository: InMemoryStorage<String>(),
         item: "This is an item.",
         otherItem: "This is another item.",
@@ -86,7 +88,7 @@ void main() {
     });
 
     test("JsonToStringTransformer", () async {
-      await testRepository<Map<String, dynamic>>(
+      await testMutableRepository<Map<String, dynamic>>(
         repository: JsonToStringTransformer(source: InMemoryStorage<String>()),
         item: {'hey': 'foo'},
         otherItem: {'hey': 'bar'},
@@ -94,7 +96,7 @@ void main() {
     });
 
     test("ObjectToJsonTransformer", () async {
-      await testRepository<SampleUser>(
+      await testMutableRepository<SampleUser>(
         repository: ObjectToJsonTransformer<SampleUser>(
           source: JsonToStringTransformer(source: InMemoryStorage<String>()),
           serializer: SampleUserSerializer(),
