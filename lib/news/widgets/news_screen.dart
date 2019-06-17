@@ -23,9 +23,6 @@ class ArticleList extends StatelessWidget {
         return StreamBuilder<Article>(
           stream: Provider.of<Bloc>(context).getArticleAtIndex(index),
           builder: (context, snapshot) {
-            if (snapshot.hasError) {
-              return Text(snapshot.error.toString());
-            }
             return Padding(
               padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
               child: snapshot.hasData
