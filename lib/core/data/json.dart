@@ -5,7 +5,7 @@ typedef ToJsonCallback<T> = Map<String, dynamic> Function(T value);
 
 /// A class that can serialize and deserialize a type from and to JSON.
 @immutable
-class Serializer<T> {
+abstract class Serializer<T> {
   final FromJsonCallback<T> _fromJson;
   final ToJsonCallback<T> _toJson;
 
