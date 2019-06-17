@@ -33,6 +33,22 @@ class SampleUserSerializer extends Serializer<SampleUser> {
         );
 }
 
+class SampleUserCreator extends Repository<SampleUser> {
+  SampleUserCreator() : super(isMutable: false, isFinite: false);
+
+  @override
+  Stream<SampleUser> fetch(Id<SampleUser> id) async* {
+    switch (id.id) {
+      case 'marcel':
+        yield SampleUser("Marcel", "password");
+        break;
+      case 'grit':
+        yield SampleUser("Grit", "someOtherPassword");
+        break;
+    }
+  }
+}
+
 Future<void> testRepository<T>({
   @required Repository<T> repository,
   @required T item,
@@ -88,14 +104,19 @@ void main() {
       );
     });
 
-    /*test("everything", () {
-      CachedRepository<SampleUser>(
-        source: ArticleDownloader(),
+    test("CachedRepository", () async {
+      var repo = CachedRepository<SampleUser>(
+        source: SampleUserCreator(),
         cache: ObjectToJsonTransformer(
           serializer: SampleUserSerializer(),
-          source: JsonToStringTransformer(source: InMemoryStorage()),
+          source: JsonToStringTransformer(source: InMemoryStorage<String>()),
         ),
       );
-    });*/
+
+      // Here, we get an item twice, once from the source and once from the
+      // cache and then from the source.
+      await repo.fetch(Id('marcel')).first;
+      await repo.fetch(Id('marcel')).first;
+    });
   });
 }
