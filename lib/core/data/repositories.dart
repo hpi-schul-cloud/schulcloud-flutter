@@ -12,6 +12,44 @@ import 'repository.dart';
 Stream<T> _notLoadedYetStream<T>() =>
     Stream<T>.fromFuture(Future.error(NotLoadedYetError())).asBroadcastStream();
 
+/// A repository that stores items in memory.
+class InMemoryStorage<T> extends Repository<T> {
+  final _controllers = Map<String, BehaviorSubject<T>>();
+  final _allEntriesController = BehaviorSubject<List<RepositoryEntry<T>>>();
+
+  InMemoryStorage() : super(isFinite: true, isMutable: true);
+
+  @override
+  Stream<T> fetch(Id<T> id) => _controllers[id.id]?.stream ?? Stream<T>.empty();
+
+  @override
+  Stream<List<RepositoryEntry<T>>> fetchAllEntries() =>
+      _allEntriesController.stream;
+
+  @override
+  Future<void> update(Id<T> id, T item) async {
+    if (item == null) {
+      _controllers[id.id]?.close();
+      _controllers.remove(id.id);
+    } else {
+      _controllers.putIfAbsent(id.id, () => BehaviorSubject());
+      _controllers[id.id].add(item);
+    }
+
+    var getEntryForId = (String id) async {
+      return RepositoryEntry<T>(id: Id(id), item: await _controllers[id].first);
+    };
+    _allEntriesController
+        .add(await Future.wait(_controllers.keys.map(getEntryForId)));
+  }
+
+  @override
+  void dispose() {
+    _controllers.values.forEach((controller) => controller.close());
+    _allEntriesController.close();
+  }
+}
+
 /// A wrapper to store [String]s in the system's shared preferences.
 class SharedPreferences extends Repository<String> {
   final String keyPrefix;
