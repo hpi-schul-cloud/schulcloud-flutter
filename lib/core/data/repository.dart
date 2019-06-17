@@ -4,9 +4,6 @@ import 'package:flutter/foundation.dart';
 
 import 'entity.dart';
 
-/// Error that may be thrown by a repository if the item is not available yet.
-class NotLoadedYetError {}
-
 /// An entry in a repository containing an [id] and an [item]. Returned by
 /// [fetchAllEntries].
 @immutable

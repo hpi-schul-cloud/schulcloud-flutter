@@ -9,9 +9,6 @@ import 'entity.dart';
 import 'json.dart';
 import 'repository.dart';
 
-Stream<T> _notLoadedYetStream<T>() =>
-    Stream<T>.fromFuture(Future.error(NotLoadedYetError())).asBroadcastStream();
-
 /// A repository that stores items in memory.
 class InMemoryStorage<T> extends Repository<T> {
   final _controllers = Map<String, BehaviorSubject<T>>();
@@ -179,8 +176,6 @@ class CachedRepository<T> extends RepositoryWithSource<T, T> {
 
   @override
   Stream<T> fetch(Id<T> id) async* {
-    yield* _notLoadedYetStream<T>();
-
     var cached =
         await _cache.fetch(id).firstWhere((a) => true, orElse: () => null);
     if (cached != null) yield cached;
@@ -193,8 +188,6 @@ class CachedRepository<T> extends RepositoryWithSource<T, T> {
 
   @override
   Stream<List<RepositoryEntry<T>>> fetchAllEntries() async* {
-    yield* _notLoadedYetStream<List<RepositoryEntry<T>>>();
-
     var cached = await _cache
         .fetchAllEntries()
         .firstWhere((a) => true, orElse: () => null);
@@ -253,8 +246,6 @@ class PaginatedLoader<T> extends Repository<T> {
 
   @override
   Stream<T> fetch(Id<T> id) async* {
-    yield* _notLoadedYetStream<T>();
-
     yield await _loadItem(id);
   }
 
