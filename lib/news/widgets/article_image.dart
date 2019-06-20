@@ -1,21 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:transparent_image/transparent_image.dart';
 
-import '../model.dart';
-
 /// Displays an article image, which is faded in as its loaded.
 ///
 /// If the [image] is [null], a placeholder is displayed.
 class ArticleImageView extends StatelessWidget {
   const ArticleImageView({
-    @required this.image,
+    @required this.imageUrl,
     this.placeholderColor = Colors.black12,
   }) : assert(placeholderColor != null);
 
-  final ArticleImage image;
+  final String imageUrl;
   final Color placeholderColor;
 
-  bool get _showPlaceholder => image == null;
+  bool get _showPlaceholder => imageUrl == null;
 
   @override
   Widget build(BuildContext context) {
@@ -26,16 +24,13 @@ class ArticleImageView extends StatelessWidget {
       );
     }
 
-    return AspectRatio(
-      aspectRatio: image.size.aspectRatio,
-      child: Container(
-        color: placeholderColor,
-        child: FadeInImage.memoryNetwork(
-          fadeInDuration: Duration(milliseconds: 500),
-          fadeInCurve: Curves.easeInOutCubic,
-          placeholder: kTransparentImage,
-          image: image.url,
-        ),
+    return Container(
+      color: placeholderColor,
+      child: FadeInImage.memoryNetwork(
+        fadeInDuration: Duration(milliseconds: 500),
+        fadeInCurve: Curves.easeInOutCubic,
+        placeholder: kTransparentImage,
+        image: imageUrl,
       ),
     );
   }
@@ -46,11 +41,11 @@ class ArticleImageView extends StatelessWidget {
 /// If the [image] is [null], a placeholder is displayed.
 class GradientArticleImageView extends StatelessWidget {
   GradientArticleImageView({
-    @required this.image,
+    @required this.imageUrl,
     this.color = Colors.purple,
   });
 
-  final ArticleImage image;
+  final String imageUrl;
   final Color color;
 
   @override
@@ -63,7 +58,7 @@ class GradientArticleImageView extends StatelessWidget {
       ),
       child: Stack(
         children: <Widget>[
-          ArticleImageView(image: image, placeholderColor: color),
+          ArticleImageView(imageUrl: imageUrl, placeholderColor: color),
           Positioned.fill(
             child: Container(
               decoration: BoxDecoration(

@@ -19,7 +19,7 @@ class PaginatedLoader<T> {
       await _downloadItemsToCache(page);
     }
     if (!_cache.containsKey(index)) {
-      // TODO: The download failed, so you should probably provide a more
+      // TODO: The download failed, so we should probably provide a more
       // meaningful error here.
       throw Error();
     }

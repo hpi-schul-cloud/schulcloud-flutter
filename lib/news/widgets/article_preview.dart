@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'package:schulcloud/utils/placeholder.dart';
+import 'package:schulcloud/core/widgets.dart';
 
-import '../model.dart';
+import '../entities.dart';
 import 'article_image.dart';
 import 'article_screen.dart';
 import 'section.dart';
@@ -77,13 +77,13 @@ class _ArticlePreviewState extends State<ArticlePreview> {
 
   Widget _buildImage() {
     if (isPlaceholder)
-      return GradientArticleImageView(image: null);
-    else if (article.image == null)
+      return GradientArticleImageView(imageUrl: null);
+    else if (article.imageUrl == null)
       return Container();
     else
       return Hero(
         tag: article,
-        child: GradientArticleImageView(image: article?.image),
+        child: GradientArticleImageView(imageUrl: article?.imageUrl),
       );
   }
 

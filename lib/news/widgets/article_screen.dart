@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../model.dart';
+import '../entities.dart';
 import 'author.dart';
 import 'article_image.dart';
 import 'headline.dart';
@@ -55,13 +55,14 @@ class ArticleView extends StatefulWidget {
 class _ArticleViewState extends State<ArticleView> {
   @override
   Widget build(BuildContext context) {
-    if (widget.article.image == null) {
+    if (widget.article.imageUrl == null) {
       return _buildWithoutImage();
-    } else if (widget.article.image.size.aspectRatio >= 1) {
-      return _buildWithLandscapeImage();
     } else {
-      return _buildWithPortraitImage();
+      return _buildWithLandscapeImage();
     }
+    /* else {
+      return _buildWithPortraitImage();
+    }*/
   }
 
   Widget _buildWithoutImage() {
@@ -96,7 +97,7 @@ class _ArticleViewState extends State<ArticleView> {
         Section(child: Text(widget.article.section)),
         Hero(
           tag: widget.article,
-          child: ArticleImageView(image: widget.article.image),
+          child: ArticleImageView(imageUrl: widget.article.imageUrl),
         ),
         Transform.translate(
           offset: Offset(0, -48),
@@ -150,10 +151,10 @@ class _ArticleViewState extends State<ArticleView> {
 
   Widget _buildImage() {
     return widget.article == null
-        ? ArticleImageView(image: null)
+        ? ArticleImageView(imageUrl: null)
         : Hero(
             tag: widget.article,
-            child: ArticleImageView(image: widget.article?.image),
+            child: ArticleImageView(imageUrl: widget.article?.imageUrl),
           );
   }
 
