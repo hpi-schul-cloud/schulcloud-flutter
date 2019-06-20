@@ -67,18 +67,23 @@ Future<void> testMutableRepository<T>({
   expect(repo.fetch(id), emitsInOrder([item]));
 
   // You can get multiple streams of the same item simultaneously.
-  var item1 = await repo.fetch(id).first;
-  var item2 = await repo.fetch(id).first;
-  expect(item1, equals(item));
-  expect(item2, equals(item));
+  print('Listening on the same stream twice...');
+  var items = await Future.wait([repo.fetch(id).first, repo.fetch(id).first]);
+  print('Done.');
+  expect(items[0], equals(item));
+  expect(items[1], equals(item));
 
   // As the data changes, the fetched streams update live.
   expect(repo.fetch(id), emitsInOrder([item, otherItem]));
   repo.update(id, otherItem);
+
+  var stream = repo.fetch(id);
+  stream.listen((_) {});
+  stream.listen((_) {});
 }
 
 void main() {
-  group("Repositories", () {
+  group("Repository", () {
     test("InMemoryStorage", () async {
       await testMutableRepository<String>(
         repository: InMemoryStorage<String>(),
@@ -117,8 +122,10 @@ void main() {
 
       // Here, we get an item twice, once from the source and once from the
       // cache and then from the source.
-      await repo.fetch(Id('marcel')).first;
-      await repo.fetch(Id('marcel')).first;
+      await Future.wait([
+        repo.fetch(Id('marcel')).first,
+        repo.fetch(Id('marcel')).first,
+      ]);
     });
   });
 }
