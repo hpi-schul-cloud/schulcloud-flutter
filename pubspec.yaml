@@ -10,6 +10,7 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_villains: ^1.2.0
+  http: any
   json_annotation: ^2.0.0
   provider: ^2.0.1
   rxdart: any
