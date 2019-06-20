@@ -1,4 +1,6 @@
+import 'package:rxdart/rxdart.dart';
 import 'package:schulcloud/core/data.dart';
+import 'package:schulcloud/core/data/utils.dart';
 
 import 'data/repository.dart';
 import 'entities.dart';
@@ -16,8 +18,8 @@ class Bloc {
     ),
   );
 
-  Stream<Article> getArticleAtIndex(int index) =>
-      _articles.fetch(Id('article_$index'));
+  BehaviorSubject<Article> getArticleAtIndex(int index) =>
+      streamToBehaviorSubject(_articles.fetch(Id('article_$index')));
 
   void refresh() => _articles.clearCache();
 }
