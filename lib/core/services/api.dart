@@ -1,36 +1,54 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:http/http.dart' as http;
 
+class NoConnectionToServerError {}
+
+class AuthenticationError {}
+
 class ApiService {
-  static const String baseUrl = "https://cloud.schul-cloud.org";
+  static const String apiUrl = "https://api.schul-cloud.org";
 
-  http.Client _client;
+  http.Client _client = http.Client();
 
-  ApiService() {
-    _client = http.Client();
+  void dispose() => _client.close();
+
+  Future<void> _ensureConnectionExists() async {
+    await InternetAddress.lookup(apiUrl.substring(apiUrl.lastIndexOf('/') + 1));
   }
 
-  void dispose() {
-    _client.close();
-  }
-
-  Future<http.Response> _makeCall(String url) async {
-    // TODO: Check how to detect if there is no internet connection.
-    var response = await _client.get(url);
-
-    if (response.statusCode != 200) {
-      throw StateError('HTTP reponse to $url got reponse status code of '
-          '${response.statusCode} (${response.reasonPhrase}).\n'
-          'The body was: ${response.body}');
+  Future<http.Response> _makeCall(
+    String path,
+    Future<http.Response> Function(String url) call,
+  ) async {
+    try {
+      await _ensureConnectionExists();
+      return await call('$apiUrl/$path');
+    } on SocketException catch (_) {
+      throw NoConnectionToServerError();
     }
-
-    return response;
   }
 
-  Future<void> login(String user, String password) async {
-    // TODO: Of course, this is a dummy call. The user and password will be
-    // encrypted, but I'll still have to look into how to do that.
-    return await _makeCall('$baseUrl/login.php?user=$user&password=$password');
+  Future<http.Response> _get(String path) => _makeCall(
+        path,
+        (url) => _client.get(url),
+      );
+
+  Future<http.Response> _post(String path, {dynamic body}) => _makeCall(
+        path,
+        (url) => _client.post(url, body: body),
+      );
+
+  Future<String> login(String username, String password) async {
+    var response = await _post('authentication', body: {
+      'username': username,
+      'password': password,
+    });
+    if (response.statusCode != 201) {
+      throw AuthenticationError();
+    }
+    return (json.decode(response.body) as Map<String, dynamic>)['accessToken']
+        as String;
   }
 }
