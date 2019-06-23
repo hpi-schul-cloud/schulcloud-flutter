@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'core/services/api.dart';
+import 'core/services.dart';
 import 'login/login.dart';
 
-void main() => runApp(MyApp());
+void main() => runApp(SchulCloudApp());
 
 const _textTheme = const TextTheme(
   title: TextStyle(fontWeight: FontWeight.bold),
@@ -23,7 +23,7 @@ const _textTheme = const TextTheme(
 
 const _mainColor = Color(0xffb10438);
 
-class MyApp extends StatelessWidget {
+class SchulCloudApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
@@ -31,10 +31,13 @@ class MyApp extends StatelessWidget {
         Provider<ApiService>(
           builder: (_) => ApiService(),
           dispose: (_, service) => service.dispose(),
-        )
+        ),
+        ProxyProvider<ApiService, AuthenticationService>(
+          builder: (_, api, __) => AuthenticationService(api: api),
+        ),
       ],
       child: MaterialApp(
-        title: 'Schulcloud',
+        title: 'Schul-Cloud',
         theme: ThemeData(
           primaryColor: _mainColor,
           buttonColor: _mainColor,
