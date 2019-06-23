@@ -1,7 +1,18 @@
-class LogInException implements Exception {}
+import 'package:flutter/foundation.dart';
+
+import 'package:schulcloud/core/services.dart';
 
 class Bloc {
-  Future<void> login(String email, String password) {
-    throw LogInException();
-  }
+  AuthenticationService auth;
+
+  Bloc({@required this.auth});
+
+  Future<void> login(String email, String password) =>
+      auth.login(email, password);
+
+  Future<void> loginAsDemoStudent() =>
+      login('demo-schueler@schul-cloud.org', 'schulcloud');
+
+  Future<void> loginAsDemoTeacher() =>
+      login('demo-lehrer@schul-cloud.org', 'schulcloud');
 }

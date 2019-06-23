@@ -1,23 +1,42 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import 'package:schulcloud/core/services.dart';
+import 'package:schulcloud/core/bloc_consumer.dart';
 import 'package:schulcloud/dashboard/dashboard.dart';
 
 import '../bloc.dart';
 import 'button.dart';
 
-class LoginScreen extends StatefulWidget {
+class LoginScreen extends StatelessWidget {
   @override
-  _LoginScreenState createState() => _LoginScreenState();
+  Widget build(BuildContext context) {
+    return ProxyProvider<AuthenticationService, Bloc>(
+      builder: (_, auth, __) => Bloc(auth: auth),
+      child: LoginContent(),
+    );
+  }
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class LoginContent extends StatefulWidget {
+  @override
+  _LoginContentState createState() => _LoginContentState();
+}
+
+class _LoginContentState extends State<LoginContent>
+    with BlocConsumer<Bloc, LoginContent> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
 
-  Future<void> _login() async {
-    await Future.delayed(Duration(milliseconds: 200));
-    //throw LogInException();
+  Future<void> _executeLogin(Future<void> Function() login) async {
+    try {
+      await login();
+    } on NoConnectionToServerError catch (_) {
+      // TODO: display error to the user
+    } on AuthenticationError catch (e) {
+      print(e);
+      // TODO: display error to the user
+    }
 
     // Logged in.
     Navigator.of(context).pushReplacement(MaterialPageRoute(
@@ -25,20 +44,28 @@ class _LoginScreenState extends State<LoginScreen> {
     ));
   }
 
+  Future<void> _login() => _executeLogin(() => bloc.login(
+        _emailController.text,
+        _passwordController.text,
+      ));
+
+  Future<void> _loginAsDemoStudent() =>
+      _executeLogin(() => bloc.loginAsDemoStudent());
+
+  Future<void> _loginAsDemoTeacher() =>
+      _executeLogin(() => bloc.loginAsDemoTeacher());
+
   @override
   Widget build(BuildContext context) {
-    return Provider<Bloc>.value(
-      value: Bloc(),
-      child: Scaffold(
-        body: SafeArea(
-          child: Center(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.all(16),
-              physics: ClampingScrollPhysics(),
-              child: Container(
-                width: 400,
-                child: Column(children: _buildContent()),
-              ),
+    return Scaffold(
+      body: SafeArea(
+        child: Center(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(16),
+            physics: ClampingScrollPhysics(),
+            child: Container(
+              width: 400,
+              child: Column(children: _buildContent()),
             ),
           ),
         ),
@@ -55,15 +82,15 @@ class _LoginScreenState extends State<LoginScreen> {
       _buildPasswordField(),
       SizedBox(height: 16),
       _buildLoginButton(),
-      /*SizedBox(height: 8),
+      SizedBox(height: 8),
       Divider(),
       SizedBox(height: 8),
       Text("Don't have an account yet? Try it out!"),
       SizedBox(height: 8),
       OutlineButton(
-        onPressed: () {},
+        onPressed: _loginAsDemoStudent,
         child: Text('Demo as a student'),
-      ),*/
+      ),
     ];
   }
 
@@ -72,10 +99,7 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Widget _buildEmailField() {
-    return LoginInput(
-      controller: _emailController,
-      label: 'Email',
-    );
+    return LoginInput(controller: _emailController, label: 'Email');
   }
 
   Widget _buildPasswordField() {
