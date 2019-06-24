@@ -26,7 +26,7 @@ class Bloc {
       throw InvalidPasswordSyntaxError();
     }
 
-    // The login may throw an exception if it wasn't successful.
+    // The login throws an exception if it wasn't successful.
     authStorage.token = await api.login(email, password);
   }
 
