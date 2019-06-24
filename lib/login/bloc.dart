@@ -2,13 +2,33 @@ import 'package:flutter/foundation.dart';
 
 import 'package:schulcloud/core/services.dart';
 
+class InvalidEmailSyntaxError {}
+
+class InvalidPasswordSyntaxError {}
+
 class Bloc {
-  AuthenticationService auth;
+  static const emailRegExp =
+      r"^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?)*$";
 
-  Bloc({@required this.auth});
+  final AuthenticationStorageService authStorage;
+  final ApiService api;
 
-  Future<void> login(String email, String password) =>
-      auth.login(email, password);
+  Bloc({@required this.authStorage, @required this.api});
+
+  Future<void> login(String email, String password) async {
+    if (!RegExp(emailRegExp).hasMatch(email)) {
+      throw InvalidEmailSyntaxError();
+    }
+
+    authStorage.email = email;
+
+    if (password.isEmpty) {
+      throw InvalidPasswordSyntaxError();
+    }
+
+    // The login may throw an exception if it wasn't successful.
+    authStorage.token = await api.login(email, password);
+  }
 
   Future<void> loginAsDemoStudent() =>
       login('demo-schueler@schul-cloud.org', 'schulcloud');

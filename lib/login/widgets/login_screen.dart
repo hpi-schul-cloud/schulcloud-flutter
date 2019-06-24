@@ -11,8 +11,9 @@ import 'button.dart';
 class LoginScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return ProxyProvider<AuthenticationService, Bloc>(
-      builder: (_, auth, __) => Bloc(auth: auth),
+    return ProxyProvider2<AuthenticationStorageService, ApiService, Bloc>(
+      builder: (_, authStorage, api, __) =>
+          Bloc(authStorage: authStorage, api: api),
       child: LoginContent(),
     );
   }
