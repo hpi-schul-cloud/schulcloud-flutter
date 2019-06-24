@@ -28,12 +28,16 @@ class SchulCloudApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        Provider<ApiService>(
-          builder: (_) => ApiService(),
+        Provider<AuthenticationStorageService>(
+          builder: (_) => AuthenticationStorageService(),
+        ),
+        ProxyProvider<AuthenticationStorageService, NetworkService>(
+          builder: (_, authStorage, __) =>
+              NetworkService(authStorage: authStorage),
           dispose: (_, service) => service.dispose(),
         ),
-        ProxyProvider<ApiService, AuthenticationService>(
-          builder: (_, api, __) => AuthenticationService(api: api),
+        ProxyProvider<NetworkService, ApiService>(
+          builder: (_, network, __) => ApiService(network: network),
         ),
       ],
       child: MaterialApp(
