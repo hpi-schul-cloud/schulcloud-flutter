@@ -177,7 +177,7 @@ class CachedRepository<T> extends RepositoryWithSource<T, T> {
   @override
   Stream<T> fetch(Id<T> id) async* {
     var cached =
-        await _cache.fetch(id).firstWhere((a) => true, orElse: () => null);
+        await _cache.fetch(id).firstWhere((_) => true, orElse: () => null);
     if (cached != null) yield cached;
 
     await for (final item in source.fetch(id)) {

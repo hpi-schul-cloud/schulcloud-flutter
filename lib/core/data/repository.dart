@@ -105,12 +105,12 @@ abstract class Repository<Item> {
   }
 
   /// Fetches all ids. May only be called if this [isFinite].
-  Stream<List<Id<Item>>> fetchAllIds() =>
-      fetchAllEntries().map((entries) => entries.map((entry) => entry.id));
+  Stream<List<Id<Item>>> fetchAllIds() => fetchAllEntries()
+      .map((entries) => entries.map((entry) => entry.id).toList());
 
   /// Fetches all items. May only be called if this [isFinite].
-  Stream<List<Item>> fetchAllItems() =>
-      fetchAllEntries().map((entries) => entries.map((entry) => entry.item));
+  Stream<List<Item>> fetchAllItems() => fetchAllEntries()
+      .map((entries) => entries.map((entry) => entry.item).toList());
 
   /// Updates an item. May only be called if this [isMutable].
   Future<void> update(Id<Item> id, Item item) {
@@ -125,6 +125,10 @@ abstract class Repository<Item> {
           "Don't do that.");
     }
   }
+
+  /// Clears all the items. May only be called if this [isMutable] and [isFinite].
+  Future<void> clear() =>
+      fetchAllIds().first.then((ids) => ids.forEach((id) => update(id, null)));
 
   /// Frees resources.
   void dispose() {}

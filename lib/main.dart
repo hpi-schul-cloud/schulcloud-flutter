@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
+import 'core/services.dart';
 import 'login/login.dart';
 
-void main() => runApp(MyApp());
+void main() => runApp(SchulCloudApp());
 
 const _textTheme = const TextTheme(
   title: TextStyle(fontWeight: FontWeight.bold),
@@ -21,18 +23,33 @@ const _textTheme = const TextTheme(
 
 const _mainColor = Color(0xffb10438);
 
-class MyApp extends StatelessWidget {
+class SchulCloudApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Schulcloud',
-      theme: ThemeData(
-        primaryColor: _mainColor,
-        buttonColor: _mainColor,
-        fontFamily: 'PT Sans Narrow',
-        textTheme: _textTheme,
+    return MultiProvider(
+      providers: [
+        Provider<AuthenticationStorageService>(
+          builder: (_) => AuthenticationStorageService(),
+        ),
+        ProxyProvider<AuthenticationStorageService, NetworkService>(
+          builder: (_, authStorage, __) =>
+              NetworkService(authStorage: authStorage),
+          dispose: (_, service) => service.dispose(),
+        ),
+        ProxyProvider<NetworkService, ApiService>(
+          builder: (_, network, __) => ApiService(network: network),
+        ),
+      ],
+      child: MaterialApp(
+        title: 'Schul-Cloud',
+        theme: ThemeData(
+          primaryColor: _mainColor,
+          buttonColor: _mainColor,
+          fontFamily: 'PT Sans Narrow',
+          textTheme: _textTheme,
+        ),
+        home: LoginScreen(),
       ),
-      home: LoginScreen(),
     );
   }
 }
