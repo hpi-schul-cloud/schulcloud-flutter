@@ -16,6 +16,8 @@ dependencies:
   rxdart: any
   shared_preferences: any
   transparent_image: any
+  sqflite: ^1.1.6
+  path_provider: ^1.1.0
 
   cupertino_icons: ^0.1.2
 
