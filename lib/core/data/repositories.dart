@@ -11,13 +11,23 @@ import 'repository.dart';
 
 /// A repository that stores items in memory.
 class InMemoryStorage<T> extends Repository<T> {
-  final _controllers = Map<String, BehaviorSubject<T>>();
+  final _values = Map<Id<T>, T>();
+  final _controllers = Map<Id<T>, BehaviorSubject<T>>();
   final _allEntriesController = BehaviorSubject<List<RepositoryEntry<T>>>();
 
   InMemoryStorage() : super(isFinite: true, isMutable: true);
 
+  T operator [](Id<T> id) => _values[id] ?? null;
+  List<T> get entries =>
+      List.unmodifiable(_values.keys.map(_getEntryForId).toList());
+  List<Id<T>> get keys => _values.keys.toList(growable: false);
+  List<T> get values => _values.values.toList(growable: false);
+
   @override
-  Stream<T> fetch(Id<T> id) => _controllers[id.id]?.stream ?? Stream<T>.empty();
+  Stream<T> fetch(Id<T> id) {
+    _controllers.putIfAbsent(id, () => BehaviorSubject());
+    return _controllers[id.id]?.stream;
+  }
 
   @override
   Stream<List<RepositoryEntry<T>>> fetchAllEntries() =>
@@ -26,19 +36,19 @@ class InMemoryStorage<T> extends Repository<T> {
   @override
   Future<void> update(Id<T> id, T item) async {
     if (item == null) {
-      _controllers[id.id]?.close();
-      _controllers.remove(id.id);
+      _values.remove(id);
+      _controllers[id]?.close();
+      _controllers.remove(id);
     } else {
-      _controllers.putIfAbsent(id.id, () => BehaviorSubject());
-      _controllers[id.id].add(item);
+      _values[id] = item;
+      _controllers.putIfAbsent(id, () => BehaviorSubject());
+      _controllers[id].add(item);
     }
-
-    var getEntryForId = (String id) async {
-      return RepositoryEntry<T>(id: Id(id), item: await _controllers[id].first);
-    };
-    _allEntriesController
-        .add(await Future.wait(_controllers.keys.map(getEntryForId)));
+    _allEntriesController.add(_controllers.keys.map(_getEntryForId).toList());
   }
+
+  RepositoryEntry<T> _getEntryForId(Id<T> id) =>
+      RepositoryEntry<T>(id: id, item: _values[id]);
 
   @override
   void dispose() {
@@ -116,7 +126,8 @@ class JsonToStringTransformer
 
   @override
   Stream<Map<String, dynamic>> fetch(Id<dynamic> id) =>
-      source.fetch(id.cast<String>()).map((s) => json.decode(s));
+      source.fetch(id.cast<String>())?.map((s) => json.decode(s)) ??
+      Stream.empty();
 
   @override
   Stream<List<RepositoryEntry<Map<String, dynamic>>>> fetchAllEntries() =>
@@ -159,11 +170,11 @@ class ObjectToJsonTransformer<Item>
 /// serves the item from the cache and only after that provides to source's
 /// item.
 class CachedRepository<T> extends RepositoryWithSource<T, T> {
-  final Repository<T> _cache;
+  final Repository<T> cache;
 
   CachedRepository({
     @required Repository<T> source,
-    @required Repository<T> cache,
+    this.cache,
   })  : assert(cache != null),
         assert(
             !source.isFinite || cache.isFinite,
@@ -171,31 +182,34 @@ class CachedRepository<T> extends RepositoryWithSource<T, T> {
             "isn't."),
         assert(cache.isMutable,
             "Can't cache items if the provided cache $cache is immutable."),
-        _cache = cache,
         super(source);
 
   @override
   Stream<T> fetch(Id<T> id) async* {
     var cached =
-        await _cache.fetch(id).firstWhere((_) => true, orElse: () => null);
+        await cache.fetch(id).firstWhere((_) => true, orElse: () => null);
     if (cached != null) yield cached;
 
     await for (final item in source.fetch(id)) {
-      _cache.update(id, item);
+      cache.update(id, item);
       yield item;
     }
   }
 
   @override
   Stream<List<RepositoryEntry<T>>> fetchAllEntries() async* {
-    var cached = await _cache
+    print('Getting cached entries.');
+    var cached = await cache
         .fetchAllEntries()
         .firstWhere((a) => true, orElse: () => null);
     if (cached != null) yield cached;
+    print('Got cached entries: $cached');
 
+    print('Getting entries from the source $source');
     await for (final entries in source.fetchAllEntries()) {
+      print('Got a set of entries: $entries');
       for (final entry in entries) {
-        _cache.update(entry.id, entry.item);
+        cache.update(entry.id, entry.item);
       }
       yield entries;
     }
@@ -205,19 +219,19 @@ class CachedRepository<T> extends RepositoryWithSource<T, T> {
   Future<void> update(Id<T> id, T value) async {
     await Future.wait([
       source.update(id, value),
-      _cache.update(id, value),
+      cache.update(id, value),
     ]);
   }
 
   Future<void> clearCache() async {
-    await Future.wait((await _cache.fetchAllIds().first)
-        .map((id) => _cache.update(id, null)));
+    await Future.wait(
+        (await cache.fetchAllIds().first).map((id) => cache.update(id, null)));
   }
 
   @override
   void dispose() {
     source.dispose();
-    _cache.dispose();
+    cache.dispose();
   }
 }
 
