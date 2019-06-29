@@ -34,7 +34,6 @@ class SchulCloudApp extends StatelessWidget {
         ProxyProvider<AuthenticationStorageService, NetworkService>(
           builder: (_, authStorage, __) =>
               NetworkService(authStorage: authStorage),
-          dispose: (_, service) => service.dispose(),
         ),
         ProxyProvider<NetworkService, ApiService>(
           builder: (_, network, __) => ApiService(network: network),

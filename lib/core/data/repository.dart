@@ -31,18 +31,20 @@ abstract class Repository<Item> {
   // You may ask yourself why this is a single class instead of being split up
   // into smaller classes like a MutableRepository and FiniteRepository etc.
   // that inherit from a base Repository class. "I'm losing my type safety!",
-  // you might think.
-  // Well, when implementing repositories, they often accept a source repository
-  // and their [isFinite] and [isMutable] properties depend on the source
-  // repository's properties. That leads to patterns like the following:
+  // you might think. Indeed, a call to [fetchAllEntries] may immediately throw
+  // an error if the repository is not finite and that doesn't align well with
+  // how methods should work.
+  // The problem is, when implementing repositories, they often accept a source
+  // repository and their [isFinite] and [isMutable] properties depend on the
+  // source repository's properties. That leads to patterns like the following:
   //
   // ```dart
   // bool get isFinite => source.isFinite;
   // ...
-  // Stream<List<T>> fetchAll() {
+  // Stream<List<RepositoryEntryyT>>> fetchAllEntries() {
   //   if (isFinite) {
   //     final source = this.source as FiniteRepository;
-  //     source.fetchAll()....
+  //     source.fetchAllEntries()....
   //   }
   // }
   // ```
@@ -55,13 +57,13 @@ abstract class Repository<Item> {
   /// method should be overriden.
   final bool isFinite;
 
-  /// Whether this repository is mutable. If set to true, the [update] method
-  /// should be overridden.
+  /// Whether this repository is mutable. If set to true, the [update] and
+  /// [remove] method should be overridden.
   final bool isMutable;
 
   const Repository({
-    this.isFinite = false,
-    this.isMutable = false,
+    @required this.isFinite,
+    @required this.isMutable,
   })  : assert(isFinite != null),
         assert(isMutable != null);
 
@@ -69,11 +71,11 @@ abstract class Repository<Item> {
   Stream<Item> fetch(Id<Item> id);
 
   /// Fetches multiple items with the given [ids].
-  Stream<Iterable<Item>> fetchMultiple(Iterable<Id<Item>> ids) {
-    StreamController<Iterable<Item>> controller;
-    Iterable<Stream<Item>> allStreams = ids.map(fetch);
+  Stream<List<Item>> fetchMultiple(Iterable<Id<Item>> ids) {
+    StreamController<List<Item>> controller;
+    List<Stream<Item>> allStreams = ids.map(fetch);
 
-    // Helping method that takes a snapshot of every item and adds it the the
+    // Helping method that takes a snapshot of every item and adds it to the the
     // controller.
     final sendSnapshot = () async {
       var snapshot =
@@ -81,7 +83,7 @@ abstract class Repository<Item> {
       controller.add(snapshot);
     };
 
-    controller = StreamController<Iterable<Item>>(
+    controller = StreamController<List<Item>>(
       onListen: () =>
           allStreams.forEach((stream) => stream.listen((_) => sendSnapshot())),
       onCancel: () => controller.close(),
@@ -94,9 +96,9 @@ abstract class Repository<Item> {
   Stream<List<RepositoryEntry<Item>>> fetchAllEntries() {
     if (isFinite) {
       throw UnimplementedError(
-          "fetchAll was called on repository $this. It's finite, so that "
-          "should be possible. Make sure you implement the fetchAll method of "
-          "${this.runtimeType} and don't call super.fetchAll.");
+          "A fetchAll method was called on repository $this. It's finite, so "
+          "that should be possible. Make sure you implement the fetchAll "
+          "method of ${this.runtimeType} and don't call super.fetchAll.");
     } else {
       throw UnsupportedError(
           "fetchAll was called on repository $this, altough it's not finite. "
@@ -116,12 +118,25 @@ abstract class Repository<Item> {
   Future<void> update(Id<Item> id, Item item) {
     if (isMutable) {
       throw UnimplementedError(
-          "update was called on repository $this. It's mutable, so that "
-          "should be possible. Make sure you implement the update method of "
+          "update was called on repository $this. It's mutable, so that should "
+          "be possible. Make sure you implement the update method of "
           "${this.runtimeType} and don't call super.update.");
     } else {
       throw UnsupportedError(
           "update was called on repository $this, altough it's not mutable. "
+          "Don't do that.");
+    }
+  }
+
+  Future<void> remove(Id<Item> id) {
+    if (isMutable) {
+      throw UnimplementedError(
+          "remove was called on repository $this. It's mutable, so that should "
+          "be possible. Make sure you implement the remove method of "
+          "${this.runtimeType} and don't call super.remove.");
+    } else {
+      throw UnsupportedError(
+          "remove was called on repository $this, altough it's not mutable. "
           "Don't do that.");
     }
   }
@@ -140,11 +155,6 @@ abstract class Repository<Item> {
 abstract class RepositoryWithSource<Item, SourceItem> extends Repository<Item> {
   /// An optional source repository.
   final Repository<SourceItem> source;
-  bool _isFinite;
-  bool _isMutable;
-
-  bool get isFinite => _isFinite;
-  bool get isMutable => _isMutable;
 
   /// Finitability and mutability are equal to the [source]'s, unless overridden
   /// here.
@@ -152,10 +162,11 @@ abstract class RepositoryWithSource<Item, SourceItem> extends Repository<Item> {
     this.source, {
     bool isFinite,
     bool isMutable,
-  }) : assert(source != null) {
-    _isMutable = isMutable ?? source?.isMutable ?? false;
-    _isFinite = isFinite ?? source?.isFinite ?? false;
-  }
+  })  : assert(source != null),
+        super(
+          isFinite: isFinite ?? source.isFinite,
+          isMutable: isMutable ?? source.isMutable,
+        );
 
   Stream<List<RepositoryEntry<Item>>> fetchSourceEntriesAndMapItems(
       Item Function(SourceItem source) itemTransformer) {
@@ -167,7 +178,7 @@ abstract class RepositoryWithSource<Item, SourceItem> extends Repository<Item> {
             )));
   }
 
-  void dispose() => source?.dispose();
+  void dispose() => source.dispose();
 }
 
 mixin SourceRepositoryForwarder<Item> on RepositoryWithSource<Item, Item> {
