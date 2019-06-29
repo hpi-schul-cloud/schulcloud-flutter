@@ -10,7 +10,8 @@ class ArticleDownloader extends Repository<Article> {
   List<Article> _articles;
   Future<void> _downloader;
 
-  ArticleDownloader({@required this.api}) : super(isFinite: true) {
+  ArticleDownloader({@required this.api})
+      : super(isFinite: true, isMutable: false) {
     _downloader = _loadArticles();
   }
 
