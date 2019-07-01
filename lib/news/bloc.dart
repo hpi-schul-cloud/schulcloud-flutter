@@ -17,7 +17,7 @@ class Bloc {
   Bloc({@required this.api})
       : _articles = CachedRepository<Article>(
           source: ArticleDownloader(api: api),
-          cache: InMemoryStorage<Article>(),
+          cache: ArticleDao()
         );
 
   Stream<List<Article>> getArticles() {

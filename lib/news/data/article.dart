@@ -31,6 +31,7 @@ class Article extends Entity<Article> {
         assert(content != null),
         super(id);
 
+  // TODO: handle id and author json on database access
   factory Article.fromJson(Map<String, dynamic> data) =>
       _$ArticleFromJson(data);
   Map<String, dynamic> toJson() => _$ArticleToJson(this);

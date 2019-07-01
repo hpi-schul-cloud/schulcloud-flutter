@@ -41,7 +41,7 @@ class ArticleDownloader extends Repository<Article> {
 class ArticleDao extends Repository<Article> {
   final databaseProvider = DatabaseProvider.instance;
 
-  ArticleDao() : super(isFinite: true, isMutable: false);
+  ArticleDao() : super(isFinite: true, isMutable: true);
 
   Stream<Article> fetch(Id<Article> id) async* {
     final Database db = await databaseProvider.database;
@@ -76,9 +76,8 @@ class ArticleDao extends Repository<Article> {
 
   Future<void> update(Id<Article> id, Article article) async {
     final Database db = await databaseProvider.database;
-    await db.update(databaseProvider.tableArticle, article.toJson(),
-        where: 'id = ?',
-        whereArgs: [id.id]);
+    await db.insert(databaseProvider.tableArticle, article.toJson(),
+        conflictAlgorithm: ConflictAlgorithm.replace);
     print('Updated article $article in database.');
   }
 

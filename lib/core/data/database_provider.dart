@@ -43,6 +43,7 @@ class DatabaseProvider {
         author TEXT NOT NULL,
         published TEXT NOT NULL,
         section TEXT NOT NULL,
+        imageUrl TEXT,
         content TEXT NOT NULL
       )
     ''');
