@@ -14,12 +14,9 @@ class NoConnectionToServerError {}
 class NetworkService {
   static const String apiUrl = "https://api.schul-cloud.org";
 
-  final http.Client _client = http.Client();
   final AuthenticationStorageService authStorage;
 
   NetworkService({@required this.authStorage});
-
-  void dispose() => _client.close();
 
   Future<void> _ensureConnectionExists() =>
       InternetAddress.lookup(apiUrl.substring(apiUrl.lastIndexOf('/') + 1));
@@ -36,25 +33,24 @@ class NetworkService {
     }
   }
 
-  Future<Map<String, String>> getHeaders() async {
+  Map<String, String> getHeaders() {
     return {
-      if (await authStorage.checkAuthorization())
-        'Authorization': 'Bearer ${await authStorage.fetchToken().first}'
+      if (authStorage.isAuthorized)
+        'Authorization': 'Bearer ${authStorage.token}'
     };
   }
 
   Future<http.Response> get(String path) async {
     return await _makeCall(
       path,
-      (url) async => await _client.get(url, headers: await getHeaders()),
+      (url) async => await http.get(url, headers: getHeaders()),
     );
   }
 
   Future<http.Response> post(String path, {dynamic body}) async {
     return await _makeCall(
       path,
-      (url) async =>
-          await _client.post(url, headers: await getHeaders(), body: body),
+      (url) async => await http.post(url, headers: getHeaders(), body: body),
     );
   }
 }

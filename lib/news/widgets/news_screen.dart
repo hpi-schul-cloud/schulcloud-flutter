@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:schulcloud/core/services.dart';
 
 import '../bloc.dart';
 import 'article_preview.dart';
@@ -8,8 +9,8 @@ import 'article_preview.dart';
 class NewsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Provider<Bloc>.value(
-      value: Bloc(),
+    return ProxyProvider<ApiService, Bloc>(
+      builder: (_, api, __) => Bloc(api: api),
       child: Scaffold(body: ArticleList()),
     );
   }
@@ -18,18 +19,19 @@ class NewsScreen extends StatelessWidget {
 class ArticleList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      itemBuilder: (context, index) {
-        return StreamBuilder<Article>(
-          stream: Provider.of<Bloc>(context).getArticleAtIndex(index),
-          builder: (context, snapshot) {
+    return StreamBuilder<List<Article>>(
+      stream: Provider.of<Bloc>(context).getArticles(),
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) {
+          return Container(color: Colors.red);
+        }
+        return ListView(
+          children: snapshot.data.map((article) {
             return Padding(
               padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
-              child: snapshot.hasData
-                  ? ArticlePreview(article: snapshot.data)
-                  : ArticlePreview.placeholder(),
+              child: ArticlePreview(article: article),
             );
-          },
+          }).toList(),
         );
       },
     );

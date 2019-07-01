@@ -12,6 +12,9 @@ class Id<T> {
 
   Id<OtherType> cast<OtherType>() => Id<OtherType>(id);
 
+  operator ==(Object other) => other is Id<T> && other.id == id;
+  int get hashCode => id.hashCode;
+
   factory Id.fromJson(Map<String, dynamic> json) => Id(json['id']);
   Map<String, dynamic> toJson() => {'id': id};
 }
