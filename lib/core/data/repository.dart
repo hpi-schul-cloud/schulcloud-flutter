@@ -141,6 +141,7 @@ abstract class Repository<Item> {
     }
   }
 
+  // TODO: check if this shouldn't call remove
   /// Clears all the items. May only be called if this [isMutable] and [isFinite].
   Future<void> clear() =>
       fetchAllIds().first.then((ids) => ids.forEach((id) => update(id, null)));
