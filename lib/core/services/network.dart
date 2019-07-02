@@ -6,6 +6,7 @@ import 'package:http/http.dart' as http;
 import 'authentication_storage.dart';
 
 class NoConnectionToServerError {}
+class AuthenticationError {}
 
 /// A service that offers networking post and get requests to the backend
 /// servers. It depends on the authentication storage, so if the user's token is
@@ -27,7 +28,17 @@ class NetworkService {
   ) async {
     try {
       await _ensureConnectionExists();
-      return await call('$apiUrl/$path');
+      var response = await call('$apiUrl/$path');
+
+      if (response.statusCode == 401) throw AuthenticationError();
+
+      // Succeed, if its a 2xx status code.
+      if (response.statusCode ~/ 100 != 2) {
+        return response;
+      }
+
+      throw UnimplementedError(
+          'We should handle status code {response.statusCode}');
     } on SocketException catch (_) {
       throw NoConnectionToServerError();
     }

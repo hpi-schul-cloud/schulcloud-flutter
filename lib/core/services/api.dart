@@ -7,8 +7,6 @@ import 'package:schulcloud/news/entities.dart';
 
 import 'network.dart';
 
-class AuthenticationError {}
-
 /// Wraps all the api network calls into nice little type-safe functions.
 class ApiService {
   final NetworkService network;
@@ -20,25 +18,12 @@ class ApiService {
       'username': username,
       'password': password,
     });
-    if (response.statusCode != 201) {
-      throw AuthenticationError();
-    }
-
     return (json.decode(response.body) as Map<String, dynamic>)['accessToken']
         as String;
   }
 
   Future<List<Article>> listNews() async {
     var response = await network.get('news?');
-
-    switch (response.statusCode) {
-      case 401:
-        throw AuthenticationError();
-      case 200:
-        break;
-      default:
-        throw Error(); // Something bad happened.
-    }
 
     var body = json.decode(response.body);
     return (body['data'] as List<dynamic>).map((data) {
@@ -62,4 +47,12 @@ class ApiService {
     var response = await network.get('news/{id}');
     // TODO: parse article
   }
+
+  /*Future<void> getUser(Id<User> id) async {
+    var response = await network.get('users/{id}');
+
+    // User
+    @GET("users/{id}")
+    fun getUser(@Path("id") userId: String): Call<User>
+  }*/
 }
