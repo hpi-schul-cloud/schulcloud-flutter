@@ -48,4 +48,6 @@ class DatabaseProvider {
       )
     ''');
   }
+
+  // TODO: add closing database
 }

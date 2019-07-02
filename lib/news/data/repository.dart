@@ -43,6 +43,7 @@ class ArticleDao extends Repository<Article> {
 
   ArticleDao() : super(isFinite: true, isMutable: true);
 
+  @override
   Stream<Article> fetch(Id<Article> id) async* {
     final Database db = await databaseProvider.database;
     final List<Map<String, dynamic>> articleMaps = await db.query(
@@ -58,11 +59,11 @@ class ArticleDao extends Repository<Article> {
     yield null;
   }
 
+  @override
   Stream<List<RepositoryEntry<Article>>> fetchAllEntries() async* {
     final Database db = await databaseProvider.database;
     final List<Map<String, dynamic>> articleMaps = await db
-        .query(databaseProvider.tableArticle,
-          orderBy: 'published DESC');
+        .query(databaseProvider.tableArticle, orderBy: 'published DESC');
     print('Got ${articleMaps.length} articles from database.');
 
     List<RepositoryEntry<Article>> articleEntries =
@@ -74,21 +75,25 @@ class ArticleDao extends Repository<Article> {
     yield articleEntries;
   }
 
+  @override
   Future<void> update(Id<Article> id, Article article) async {
     final Database db = await databaseProvider.database;
     await db.insert(databaseProvider.tableArticle, article.toJson(),
         conflictAlgorithm: ConflictAlgorithm.replace);
-    print('Updated article $article in database.');
+    print('Updated article with id ${id.id} in database.');
   }
 
+  @override
   Future<void> remove(Id<Article> id) async {
     final Database db = await databaseProvider.database;
     await db.delete(databaseProvider.tableArticle,
-        where: 'id = ?',
-        whereArgs: [id.id]);
+        where: 'id = ?', whereArgs: [id.id]);
     print('Removed article with id ${id.id} from database.');
   }
 
-// TODO: override clear?
-
+  @override
+  Future<void> clear() async {
+    final Database db = await databaseProvider.database;
+    await db.delete(databaseProvider.tableArticle);
+  }
 }
