@@ -10,6 +10,7 @@ class DatabaseProvider {
   static const _databaseName = "Schul-Cloud-DB.db";
   static const _databaseVersion = 1;
   final tableArticle = "article";
+  final tableAuthor = "author";
 
   DatabaseProvider._internal();
 
@@ -32,6 +33,7 @@ class DatabaseProvider {
 
   Future _onCreate(Database db, int version) async {
     await _createTableArticle(db);
+    await _createTableAuthor(db);
   }
 
   // TODO: correct author entry
@@ -40,11 +42,23 @@ class DatabaseProvider {
       CREATE TABLE $tableArticle(
         id TEXT PRIMARY KEY,
         title TEXT NOT NULL,
-        author TEXT NOT NULL,
+        authorId TEXT NOT NULL,
         published TEXT NOT NULL,
         section TEXT NOT NULL,
         imageUrl TEXT,
-        content TEXT NOT NULL
+        content TEXT NOT NULL,
+        FOREIGN KEY (authorId) REFERENCES $tableAuthor(id) 
+                ON DELETE SET NULL ON UPDATE CASCADE
+      )
+    ''');
+  }
+
+  Future _createTableAuthor(Database db) async {
+    db.execute('''
+      CREATE TABLE $tableAuthor(
+        id TEXT PRIMARY KEY,
+        name TEXT NOT NULL,
+        photoUrl TEXT
       )
     ''');
   }

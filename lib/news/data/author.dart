@@ -17,8 +17,15 @@ class Author extends Entity<Author> {
   })  : assert(name != null),
         super(id);
 
-  factory Author.fromJson(json) => _$AuthorFromJson(json);
-  Map<String, dynamic> toJson() => _$AuthorToJson(this);
+  factory Author.fromJson(Map<String, dynamic> data) => Author(
+      id: Id(data['id']),
+      name: data['name'] as String,
+      photoUrl: data['photoUrl'] as String);
+  Map<String, dynamic> toJson() => <String, dynamic>{
+    'id': id.id,
+    'name': name,
+    'photoUrl': photoUrl
+  };
 }
 
 class AuthorSerializer extends Serializer<Author> {
