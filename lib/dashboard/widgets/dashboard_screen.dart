@@ -17,7 +17,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: NewsScreen(),
+      body: Center(
+        child: FlutterLogo()
+      ),
       bottomNavigationBar: _buildBottomAppBar(),
     );
   }
