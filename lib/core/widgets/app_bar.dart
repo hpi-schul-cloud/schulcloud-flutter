@@ -22,12 +22,13 @@ class _MyAppBarState extends State<MyAppBar> {
   Widget build(BuildContext context) {
     return Hero(
       tag: 'bottom_app_bar',
-      child: BottomAppBar(
+      child: Material(
         color: Theme.of(context).primaryColor,
         elevation: 6,
         child: Container(
           height: 56,
           padding: const EdgeInsets.symmetric(horizontal: 8),
+          alignment: Alignment.center,
           child: Row(
             children: <Widget>[
               IconButton(
