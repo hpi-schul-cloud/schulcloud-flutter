@@ -31,7 +31,7 @@ class SharedPreferences extends Repository<String> {
     });
   }
 
-  String _getKey(Id<String> id) => '${this.keyPrefix}${id.id}';
+  String _getKey(Id<String> id) => '${this.keyPrefix}_${id.id}';
 
   @override
   Stream<String> fetch(Id<String> id) =>

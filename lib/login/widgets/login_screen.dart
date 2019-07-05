@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 
 import 'package:schulcloud/app/services.dart';
 import 'package:schulcloud/core/widgets.dart';
-import 'package:schulcloud/dashboard/dashboard.dart';
 
 import '../bloc.dart';
 import 'button.dart';
@@ -52,9 +51,7 @@ class _LoginContentState extends State<LoginContent>
       setState(() => _ambientError = null);
 
       // Logged in.
-      await Navigator.of(context).pushReplacement(MaterialPageRoute(
-        builder: (context) => DashboardScreen(),
-      ));
+      Navigator.of(context).pushReplacementNamed('dashboard');
     } on NoConnectionToServerError catch (_) {
       setState(() => _ambientError = "No connection to the server.");
     } on AuthenticationError catch (_) {
@@ -67,7 +64,8 @@ class _LoginContentState extends State<LoginContent>
   Future<void> _login() async {
     await _executeLogin(() async {
       _checkSyntax();
-      await bloc.login(_emailController.text, _passwordController.text);
+      if (_isEmailValid && _isPasswordValid)
+        await bloc.login(_emailController.text, _passwordController.text);
     });
   }
 
