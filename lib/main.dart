@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'core/services.dart';
+import 'dashboard/dashboard.dart';
 import 'login/login.dart';
+import 'news/news.dart';
+import 'routes.dart';
 
 void main() => runApp(SchulCloudApp());
 
@@ -47,7 +50,13 @@ class SchulCloudApp extends StatelessWidget {
           fontFamily: 'PT Sans Narrow',
           textTheme: _textTheme,
         ),
-        home: LoginScreen(),
+        darkTheme: ThemeData(),
+        initialRoute: Routes.login,
+        routes: {
+          Routes.dashboard: (_) => DashboardScreen(),
+          Routes.login: (_) => LoginScreen(),
+          Routes.news: (_) => NewsScreen(),
+        },
       ),
     );
   }
