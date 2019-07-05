@@ -21,14 +21,10 @@ class Author extends Entity<Author> {
       id: Id(data['id']),
       name: data['name'] as String,
       photoUrl: data['photoUrl'] as String);
-  Map<String, dynamic> toJson() => <String, dynamic>{
-    'id': id.id,
-    'name': name,
-    'photoUrl': photoUrl
-  };
-}
 
-class AuthorSerializer extends Serializer<Author> {
-  const AuthorSerializer()
-      : super(fromJson: _$AuthorFromJson, toJson: _$AuthorToJson);
+  Map<String, dynamic> toJson() => <String, dynamic> {''
+      'id': id.id,
+      'name': name,
+      'photoUrl': photoUrl
+  };
 }

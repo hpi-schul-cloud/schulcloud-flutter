@@ -45,7 +45,7 @@ class Article extends Entity<Article> {
       imageUrl: data['imageUrl'] as String,
       content: data['content'] as String);
 
-  Map<String, dynamic> toJson() => <String, dynamic>{
+  Map<String, dynamic> toJson() => <String, dynamic> {
         'id': id.id,
         'title': title,
         'authorId': authorId,
@@ -53,10 +53,5 @@ class Article extends Entity<Article> {
         'section': section,
         'imageUrl': imageUrl,
         'content': content
-      };
-}
-
-class ArticleSerializer extends Serializer<Article> {
-  const ArticleSerializer()
-      : super(fromJson: _$ArticleFromJson, toJson: _$ArticleToJson);
+  };
 }
