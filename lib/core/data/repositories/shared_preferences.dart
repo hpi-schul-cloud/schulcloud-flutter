@@ -43,6 +43,8 @@ class SharedPreferences extends Repository<String> {
 
   @override
   Future<void> update(Id<String> id, String item) async {
+    assert(id != null);
+    assert(item != null);
     final prefs = await _prefs;
 
     prefs.setString(_getKey(id), item);
