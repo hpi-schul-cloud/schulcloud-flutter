@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:schulcloud/core/services.dart';
+
+import 'package:schulcloud/app/services.dart';
 
 import '../bloc.dart';
 import 'article_preview.dart';

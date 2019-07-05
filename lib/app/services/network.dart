@@ -6,6 +6,7 @@ import 'package:http/http.dart' as http;
 import 'authentication_storage.dart';
 
 class NoConnectionToServerError {}
+
 class AuthenticationError {}
 
 /// A service that offers networking post and get requests to the backend
@@ -33,7 +34,7 @@ class NetworkService {
       if (response.statusCode == 401) throw AuthenticationError();
 
       // Succeed, if its a 2xx status code.
-      if (response.statusCode ~/ 100 != 2) {
+      if (response.statusCode ~/ 100 == 2) {
         return response;
       }
 

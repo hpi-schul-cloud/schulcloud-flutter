@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:schulcloud/core/data.dart';
 import 'package:schulcloud/news/entities.dart';
 
+import '../data/user.dart';
 import 'network.dart';
 
 /// Wraps all the api network calls into nice little type-safe functions.
@@ -48,11 +49,15 @@ class ApiService {
     // TODO: parse article
   }
 
-  /*Future<void> getUser(Id<User> id) async {
+  Future<User> getUser(Id<User> id) async {
     var response = await network.get('users/{id}');
-
-    // User
-    @GET("users/{id}")
-    fun getUser(@Path("id") userId: String): Call<User>
-  }*/
+    return User(
+      id: id,
+      firstName: 'Max',
+      lastName: 'Mustermann',
+      email: 'max.mustermann@gmail.com',
+      schoolToken: 'school-token',
+      displayName: 'MaxMustermann',
+    );
+  }
 }

@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'core/services.dart';
+import 'package:schulcloud/app/services.dart';
+
 import 'login/login.dart';
 
 void main() => runApp(SchulCloudApp());

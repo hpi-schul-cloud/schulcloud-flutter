@@ -1,9 +1,9 @@
 import 'package:flutter/foundation.dart';
-
 import 'package:rxdart/rxdart.dart';
+
+import 'package:schulcloud/app/services.dart';
 import 'package:schulcloud/core/data.dart';
 import 'package:schulcloud/core/data/utils.dart';
-import 'package:schulcloud/core/services.dart';
 
 import 'data/repository.dart';
 import 'entities.dart';
