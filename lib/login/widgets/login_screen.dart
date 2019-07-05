@@ -64,7 +64,8 @@ class _LoginContentState extends State<LoginContent>
   Future<void> _login() async {
     await _executeLogin(() async {
       _checkSyntax();
-      await bloc.login(_emailController.text, _passwordController.text);
+      if (_isEmailValid && _isPasswordValid)
+        await bloc.login(_emailController.text, _passwordController.text);
     });
   }
 
