@@ -1,3 +1,6 @@
-export 'widgets/paginated_loader.dart';
-export 'widgets/placeholder.dart';
-export 'widgets/staggered_column.dart';
+import 'package:flutter/widgets.dart';
+import 'package:provider/provider.dart';
+
+mixin BlocConsumer<T, W extends StatefulWidget> on State<W> {
+  T get bloc => Provider.of<T>(context);
+}
