@@ -2,9 +2,30 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'core/services.dart';
+import 'dashboard/dashboard.dart';
 import 'login/login.dart';
+import 'news/news.dart';
+import 'routes.dart';
 
-void main() => runApp(SchulCloudApp());
+void main() {
+  runApp(
+    MultiProvider(
+      providers: [
+        Provider<AuthenticationStorageService>(
+          builder: (_) => AuthenticationStorageService(),
+        ),
+        ProxyProvider<AuthenticationStorageService, NetworkService>(
+          builder: (_, authStorage, __) =>
+              NetworkService(authStorage: authStorage),
+        ),
+        ProxyProvider<NetworkService, ApiService>(
+          builder: (_, network, __) => ApiService(network: network),
+        ),
+      ],
+      child: SchulCloudApp(),
+    ),
+  );
+}
 
 const _textTheme = const TextTheme(
   title: TextStyle(fontWeight: FontWeight.bold),
@@ -26,29 +47,21 @@ const _mainColor = Color(0xffb10438);
 class SchulCloudApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MultiProvider(
-      providers: [
-        Provider<AuthenticationStorageService>(
-          builder: (_) => AuthenticationStorageService(),
-        ),
-        ProxyProvider<AuthenticationStorageService, NetworkService>(
-          builder: (_, authStorage, __) =>
-              NetworkService(authStorage: authStorage),
-        ),
-        ProxyProvider<NetworkService, ApiService>(
-          builder: (_, network, __) => ApiService(network: network),
-        ),
-      ],
-      child: MaterialApp(
-        title: 'Schul-Cloud',
-        theme: ThemeData(
-          primaryColor: _mainColor,
-          buttonColor: _mainColor,
-          fontFamily: 'PT Sans Narrow',
-          textTheme: _textTheme,
-        ),
-        home: LoginScreen(),
+    return MaterialApp(
+      title: 'Schul-Cloud',
+      theme: ThemeData(
+        primaryColor: _mainColor,
+        buttonColor: _mainColor,
+        fontFamily: 'PT Sans Narrow',
+        textTheme: _textTheme,
       ),
+      darkTheme: ThemeData(),
+      initialRoute: Routes.login,
+      routes: {
+        Routes.dashboard: (_) => DashboardScreen(),
+        Routes.login: (_) => LoginScreen(),
+        Routes.news: (_) => NewsScreen(),
+      },
     );
   }
 }

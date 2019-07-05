@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:schulcloud/core/services.dart';
+import 'package:schulcloud/core/widgets.dart';
 
 import '../bloc.dart';
 import 'article_preview.dart';
@@ -11,7 +12,10 @@ class NewsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return ProxyProvider<ApiService, Bloc>(
       builder: (_, api, __) => Bloc(api: api),
-      child: Scaffold(body: ArticleList()),
+      child: Scaffold(
+        body: ArticleList(),
+        bottomNavigationBar: MyAppBar(),
+      ),
     );
   }
 }

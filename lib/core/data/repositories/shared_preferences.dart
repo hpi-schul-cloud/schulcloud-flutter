@@ -31,7 +31,7 @@ class SharedPreferences extends Repository<String> {
     });
   }
 
-  String _getKey(Id<String> id) => '${this.keyPrefix}${id.id}';
+  String _getKey(Id<String> id) => '${this.keyPrefix}_${id.id}';
 
   @override
   Stream<String> fetch(Id<String> id) =>
@@ -43,6 +43,7 @@ class SharedPreferences extends Repository<String> {
 
   @override
   Future<void> update(Id<String> id, String item) async {
+    assert(item != null);
     final prefs = await _prefs;
 
     prefs.setString(_getKey(id), item);
