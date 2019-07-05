@@ -21,23 +21,26 @@ class Article extends Entity<Article> {
     @required Id<Article> id,
     @required this.title,
     @required this.authorId,
-    this.author,
+    @required this.author,
     @required this.published,
     @required this.section,
     this.imageUrl,
     @required this.content,
   })  : assert(title != null),
         assert(authorId != null),
+        assert(author != null),
         assert(published != null),
         assert(section != null),
         assert(content != null),
         super(id);
 
-  // TODO: handle id and author json on database access
   factory Article.fromJson(Map<String, dynamic> data) => Article(
       id: Id(data['id']),
       title: data['title'] as String,
       authorId: data['authorId'] as String,
+      author: data['author'] == null
+          ? null
+          : Author.fromJson(data['author'] as Map<String, dynamic>),
       published: data['published'] == null
           ? null
           : DateTime.parse(data['published'] as String),
@@ -45,6 +48,7 @@ class Article extends Entity<Article> {
       imageUrl: data['imageUrl'] as String,
       content: data['content'] as String);
 
+  // Author has to be stored separately in database
   Map<String, dynamic> toJson() => <String, dynamic> {
         'id': id.id,
         'title': title,

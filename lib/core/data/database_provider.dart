@@ -50,7 +50,7 @@ class DatabaseProvider {
         imageUrl TEXT,
         content TEXT NOT NULL,
         FOREIGN KEY (authorId) REFERENCES $tableAuthor(id) 
-                ON DELETE SET NULL ON UPDATE CASCADE
+                ON UPDATE CASCADE
       )
     ''');
   }
