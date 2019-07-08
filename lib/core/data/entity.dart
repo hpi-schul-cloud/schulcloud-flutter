@@ -17,6 +17,8 @@ class Id<T> {
 
   factory Id.fromJson(Map<String, dynamic> json) => Id(json['id']);
   Map<String, dynamic> toJson() => {'id': id};
+
+  String toString() => id;
 }
 
 /// A special kind of item that also carries its id.

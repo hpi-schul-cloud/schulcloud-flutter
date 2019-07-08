@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:schulcloud/core/widgets.dart';
+import 'package:schulcloud/app/widgets.dart';
 
 class DashboardScreen extends StatefulWidget {
   @override

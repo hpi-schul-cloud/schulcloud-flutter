@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'core/services.dart';
+import 'package:schulcloud/app/services.dart';
+
 import 'dashboard/dashboard.dart';
 import 'login/login.dart';
 import 'news/news.dart';
@@ -20,6 +21,10 @@ void main() {
         ),
         ProxyProvider<NetworkService, ApiService>(
           builder: (_, network, __) => ApiService(network: network),
+        ),
+        ProxyProvider2<AuthenticationStorageService, ApiService, UserService>(
+          builder: (_, authStorage, api, __) =>
+              UserService(authStorage: authStorage, api: api),
         ),
       ],
       child: SchulCloudApp(),

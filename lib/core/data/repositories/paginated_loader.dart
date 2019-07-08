@@ -31,6 +31,7 @@ class PaginatedLoader<Item> extends Repository<Item> {
 
   @override
   Stream<Item> fetch(Id<Item> id) async* {
+    assert(id != null);
     yield await _loadItem(id);
   }
 

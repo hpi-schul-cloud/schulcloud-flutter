@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'package:schulcloud/core/services.dart';
-import 'package:schulcloud/core/bloc_consumer.dart';
+import 'package:schulcloud/app/services.dart';
+import 'package:schulcloud/core/widgets.dart';
 
 import '../bloc.dart';
 import 'button.dart';

@@ -50,16 +50,13 @@ class CachedRepository<Item> extends RepositoryWithSource<Item, Item> {
       onCancel: () {},
     );
 
-    print('Getting cached entries.');
     cache
         .fetchAllEntries()
         .firstWhere((a) => true, orElse: () => null)
         .then((entries) {
       if (entries != null && !sentSourceEntries) controller.add(entries);
-      print('Got cached entries: $entries');
     });
 
-    print('Getting entries from the source $source');
     source.fetchAllEntries().listen(
       (entries) {
         controller.add(entries);

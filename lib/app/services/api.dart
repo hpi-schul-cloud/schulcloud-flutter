@@ -5,9 +5,8 @@ import 'package:flutter/foundation.dart';
 import 'package:schulcloud/core/data.dart';
 import 'package:schulcloud/news/entities.dart';
 
+import '../data/user.dart';
 import 'network.dart';
-
-class AuthenticationError {}
 
 /// Wraps all the api network calls into nice little type-safe functions.
 class ApiService {
@@ -20,25 +19,12 @@ class ApiService {
       'username': username,
       'password': password,
     });
-    if (response.statusCode != 201) {
-      throw AuthenticationError();
-    }
-
     return (json.decode(response.body) as Map<String, dynamic>)['accessToken']
         as String;
   }
 
   Future<List<Article>> listNews() async {
     var response = await network.get('news?');
-
-    switch (response.statusCode) {
-      case 401:
-        throw AuthenticationError();
-      case 200:
-        break;
-      default:
-        throw Error(); // Something bad happened.
-    }
 
     var body = json.decode(response.body);
     return (body['data'] as List<dynamic>).map((data) {
@@ -59,7 +45,23 @@ class ApiService {
   }
 
   Future<Article> getArticle(Id<Article> id) async {
-    var response = await network.get('news/{id}');
+    var response = await network.get('news/$id');
     // TODO: parse article
+  }
+
+  Future<User> getUser(Id<User> id) async {
+    var response = await network.get('users/$id');
+    var data = json.decode(response.body);
+
+    // For now, the [avatarBackgroundColor] and [avatarInitials] are not saved.
+    // Not sure if we'll need it.
+    return User(
+      id: Id<User>(data['_id']),
+      firstName: data['firstName'],
+      lastName: data['lastName'],
+      email: data['email'],
+      schoolToken: data['schoolId'],
+      displayName: data['displayName'],
+    );
   }
 }

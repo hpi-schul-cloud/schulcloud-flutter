@@ -25,6 +25,9 @@ class InMemoryStorage<Item> extends Repository<Item> {
 
   @override
   Future<void> update(Id<Item> id, Item item) async {
+    assert(id != null);
+    assert(item != null);
+
     _values[id] = item;
     _controllers.putIfAbsent(id, () => BehaviorSubject()).add(item);
     _allEntriesController.add(_values.keys.map(_getEntryForId).toList());
@@ -32,6 +35,8 @@ class InMemoryStorage<Item> extends Repository<Item> {
 
   @override
   Future<void> remove(Id<Item> id) async {
+    assert(id != null);
+
     _values.remove(id);
     _controllers.remove(id)?.close();
   }
