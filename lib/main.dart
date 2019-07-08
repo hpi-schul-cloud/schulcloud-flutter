@@ -22,6 +22,10 @@ void main() {
         ProxyProvider<NetworkService, ApiService>(
           builder: (_, network, __) => ApiService(network: network),
         ),
+        ProxyProvider2<AuthenticationStorageService, ApiService, UserService>(
+          builder: (_, authStorage, api, __) =>
+              UserService(authStorage: authStorage, api: api),
+        ),
       ],
       child: SchulCloudApp(),
     ),
