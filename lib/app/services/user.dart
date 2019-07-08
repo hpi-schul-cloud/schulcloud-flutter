@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/foundation.dart';
 
 import 'package:schulcloud/core/data.dart';
@@ -22,6 +24,16 @@ class UserService {
   }
 
   Future<void> _updateUser() async {
-    _user = await api.getUser(Id<User>('some-id'));
+    _user = await api.getUser(Id<User>(_decodeTokenToUser(authStorage.token)));
+  }
+
+  String _decodeTokenToUser(String jwtEncoded) {
+    // A JWT token exists of a header, body and claim (signature), all separated
+    // by dots and encoded in base64. For now, we don't verify the claim, but
+    // just decode the body.
+    var encodedBody = jwtEncoded.split('.')[1];
+    var body = String.fromCharCodes(base64.decode(encodedBody));
+    Map<String, dynamic> jsonBody = json.decode(body);
+    return jsonBody['userId'] as String;
   }
 }
