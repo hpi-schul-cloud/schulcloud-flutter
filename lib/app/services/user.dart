@@ -19,12 +19,15 @@ class UserService {
   User get user => _user;
 
   UserService({@required this.authStorage, @required this.api}) {
-    _updateUser();
     authStorage.onCredentialsChangedStream.listen((_) => _updateUser());
   }
 
   Future<void> _updateUser() async {
-    _user = await api.getUser(Id<User>(_decodeTokenToUser(authStorage.token)));
+    var token = authStorage.token;
+
+    _user = token == null
+        ? null
+        : await api.getUser(Id<User>(_decodeTokenToUser(token)));
   }
 
   String _decodeTokenToUser(String jwtEncoded) {
