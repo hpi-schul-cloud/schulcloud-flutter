@@ -9,29 +9,28 @@ import '../repository.dart';
 
 /// A wrapper to store [String]s in the system's shared preferences.
 class SharedPreferences extends Repository<String> {
-  final String keyPrefix;
+  final String _keyPrefix;
   Map<String, BehaviorSubject<String>> _controllers;
   final BehaviorSubject<List<RepositoryEntry<String>>> _allEntriesController;
   Future<sp.SharedPreferences> get _prefs => sp.SharedPreferences.getInstance();
 
-  SharedPreferences(this.keyPrefix)
-      : assert(keyPrefix != null),
+  SharedPreferences(String name)
+      : assert(name != null),
+        _keyPrefix = '${name}_',
         _allEntriesController = BehaviorSubject(),
         super(isFinite: true, isMutable: true) {
     _controllers = Map<String, BehaviorSubject<String>>();
     _prefs.then((prefs) {
       // When starting up, load all existing values from SharedPreferences.
       // All the SharedPreferences properties managed by this repository have
-      // [this.id] as a prefix in their key.
-      prefs
-          .getKeys()
-          .where((key) => key.startsWith(this.keyPrefix))
-          .map((key) => key.substring(this.keyPrefix.length))
-          .forEach((key) => update(Id(key), prefs.getString(key)));
+      // [_keyPrefix] as a prefix in their key.
+      prefs.getKeys().where((key) => key.startsWith(_keyPrefix)).forEach(
+          (key) => update(
+              Id(key.substring(_keyPrefix.length)), prefs.getString(key)));
     });
   }
 
-  String _getKey(Id<String> id) => '${this.keyPrefix}_${id.id}';
+  String _getKey(Id<String> id) => '$_keyPrefix${id.id}';
 
   @override
   Stream<String> fetch(Id<String> id) =>
@@ -45,6 +44,7 @@ class SharedPreferences extends Repository<String> {
   Future<void> update(Id<String> id, String item) async {
     assert(id != null);
     assert(item != null);
+
     final prefs = await _prefs;
 
     prefs.setString(_getKey(id), item);
@@ -60,6 +60,8 @@ class SharedPreferences extends Repository<String> {
 
   @override
   Future<void> remove(Id<String> id) async {
+    assert(id != null);
+
     (await _prefs).remove(_getKey(id));
     _controllers.remove(id.id)?.close();
   }
