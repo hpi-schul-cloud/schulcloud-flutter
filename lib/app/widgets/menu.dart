@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import 'package:schulcloud/routes.dart';
+
+import '../data/user.dart';
+import '../services.dart';
 
 class Menu extends StatefulWidget {
   @override
@@ -28,15 +32,35 @@ class _MenuState extends State<Menu> {
   }
 
   Widget _buildUserInfo() {
-    return Row(
-      children: <Widget>[
-        SizedBox(width: 16.0 + 8),
-        Expanded(child: Text('Fritz Schmidt', style: TextStyle(fontSize: 16))),
-        IconButton(icon: Icon(Icons.settings), onPressed: () {}),
-        IconButton(
-            icon: Icon(Icons.airline_seat_legroom_reduced), onPressed: () {}),
-        SizedBox(width: 8),
-      ],
+    return StreamBuilder<User>(
+      stream: Provider.of<UserService>(context).userStream,
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) {
+          return Container(color: Colors.red);
+        }
+        var user = snapshot.data;
+
+        return Row(
+          children: <Widget>[
+            SizedBox(width: 16.0 + 8),
+            Expanded(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(user.name, style: TextStyle(fontSize: 16)),
+                  Text(user.email, style: TextStyle(fontSize: 12)),
+                ],
+              ),
+            ),
+            IconButton(icon: Icon(Icons.settings), onPressed: () {}),
+            IconButton(
+                icon: Icon(Icons.airline_seat_legroom_reduced),
+                onPressed: () {}),
+            SizedBox(width: 8),
+          ],
+        );
+      },
     );
   }
 
