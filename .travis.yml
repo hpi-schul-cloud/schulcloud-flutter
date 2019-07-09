@@ -10,10 +10,8 @@ addons:
       - libstdc++6
       #- fonts-droid
 before_script:
-  # Clone Flutter and add it to the path.
+  # Clone Flutter.
   - git clone https://github.com/flutter/flutter.git -b beta .flutter
-  - export PATH="$PATH;$(pwd)/.flutter/bin"
-  - echo $PATH
   # Actually download the Flutter SDK and generate auto-generated dart files.
   - ./.flutter/bin/flutter doctor
   - ./.flutter/bin/flutter packages get
