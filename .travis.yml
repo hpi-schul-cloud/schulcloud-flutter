@@ -13,14 +13,15 @@ before_script:
   # Clone Flutter and add it to the path.
   - git clone https://github.com/flutter/flutter.git -b beta .flutter
   - export PATH="$PATH;$(pwd)/.flutter/bin"
+  - echo $PATH
   # Actually download the Flutter SDK and generate auto-generated dart files.
-  - flutter doctor
-  - flutter packages pub run build_runner build
+  - ./.flutter/bin/flutter doctor
+  - ./.flutter/bin/flutter packages pub run build_runner build
 script:
   # For now, don't run tests.
   #- ./.flutter/bin/flutter test
   # Lint the source code.
-  - flutter analyze
+  - ./.flutter/bin/flutter analyze
 cache:
   directories:
     - $HOME/.pub-cache
