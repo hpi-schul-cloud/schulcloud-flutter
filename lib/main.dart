@@ -61,12 +61,50 @@ class SchulCloudApp extends StatelessWidget {
         textTheme: _textTheme,
       ),
       darkTheme: ThemeData(),
-      initialRoute: Routes.login,
+      initialRoute: Routes.splashScreen,
       routes: {
+        Routes.splashScreen: (_) => SplashScreen(),
         Routes.dashboard: (_) => DashboardScreen(),
         Routes.login: (_) => LoginScreen(),
         Routes.news: (_) => NewsScreen(),
       },
+    );
+  }
+}
+
+/// A screen that shows a loading spinner (that should probably be changed into
+/// the Schul-Cloud logo or something similar). When the [AuthStorageService] is
+/// ready (when it loaded stuff from the [SharedPreferences]), it either
+/// redirects to the loading screen or the dashboard.
+class SplashScreen extends StatefulWidget {
+  @override
+  _SplashScreenState createState() => _SplashScreenState();
+}
+
+class _SplashScreenState extends State<SplashScreen>
+    with SingleTickerProviderStateMixin {
+  @override
+  void initState() {
+    super.initState();
+    Future.delayed(Duration.zero, initialize);
+  }
+
+  void initialize() {
+    var authStorage = Provider.of<AuthenticationStorageService>(context);
+
+    authStorage.addOnLoadedListener(() {
+      if (!this.mounted) return;
+      Navigator.of(context).pushReplacementNamed(
+          authStorage.isAuthenticated ? Routes.dashboard : Routes.login);
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: Colors.white,
+      alignment: Alignment.center,
+      child: GestureDetector(child: CircularProgressIndicator()),
     );
   }
 }

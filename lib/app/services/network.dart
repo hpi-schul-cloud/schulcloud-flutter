@@ -47,7 +47,7 @@ class NetworkService {
 
   Map<String, String> getHeaders() {
     return {
-      if (authStorage.isAuthorized)
+      if (authStorage.isAuthenticated)
         'Authorization': 'Bearer ${authStorage.token}'
     };
   }
