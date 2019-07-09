@@ -12,7 +12,7 @@ addons:
 before_script:
   - git clone https://github.com/flutter/flutter.git -b beta .flutter
   - ./.flutter/bin/flutter doctor
-  - flutter packages pub run build_runer build
+  - flutter packages pub run build_runner build
 script:
   # For now, don't run tests.
   #- ./.flutter/bin/flutter test
