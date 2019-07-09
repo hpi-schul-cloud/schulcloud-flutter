@@ -88,11 +88,11 @@ class ArticleDao extends Repository<Article> {
   @override
   Future<void> update(Id<Article> id, Article article) async {
     final Database db = await databaseProvider.database;
-    await _insertAuthorForArticle(article, db);
+    await _deleteObsoleteAuthorForArticle(article, db);
+    await _updateAuthorForArticle(article, db);
     await db.insert(databaseProvider.tableArticle, article.toJson(),
         conflictAlgorithm: ConflictAlgorithm.replace);
     print('Updated article with id ${id.id} in database.');
-    // TODO: delete old author if changed?
   }
 
   @override
@@ -101,14 +101,14 @@ class ArticleDao extends Repository<Article> {
     await db.delete(databaseProvider.tableArticle,
         where: 'id = ?', whereArgs: [id.id]);
     print('Removed article with id ${id.id} from database.');
-    // TODO: Delete author too (if they have no other referencing article)
+    await _deleteAuthorForArticle(id, db);
   }
 
   @override
   Future<void> clear() async {
     final Database db = await databaseProvider.database;
     await db.delete(databaseProvider.tableArticle);
-    // TODO: delete authors
+    await db.delete(databaseProvider.tableAuthor);
   }
 
   Map<String, dynamic> _addAuthorJson(
@@ -121,10 +121,13 @@ class ArticleDao extends Repository<Article> {
 
   Future<Map<String, dynamic>> _getAuthorJsonForArticle(
       Id<Article> id, Database db) async {
+    final String ar = databaseProvider.tableArticle;
+    final String aut = databaseProvider.tableAuthor;
     final List<Map<String, dynamic>> authorJsons = await db.rawQuery(
-        '''SELECT DISTINCT author.id as id, author.name as name, author.photoUrl as photoUrl
-            FROM (SELECT authorId FROM article WHERE id = ${id.id}) articleAuthor
-              INNER JOIN author ON articleAuthor.authorId = author.id''');
+        '''SELECT DISTINCT $aut.id as id, $aut.name as name, $aut.photoUrl as photoUrl
+            FROM (SELECT authorId FROM $ar WHERE id = ?) articleAuthor
+              INNER JOIN $aut ON articleAuthor.authorId = $aut.id
+      ''', ['${id.id}']);
 
     if (authorJsons.isEmpty) {
       print('Author does not exist in database.');
@@ -136,10 +139,12 @@ class ArticleDao extends Repository<Article> {
 
   Future<List<Map<String, dynamic>>> _getAuthorJsonsForArticles(
       Database db) async {
+    final String ar = databaseProvider.tableArticle;
+    final String aut = databaseProvider.tableAuthor;
     final List<Map<String, dynamic>> authorJsons = await db.rawQuery(
-        '''SELECT DISTINCT author.id as id, author.name as name, author.photoUrl as photoUrl
-            FROM (SELECT authorId FROM article) articleAuthor
-              INNER JOIN author ON articleAuthor.authorId = author.id''');
+        '''SELECT DISTINCT $aut.id as id, $aut.name as name, $aut.photoUrl as photoUrl
+            FROM (SELECT authorId FROM $ar) articleAuthor
+              INNER JOIN $aut ON articleAuthor.authorId = $aut.id''');
 
     if (authorJsons.isEmpty) {
       print('There are no authors who have written articles in database.');
@@ -149,8 +154,30 @@ class ArticleDao extends Repository<Article> {
     return authorJsons;
   }
 
-  Future<void> _insertAuthorForArticle(Article article, Database db) async {
+  Future<void> _updateAuthorForArticle(Article article, Database db) async {
     db.insert(databaseProvider.tableAuthor, article.author.toJson(),
         conflictAlgorithm: ConflictAlgorithm.replace);
   }
+
+  Future<void> _deleteAuthorForArticle(Id<Article> id, Database db) async {
+    final String ar = databaseProvider.tableArticle;
+    final String aut = databaseProvider.tableAuthor;
+    db.rawDelete(
+        '''DELETE FROM $aut
+        WHERE id IN (SELECT authorId FROM $ar WHERE id = ?)
+    ''', ['${id.id}']);
+  }
+
+  Future<void> _deleteObsoleteAuthorForArticle(Article article,
+      Database db) async {
+    final String ar = databaseProvider.tableArticle;
+    final String aut = databaseProvider.tableAuthor;
+    db.rawDelete(
+        '''DELETE FROM $aut
+        WHERE id IN (
+          SELECT authorId FROM $ar
+            WHERE id = ? AND authorId <> ?)
+    ''', ['${article.id.id}', '${article.authorId}']);
+  }
+
 }

@@ -24,6 +24,13 @@ class DatabaseProvider {
     return _database;
   }
 
+  Future<void> closeDatabase() async {
+    if (_database != null) {
+      await _database.close();
+      _database = null;
+    }
+  }
+
   Future<Database> _initDatabase() async {
     // enables SQL logging. TODO: remove this
     Sqflite.devSetDebugModeOn(true);
@@ -38,7 +45,6 @@ class DatabaseProvider {
     await _createTableAuthor(db);
   }
 
-  // TODO: correct author entry
   Future _createTableArticle(Database db) async {
     db.execute('''
       CREATE TABLE $tableArticle(
@@ -64,6 +70,4 @@ class DatabaseProvider {
       )
     ''');
   }
-
-  // TODO: add closing database
 }
