@@ -44,10 +44,10 @@ class ApiService {
     }).toList();
   }
 
-  Future<Article> getArticle(Id<Article> id) async {
+  /*Future<Article> getArticle(Id<Article> id) async {
     var response = await network.get('news/$id');
     // TODO: parse article
-  }
+  }*/
 
   Future<User> getUser(Id<User> id) async {
     var response = await network.get('users/$id');

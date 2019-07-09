@@ -72,8 +72,8 @@ class _LoginContentState extends State<LoginContent>
   Future<void> _loginAsDemoStudent() =>
       _executeLogin(() => bloc.loginAsDemoStudent());
 
-  Future<void> _loginAsDemoTeacher() =>
-      _executeLogin(() => bloc.loginAsDemoTeacher());
+  /*Future<void> _loginAsDemoTeacher() =>
+      _executeLogin(() => bloc.loginAsDemoTeacher());*/
 
   @override
   Widget build(BuildContext context) {
