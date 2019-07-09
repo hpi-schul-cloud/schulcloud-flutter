@@ -11,10 +11,16 @@ class DatabaseProvider {
   static const _databaseVersion = 1;
   final tableArticle = "article";
   final tableAuthor = "author";
+  static int _countDatabaseReferences = 0;
 
   DatabaseProvider._internal();
 
-  static final DatabaseProvider instance = new DatabaseProvider._internal();
+  static final DatabaseProvider _instance = DatabaseProvider._internal();
+
+  static DatabaseProvider get instance {
+    _countDatabaseReferences++;
+    return _instance;
+  }
 
   Database _database;
 
@@ -24,11 +30,10 @@ class DatabaseProvider {
     return _database;
   }
 
-  Future<void> closeDatabase() async {
-    if (_database != null) {
-      await _database.close();
-      _database = null;
-    }
+  Future<void> deregisterReference() async {
+    _countDatabaseReferences--;
+    assert(_countDatabaseReferences >= 0);
+    if (_countDatabaseReferences == 0) await _closeDatabase();
   }
 
   Future<Database> _initDatabase() async {
@@ -43,6 +48,14 @@ class DatabaseProvider {
   Future _onCreate(Database db, int version) async {
     await _createTableArticle(db);
     await _createTableAuthor(db);
+  }
+
+  Future<void> _closeDatabase() async {
+    if (_database != null) {
+      await _database.close();
+      print('Database closed.');
+      _database = null;
+    }
   }
 
   Future _createTableArticle(Database db) async {

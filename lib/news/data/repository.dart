@@ -87,28 +87,41 @@ class ArticleDao extends Repository<Article> {
 
   @override
   Future<void> update(Id<Article> id, Article article) async {
+    // TODO: use transactions here!
     final Database db = await databaseProvider.database;
     await _deleteObsoleteAuthorForArticle(article, db);
     await _updateAuthorForArticle(article, db);
-    await db.insert(databaseProvider.tableArticle, article.toJson(),
+    final result = await db.insert(
+        databaseProvider.tableArticle, article.toJson(),
         conflictAlgorithm: ConflictAlgorithm.replace);
-    print('Updated article with id ${id.id} in database.');
+    print(
+        'Result for updating article with id: ${id.id} in database: $result.');
   }
 
   @override
   Future<void> remove(Id<Article> id) async {
     final Database db = await databaseProvider.database;
-    await db.delete(databaseProvider.tableArticle,
+    final result = await db.delete(databaseProvider.tableArticle,
         where: 'id = ?', whereArgs: [id.id]);
-    print('Removed article with id ${id.id} from database.');
+    print(
+        'Result for removing article with id: ${id.id} in database: $result.');
     await _deleteAuthorForArticle(id, db);
   }
 
   @override
   Future<void> clear() async {
     final Database db = await databaseProvider.database;
-    await db.delete(databaseProvider.tableArticle);
-    await db.delete(databaseProvider.tableAuthor);
+    final resultArticle = await db.delete(databaseProvider.tableArticle);
+    print('''Result for clearing table ${databaseProvider.tableArticle}
+        in database: $resultArticle.''');
+    final resultAuthor = await db.delete(databaseProvider.tableAuthor);
+    print('''Result for clearing table ${databaseProvider.tableAuthor}
+        in database: $resultAuthor.''');
+  }
+
+  @override
+  Future<void> dispose() async {
+    await databaseProvider.deregisterReference();
   }
 
   Map<String, dynamic> _addAuthorJson(
@@ -121,13 +134,13 @@ class ArticleDao extends Repository<Article> {
 
   Future<Map<String, dynamic>> _getAuthorJsonForArticle(
       Id<Article> id, Database db) async {
-    final String ar = databaseProvider.tableArticle;
-    final String aut = databaseProvider.tableAuthor;
     final List<Map<String, dynamic>> authorJsons = await db.rawQuery(
-        '''SELECT DISTINCT $aut.id as id, $aut.name as name, $aut.photoUrl as photoUrl
-            FROM (SELECT authorId FROM $ar WHERE id = ?) articleAuthor
-              INNER JOIN $aut ON articleAuthor.authorId = $aut.id
-      ''', ['${id.id}']);
+        '''SELECT DISTINCT aut.id as id, aut.name as name, aut.photoUrl as photoUrl
+           FROM (SELECT authorId
+                  FROM ${databaseProvider.tableArticle}
+                  WHERE id = ?) articleAuthor
+            INNER JOIN ${databaseProvider.tableAuthor} aut
+              ON articleAuthor.authorId = aut.id''', ['${id.id}']);
 
     if (authorJsons.isEmpty) {
       print('Author does not exist in database.');
@@ -139,12 +152,12 @@ class ArticleDao extends Repository<Article> {
 
   Future<List<Map<String, dynamic>>> _getAuthorJsonsForArticles(
       Database db) async {
-    final String ar = databaseProvider.tableArticle;
-    final String aut = databaseProvider.tableAuthor;
     final List<Map<String, dynamic>> authorJsons = await db.rawQuery(
-        '''SELECT DISTINCT $aut.id as id, $aut.name as name, $aut.photoUrl as photoUrl
-            FROM (SELECT authorId FROM $ar) articleAuthor
-              INNER JOIN $aut ON articleAuthor.authorId = $aut.id''');
+        '''SELECT DISTINCT aut.id as id, aut.name as name, aut.photoUrl as photoUrl
+           FROM (SELECT authorId 
+                 FROM ${databaseProvider.tableArticle}) articleAuthor
+            INNER JOIN ${databaseProvider.tableAuthor} aut
+              ON articleAuthor.authorId = aut.id''');
 
     if (authorJsons.isEmpty) {
       print('There are no authors who have written articles in database.');
@@ -155,29 +168,34 @@ class ArticleDao extends Repository<Article> {
   }
 
   Future<void> _updateAuthorForArticle(Article article, Database db) async {
-    db.insert(databaseProvider.tableAuthor, article.author.toJson(),
+    final result = await db.insert(
+        databaseProvider.tableAuthor, article.author.toJson(),
         conflictAlgorithm: ConflictAlgorithm.replace);
+    print('''Result for updating author for article with id: ${article.id.id}
+    in database: $result.''');
   }
 
   Future<void> _deleteAuthorForArticle(Id<Article> id, Database db) async {
-    final String ar = databaseProvider.tableArticle;
-    final String aut = databaseProvider.tableAuthor;
-    db.rawDelete(
-        '''DELETE FROM $aut
-        WHERE id IN (SELECT authorId FROM $ar WHERE id = ?)
-    ''', ['${id.id}']);
+    final result =
+        await db.rawDelete('''DELETE FROM ${databaseProvider.tableAuthor}
+                    WHERE id IN (
+                      SELECT authorId
+                      FROM ${databaseProvider.tableArticle}
+                      WHERE id = ?)''', ['${id.id}']);
+    print('''Result for deleting author for article with id: ${id.id}
+    in database: $result.''');
   }
 
-  Future<void> _deleteObsoleteAuthorForArticle(Article article,
-      Database db) async {
-    final String ar = databaseProvider.tableArticle;
-    final String aut = databaseProvider.tableAuthor;
-    db.rawDelete(
-        '''DELETE FROM $aut
-        WHERE id IN (
-          SELECT authorId FROM $ar
-            WHERE id = ? AND authorId <> ?)
-    ''', ['${article.id.id}', '${article.authorId}']);
+  Future<void> _deleteObsoleteAuthorForArticle(
+      Article article, Database db) async {
+    final result = await db.rawDelete(
+        '''DELETE FROM ${databaseProvider.tableAuthor}
+                    WHERE id IN (
+                      SELECT authorId
+                      FROM ${databaseProvider.tableArticle}
+                      WHERE id = ? AND authorId <> ?)''',
+        ['${article.id.id}', '${article.authorId}']);
+    print('''Result for deleting obsolete author for article with
+    id: ${article.id.id} in database: $result.''');
   }
-
 }
