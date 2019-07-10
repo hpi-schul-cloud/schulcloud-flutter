@@ -23,9 +23,11 @@ class SharedPreferences extends Repository<String> {
       // When starting up, load all existing values from SharedPreferences.
       // All the SharedPreferences properties managed by this repository have
       // [_keyPrefix] as a prefix in their key.
-      prefs.getKeys().where((key) => key.startsWith(_keyPrefix)).forEach(
-          (key) => update(
-              Id(key.substring(_keyPrefix.length)), prefs.getString(key)));
+      prefs.getKeys().where((key) => key.startsWith(_keyPrefix)).forEach((key) {
+        _controllers[key.substring(_keyPrefix.length)] = BehaviorSubject()
+          ..add(prefs.getString(key));
+      });
+      _updateAllEntriesController();
     });
   }
 
@@ -39,16 +41,7 @@ class SharedPreferences extends Repository<String> {
   Stream<List<RepositoryEntry<String>>> fetchAllEntries() =>
       _allEntriesController.stream;
 
-  @override
-  Future<void> update(Id<String> id, String item) async {
-    assert(id != null);
-    assert(item != null);
-
-    final prefs = await _prefs;
-
-    prefs.setString(_getKey(id), item);
-    _controllers.putIfAbsent(id.id, () => BehaviorSubject()).add(item);
-
+  void _updateAllEntriesController() async {
     var getEntryForId = (String id) async {
       return RepositoryEntry<String>(
           id: Id(id), item: await _controllers[id].first);
@@ -58,11 +51,24 @@ class SharedPreferences extends Repository<String> {
   }
 
   @override
+  Future<void> update(Id<String> id, String item) async {
+    assert(id != null);
+    assert(item != null);
+
+    final prefs = await _prefs;
+
+    prefs.setString(_getKey(id), item);
+    _controllers.putIfAbsent(id.id, () => BehaviorSubject()).add(item);
+    _updateAllEntriesController();
+  }
+
+  @override
   Future<void> remove(Id<String> id) async {
     assert(id != null);
 
     (await _prefs).remove(_getKey(id));
     _controllers.remove(id.id)?.close();
+    _updateAllEntriesController();
   }
 
   @override

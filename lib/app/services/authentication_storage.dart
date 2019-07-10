@@ -25,6 +25,8 @@ class AuthenticationStorageService {
   }
 
   void addOnLoadedListener(VoidCallback listener) {
+    assert(listener != null);
+    
     if (_isLoaded)
       listener();
     else
