@@ -46,10 +46,14 @@ class ArticleDao extends Repository<Article> {
   @override
   Stream<Article> fetch(Id<Article> id) async* {
     final Database db = await databaseProvider.database;
-    final List<Map<String, dynamic>> articleJsons = await db.query(
-        databaseProvider.tableArticle,
-        where: 'id = ?',
-        whereArgs: [id.id]);
+    List<Map<String, dynamic>> articleJsons;
+    Map<String, dynamic> authorJson;
+
+    await db.transaction((txn) async {
+      articleJsons = await txn.query(databaseProvider.tableArticle,
+          where: 'id = ?', whereArgs: [id.id]);
+      authorJson = await _getAuthorJsonForArticle(id, txn);
+    });
 
     if (articleJsons.isEmpty) {
       print('Article does not exist in database.');
@@ -57,20 +61,22 @@ class ArticleDao extends Repository<Article> {
     }
     print('Got single article with id ${id.id} from database.');
     Map<String, dynamic> articleJson = articleJsons.first;
-    articleJson =
-        _addAuthorJson(articleJson, await _getAuthorJsonForArticle(id, db));
+    articleJson = _addAuthorJson(articleJson, authorJson);
     yield Article.fromJson(articleJson);
   }
 
   @override
   Stream<List<RepositoryEntry<Article>>> fetchAllEntries() async* {
     final Database db = await databaseProvider.database;
-    final List<Map<String, dynamic>> articleJsons = await db
-        .query(databaseProvider.tableArticle, orderBy: 'published DESC');
-    print('Got ${articleJsons.length} articles from database.');
-    final List<Map<String, dynamic>> authorJsons =
-        await _getAuthorJsonsForArticles(db);
+    List<Map<String, dynamic>> articleJsons;
+    List<Map<String, dynamic>> authorJsons;
+    await db.transaction((txn) async {
+      articleJsons = await txn.query(databaseProvider.tableArticle,
+          orderBy: 'published DESC');
+      authorJsons = await _getAuthorJsonsForArticles(txn);
+    });
 
+    print('Got ${articleJsons.length} articles from database.');
     List<RepositoryEntry<Article>> articleEntries =
         articleJsons.map((articleJson) {
       Map<String, dynamic> authorJsonForArticle = authorJsons
@@ -87,36 +93,41 @@ class ArticleDao extends Repository<Article> {
 
   @override
   Future<void> update(Id<Article> id, Article article) async {
-    // TODO: use transactions here!
     final Database db = await databaseProvider.database;
-    await _deleteObsoleteAuthorForArticle(article, db);
-    await _updateAuthorForArticle(article, db);
-    final result = await db.insert(
-        databaseProvider.tableArticle, article.toJson(),
-        conflictAlgorithm: ConflictAlgorithm.replace);
-    print(
-        'Result for updating article with id: ${id.id} in database: $result.');
+    await db.transaction((txn) async {
+      await _deleteObsoleteAuthorForArticle(article, txn);
+      await _updateAuthorForArticle(article, txn);
+      final result = await txn.insert(
+          databaseProvider.tableArticle, article.toJson(),
+          conflictAlgorithm: ConflictAlgorithm.replace);
+      print('''Result for updating article with id: ${id.id}'
+              in database: $result.''');
+    });
   }
 
   @override
   Future<void> remove(Id<Article> id) async {
     final Database db = await databaseProvider.database;
-    final result = await db.delete(databaseProvider.tableArticle,
-        where: 'id = ?', whereArgs: [id.id]);
-    print(
-        'Result for removing article with id: ${id.id} in database: $result.');
-    await _deleteAuthorForArticle(id, db);
+    await db.transaction((txn) async {
+      final result = await txn.delete(databaseProvider.tableArticle,
+          where: 'id = ?', whereArgs: [id.id]);
+      print('''Result for removing article with id: ${id.id}
+           in database: $result.''');
+      await _deleteAuthorForArticle(id, txn);
+    });
   }
 
   @override
   Future<void> clear() async {
     final Database db = await databaseProvider.database;
-    final resultArticle = await db.delete(databaseProvider.tableArticle);
-    print('''Result for clearing table ${databaseProvider.tableArticle}
+    await db.transaction((txn) async {
+      final resultArticle = await txn.delete(databaseProvider.tableArticle);
+      print('''Result for clearing table ${databaseProvider.tableArticle}
         in database: $resultArticle.''');
-    final resultAuthor = await db.delete(databaseProvider.tableAuthor);
-    print('''Result for clearing table ${databaseProvider.tableAuthor}
+      final resultAuthor = await txn.delete(databaseProvider.tableAuthor);
+      print('''Result for clearing table ${databaseProvider.tableAuthor}
         in database: $resultAuthor.''');
+    });
   }
 
   @override
@@ -133,8 +144,8 @@ class ArticleDao extends Repository<Article> {
   }
 
   Future<Map<String, dynamic>> _getAuthorJsonForArticle(
-      Id<Article> id, Database db) async {
-    final List<Map<String, dynamic>> authorJsons = await db.rawQuery(
+      Id<Article> id, Transaction txn) async {
+    final List<Map<String, dynamic>> authorJsons = await txn.rawQuery(
         '''SELECT DISTINCT aut.id as id, aut.name as name, aut.photoUrl as photoUrl
            FROM (SELECT authorId
                   FROM ${databaseProvider.tableArticle}
@@ -151,8 +162,8 @@ class ArticleDao extends Repository<Article> {
   }
 
   Future<List<Map<String, dynamic>>> _getAuthorJsonsForArticles(
-      Database db) async {
-    final List<Map<String, dynamic>> authorJsons = await db.rawQuery(
+      Transaction txn) async {
+    final List<Map<String, dynamic>> authorJsons = await txn.rawQuery(
         '''SELECT DISTINCT aut.id as id, aut.name as name, aut.photoUrl as photoUrl
            FROM (SELECT authorId 
                  FROM ${databaseProvider.tableArticle}) articleAuthor
@@ -167,17 +178,17 @@ class ArticleDao extends Repository<Article> {
     return authorJsons;
   }
 
-  Future<void> _updateAuthorForArticle(Article article, Database db) async {
-    final result = await db.insert(
+  Future<void> _updateAuthorForArticle(Article article, Transaction txn) async {
+    final result = await txn.insert(
         databaseProvider.tableAuthor, article.author.toJson(),
         conflictAlgorithm: ConflictAlgorithm.replace);
     print('''Result for updating author for article with id: ${article.id.id}
     in database: $result.''');
   }
 
-  Future<void> _deleteAuthorForArticle(Id<Article> id, Database db) async {
+  Future<void> _deleteAuthorForArticle(Id<Article> id, Transaction txn) async {
     final result =
-        await db.rawDelete('''DELETE FROM ${databaseProvider.tableAuthor}
+        await txn.rawDelete('''DELETE FROM ${databaseProvider.tableAuthor}
                     WHERE id IN (
                       SELECT authorId
                       FROM ${databaseProvider.tableArticle}
@@ -187,8 +198,8 @@ class ArticleDao extends Repository<Article> {
   }
 
   Future<void> _deleteObsoleteAuthorForArticle(
-      Article article, Database db) async {
-    final result = await db.rawDelete(
+      Article article, Transaction txn) async {
+    final result = await txn.rawDelete(
         '''DELETE FROM ${databaseProvider.tableAuthor}
                     WHERE id IN (
                       SELECT authorId

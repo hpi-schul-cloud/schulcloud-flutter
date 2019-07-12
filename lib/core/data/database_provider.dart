@@ -25,6 +25,7 @@ class DatabaseProvider {
   Database _database;
 
   Future<Database> get database async {
+    assert(_countDatabaseReferences > 0);
     if (_database != null) return _database;
     _database = await _initDatabase();
     return _database;
