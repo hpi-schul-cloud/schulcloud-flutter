@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 
+import 'package:schulcloud/app/services.dart';
 import 'package:schulcloud/core/data.dart';
-import 'package:schulcloud/core/services.dart';
 import 'package:sqflite/sqflite.dart';
 
 import 'article.dart';

@@ -50,16 +50,13 @@ class CachedRepository<Item> extends RepositoryWithSource<Item, Item> {
       onCancel: () {},
     );
 
-    print('Getting cached entries.');
     cache
         .fetchAllEntries()
         .firstWhere((a) => true, orElse: () => null)
         .then((entries) {
       if (entries != null && !sentSourceEntries) controller.add(entries);
-      print('Got cached entries: $entries');
     });
 
-    print('Getting entries from the source $source');
     source.fetchAllEntries().listen(
       (entries) {
         controller.add(entries);
@@ -96,12 +93,13 @@ class CachedRepository<Item> extends RepositoryWithSource<Item, Item> {
   }
 
   /// Loads all the items from the source into the cache. May only be called if
-  /// the source [isFinite].
+  /// the source [isFinite]. Is asynchronous and returns when all items are
+  /// loaded into the cache.
   Future<void> loadItemsIntoCache() async {
     assert(source.isFinite);
-    for (final entry in await source.fetchAllEntries().first) {
-      cache.update(entry.id, entry.item);
-    }
+    final entries = await source.fetchAllEntries().first;
+    await Future.wait(
+        entries.map((entry) => cache.update(entry.id, entry.item)));
   }
 
   @override

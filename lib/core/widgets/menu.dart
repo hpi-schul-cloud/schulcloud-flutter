@@ -1,6 +1,15 @@
 import 'package:flutter/material.dart';
 
-class Menu extends StatelessWidget {
+import 'package:schulcloud/routes.dart';
+
+class Menu extends StatefulWidget {
+  @override
+  _MenuState createState() => _MenuState();
+}
+
+class _MenuState extends State<Menu> {
+  void _navigateTo(String target) => Navigator.pop(context, target);
+
   @override
   Widget build(BuildContext context) {
     return Material(
@@ -36,13 +45,13 @@ class Menu extends StatelessWidget {
       NavigationItem(
         iconBuilder: (color) => Icon(Icons.dashboard, color: color),
         text: 'Dashboard',
-        onPressed: () {},
+        onPressed: () => _navigateTo(Routes.dashboard),
         isActive: true,
       ),
       NavigationItem(
         iconBuilder: (color) => Icon(Icons.new_releases, color: color),
         text: 'News',
-        onPressed: () {},
+        onPressed: () => _navigateTo(Routes.news),
         isActive: false,
       ),
       NavigationItem(
@@ -53,8 +62,8 @@ class Menu extends StatelessWidget {
       ),
       NavigationItem(
         iconBuilder: (color) => Icon(Icons.list, color: color),
-        text: 'Assignments',
-        onPressed: () {},
+        text: 'Login',
+        onPressed: () => _navigateTo(Routes.login),
         isActive: false,
       ),
     ];

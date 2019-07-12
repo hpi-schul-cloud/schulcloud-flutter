@@ -1,10 +1,36 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'core/services.dart';
-import 'login/login.dart';
+import 'package:schulcloud/app/services.dart';
 
-void main() => runApp(SchulCloudApp());
+import 'dashboard/dashboard.dart';
+import 'login/login.dart';
+import 'news/news.dart';
+import 'routes.dart';
+
+void main() {
+  runApp(
+    MultiProvider(
+      providers: [
+        Provider<AuthenticationStorageService>(
+          builder: (_) => AuthenticationStorageService(),
+        ),
+        ProxyProvider<AuthenticationStorageService, NetworkService>(
+          builder: (_, authStorage, __) =>
+              NetworkService(authStorage: authStorage),
+        ),
+        ProxyProvider<NetworkService, ApiService>(
+          builder: (_, network, __) => ApiService(network: network),
+        ),
+        ProxyProvider2<AuthenticationStorageService, ApiService, UserService>(
+          builder: (_, authStorage, api, __) =>
+              UserService(authStorage: authStorage, api: api),
+        ),
+      ],
+      child: SchulCloudApp(),
+    ),
+  );
+}
 
 const _textTheme = const TextTheme(
   title: TextStyle(fontWeight: FontWeight.bold),
@@ -26,29 +52,59 @@ const _mainColor = Color(0xffb10438);
 class SchulCloudApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MultiProvider(
-      providers: [
-        Provider<AuthenticationStorageService>(
-          builder: (_) => AuthenticationStorageService(),
-        ),
-        ProxyProvider<AuthenticationStorageService, NetworkService>(
-          builder: (_, authStorage, __) =>
-              NetworkService(authStorage: authStorage),
-        ),
-        ProxyProvider<NetworkService, ApiService>(
-          builder: (_, network, __) => ApiService(network: network),
-        ),
-      ],
-      child: MaterialApp(
-        title: 'Schul-Cloud',
-        theme: ThemeData(
-          primaryColor: _mainColor,
-          buttonColor: _mainColor,
-          fontFamily: 'PT Sans Narrow',
-          textTheme: _textTheme,
-        ),
-        home: LoginScreen(),
+    return MaterialApp(
+      title: 'Schul-Cloud',
+      theme: ThemeData(
+        primaryColor: _mainColor,
+        buttonColor: _mainColor,
+        fontFamily: 'PT Sans Narrow',
+        textTheme: _textTheme,
       ),
+      darkTheme: ThemeData(),
+      initialRoute: Routes.splashScreen,
+      routes: {
+        Routes.splashScreen: (_) => SplashScreen(),
+        Routes.dashboard: (_) => DashboardScreen(),
+        Routes.login: (_) => LoginScreen(),
+        Routes.news: (_) => NewsScreen(),
+      },
+    );
+  }
+}
+
+/// A screen that shows a loading spinner (that should probably be changed into
+/// the Schul-Cloud logo or something similar). When the [AuthStorageService] is
+/// ready (when it loaded stuff from the [SharedPreferences]), it either
+/// redirects to the loading screen or the dashboard.
+class SplashScreen extends StatefulWidget {
+  @override
+  _SplashScreenState createState() => _SplashScreenState();
+}
+
+class _SplashScreenState extends State<SplashScreen>
+    with SingleTickerProviderStateMixin {
+  @override
+  void initState() {
+    super.initState();
+    Future.delayed(Duration.zero, initialize);
+  }
+
+  void initialize() {
+    var authStorage = Provider.of<AuthenticationStorageService>(context);
+
+    authStorage.addOnLoadedListener(() {
+      if (!this.mounted) return;
+      Navigator.of(context).pushReplacementNamed(
+          authStorage.isAuthenticated ? Routes.dashboard : Routes.login);
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: Colors.white,
+      alignment: Alignment.center,
+      child: GestureDetector(child: CircularProgressIndicator()),
     );
   }
 }

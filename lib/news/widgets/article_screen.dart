@@ -118,7 +118,7 @@ class _ArticleViewState extends State<ArticleView> {
     );
   }
 
-  Widget _buildWithPortraitImage() {
+  /*Widget _buildWithPortraitImage() {
     var padding = Provider.of<ArticleTheme>(context).padding;
 
     return Stack(
@@ -156,7 +156,7 @@ class _ArticleViewState extends State<ArticleView> {
             tag: widget.article,
             child: ArticleImageView(imageUrl: widget.article?.imageUrl),
           );
-  }
+  }*/
 
   Widget _buildContent(BuildContext context) {
     var padding = Provider.of<ArticleTheme>(context).padding;

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'package:schulcloud/core/widgets.dart';
+import 'package:schulcloud/app/widgets.dart';
 
 import '../entities.dart';
 import 'article_image.dart';
