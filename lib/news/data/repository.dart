@@ -38,10 +38,7 @@ class ArticleDownloader extends Repository<Article> {
   }
 }
 
-class ArticleDao extends Repository<Article> {
-  final databaseProvider = DatabaseProvider.instance;
-
-  ArticleDao() : super(isFinite: true, isMutable: true);
+class ArticleDao extends BaseDao<Article> {
 
   @override
   Stream<Article> fetch(Id<Article> id) async* {
@@ -51,7 +48,7 @@ class ArticleDao extends Repository<Article> {
 
     await db.transaction((txn) async {
       articleJsons = await txn.query(databaseProvider.tableArticle,
-          where: 'id = ?', whereArgs: [id.id]);
+          where: 'id = ?', whereArgs: [id.toString()]);
       authorJson = await _getAuthorJsonForArticle(id, txn);
     });
 
@@ -59,7 +56,7 @@ class ArticleDao extends Repository<Article> {
       print('Article does not exist in database.');
       yield null;
     }
-    print('Got single article with id ${id.id} from database.');
+    print('Got single article with id ${id.toString()} from database.');
     Map<String, dynamic> articleJson = articleJsons.first;
     articleJson = _addAuthorJson(articleJson, authorJson);
     yield Article.fromJson(articleJson);
@@ -100,7 +97,7 @@ class ArticleDao extends Repository<Article> {
       final result = await txn.insert(
           databaseProvider.tableArticle, article.toJson(),
           conflictAlgorithm: ConflictAlgorithm.replace);
-      print('''Result for updating article with id: ${id.id}'
+      print('''Result for updating article with id: ${id.toString()}'
               in database: $result.''');
     });
   }
@@ -110,8 +107,8 @@ class ArticleDao extends Repository<Article> {
     final Database db = await databaseProvider.database;
     await db.transaction((txn) async {
       final result = await txn.delete(databaseProvider.tableArticle,
-          where: 'id = ?', whereArgs: [id.id]);
-      print('''Result for removing article with id: ${id.id}
+          where: 'id = ?', whereArgs: [id.toString()]);
+      print('''Result for removing article with id: ${id.toString()}
            in database: $result.''');
       await _deleteAuthorForArticle(id, txn);
     });
@@ -130,10 +127,7 @@ class ArticleDao extends Repository<Article> {
     });
   }
 
-  @override
-  Future<void> dispose() async {
-    await databaseProvider.deregisterReference();
-  }
+
 
   Map<String, dynamic> _addAuthorJson(
       Map<String, dynamic> articleJson, Map<String, dynamic> authorJson) {
@@ -151,13 +145,13 @@ class ArticleDao extends Repository<Article> {
                   FROM ${databaseProvider.tableArticle}
                   WHERE id = ?) articleAuthor
             INNER JOIN ${databaseProvider.tableAuthor} aut
-              ON articleAuthor.authorId = aut.id''', ['${id.id}']);
+              ON articleAuthor.authorId = aut.id''', ['${id.toString()}']);
 
     if (authorJsons.isEmpty) {
       print('Author does not exist in database.');
       return null;
     }
-    print("Got author for article with id ${id.id} from database");
+    print("Got author for article with id ${id.toString()} from database");
     return authorJsons.first;
   }
 
@@ -182,7 +176,7 @@ class ArticleDao extends Repository<Article> {
     final result = await txn.insert(
         databaseProvider.tableAuthor, article.author.toJson(),
         conflictAlgorithm: ConflictAlgorithm.replace);
-    print('''Result for updating author for article with id: ${article.id.id}
+    print('''Result for updating author for article with id: ${article.id.toString()}
     in database: $result.''');
   }
 
@@ -192,8 +186,8 @@ class ArticleDao extends Repository<Article> {
                     WHERE id IN (
                       SELECT authorId
                       FROM ${databaseProvider.tableArticle}
-                      WHERE id = ?)''', ['${id.id}']);
-    print('''Result for deleting author for article with id: ${id.id}
+                      WHERE id = ?)''', ['${id.toString()}']);
+    print('''Result for deleting author for article with id: ${id.toString()}
     in database: $result.''');
   }
 

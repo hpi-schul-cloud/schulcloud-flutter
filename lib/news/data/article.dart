@@ -35,7 +35,7 @@ class Article extends Entity<Article> {
         super(id);
 
   factory Article.fromJson(Map<String, dynamic> data) => Article(
-      id: Id(data['id']),
+      id: Id(data['id'] as String),
       title: data['title'] as String,
       authorId: data['authorId'] as String,
       author: data['author'] == null
@@ -50,7 +50,7 @@ class Article extends Entity<Article> {
 
   // Author has to be stored separately in database
   Map<String, dynamic> toJson() => <String, dynamic> {
-        'id': id.id,
+        'id': id.toString(),
         'title': title,
         'authorId': authorId,
         'published': published?.toIso8601String(),
