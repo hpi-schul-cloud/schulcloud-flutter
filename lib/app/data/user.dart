@@ -1,11 +1,6 @@
 import 'package:flutter/foundation.dart';
-import 'package:json_annotation/json_annotation.dart';
-
 import 'package:schulcloud/core/data.dart';
 
-part 'user.g.dart';
-
-@JsonSerializable()
 class User extends Entity<User> {
   final String firstName;
   final String lastName;

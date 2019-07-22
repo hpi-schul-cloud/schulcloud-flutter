@@ -1,11 +1,6 @@
 import 'package:flutter/foundation.dart';
-import 'package:json_annotation/json_annotation.dart';
-
 import 'package:schulcloud/core/data.dart';
 
-part 'author.g.dart';
-
-@JsonSerializable()
 class Author extends Entity<Author> {
   final String name;
   final String photoUrl;
