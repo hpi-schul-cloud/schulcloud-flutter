@@ -5,36 +5,37 @@ import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
 
+import 'repositories/base_dao.dart';
+
 /// Provides access to the app's database.
 class DatabaseProvider {
   static const _databaseName = "Schul-Cloud-DB.db";
   static const _databaseVersion = 1;
   final tableArticle = "article";
   final tableAuthor = "author";
-  static int _countDatabaseReferences = 0;
+  static Set _databaseReferences = Set.identity();
 
   DatabaseProvider._internal();
 
   static final DatabaseProvider _instance = DatabaseProvider._internal();
 
-  static DatabaseProvider get instance {
-    _countDatabaseReferences++;
+  static DatabaseProvider getRegisteredInstance(BaseDao dao) {
+    _databaseReferences.add(dao);
     return _instance;
   }
 
   Database _database;
 
   Future<Database> get database async {
-    assert(_countDatabaseReferences > 0);
+    assert(_databaseReferences.isNotEmpty);
     if (_database != null) return _database;
     _database = await _initDatabase();
     return _database;
   }
 
-  Future<void> deregisterReference() async {
-    _countDatabaseReferences--;
-    assert(_countDatabaseReferences >= 0);
-    if (_countDatabaseReferences == 0) await _closeDatabase();
+  Future<void> deregisterReference(BaseDao dao) async {
+    _databaseReferences.remove(dao);
+    if (_databaseReferences.isEmpty) await _closeDatabase();
   }
 
   Future<Database> _initDatabase() async {
