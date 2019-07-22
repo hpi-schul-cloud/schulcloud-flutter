@@ -1,5 +1,4 @@
 import 'package:flutter/foundation.dart';
-
 import 'package:schulcloud/app/services.dart';
 import 'package:schulcloud/core/data.dart';
 import 'package:sqflite/sqflite.dart';
@@ -39,7 +38,6 @@ class ArticleDownloader extends Repository<Article> {
 }
 
 class ArticleDao extends BaseDao<Article> {
-
   @override
   Stream<Article> fetch(Id<Article> id) async* {
     final Database db = await databaseProvider.database;
@@ -55,6 +53,7 @@ class ArticleDao extends BaseDao<Article> {
     if (articleJsons.isEmpty) {
       print('Article does not exist in database.');
       yield null;
+      return;
     }
     print('Got single article with id ${id.toString()} from database.');
     Map<String, dynamic> articleJson = articleJsons.first;

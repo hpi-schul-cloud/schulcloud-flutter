@@ -13,6 +13,7 @@ class DatabaseProvider {
   static const _databaseVersion = 1;
   final tableArticle = "article";
   final tableAuthor = "author";
+  final tableUser = "user";
   static Set _databaseReferences = Set.identity();
 
   DatabaseProvider._internal();
@@ -50,6 +51,7 @@ class DatabaseProvider {
   Future _onCreate(Database db, int version) async {
     await _createTableArticle(db);
     await _createTableAuthor(db);
+    await _createTableUser(db);
   }
 
   Future<void> _closeDatabase() async {
@@ -82,6 +84,19 @@ class DatabaseProvider {
         id TEXT PRIMARY KEY,
         name TEXT NOT NULL,
         photoUrl TEXT
+      )
+    ''');
+  }
+
+  Future _createTableUser(Database db) async {
+    db.execute('''
+      CREATE TABLE $tableUser(
+        id TEXT PRIMARY KEY,
+        firstName TEXT NOT NULL,
+        lastName TEXT NOT NULL,
+        email TEXT NOT NULL,
+        schoolToken TEXT NOT NULL,
+        displayName TEXT NOT NULL
       )
     ''');
   }
