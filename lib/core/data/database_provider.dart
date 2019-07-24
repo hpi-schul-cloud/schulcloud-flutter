@@ -41,6 +41,7 @@ class DatabaseProvider {
 
   Future<Database> _initDatabase() async {
     // enables SQL logging. TODO: remove this
+    // ignore: deprecated_member_use
     Sqflite.devSetDebugModeOn(true);
     Directory documents = await getApplicationDocumentsDirectory();
     String path = join(documents.path, _databaseName);
