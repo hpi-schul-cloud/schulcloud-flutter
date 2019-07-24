@@ -7,7 +7,7 @@ import 'package:sqflite/sqflite.dart';
 
 import 'repositories/base_dao.dart';
 
-/// Provides access to the app's database.
+// Provides access to the app's database. Can be called from a Dao.
 class DatabaseProvider {
   static const _databaseName = "Schul-Cloud-DB.db";
   static const _databaseVersion = 1;
@@ -57,7 +57,6 @@ class DatabaseProvider {
   Future<void> _closeDatabase() async {
     if (_database != null) {
       await _database.close();
-      print('Database closed.');
       _database = null;
     }
   }
