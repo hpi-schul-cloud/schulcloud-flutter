@@ -42,5 +42,5 @@ class AuthenticationStorageService {
 
   Stream<void> get onCredentialsChangedStream => _inMemory.fetch(_tokenId);
 
-  void logout() => _repo.clear();
+  Future<void> logOut() => _repo.clear();
 }

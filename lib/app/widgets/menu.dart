@@ -14,6 +14,9 @@ class Menu extends StatefulWidget {
 class _MenuState extends State<Menu> {
   void _navigateTo(String target) => Navigator.pop(context, target);
 
+  Future<void> _logOut() =>
+      Provider.of<AuthenticationStorageService>(context).logOut();
+
   @override
   Widget build(BuildContext context) {
     return Material(
@@ -55,8 +58,9 @@ class _MenuState extends State<Menu> {
             ),
             IconButton(icon: Icon(Icons.settings), onPressed: () {}),
             IconButton(
-                icon: Icon(Icons.airline_seat_legroom_reduced),
-                onPressed: () {}),
+              icon: Icon(Icons.airline_seat_legroom_reduced),
+              onPressed: _logOut,
+            ),
             SizedBox(width: 8),
           ],
         );
