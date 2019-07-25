@@ -32,6 +32,7 @@ class ApiService {
       return Article(
         id: Id<Article>(data['_id']),
         title: data['title'],
+        authorId: data['creatorId'],
         author: Author(
           id: Id<Author>(data['creator']['_id']),
           name:
