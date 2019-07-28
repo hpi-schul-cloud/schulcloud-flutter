@@ -6,6 +6,7 @@ import 'package:schulcloud/app/services.dart';
 import 'dashboard/dashboard.dart';
 import 'login/login.dart';
 import 'news/news.dart';
+import 'courses/courses.dart';
 import 'routes.dart';
 
 void main() {
@@ -67,6 +68,7 @@ class SchulCloudApp extends StatelessWidget {
         Routes.dashboard: (_) => DashboardScreen(),
         Routes.login: (_) => LoginScreen(),
         Routes.news: (_) => NewsScreen(),
+        Routes.courses: (_) => CoursesScreen()
       },
     );
   }
