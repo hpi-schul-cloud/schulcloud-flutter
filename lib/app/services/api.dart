@@ -1,8 +1,10 @@
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 
 import 'package:schulcloud/core/data.dart';
+import 'package:schulcloud/courses/data/course.dart';
 import 'package:schulcloud/news/entities.dart';
 
 import '../data/user.dart';
@@ -42,6 +44,25 @@ class ApiService {
         content: data['content'],
       );
     }).toList();
+  }
+
+  Future<List<Course>> listCourses() async {
+    var response = await network.get('courses?');
+
+    var body = json.decode(response.body);
+
+    return Future.wait((body['data'] as List<dynamic>).map((data) async {
+      data = data as Map<String, dynamic>;
+      return Course(
+          id: Id<Course>(data['_id']),
+          name: data['name'],
+          description: data['description'],
+          teachers: [
+            for (String id in data['teacherIds']) await getUser(Id<User>(id))
+          ],
+          color: Color(int.parse('ff' + data['color'].toString().substring(1),
+              radix: 16)));
+    }).toList());
   }
 
   /*Future<Article> getArticle(Id<Article> id) async {
