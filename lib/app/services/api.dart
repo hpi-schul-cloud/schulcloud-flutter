@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import 'package:schulcloud/core/data.dart';
+import 'package:schulcloud/courses/data/content.dart';
 import 'package:schulcloud/courses/data/course.dart';
 import 'package:schulcloud/courses/data/lesson.dart';
 import 'package:schulcloud/news/entities.dart';
@@ -75,14 +76,37 @@ class ApiService {
       return Lesson(
         id: Id<Lesson>(data['_id']),
         name: data['name'],
-        contents: {
-          for (var content in data['contents'])
-            content['title']: content['component'] == 'text'
-                ? content['content']['text']
-                : '<p>${content["component"]}</p>'
-        },
+        contents: (data['contents'] as List<dynamic>)
+            .map((content) => _createContent(content))
+            .where((c) => c != null)
+            .toList(),
       );
     }).toList();
+  }
+
+  Content _createContent(Map<String, dynamic> data) {
+    ContentType type = ContentType.unknown;
+    switch (data['component']) {
+      case 'text':
+        type = ContentType.text;
+        break;
+      case 'Etherpad':
+        type = ContentType.etherpad;
+        break;
+      case 'neXboard':
+        type = ContentType.nexboad;
+        break;
+      default:
+        return null;
+        break;
+    }
+    return Content(
+      id: Id<Content>(data['_id']),
+      title: data['title'] != '' ? data['title'] : 'Ohne Titel',
+      type: type,
+      text: type == ContentType.text ? data['content']['text'] : null,
+      url: type != ContentType.text ? data['content']['url'] : null,
+    );
   }
 
   /*Future<Article> getArticle(Id<Article> id) async {

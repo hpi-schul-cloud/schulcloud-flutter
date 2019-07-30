@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'menu.dart';
 
 class MyAppBar extends StatefulWidget {
-  List<Widget> actions;
+  final List<Widget> actions;
 
   MyAppBar({this.actions = const []});
 

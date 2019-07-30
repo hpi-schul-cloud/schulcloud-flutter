@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:schulcloud/core/data.dart';
+import 'package:schulcloud/courses/data/content.dart';
 
 part 'lesson.g.dart';
 
@@ -10,7 +11,7 @@ class Lesson extends Entity<Lesson> {
   final String name;
 
   /// This maps content titles to the actual lesson contents
-  final Map<String, String> contents;
+  final List<Content> contents;
 
   const Lesson(
       {@required this.id, @required this.name, @required this.contents})

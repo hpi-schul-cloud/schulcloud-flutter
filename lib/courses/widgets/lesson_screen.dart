@@ -2,17 +2,16 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:schulcloud/app/widgets.dart';
+import 'package:schulcloud/courses/data/content.dart';
 import 'package:schulcloud/courses/entities.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 class LessonScreen extends StatelessWidget {
   final Course course;
   final Lesson lesson;
-  String htmlSource;
   WebViewController _controller;
 
-  LessonScreen({this.course, this.lesson})
-      : htmlSource = lesson.contents.values.first;
+  LessonScreen({this.course, this.lesson});
 
   @override
   Widget build(BuildContext context) {
@@ -39,15 +38,13 @@ class LessonScreen extends StatelessWidget {
                       builder: (context) {
                         return Column(
                           mainAxisSize: MainAxisSize.min,
-                          children: lesson.contents.keys
-                              .map((name) => NavigationItem(
+                          children: lesson.contents
+                              .map((content) => NavigationItem(
                                     iconBuilder: (color) => Icon(Icons.textsms),
-                                    text: name,
+                                    text: content.title,
                                     onPressed: () {
                                       if (_controller == null) return null;
-                                      htmlSource = lesson.contents[name];
-                                      _controller.loadUrl(
-                                          _createBase64Source(htmlSource));
+                                      _controller.loadUrl(_textOrUrl(content));
                                       Navigator.pop(context);
                                     },
                                     isActive: false,
@@ -62,11 +59,15 @@ class LessonScreen extends StatelessWidget {
           )
         ],
       ),
-      body: WebView(
-        initialUrl: _createBase64Source(htmlSource),
-        onWebViewCreated: (controller) {
-          _controller = controller;
-        },
+      body: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: WebView(
+          initialUrl: _textOrUrl(lesson.contents[0]),
+          onWebViewCreated: (controller) {
+            _controller = controller;
+          },
+          javascriptMode: JavascriptMode.unrestricted,
+        ),
       ),
     );
   }
@@ -74,5 +75,15 @@ class LessonScreen extends StatelessWidget {
   String _createBase64Source(String html) {
     var encoded = base64Encode(const Utf8Encoder().convert(html));
     return 'data:text/html;base64,$encoded';
+  }
+
+  String _textOrUrl(Content content) {
+    if (content.isText) {
+      return _createBase64Source(content.text);
+    } else if (!content.isTypeKnown) {
+      return _createBase64Source('<p>Dieser Datentyp ist unbekannt</p>');
+    } else {
+      return content.url;
+    }
   }
 }
