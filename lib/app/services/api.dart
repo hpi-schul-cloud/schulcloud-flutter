@@ -72,9 +72,16 @@ class ApiService {
 
     return (body['data'] as List<dynamic>).map((data) {
       data = data as Map<String, dynamic>;
-      return Lesson(id: Id<Lesson>(data['_id']), name: data['name'], contents: {
-        for (var content in data['contents']) content['title']: content['text']
-      });
+      return Lesson(
+        id: Id<Lesson>(data['_id']),
+        name: data['name'],
+        contents: {
+          for (var content in data['contents'])
+            content['title']: content['component'] == 'text'
+                ? content['content']['text']
+                : '<p>${content["component"]}</p>'
+        },
+      );
     }).toList();
   }
 
