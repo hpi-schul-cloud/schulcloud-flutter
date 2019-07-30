@@ -7,6 +7,10 @@ import '../data/user.dart';
 import '../services.dart';
 
 class Menu extends StatefulWidget {
+  final String activeNavigationItem;
+
+  const Menu({this.activeNavigationItem});
+
   @override
   _MenuState createState() => _MenuState();
 }
@@ -70,25 +74,25 @@ class _MenuState extends State<Menu> {
         iconBuilder: (color) => Icon(Icons.dashboard, color: color),
         text: 'Dashboard',
         onPressed: () => _navigateTo(Routes.dashboard),
-        isActive: true,
+        isActive: Routes.dashboard == widget.activeNavigationItem,
       ),
       NavigationItem(
         iconBuilder: (color) => Icon(Icons.new_releases, color: color),
         text: 'News',
         onPressed: () => _navigateTo(Routes.news),
-        isActive: false,
+        isActive: Routes.news == widget.activeNavigationItem,
       ),
       NavigationItem(
         iconBuilder: (color) => Icon(Icons.school, color: color),
         text: 'Courses',
         onPressed: () => _navigateTo(Routes.courses),
-        isActive: false,
+        isActive: Routes.courses == widget.activeNavigationItem,
       ),
       NavigationItem(
         iconBuilder: (color) => Icon(Icons.list, color: color),
         text: 'Login',
         onPressed: () => _navigateTo(Routes.login),
-        isActive: false,
+        isActive: Routes.login == widget.activeNavigationItem,
       ),
     ];
   }

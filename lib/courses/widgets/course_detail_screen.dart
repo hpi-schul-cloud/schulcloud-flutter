@@ -5,6 +5,7 @@ import 'package:schulcloud/app/widgets/app_bar.dart';
 import 'package:schulcloud/courses/bloc.dart';
 import 'package:schulcloud/courses/data/lesson.dart';
 import 'package:schulcloud/courses/widgets/lesson_screen.dart';
+import 'package:schulcloud/routes.dart';
 
 class CourseDetailScreen extends StatelessWidget {
   final Course course;
@@ -24,7 +25,9 @@ class CourseDetailScreen extends StatelessWidget {
           ),
           backgroundColor: course.color,
         ),
-        bottomNavigationBar: MyAppBar(),
+        bottomNavigationBar: MyAppBar(
+          parent: Routes.courses,
+        ),
         body: LessonList(
           course: course,
         ),

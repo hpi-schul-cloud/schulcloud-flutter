@@ -4,6 +4,7 @@ import 'package:schulcloud/app/services.dart';
 import 'package:schulcloud/app/widgets.dart';
 import 'package:schulcloud/courses/bloc.dart';
 import 'package:schulcloud/courses/data/course.dart';
+import 'package:schulcloud/routes.dart';
 
 import 'course_card.dart';
 
@@ -14,7 +15,9 @@ class CoursesScreen extends StatelessWidget {
       builder: (_, api, __) => Bloc(api: api),
       child: Scaffold(
         body: CourseGrid(),
-        bottomNavigationBar: MyAppBar(),
+        bottomNavigationBar: MyAppBar(
+          parent: Routes.courses,
+        ),
       ),
     );
   }

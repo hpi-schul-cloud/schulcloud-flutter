@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:schulcloud/app/widgets.dart';
 import 'package:schulcloud/courses/data/content.dart';
 import 'package:schulcloud/courses/entities.dart';
+import 'package:schulcloud/routes.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 class LessonScreen extends StatelessWidget {
@@ -27,6 +28,7 @@ class LessonScreen extends StatelessWidget {
         backgroundColor: course.color,
       ),
       bottomNavigationBar: MyAppBar(
+        parent: Routes.courses,
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.web, color: Colors.white),

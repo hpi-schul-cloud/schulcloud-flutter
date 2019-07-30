@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 
 import 'package:schulcloud/app/services.dart';
 import 'package:schulcloud/app/widgets.dart';
+import 'package:schulcloud/routes.dart';
 
 import '../bloc.dart';
 import 'article_preview.dart';
@@ -15,7 +16,9 @@ class NewsScreen extends StatelessWidget {
       builder: (_, api, __) => Bloc(api: api),
       child: Scaffold(
         body: ArticleList(),
-        bottomNavigationBar: MyAppBar(),
+        bottomNavigationBar: MyAppBar(
+          parent: Routes.news,
+        ),
       ),
     );
   }

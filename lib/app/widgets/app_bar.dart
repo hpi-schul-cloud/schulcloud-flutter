@@ -4,8 +4,9 @@ import 'menu.dart';
 
 class MyAppBar extends StatefulWidget {
   final List<Widget> actions;
+  final String parent;
 
-  MyAppBar({this.actions = const []});
+  MyAppBar({this.actions = const [], this.parent});
 
   @override
   _MyAppBarState createState() => _MyAppBarState();
@@ -13,9 +14,12 @@ class MyAppBar extends StatefulWidget {
 
 class _MyAppBarState extends State<MyAppBar> {
   Future<void> _showMenu() async {
+    print(widget.parent);
     String targetScreen = await showModalBottomSheet(
       context: context,
-      builder: (context) => Menu(),
+      builder: (context) => Menu(
+        activeNavigationItem: widget.parent,
+      ),
     );
 
     if (targetScreen != null)
