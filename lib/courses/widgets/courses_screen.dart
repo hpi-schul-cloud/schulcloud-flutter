@@ -27,7 +27,9 @@ class CourseGrid extends StatelessWidget {
       stream: Provider.of<Bloc>(context).getCourses(),
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
-          return Container(color: Colors.red);
+          return Center(
+            child: CircularProgressIndicator(),
+          );
         }
         return GridView.count(
           childAspectRatio: 1.5,

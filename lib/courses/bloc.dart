@@ -4,6 +4,7 @@ import 'package:schulcloud/app/services.dart';
 import 'package:schulcloud/core/data.dart';
 import 'package:schulcloud/core/data/utils.dart';
 import 'package:schulcloud/courses/data/course.dart';
+import 'package:schulcloud/courses/data/lesson.dart';
 import 'package:schulcloud/courses/data/repository.dart';
 
 import 'entities.dart';
@@ -31,6 +32,17 @@ class Bloc {
       print(data);
     });
     return s;
+  }
+
+  Stream<List<Lesson>> getLessons(Id<Course> courseId) {
+    var _lessons = CachedRepository<Lesson>(
+      source: LessonDownloader(
+        api: api,
+        courseId: courseId,
+      ),
+      cache: InMemoryStorage<Lesson>(),
+    );
+    return streamToBehaviorSubject(_lessons.fetchAllItems());
   }
 
   void refresh() => _courses.clear();
