@@ -59,12 +59,15 @@ class LessonList extends StatelessWidget {
             ),
             child: Text(
               course.description,
-              style: TextStyle(fontSize: 16),
+              style: TextStyle(fontSize: 20),
             ),
           ),
           for (var lesson in snapshot.data)
             ListTile(
-              title: Text(lesson.name),
+              title: Text(
+                lesson.name,
+                style: TextStyle(fontSize: 20),
+              ),
               onTap: () => Navigator.push(
                   context,
                   MaterialPageRoute(
