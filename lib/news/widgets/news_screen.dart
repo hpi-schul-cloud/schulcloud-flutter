@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 
 import 'package:schulcloud/app/services.dart';
 import 'package:schulcloud/app/widgets.dart';
-import 'package:schulcloud/routes.dart';
 
 import '../bloc.dart';
 import 'article_preview.dart';
