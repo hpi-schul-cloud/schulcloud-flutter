@@ -27,7 +27,7 @@ class Course extends Entity<Course> {
         assert(color != null),
         super(id);
 
-  factory Course.fromJSON(Map<String, dynamic> data) => _$CourseFromJson(data);
+  factory Course.fromJson(Map<String, dynamic> data) => _$CourseFromJson(data);
   Map<String, dynamic> toJson() => _$CourseToJson(this);
 }
 

@@ -7,7 +7,7 @@ import 'menu.dart';
 class MyAppBar extends StatefulWidget {
   final List<Widget> actions;
 
-  MyAppBar({this.actions = const []});
+  MyAppBar({this.actions = const []}) : assert(actions != null);
 
   @override
   _MyAppBarState createState() => _MyAppBarState();

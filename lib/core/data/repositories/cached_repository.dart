@@ -89,8 +89,7 @@ class CachedRepository<Item> extends RepositoryWithSource<Item, Item> {
   }
 
   Future<void> clearCache() async {
-    await Future.wait(
-        (await cache.fetchAllIds().first).map((id) => cache.update(id, null)));
+    await cache.clear();
   }
 
   /// Loads all the items from the source into the cache. May only be called if

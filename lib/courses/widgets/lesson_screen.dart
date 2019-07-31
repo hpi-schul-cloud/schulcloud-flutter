@@ -1,18 +1,24 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:webview_flutter/webview_flutter.dart';
+
 import 'package:schulcloud/app/widgets.dart';
 import 'package:schulcloud/courses/data/content.dart';
 import 'package:schulcloud/courses/entities.dart';
-import 'package:schulcloud/routes.dart';
-import 'package:webview_flutter/webview_flutter.dart';
 
-class LessonScreen extends StatelessWidget {
+class LessonScreen extends StatefulWidget {
   final Course course;
   final Lesson lesson;
-  WebViewController _controller;
 
   LessonScreen({this.course, this.lesson});
+
+  @override
+  _LessonScreenState createState() => _LessonScreenState();
+}
+
+class _LessonScreenState extends State<LessonScreen> {
+  WebViewController _controller;
 
   @override
   Widget build(BuildContext context) {
@@ -21,52 +27,25 @@ class LessonScreen extends StatelessWidget {
         iconTheme: IconThemeData(color: Colors.black),
         title: Column(
           children: <Widget>[
-            Text(lesson.name, style: TextStyle(color: Colors.black)),
-            Text(course.name, style: TextStyle(color: Colors.black)),
+            Text(widget.lesson.name, style: TextStyle(color: Colors.black)),
+            Text(widget.course.name, style: TextStyle(color: Colors.black)),
           ],
         ),
-        backgroundColor: course.color,
+        backgroundColor: widget.course.color,
       ),
       bottomNavigationBar: MyAppBar(
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.web, color: Colors.white),
-            onPressed: () {
-              showModalBottomSheet(
-                  context: context,
-                  builder: (context) {
-                    return BottomSheet(
-                      builder: (context) {
-                        return Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: lesson.contents
-                              .map((content) => NavigationItem(
-                                    iconBuilder: (color) => Icon(Icons.textsms),
-                                    text: content.title,
-                                    onPressed: () {
-                                      if (_controller == null) return null;
-                                      _controller.loadUrl(_textOrUrl(content));
-                                      Navigator.pop(context);
-                                    },
-                                    isActive: false,
-                                  ))
-                              .toList(),
-                        );
-                      },
-                      onClosing: () {},
-                    );
-                  });
-            },
+            onPressed: () => _showLessonContentMenu(context: context),
           )
         ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
         child: WebView(
-          initialUrl: _textOrUrl(lesson.contents[0]),
-          onWebViewCreated: (controller) {
-            _controller = controller;
-          },
+          initialUrl: _textOrUrl(widget.lesson.contents[0]),
+          onWebViewCreated: (controller) => _controller = controller,
           javascriptMode: JavascriptMode.unrestricted,
         ),
       ),
@@ -86,5 +65,32 @@ class LessonScreen extends StatelessWidget {
     } else {
       return content.url;
     }
+  }
+
+  void _showLessonContentMenu({BuildContext context}) {
+    showModalBottomSheet(
+        context: context,
+        builder: (context) {
+          return BottomSheet(
+            builder: (context) {
+              return Column(
+                mainAxisSize: MainAxisSize.min,
+                children: widget.lesson.contents
+                    .map((content) => NavigationItem(
+                          iconBuilder: (color) => Icon(Icons.textsms),
+                          text: content.title,
+                          onPressed: () {
+                            if (_controller == null) return null;
+                            _controller.loadUrl(_textOrUrl(content));
+                            Navigator.pop(context);
+                          },
+                          isActive: false,
+                        ))
+                    .toList(),
+              );
+            },
+            onClosing: () {},
+          );
+        });
   }
 }

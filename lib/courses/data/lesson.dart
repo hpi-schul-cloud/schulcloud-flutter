@@ -9,8 +9,6 @@ part 'lesson.g.dart';
 class Lesson extends Entity<Lesson> {
   final Id<Lesson> id;
   final String name;
-
-  /// This maps content titles to the actual lesson contents
   final List<Content> contents;
 
   const Lesson(

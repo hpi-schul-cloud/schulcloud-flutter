@@ -16,7 +16,6 @@ class CourseDownloader extends Repository<Course> {
 
   Future<void> _loadCourses() async {
     _courses = await api.listCourses();
-    print(_courses);
   }
 
   @override
@@ -51,7 +50,6 @@ class LessonDownloader extends Repository<Lesson> {
 
   Future<void> _loadLessons() async {
     _lessons = await api.listLessons(courseId);
-    print(_lessons);
   }
 
   @override

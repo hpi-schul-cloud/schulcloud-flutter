@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
 import 'package:schulcloud/app/services.dart';
 import 'package:schulcloud/app/widgets/app_bar.dart';
 import 'package:schulcloud/courses/bloc.dart';
@@ -43,19 +44,14 @@ class LessonList extends StatelessWidget {
     return StreamBuilder<List<Lesson>>(
       stream: Provider.of<Bloc>(context).getLessons(course.id),
       builder: (context, snapshot) {
-        if (!snapshot.hasData) {
-          return Center(
-            child: CircularProgressIndicator(),
-          );
-        }
+        if (!snapshot.hasData)
+          return Center(child: CircularProgressIndicator());
 
         var tiles = [
           Padding(
-            padding: const EdgeInsets.only(
-              top: 18,
-              bottom: 18,
-              left: 12,
-              right: 12,
+            padding: const EdgeInsets.symmetric(
+              vertical: 18,
+              horizontal: 12,
             ),
             child: Text(
               course.description,
@@ -68,13 +64,11 @@ class LessonList extends StatelessWidget {
                 lesson.name,
                 style: TextStyle(fontSize: 20),
               ),
-              onTap: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => LessonScreen(
-                            course: course,
-                            lesson: lesson,
-                          ))),
+              onTap: () => _pushLessonScreen(
+                context: context,
+                lesson: lesson,
+                course: course,
+              ),
             )
         ];
 
@@ -85,5 +79,13 @@ class LessonList extends StatelessWidget {
         );
       },
     );
+  }
+
+  void _pushLessonScreen({BuildContext context, Lesson lesson, Course course}) {
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) =>
+                LessonScreen(course: course, lesson: lesson)));
   }
 }

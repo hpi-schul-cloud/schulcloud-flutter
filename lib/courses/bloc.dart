@@ -21,18 +21,11 @@ class Bloc {
           cache: InMemoryStorage<Course>(),
         );
 
-  Stream<List<Course>> getCourses() {
-    return streamToBehaviorSubject(_courses.fetchAllItems());
-  }
+  Stream<List<Course>> getCourses() =>
+      streamToBehaviorSubject(_courses.fetchAllItems());
 
-  BehaviorSubject<Course> getCourseAtIndex(int index) {
-    final BehaviorSubject<Course> s =
-        streamToBehaviorSubject(_courses.fetch(Id('course_$index')));
-    s.listen((data) {
-      print(data);
-    });
-    return s;
-  }
+  BehaviorSubject<Course> getCourseAtIndex(int index) =>
+      streamToBehaviorSubject(_courses.fetch(Id('course_$index')));
 
   Stream<List<Lesson>> getLessons(Id<Course> courseId) {
     var _lessons = CachedRepository<Lesson>(

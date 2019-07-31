@@ -1,12 +1,10 @@
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 
 import 'package:schulcloud/core/data.dart';
-import 'package:schulcloud/courses/data/content.dart';
-import 'package:schulcloud/courses/data/course.dart';
-import 'package:schulcloud/courses/data/lesson.dart';
+import 'package:schulcloud/core/utils.dart';
+import 'package:schulcloud/courses/entities.dart';
 import 'package:schulcloud/news/entities.dart';
 
 import '../data/user.dart';
@@ -28,7 +26,7 @@ class ApiService {
   }
 
   Future<List<Article>> listNews() async {
-    var response = await network.get('news?');
+    var response = await network.get('news');
 
     var body = json.decode(response.body);
     return (body['data'] as List<dynamic>).map((data) {
@@ -36,6 +34,7 @@ class ApiService {
       return Article(
         id: Id<Article>(data['_id']),
         title: data['title'],
+        authorId: data['creatorId'],
         author: Author(
           id: Id<Author>(data['creator']['_id']),
           name:
@@ -49,22 +48,21 @@ class ApiService {
   }
 
   Future<List<Course>> listCourses() async {
-    var response = await network.get('courses?');
+    var response = await network.get('courses');
 
     var body = json.decode(response.body);
 
     return Future.wait((body['data'] as List<dynamic>).map((data) async {
       data = data as Map<String, dynamic>;
       return Course(
-          id: Id<Course>(data['_id']),
-          name: data['name'],
-          description: data['description'],
-          teachers: [
-            for (String id in data['teacherIds']) await getUser(Id<User>(id))
-          ],
-          color: Color(int.parse('ff' + data['color'].toString().substring(1),
-              radix: 16)));
-    }).toList());
+        id: Id<Course>(data['_id']),
+        name: data['name'],
+        description: data['description'],
+        teachers: await Future.wait(
+            [for (String id in data['teacherIds']) getUser(Id<User>(id))]),
+        color: hexStringToColor(data['color']),
+      );
+    }));
   }
 
   Future<List<Lesson>> listLessons(Id<Course> courseId) async {
@@ -72,7 +70,6 @@ class ApiService {
     var body = json.decode(response.body);
 
     return (body['data'] as List<dynamic>).map((data) {
-      data = data as Map<String, dynamic>;
       return Lesson(
         id: Id<Lesson>(data['_id']),
         name: data['name'],

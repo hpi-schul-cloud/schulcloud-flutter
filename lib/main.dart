@@ -4,10 +4,10 @@ import 'package:provider/provider.dart';
 import 'package:schulcloud/app/services.dart';
 import 'package:schulcloud/app/services/navigation.dart';
 
+import 'courses/courses.dart';
 import 'dashboard/dashboard.dart';
 import 'login/login.dart';
 import 'news/news.dart';
-import 'courses/courses.dart';
 import 'routes.dart';
 
 void main() {
@@ -72,11 +72,19 @@ class SchulCloudApp extends StatelessWidget {
             navigationService: Provider.of<NavigationService>(context))
       ],
       routes: {
+<<<<<<< HEAD
         Routes.splashScreen.name: (_) => SplashScreen(),
         Routes.dashboard.name: (_) => DashboardScreen(),
         Routes.login.name: (_) => LoginScreen(),
         Routes.news.name: (_) => NewsScreen(),
         Routes.courses.name: (_) => CoursesScreen()
+=======
+        Routes.splashScreen: (_) => SplashScreen(),
+        Routes.dashboard: (_) => DashboardScreen(),
+        Routes.login: (_) => LoginScreen(),
+        Routes.news: (_) => NewsScreen(),
+        Routes.courses: (_) => CoursesScreen(),
+>>>>>>> origin/master
       },
     );
   }
