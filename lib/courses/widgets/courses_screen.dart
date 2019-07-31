@@ -5,8 +5,6 @@ import 'package:schulcloud/app/services.dart';
 import 'package:schulcloud/app/widgets.dart';
 import 'package:schulcloud/courses/bloc.dart';
 import 'package:schulcloud/courses/data/course.dart';
-import 'package:schulcloud/main.dart';
-import 'package:schulcloud/routes.dart';
 
 import 'course_card.dart';
 
