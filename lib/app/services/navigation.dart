@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import 'package:schulcloud/routes.dart';
 
 class NavigationService {

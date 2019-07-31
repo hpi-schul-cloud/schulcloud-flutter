@@ -17,13 +17,14 @@ class _MyAppBarState extends State<MyAppBar> {
   Future<void> _showMenu() async {
     String targetScreen = await showModalBottomSheet(
       context: context,
-      builder: (context) =>
-          Menu(navigation: Provider.of<NavigationService>(context)),
+      builder: (context) => Menu(
+          activeScreen: Provider.of<NavigationService>(context).activeScreen),
     );
 
     if (targetScreen != null) {
-      Navigator.popUntil(context, (_) => true);
-      Navigator.pushReplacementNamed(context, targetScreen);
+      Navigator.of(context)
+        ..popUntil((_) => true)
+        ..pushReplacementNamed(targetScreen);
     }
   }
 

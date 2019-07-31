@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:schulcloud/app/services/navigation.dart';
 
 import 'package:schulcloud/routes.dart';
 
@@ -8,9 +7,9 @@ import '../data/user.dart';
 import '../services.dart';
 
 class Menu extends StatefulWidget {
-  final NavigationService navigation;
+  final Routes activeScreen;
 
-  const Menu({this.navigation});
+  const Menu({this.activeScreen});
   @override
   _MenuState createState() => _MenuState();
 }
@@ -74,25 +73,25 @@ class _MenuState extends State<Menu> {
         iconBuilder: (color) => Icon(Icons.dashboard, color: color),
         text: 'Dashboard',
         onPressed: () => _navigateTo(Routes.dashboard),
-        isActive: widget.navigation.activeScreen == Routes.dashboard,
+        isActive: widget.activeScreen == Routes.dashboard,
       ),
       NavigationItem(
         iconBuilder: (color) => Icon(Icons.new_releases, color: color),
         text: 'News',
         onPressed: () => _navigateTo(Routes.news),
-        isActive: widget.navigation.activeScreen == Routes.news,
+        isActive: widget.activeScreen == Routes.news,
       ),
       NavigationItem(
         iconBuilder: (color) => Icon(Icons.school, color: color),
         text: 'Courses',
         onPressed: () => _navigateTo(Routes.courses),
-        isActive: widget.navigation.activeScreen == Routes.courses,
+        isActive: widget.activeScreen == Routes.courses,
       ),
       NavigationItem(
         iconBuilder: (color) => Icon(Icons.list, color: color),
         text: 'Login',
         onPressed: () => _navigateTo(Routes.login),
-        isActive: widget.navigation.activeScreen == Routes.login,
+        isActive: widget.activeScreen == Routes.login,
       ),
     ];
   }
