@@ -13,9 +13,11 @@ dependencies:
   flutter_villains: ^1.2.0
   http: ^0.12.0
   json_annotation: ^2.0.0
+  path_provider: ^1.1.0
   provider: ^3.0.0
   rxdart: ^0.22.0
   shared_preferences: ^0.5.3
+  sqflite: ^1.1.6
   transparent_image: ^1.0.0
   webview_flutter: ^0.3.10+4
 
@@ -30,12 +32,12 @@ flutter:
   uses-material-design: true
 
   fonts:
-    - family: PT Sans
-      fonts:
-        - asset: assets/PT_Sans-Web-Regular.ttf
-    - family: PT Sans Narrow
-      fonts:
-        - asset: assets/PT_Sans-Narrow-Web-Regular.ttf
-          weight: 300
-        - asset: assets/PT_Sans-Narrow-Web-Bold.ttf
-          weight: 700
+  - family: PT Sans
+    fonts:
+    - asset: assets/PT_Sans-Web-Regular.ttf
+  - family: PT Sans Narrow
+    fonts:
+    - asset: assets/PT_Sans-Narrow-Web-Regular.ttf
+      weight: 300
+    - asset: assets/PT_Sans-Narrow-Web-Bold.ttf
+      weight: 700

@@ -1,9 +1,9 @@
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
-
 import 'package:schulcloud/core/data.dart';
 
+import '../data/repository.dart';
 import '../data/user.dart';
 import 'api.dart';
 import 'authentication_storage.dart';
@@ -16,10 +16,9 @@ class UserService {
   final ApiService api;
 
   final _userKey = Id<User>('user');
-  final _storage = InMemoryStorage<User>();
+  final _storage = UserDao();
 
   Stream<User> get userStream => _storage.fetch(_userKey);
-  User get user => _storage.get(_userKey);
 
   UserService({@required this.authStorage, @required this.api}) {
     authStorage.onCredentialsChangedStream.listen((_) => _updateUser());
