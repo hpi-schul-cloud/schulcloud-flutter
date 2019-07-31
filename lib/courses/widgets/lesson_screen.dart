@@ -7,12 +7,18 @@ import 'package:schulcloud/app/widgets.dart';
 import 'package:schulcloud/courses/data/content.dart';
 import 'package:schulcloud/courses/entities.dart';
 
-class LessonScreen extends StatelessWidget {
+class LessonScreen extends StatefulWidget {
   final Course course;
   final Lesson lesson;
-  WebViewController _controller;
 
   LessonScreen({this.course, this.lesson});
+
+  @override
+  _LessonScreenState createState() => _LessonScreenState();
+}
+
+class _LessonScreenState extends State<LessonScreen> {
+  WebViewController _controller;
 
   @override
   Widget build(BuildContext context) {
@@ -21,11 +27,11 @@ class LessonScreen extends StatelessWidget {
         iconTheme: IconThemeData(color: Colors.black),
         title: Column(
           children: <Widget>[
-            Text(lesson.name, style: TextStyle(color: Colors.black)),
-            Text(course.name, style: TextStyle(color: Colors.black)),
+            Text(widget.lesson.name, style: TextStyle(color: Colors.black)),
+            Text(widget.course.name, style: TextStyle(color: Colors.black)),
           ],
         ),
-        backgroundColor: course.color,
+        backgroundColor: widget.course.color,
       ),
       bottomNavigationBar: MyAppBar(
         actions: <Widget>[
@@ -38,7 +44,7 @@ class LessonScreen extends StatelessWidget {
       body: Padding(
         padding: const EdgeInsets.all(8.0),
         child: WebView(
-          initialUrl: _textOrUrl(lesson.contents[0]),
+          initialUrl: _textOrUrl(widget.lesson.contents[0]),
           onWebViewCreated: (controller) => _controller = controller,
           javascriptMode: JavascriptMode.unrestricted,
         ),
@@ -69,7 +75,7 @@ class LessonScreen extends StatelessWidget {
             builder: (context) {
               return Column(
                 mainAxisSize: MainAxisSize.min,
-                children: lesson.contents
+                children: widget.lesson.contents
                     .map((content) => NavigationItem(
                           iconBuilder: (color) => Icon(Icons.textsms),
                           text: content.title,
