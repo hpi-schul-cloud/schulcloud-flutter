@@ -72,19 +72,11 @@ class SchulCloudApp extends StatelessWidget {
             navigationService: Provider.of<NavigationService>(context))
       ],
       routes: {
-<<<<<<< HEAD
         Routes.splashScreen.name: (_) => SplashScreen(),
         Routes.dashboard.name: (_) => DashboardScreen(),
         Routes.login.name: (_) => LoginScreen(),
         Routes.news.name: (_) => NewsScreen(),
         Routes.courses.name: (_) => CoursesScreen()
-=======
-        Routes.splashScreen: (_) => SplashScreen(),
-        Routes.dashboard: (_) => DashboardScreen(),
-        Routes.login: (_) => LoginScreen(),
-        Routes.news: (_) => NewsScreen(),
-        Routes.courses: (_) => CoursesScreen(),
->>>>>>> origin/master
       },
     );
   }
