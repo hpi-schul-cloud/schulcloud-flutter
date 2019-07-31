@@ -81,7 +81,7 @@ class _MenuState extends State<Menu> {
       NavigationItem(
         iconBuilder: (color) => Icon(Icons.school, color: color),
         text: 'Courses',
-        onPressed: () {},
+        onPressed: () => _navigateTo(Routes.courses),
         isActive: false,
       ),
       NavigationItem(

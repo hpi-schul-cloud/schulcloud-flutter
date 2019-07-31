@@ -3,6 +3,10 @@ import 'package:flutter/material.dart';
 import 'menu.dart';
 
 class MyAppBar extends StatefulWidget {
+  final List<Widget> actions;
+
+  MyAppBar({this.actions = const []}) : assert(actions != null);
+
   @override
   _MyAppBarState createState() => _MyAppBarState();
 }
@@ -35,6 +39,8 @@ class _MyAppBarState extends State<MyAppBar> {
                 icon: Icon(Icons.menu, color: Colors.white),
                 onPressed: _showMenu,
               ),
+              Spacer(),
+              ...widget.actions
             ],
           ),
         ),
