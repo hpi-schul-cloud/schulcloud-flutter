@@ -28,7 +28,6 @@ class LessonScreen extends StatelessWidget {
         backgroundColor: course.color,
       ),
       bottomNavigationBar: MyAppBar(
-        parent: Routes.courses,
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.web, color: Colors.white),

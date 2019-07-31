@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:schulcloud/app/services/navigation.dart';
 
 import 'package:schulcloud/routes.dart';
 
@@ -7,16 +8,15 @@ import '../data/user.dart';
 import '../services.dart';
 
 class Menu extends StatefulWidget {
-  final String activeNavigationItem;
+  final NavigationService navigation;
 
-  const Menu({this.activeNavigationItem});
-
+  const Menu({this.navigation});
   @override
   _MenuState createState() => _MenuState();
 }
 
 class _MenuState extends State<Menu> {
-  void _navigateTo(String target) => Navigator.pop(context, target);
+  void _navigateTo(Routes target) => Navigator.pop(context, target.name);
 
   @override
   Widget build(BuildContext context) {
@@ -74,25 +74,25 @@ class _MenuState extends State<Menu> {
         iconBuilder: (color) => Icon(Icons.dashboard, color: color),
         text: 'Dashboard',
         onPressed: () => _navigateTo(Routes.dashboard),
-        isActive: Routes.dashboard == widget.activeNavigationItem,
+        isActive: widget.navigation.activeScreen == Routes.dashboard,
       ),
       NavigationItem(
         iconBuilder: (color) => Icon(Icons.new_releases, color: color),
         text: 'News',
         onPressed: () => _navigateTo(Routes.news),
-        isActive: Routes.news == widget.activeNavigationItem,
+        isActive: widget.navigation.activeScreen == Routes.news,
       ),
       NavigationItem(
         iconBuilder: (color) => Icon(Icons.school, color: color),
         text: 'Courses',
         onPressed: () => _navigateTo(Routes.courses),
-        isActive: Routes.courses == widget.activeNavigationItem,
+        isActive: widget.navigation.activeScreen == Routes.courses,
       ),
       NavigationItem(
         iconBuilder: (color) => Icon(Icons.list, color: color),
         text: 'Login',
         onPressed: () => _navigateTo(Routes.login),
-        isActive: Routes.login == widget.activeNavigationItem,
+        isActive: widget.navigation.activeScreen == Routes.login,
       ),
     ];
   }

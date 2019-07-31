@@ -16,9 +16,7 @@ class NewsScreen extends StatelessWidget {
       builder: (_, api, __) => Bloc(api: api),
       child: Scaffold(
         body: ArticleList(),
-        bottomNavigationBar: MyAppBar(
-          parent: Routes.news,
-        ),
+        bottomNavigationBar: MyAppBar(),
       ),
     );
   }

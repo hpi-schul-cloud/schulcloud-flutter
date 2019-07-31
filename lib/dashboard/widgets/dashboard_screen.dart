@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import 'package:schulcloud/app/widgets.dart';
-import 'package:schulcloud/routes.dart';
 
 class DashboardScreen extends StatefulWidget {
   @override
@@ -13,9 +12,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(child: FlutterLogo()),
-      bottomNavigationBar: MyAppBar(
-        parent: Routes.dashboard,
-      ),
+      bottomNavigationBar: MyAppBar(),
     );
   }
 }
