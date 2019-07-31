@@ -32,8 +32,7 @@ class CourseCard extends StatelessWidget {
                 style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
               subtitle: Text(course.teachers
-                  .map((teacher) =>
-                      '${teacher.firstName.substring(0, 1)}. ${teacher.lastName}')
+                  .map((teacher) => teacher.shortName)
                   .join(', ')),
             )
           ],

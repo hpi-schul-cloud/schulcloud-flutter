@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
 import 'package:schulcloud/app/services.dart';
 import 'package:schulcloud/app/widgets.dart';
 import 'package:schulcloud/courses/bloc.dart';
@@ -26,17 +27,15 @@ class CourseGrid extends StatelessWidget {
     return StreamBuilder<List<Course>>(
       stream: Provider.of<Bloc>(context).getCourses(),
       builder: (context, snapshot) {
-        if (!snapshot.hasData) {
-          return Center(
-            child: CircularProgressIndicator(),
-          );
-        }
+        if (!snapshot.hasData)
+          return Center(child: CircularProgressIndicator());
+
         return GridView.count(
           childAspectRatio: 1.5,
           crossAxisCount: 2,
-          children: snapshot.data.map((course) {
-            return CourseCard(course: course);
-          }).toList(),
+          children: snapshot.data
+              .map((course) => CourseCard(course: course))
+              .toList(),
         );
       },
     );

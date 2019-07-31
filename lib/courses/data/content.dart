@@ -19,13 +19,13 @@ class Content extends Entity<Content> {
   final String url;
   final ContentType type;
 
-  Content(
-      {@required this.id,
-      @required this.title,
-      this.text,
-      this.url,
-      @required this.type})
-      : assert(id != null),
+  Content({
+    @required this.id,
+    @required this.title,
+    this.text,
+    this.url,
+    @required this.type,
+  })  : assert(id != null),
         assert(title != null),
         assert(type != null),
         super(id);
