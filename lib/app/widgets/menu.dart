@@ -7,12 +7,15 @@ import '../data/user.dart';
 import '../services.dart';
 
 class Menu extends StatefulWidget {
+  final Routes activeScreen;
+
+  const Menu({this.activeScreen});
   @override
   _MenuState createState() => _MenuState();
 }
 
 class _MenuState extends State<Menu> {
-  void _navigateTo(String target) => Navigator.pop(context, target);
+  void _navigateTo(Routes target) => Navigator.pop(context, target.name);
 
   @override
   Widget build(BuildContext context) {
@@ -70,25 +73,25 @@ class _MenuState extends State<Menu> {
         iconBuilder: (color) => Icon(Icons.dashboard, color: color),
         text: 'Dashboard',
         onPressed: () => _navigateTo(Routes.dashboard),
-        isActive: true,
+        isActive: widget.activeScreen == Routes.dashboard,
       ),
       NavigationItem(
         iconBuilder: (color) => Icon(Icons.new_releases, color: color),
         text: 'News',
         onPressed: () => _navigateTo(Routes.news),
-        isActive: false,
+        isActive: widget.activeScreen == Routes.news,
       ),
       NavigationItem(
         iconBuilder: (color) => Icon(Icons.school, color: color),
         text: 'Courses',
         onPressed: () => _navigateTo(Routes.courses),
-        isActive: false,
+        isActive: widget.activeScreen == Routes.courses,
       ),
       NavigationItem(
         iconBuilder: (color) => Icon(Icons.list, color: color),
         text: 'Login',
         onPressed: () => _navigateTo(Routes.login),
-        isActive: false,
+        isActive: widget.activeScreen == Routes.login,
       ),
     ];
   }
