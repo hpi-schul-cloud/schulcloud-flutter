@@ -5,7 +5,6 @@ import 'package:flutter/foundation.dart';
 import 'package:schulcloud/core/data.dart';
 import 'package:schulcloud/core/utils.dart';
 import 'package:schulcloud/courses/entities.dart';
-import 'package:schulcloud/files/entities.dart';
 import 'package:schulcloud/news/entities.dart';
 
 import '../data/user.dart';
