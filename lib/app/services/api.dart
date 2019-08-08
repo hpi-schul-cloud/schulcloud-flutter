@@ -9,6 +9,7 @@ import 'package:schulcloud/files/entities.dart';
 import 'package:schulcloud/news/entities.dart';
 
 import '../data/user.dart';
+import '../data/file.dart';
 import 'network.dart';
 
 /// Wraps all the api network calls into nice little type-safe functions.
@@ -48,9 +49,11 @@ class ApiService {
     }).toList();
   }
 
-  Future<List<File>> getFiles({String owner}) async {
-    var ownerQuery = owner != null ? '?owner=$owner' : '';
-    var response = await network.get('files' + ownerQuery);
+  Future<List<File>> getFiles({String owner, String ownerType}) async {
+    Map<String, String> queries = Map();
+    if (owner != null) queries['owner'] = owner;
+    if (ownerType != null) queries['ownerRefModel'] = ownerType;
+    var response = await network.get('files', queries: queries);
 
     var body = json.decode(response.body);
     return (body['data'] as List<dynamic>).where((f) => f != null).map((data) {

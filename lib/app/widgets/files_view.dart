@@ -1,21 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:schulcloud/app/services.dart';
-import 'package:schulcloud/files/bloc.dart';
-
-import '../entities.dart';
+import 'package:schulcloud/app/services/files.dart';
+import 'package:schulcloud/app/data/file.dart';
 
 class FilesView extends StatelessWidget {
   final String owner;
+  final String ownerType;
 
-  FilesView({this.owner});
+  FilesView({this.owner, this.ownerType});
 
   @override
   Widget build(BuildContext context) {
-    return ProxyProvider<ApiService, Bloc>(
-      builder: (_, api, __) => Bloc(api: api),
+    return ProxyProvider<ApiService, FilesService>(
+      builder: (_, api, __) => FilesService(
+        api: api,
+        owner: owner,
+        ownerType: ownerType,
+      ),
       child: StreamBuilder<List<File>>(
-        stream: Provider.of<Bloc>(context).getFiles(),
+        stream: Provider.of<FilesService>(context).getFiles(),
         builder: (context, snapshot) {
           if (!snapshot.hasData)
             return Center(child: CircularProgressIndicator());
