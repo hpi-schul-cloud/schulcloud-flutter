@@ -4,19 +4,28 @@ import 'package:schulcloud/app/services.dart';
 import 'package:schulcloud/app/services/files.dart';
 import 'package:schulcloud/app/data/file.dart';
 
-class FilesView extends StatelessWidget {
+class FilesView extends StatefulWidget {
   final String owner;
   final String ownerType;
+  final String parent;
 
-  FilesView({this.owner, this.ownerType});
+  FilesView({this.owner, this.ownerType, this.parent});
+
+  @override
+  _FilesViewState createState() => _FilesViewState();
+}
+
+class _FilesViewState extends State<FilesView> {
+  String parent;
 
   @override
   Widget build(BuildContext context) {
     return ProxyProvider<ApiService, FilesService>(
       builder: (_, api, __) => FilesService(
         api: api,
-        owner: owner,
-        ownerType: ownerType,
+        owner: widget.owner,
+        ownerType: widget.ownerType,
+        parent: parent,
       ),
       child: StreamBuilder<List<File>>(
         stream: Provider.of<FilesService>(context).getFiles(),
@@ -27,10 +36,21 @@ class FilesView extends StatelessWidget {
             children: snapshot.data
                 .map((file) => ListTile(
                       title: Text(file.name),
-                      subtitle: Text(file.ownerType),
+                      subtitle: Text((parent != null) ? parent : ''),
                       leading: Icon(
                         file.isDirectory ? Icons.folder : Icons.note,
                       ),
+                      onTap: () {
+                        if (file.isDirectory) {
+                          setState(() {
+                            parent = file.id.toString();
+                          });
+                        } else {
+                          Scaffold.of(context).showSnackBar(SnackBar(
+                            content: Text('Opened file ${file.name}'),
+                          ));
+                        }
+                      },
                     ))
                 .toList(),
           );

@@ -11,9 +11,9 @@ class FilesScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ProxyProvider<ApiService, FilesService>(
-      builder: (_, api, __) => FilesService(api: api, ownerType: 'user'),
+      builder: (_, api, __) => FilesService(api: api),
       child: Scaffold(
-        body: FilesView(ownerType: 'user'),
+        body: FilesView(),
         bottomNavigationBar: MyAppBar(),
       ),
     );

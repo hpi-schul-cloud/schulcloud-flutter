@@ -48,10 +48,12 @@ class ApiService {
     }).toList();
   }
 
-  Future<List<File>> getFiles({String owner, String ownerType}) async {
+  Future<List<File>> getFiles(
+      {String owner, String ownerType, String parent}) async {
     Map<String, String> queries = Map();
     if (owner != null) queries['owner'] = owner;
     if (ownerType != null) queries['ownerRefModel'] = ownerType;
+    if (parent != null) queries['parent'] = parent;
     var response = await network.get('files', queries: queries);
 
     var body = json.decode(response.body);
