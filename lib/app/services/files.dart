@@ -1,3 +1,5 @@
+import 'package:flutter_downloader/flutter_downloader.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:rxdart/rxdart.dart';
 
 import 'package:flutter/material.dart';
@@ -6,6 +8,7 @@ import 'package:schulcloud/app/data/file_repository.dart';
 import 'package:schulcloud/app/services.dart';
 import 'package:schulcloud/core/data.dart';
 import 'package:schulcloud/core/data/utils.dart';
+import 'package:schulcloud/courses/entities.dart';
 
 import '../data/file.dart';
 
@@ -34,4 +37,17 @@ class FilesService {
 
   BehaviorSubject<File> getFileAtIndex(int index) =>
       streamToBehaviorSubject(_files.fetch(Id('file_$index')));
+
+  Future<List<Course>> getCourses() async => await api.listCourses();
+
+  void downloadFile(Id<File> id, {fileName: String}) async {
+    var signedUrl = await api.getSignedUrl(id: id);
+    FlutterDownloader.enqueue(
+      url: signedUrl,
+      savedDir: '/sdcard/Download',
+      fileName: (fileName != null) ? fileName : id.toString(),
+      showNotification: true,
+      openFileFromNotification: true,
+    );
+  }
 }

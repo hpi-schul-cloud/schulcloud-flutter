@@ -12,6 +12,7 @@ class File extends Entity<File> {
   final String ownerType;
   final String ownerId;
   final bool isDirectory;
+  final String parent;
 
   File({
     @required this.id,
@@ -19,6 +20,7 @@ class File extends Entity<File> {
     @required this.ownerType,
     @required this.ownerId,
     @required this.isDirectory,
+    @required this.parent,
   })  : assert(id != null),
         assert(name != null),
         assert(ownerType != null),

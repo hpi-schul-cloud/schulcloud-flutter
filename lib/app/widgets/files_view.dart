@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:schulcloud/app/services.dart';
 import 'package:schulcloud/app/services/files.dart';
 import 'package:schulcloud/app/data/file.dart';
+import 'package:schulcloud/app/widgets/app_bar.dart';
 
 class FilesView extends StatefulWidget {
   final String owner;
@@ -21,6 +22,7 @@ class _FilesViewState extends State<FilesView> {
   @override
   Widget build(BuildContext context) {
     return ProxyProvider<ApiService, FilesService>(
+      key: UniqueKey(),
       builder: (_, api, __) => FilesService(
         api: api,
         owner: widget.owner,
@@ -36,7 +38,7 @@ class _FilesViewState extends State<FilesView> {
             children: snapshot.data
                 .map((file) => ListTile(
                       title: Text(file.name),
-                      subtitle: Text((parent != null) ? parent : ''),
+                      subtitle: Text((file.parent != null) ? file.parent : ''),
                       leading: Icon(
                         file.isDirectory ? Icons.folder : Icons.note,
                       ),
@@ -49,6 +51,8 @@ class _FilesViewState extends State<FilesView> {
                           Scaffold.of(context).showSnackBar(SnackBar(
                             content: Text('Opened file ${file.name}'),
                           ));
+                          Provider.of<FilesService>(context)
+                              .downloadFile(file.id, fileName: file.name);
                         }
                       },
                     ))

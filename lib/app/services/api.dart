@@ -64,8 +64,17 @@ class ApiService {
         ownerType: data['refOwnerModel'],
         ownerId: data['owner'],
         isDirectory: data['isDirectory'],
+        parent: data['parent'],
       );
     }).toList();
+  }
+
+  Future<String> getSignedUrl({Id<File> id}) async {
+    var response = await network.get('fileStorage/signedUrl',
+        queries: {'download': null, 'file': id.toString()});
+
+    var body = json.decode(response.body);
+    return body['url'];
   }
 
   Future<List<Course>> listCourses() async {
