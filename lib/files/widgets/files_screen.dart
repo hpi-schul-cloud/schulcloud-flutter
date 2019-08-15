@@ -1,6 +1,7 @@
 import 'package:provider/provider.dart';
 
 import 'package:flutter/material.dart';
+import 'package:schulcloud/app/data/user.dart';
 
 import 'package:schulcloud/app/services.dart';
 import 'package:schulcloud/app/services/files.dart';
@@ -19,35 +20,47 @@ class FilesScreen extends StatelessWidget {
         ),
         body: ListView(
           children: <Widget>[
-            Card(
-              child: ListTile(
-                title: Text('My files'),
-                leading: Icon(Icons.person),
-                subtitle: Text(
-                    'Your personal files. By default, only you can access them, but they may be shared with others.'),
-                onTap: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) {
-                    return ProxyProvider<ApiService, FilesService>(
-                      builder: (_, api, __) =>
-                          FilesService(api: api, ownerType: 'user'),
-                      child: Scaffold(
-                        appBar: AppBar(
-                          title: Text('My files'),
-                        ),
-                        body: FilesView(
-                          ownerType: 'user',
-                        ),
-                        bottomNavigationBar: MyAppBar(),
-                      ),
-                    );
-                  }));
-                },
-              ),
-            ),
+            UserFilesCard(),
             CourseFilesList(),
           ],
         ),
         bottomNavigationBar: MyAppBar(),
+      ),
+    );
+  }
+}
+
+class UserFilesCard extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return ProxyProvider2<ApiService, AuthenticationStorageService,
+        UserService>(
+      builder: (_, api, authStorage, __) =>
+          UserService(api: api, authStorage: authStorage),
+      child: Card(
+        child: ListTile(
+          title: Text('My files'),
+          subtitle: Text(
+              'Your personal files. By default, only you can access them, but they may be shared with others.'),
+          leading: Icon(Icons.person),
+          onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => ProxyProvider<ApiService, FilesService>(
+                  builder: (_, api, __) => FilesService(
+                      api: api,
+                      owner: Provider.of<UserService>(context).userId),
+                  child: Scaffold(
+                    appBar: AppBar(
+                      title: Text('My files'),
+                    ),
+                    body: FilesView(
+                        owner: Provider.of<UserService>(context).userId),
+                    bottomNavigationBar: MyAppBar(),
+                  ),
+                ),
+              )),
+        ),
       ),
     );
   }

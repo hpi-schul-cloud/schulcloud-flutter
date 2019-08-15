@@ -48,23 +48,23 @@ class ApiService {
     }).toList();
   }
 
-  Future<List<File>> getFiles(
+  Future<List<File>> listFiles(
       {String owner, String ownerType, String parent}) async {
     Map<String, String> queries = Map();
     if (owner != null) queries['owner'] = owner;
-    if (ownerType != null) queries['ownerRefModel'] = ownerType;
     if (parent != null) queries['parent'] = parent;
-    var response = await network.get('files', queries: queries);
+    var response = await network.get('fileStorage', queries: queries);
 
     var body = json.decode(response.body);
-    return (body['data'] as List<dynamic>).where((f) => f != null).map((data) {
+    return (body as List<dynamic>).where((f) => f['name'] != null).map((data) {
       return File(
         id: Id<File>(data['_id']),
-        name: data['name'],
+        name: data['name'] ?? data['_id'],
         ownerType: data['refOwnerModel'],
         ownerId: data['owner'],
         isDirectory: data['isDirectory'],
         parent: data['parent'],
+        size: data['size'],
       );
     }).toList();
   }
@@ -87,7 +87,7 @@ class ApiService {
       return Course(
         id: Id<Course>(data['_id']),
         name: data['name'],
-        description: data['description'],
+        description: data['description'] ?? 'No description provided',
         teachers: await Future.wait(
             [for (String id in data['teacherIds']) getUser(Id<User>(id))]),
         color: hexStringToColor(data['color']),

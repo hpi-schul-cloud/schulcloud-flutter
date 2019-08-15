@@ -10,17 +10,16 @@ class FileDownloader extends Repository<File> {
   List<File> _files;
   Future<void> _downloader;
   String owner;
-  String ownerType;
+
   String parent;
 
-  FileDownloader({@required this.api, this.owner, this.ownerType, this.parent})
+  FileDownloader({@required this.api, this.owner, this.parent})
       : super(isFinite: true, isMutable: false) {
     _downloader = _loadFiles();
   }
 
   Future<void> _loadFiles() async {
-    _files =
-        await api.getFiles(owner: owner, ownerType: ownerType, parent: parent);
+    _files = await api.listFiles(owner: owner, parent: parent);
   }
 
   @override

@@ -20,6 +20,8 @@ class UserService {
 
   Stream<User> get userStream => _storage.fetch(_userKey);
 
+  String get userId => _decodeTokenToUser(authStorage.token);
+
   UserService({@required this.authStorage, @required this.api}) {
     authStorage.onCredentialsChangedStream.listen((_) => _updateUser());
   }

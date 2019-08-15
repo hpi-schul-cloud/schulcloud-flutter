@@ -1,5 +1,6 @@
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:rxdart/rxdart.dart';
 
 import 'package:flutter/material.dart';
@@ -17,16 +18,14 @@ import '../data/file.dart';
 class FilesService {
   final ApiService api;
   final String owner;
-  final String ownerType;
   final String parent;
   Repository<File> _files;
 
-  FilesService({@required this.api, this.owner, this.ownerType, this.parent})
+  FilesService({@required this.api, this.owner, this.parent})
       : _files = CachedRepository(
           source: FileDownloader(
             api: api,
             owner: owner,
-            ownerType: ownerType,
             parent: parent,
           ),
           cache: InMemoryStorage(),
@@ -42,6 +41,11 @@ class FilesService {
 
   void downloadFile(Id<File> id, {fileName: String}) async {
     var signedUrl = await api.getSignedUrl(id: id);
+    PermissionStatus permissions = await PermissionHandler()
+        .checkPermissionStatus(PermissionGroup.storage);
+    while (permissions.value == 0) {
+      await PermissionHandler().requestPermissions([PermissionGroup.storage]);
+    }
     FlutterDownloader.enqueue(
       url: signedUrl,
       savedDir: '/sdcard/Download',
