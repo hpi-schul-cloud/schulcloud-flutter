@@ -17,7 +17,7 @@ class JsonToStringTransformer
       Stream.empty();
 
   @override
-  Stream<List<RepositoryEntry<Map<String, dynamic>>>> fetchAllEntries() =>
+  Stream<Map<Id<Map<String, dynamic>>, Map<String, dynamic>>> fetchAll() =>
       fetchSourceEntriesAndMapItems(
           (data) => json.decode(data) as Map<String, dynamic>);
 

@@ -41,28 +41,28 @@ class CachedRepository<Item> extends RepositoryWithSource<Item, Item> {
   }
 
   @override
-  Stream<List<RepositoryEntry<Item>>> fetchAllEntries() {
+  Stream<Map<Id<Item>, Item>> fetchAll() {
     // Why no async* pattern was used: https://stackoverflow.com/questions/56813471/is-it-possible-to-yield-to-an-outer-scope-in-dart
 
     var sentSourceEntries = false;
-    var controller = BehaviorSubject<List<RepositoryEntry<Item>>>(
+    var controller = BehaviorSubject<Map<Id<Item>, Item>>(
       onListen: () {},
       onCancel: () {},
     );
 
     cache
-        .fetchAllEntries()
+        .fetchAll()
         .firstWhere((a) => true, orElse: () => null)
         .then((entries) {
       if (entries != null && !sentSourceEntries) controller.add(entries);
     });
 
-    source.fetchAllEntries().listen(
-      (entries) {
-        controller.add(entries);
+    source.fetchAll().listen(
+      (all) {
+        controller.add(all);
         sentSourceEntries = true;
-        for (final entry in entries) {
-          cache.update(entry.id, entry.item);
+        for (final entry in all.entries) {
+          cache.update(entry.key, entry.value);
         }
       },
       onDone: () => controller.close(),
@@ -97,9 +97,9 @@ class CachedRepository<Item> extends RepositoryWithSource<Item, Item> {
   /// loaded into the cache.
   Future<void> loadItemsIntoCache() async {
     assert(source.isFinite);
-    final entries = await source.fetchAllEntries().first;
+    final all = await source.fetchAll().first;
     await Future.wait(
-        entries.map((entry) => cache.update(entry.id, entry.item)));
+        all.entries.map((entry) => cache.update(entry.key, entry.value)));
   }
 
   @override

@@ -10,7 +10,7 @@ import '../repository.dart';
 class SharedPreferences extends Repository<String> {
   final String _keyPrefix;
   Map<String, BehaviorSubject<String>> _controllers;
-  final BehaviorSubject<List<RepositoryEntry<String>>> _allEntriesController;
+  final BehaviorSubject<Map<Id<String>, String>> _allEntriesController;
   Future<sp.SharedPreferences> get _prefs => sp.SharedPreferences.getInstance();
 
   SharedPreferences(String name)
@@ -38,16 +38,12 @@ class SharedPreferences extends Repository<String> {
       _controllers[id.id]?.stream ?? Stream<String>.empty().asBroadcastStream();
 
   @override
-  Stream<List<RepositoryEntry<String>>> fetchAllEntries() =>
-      _allEntriesController.stream;
+  Stream<Map<Id<String>, String>> fetchAll() => _allEntriesController.stream;
 
   void _updateAllEntriesController() async {
-    var getEntryForId = (String id) async {
-      return RepositoryEntry<String>(
-          id: Id(id), item: await _controllers[id].first);
-    };
-    _allEntriesController
-        .add(await Future.wait(_controllers.keys.map(getEntryForId)));
+    _allEntriesController.add({
+      for (var id in _controllers.keys) Id(id): await _controllers[id].first,
+    });
   }
 
   @override

@@ -43,7 +43,7 @@ class ObjectToJsonTransformer<Item>
       source.fetch(id.cast<Map<String, dynamic>>()).map(serializer.fromJson);
 
   @override
-  Stream<List<RepositoryEntry<Item>>> fetchAllEntries() =>
+  Stream<Map<Id<Item>, Item>> fetchAll() =>
       fetchSourceEntriesAndMapItems(serializer.fromJson);
 
   @override

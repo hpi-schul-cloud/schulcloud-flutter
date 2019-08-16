@@ -4,25 +4,6 @@ import 'package:flutter/foundation.dart';
 
 import 'entity.dart';
 
-/// An entry in a repository containing an [id] and an [item]. Returned by
-/// [fetchAllEntries].
-@immutable
-class RepositoryEntry<T> {
-  final Id<T> id;
-  final T item;
-
-  RepositoryEntry({@required this.id, @required this.item})
-      : assert(id != null),
-        assert(item != null);
-
-  RepositoryEntry copyWith({Id<T> id, T item}) {
-    return RepositoryEntry(
-      id: id ?? this.id,
-      item: item ?? this.item,
-    );
-  }
-}
-
 /// Something that can fetch items. Always returns a stream of items.
 ///
 /// If [isFinite] is true, the fetchAll() method should be implemented.
@@ -53,7 +34,7 @@ abstract class Repository<Item> {
   // That's why I opted for the simpler alternative of condensing everything
   // into a repository base class.
 
-  /// Whether this repository is finite. If set to true, the [fetchAllEntries]
+  /// Whether this repository is finite. If set to true, the [fetchAll]
   /// method should be overriden.
   final bool isFinite;
 
@@ -93,7 +74,7 @@ abstract class Repository<Item> {
   }
 
   /// Fetches all entries. May only be called if this [isFinite].
-  Stream<List<RepositoryEntry<Item>>> fetchAllEntries() {
+  Stream<Map<Id<Item>, Item>> fetchAll() {
     if (isFinite) {
       throw UnimplementedError(
           "A fetchAll method was called on repository $this. It's finite, so "
@@ -107,12 +88,12 @@ abstract class Repository<Item> {
   }
 
   /// Fetches all ids. May only be called if this [isFinite].
-  Stream<List<Id<Item>>> fetchAllIds() => fetchAllEntries()
-      .map((entries) => entries.map((entry) => entry.id).toList());
+  Stream<List<Id<Item>>> fetchAllIds() =>
+      fetchAll().map((all) => all.keys.toList());
 
   /// Fetches all items. May only be called if this [isFinite].
-  Stream<List<Item>> fetchAllItems() => fetchAllEntries()
-      .map((entries) => entries.map((entry) => entry.item).toList());
+  Stream<List<Item>> fetchAllItems() =>
+      fetchAll().map((all) => all.values.toList());
 
   /// Updates an item. May only be called if this [isMutable].
   Future<void> update(Id<Item> id, Item item) {
@@ -143,7 +124,7 @@ abstract class Repository<Item> {
 
   /// Clears all the items. May only be called if this [isMutable] and [isFinite].
   Future<void> clear() =>
-      fetchAllIds().first.then((ids) => ids.forEach((id) => update(id, null)));
+      fetchAllIds().first.then((ids) => ids.forEach((id) => remove(id)));
 
   /// Frees resources.
   void dispose() {}
@@ -168,14 +149,12 @@ abstract class RepositoryWithSource<Item, SourceItem> extends Repository<Item> {
           isMutable: isMutable ?? source.isMutable,
         );
 
-  Stream<List<RepositoryEntry<Item>>> fetchSourceEntriesAndMapItems(
+  Stream<Map<Id<Item>, Item>> fetchSourceEntriesAndMapItems(
       Item Function(SourceItem source) itemTransformer) {
-    return source
-        .fetchAllEntries()
-        .map((entries) => entries.map((entry) => RepositoryEntry(
-              id: entry.id.cast<Item>(),
-              item: itemTransformer(entry.item),
-            )));
+    return source.fetchAll().map((all) => {
+          for (var entry in all.entries)
+            entry.key.cast<Item>(): itemTransformer(entry.value),
+        });
   }
 
   void dispose() => source.dispose();
@@ -186,8 +165,7 @@ mixin SourceRepositoryForwarder<Item> on RepositoryWithSource<Item, Item> {
   Stream<Item> fetch(Id<Item> id) => source.fetch(id);
 
   @override
-  Stream<List<RepositoryEntry<Item>>> fetchAllEntries() =>
-      source.fetchAllEntries();
+  Stream<Map<Id<Item>, Item>> fetchAll() => source.fetchAll();
 
   @override
   Future<void> update(Id<Item> id, Item item) => source.update(id, item);
