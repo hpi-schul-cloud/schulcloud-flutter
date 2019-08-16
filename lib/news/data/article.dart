@@ -44,7 +44,7 @@ class Article extends Entity<Article> {
       content: data['content'] as String);
 
   // Author has to be stored separately in database
-  Map<String, dynamic> toJson() => <String, dynamic> {
+  Map<String, dynamic> toJson() => <String, dynamic>{
         'id': id.toString(),
         'title': title,
         'authorId': authorId,
@@ -52,5 +52,5 @@ class Article extends Entity<Article> {
         'section': section,
         'imageUrl': imageUrl,
         'content': content
-  };
+      };
 }
