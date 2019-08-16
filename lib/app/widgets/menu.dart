@@ -14,8 +14,10 @@ class Menu extends StatefulWidget {
 class _MenuState extends State<Menu> {
   void _navigateTo(String target) => Navigator.pop(context, target);
 
-  Future<void> _logOut() =>
-      Provider.of<AuthenticationStorageService>(context).logOut();
+  Future<void> _logOut() async {
+    await Provider.of<AuthenticationStorageService>(context).logOut();
+    Navigator.of(context).pushReplacementNamed(Routes.login);
+  }
 
   @override
   Widget build(BuildContext context) {
