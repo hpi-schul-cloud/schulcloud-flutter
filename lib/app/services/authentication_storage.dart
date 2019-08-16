@@ -26,7 +26,7 @@ class AuthenticationStorageService {
 
   void addOnLoadedListener(VoidCallback listener) {
     assert(listener != null);
-    
+
     if (_isLoaded)
       listener();
     else
@@ -40,7 +40,7 @@ class AuthenticationStorageService {
   set email(String email) => _repo.update(_emailId, email);
   set token(String token) => _repo.update(_tokenId, token);
 
-  Stream<void> get onCredentialsChangedStream => _inMemory.fetch(_tokenId);
+  Stream<String> get tokenStream => _inMemory.fetch(_tokenId);
 
   Future<void> logOut() => _repo.clear();
 }
