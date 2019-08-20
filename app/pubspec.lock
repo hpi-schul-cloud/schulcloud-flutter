@@ -148,6 +148,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.2.9"
+  entity_generator:
+    dependency: "direct dev"
+    description:
+      path: "..\\entity_generator"
+      relative: true
+    source: path
+    version: "1.0.0"
   fixnum:
     dependency: transitive
     description:
@@ -201,14 +208,14 @@ packages:
     source: hosted
     version: "0.2.0"
   hive:
-    dependency: "direct main"
+    dependency: transitive
     description:
       name: hive
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.4.1"
   hive_generator:
-    dependency: "direct main"
+    dependency: "direct dev"
     description:
       name: hive_generator
       url: "https://pub.dartlang.org"
@@ -257,7 +264,7 @@ packages:
     source: hosted
     version: "0.6.1+1"
   json_annotation:
-    dependency: "direct main"
+    dependency: transitive
     description:
       name: json_annotation
       url: "https://pub.dartlang.org"
@@ -403,6 +410,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.0.5"
+  repositories:
+    dependency: "direct main"
+    description:
+      path: "..\\repositories"
+      relative: true
+    source: path
+    version: "1.0.0"
   rxdart:
     dependency: "direct main"
     description:
@@ -411,7 +425,7 @@ packages:
     source: hosted
     version: "0.22.1+1"
   shared_preferences:
-    dependency: "direct main"
+    dependency: transitive
     description:
       name: shared_preferences
       url: "https://pub.dartlang.org"
@@ -478,13 +492,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.5.5"
-  sqflite:
-    dependency: "direct main"
-    description:
-      name: sqflite
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.1.6+3"
   stack_trace:
     dependency: transitive
     description:
@@ -513,13 +520,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.0.5"
-  synchronized:
-    dependency: transitive
-    description:
-      name: synchronized
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "2.1.0+1"
   term_glyph:
     dependency: transitive
     description:

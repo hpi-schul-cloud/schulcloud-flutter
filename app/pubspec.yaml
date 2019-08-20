@@ -9,23 +9,25 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  repositories:
+    path: ../repositories
+
   cupertino_icons: ^0.1.2
   flutter_villains: ^1.2.0
-  hive: any
-  hive_generator: any
   http: ^0.12.0
-  json_annotation: ^2.0.0
+  path_provider: ^1.1.0
   provider: ^3.0.0
   rxdart: ^0.22.0
-  shared_preferences: ^0.5.3
   transparent_image: ^1.0.0
-  sqflite: ^1.1.6
-  path_provider: ^1.1.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  entity_generator:
+    path: ../entity_generator
+
   build_runner: ^1.0.0
+  hive_generator: any
   json_serializable: ^3.0.0
   test: any
 
