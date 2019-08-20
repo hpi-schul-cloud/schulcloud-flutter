@@ -1,0 +1,15 @@
+targets:
+  $default:
+    builders:
+      entity_generator|entity:
+        enabled: true
+
+builders:
+  entity:
+    target: ":entity_generator"
+    import: "package:entity_generator/builder.dart"
+    builder_factories: ["todoReporter"]
+    build_extensions: {".dart": [".entity.g.part"]}
+    auto_apply: dependents
+    build_to: cache
+    applies_builders: ["source_gen|combining_builder"]
