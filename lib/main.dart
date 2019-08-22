@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'package:schulcloud/app/services.dart';
+import 'package:schulcloud/app/services/navigation.dart';
 
+import 'courses/courses.dart';
 import 'dashboard/dashboard.dart';
 import 'login/login.dart';
 import 'news/news.dart';
@@ -24,6 +26,9 @@ void main() {
           builder: (_, authStorage, network, __) =>
               UserService(authStorage: authStorage, network: network),
         ),
+        Provider<NavigationService>(
+          builder: (_) => NavigationService(),
+        )
       ],
       child: SchulCloudApp(),
     ),
@@ -59,12 +64,17 @@ class SchulCloudApp extends StatelessWidget {
         textTheme: _textTheme,
       ),
       darkTheme: ThemeData(),
-      initialRoute: Routes.splashScreen,
+      initialRoute: Routes.splashScreen.name,
+      navigatorObservers: [
+        MyNavigatorObserver(
+            navigationService: Provider.of<NavigationService>(context))
+      ],
       routes: {
-        Routes.splashScreen: (_) => SplashScreen(),
-        Routes.dashboard: (_) => DashboardScreen(),
-        Routes.login: (_) => LoginScreen(),
-        Routes.news: (_) => NewsScreen(),
+        Routes.splashScreen.name: (_) => SplashScreen(),
+        Routes.dashboard.name: (_) => DashboardScreen(),
+        Routes.login.name: (_) => LoginScreen(),
+        Routes.news.name: (_) => NewsScreen(),
+        Routes.courses.name: (_) => CoursesScreen()
       },
     );
   }
@@ -92,8 +102,9 @@ class _SplashScreenState extends State<SplashScreen>
 
     authStorage.addOnLoadedListener(() {
       if (!this.mounted) return;
-      Navigator.of(context).pushReplacementNamed(
-          authStorage.isAuthenticated ? Routes.dashboard : Routes.login);
+      Navigator.of(context).pushReplacementNamed(authStorage.isAuthenticated
+          ? Routes.dashboard.name
+          : Routes.login.name);
     });
   }
 

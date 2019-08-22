@@ -70,7 +70,7 @@ packages:
       name: build_runner
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.6.6"
+    version: "1.6.7"
   build_runner_core:
     dependency: transitive
     description:
@@ -220,7 +220,7 @@ packages:
       name: hive_generator
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.4.0"
+    version: "0.4.0+1"
   html:
     dependency: transitive
     description:
@@ -276,7 +276,7 @@ packages:
       name: json_annotation
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.4.0"
+    version: "3.0.0"
   json_rpc_2:
     dependency: transitive
     description:
@@ -290,7 +290,7 @@ packages:
       name: json_serializable
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "3.1.0"
+    version: "3.2.2"
   kernel:
     dependency: transitive
     description:
@@ -402,7 +402,7 @@ packages:
       name: provider
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "3.0.0+1"
+    version: "3.1.0"
   pub_semver:
     dependency: transitive
     description:
@@ -498,7 +498,7 @@ packages:
       name: source_gen
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.9.4+3"
+    version: "0.9.4+4"
   source_map_stack_trace:
     dependency: transitive
     description:
@@ -625,6 +625,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.0.15"
+  webview_flutter:
+    dependency: "direct main"
+    description:
+      name: webview_flutter
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.3.13"
   xml:
     dependency: transitive
     description:

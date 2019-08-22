@@ -1,8 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:schulcloud/app/services/navigation.dart';
 
 import 'menu.dart';
 
 class MyAppBar extends StatefulWidget {
+  final List<Widget> actions;
+
+  MyAppBar({this.actions = const []}) : assert(actions != null);
+
   @override
   _MyAppBarState createState() => _MyAppBarState();
 }
@@ -11,11 +17,15 @@ class _MyAppBarState extends State<MyAppBar> {
   Future<void> _showMenu() async {
     String targetScreen = await showModalBottomSheet(
       context: context,
-      builder: (context) => Menu(),
+      builder: (context) => Menu(
+          activeScreen: Provider.of<NavigationService>(context).activeScreen),
     );
 
-    if (targetScreen != null)
-      Navigator.pushReplacementNamed(context, targetScreen);
+    if (targetScreen != null) {
+      Navigator.of(context)
+        ..popUntil((_) => true)
+        ..pushReplacementNamed(targetScreen);
+    }
   }
 
   @override
@@ -35,6 +45,8 @@ class _MyAppBarState extends State<MyAppBar> {
                 icon: Icon(Icons.menu, color: Colors.white),
                 onPressed: _showMenu,
               ),
+              Spacer(),
+              ...widget.actions
             ],
           ),
         ),
