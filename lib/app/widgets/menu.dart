@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 
 import 'package:schulcloud/routes.dart';
 
-import '../data/user.dart';
+import '../data.dart';
 import '../services.dart';
 
 class Menu extends StatefulWidget {
