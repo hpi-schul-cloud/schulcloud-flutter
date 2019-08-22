@@ -1,37 +1,22 @@
 import 'package:flutter/foundation.dart';
-import 'package:rxdart/rxdart.dart';
-
 import 'package:schulcloud/app/services.dart';
-import 'package:schulcloud/core/data.dart';
-import 'package:schulcloud/core/data/utils.dart';
+import 'package:repository/repository.dart';
+import 'package:repository_hive/repository_hive.dart';
 
-import 'data/repository.dart';
-import 'entities.dart';
-
-export 'entities.dart';
+import 'data.dart';
+import 'data/article_downloader.dart';
 
 class Bloc {
-  final ApiService api;
+  final NetworkService network;
   Repository<Article> _articles;
 
-  Bloc({@required this.api})
+  Bloc({@required this.network})
       : _articles = CachedRepository<Article>(
-          source: ArticleDownloader(api: api),
+          source: ArticleDownloader(network: network),
           cache: HiveRepository<Article>('articles'),
         );
 
-  Stream<List<Article>> getArticles() {
-    return streamToBehaviorSubject(_articles.fetchAllItems());
-  }
-
-  BehaviorSubject<Article> getArticleAtIndex(int index) {
-    final BehaviorSubject<Article> s =
-        streamToBehaviorSubject(_articles.fetch(Id('article_$index')));
-    s.listen((data) {
-      print(data);
-    });
-    return s;
-  }
+  Stream<List<Article>> getArticles() => _articles.fetchAllItems();
 
   void refresh() => _articles.clear();
 }

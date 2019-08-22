@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 
 import 'package:schulcloud/app/widgets.dart';
 
-import '../entities.dart';
+import '../data.dart';
 import 'article_image.dart';
 import 'article_screen.dart';
 import 'section.dart';

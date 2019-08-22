@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../entities.dart';
+import '../data.dart';
 import 'author.dart';
 import 'article_image.dart';
 import 'headline.dart';

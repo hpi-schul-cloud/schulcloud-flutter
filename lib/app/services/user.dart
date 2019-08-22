@@ -1,7 +1,8 @@
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
-import 'package:schulcloud/core/data.dart';
+import 'package:repository/repository.dart';
+import 'package:repository_hive/repository_hive.dart';
 
 import '../data/user.dart';
 import 'api.dart';

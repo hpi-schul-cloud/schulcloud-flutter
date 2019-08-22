@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'package:schulcloud/app/services.dart';
-import 'package:schulcloud/core/widgets.dart';
+import 'package:schulcloud/app/widgets.dart';
 
 import '../bloc.dart';
 import 'button.dart';
@@ -10,9 +10,9 @@ import 'button.dart';
 class LoginScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return ProxyProvider2<AuthenticationStorageService, ApiService, Bloc>(
-      builder: (_, authStorage, api, __) =>
-          Bloc(authStorage: authStorage, api: api),
+    return ProxyProvider2<AuthenticationStorageService, NetworkService, Bloc>(
+      builder: (_, authStorage, network, __) =>
+          Bloc(authStorage: authStorage, network: network),
       child: LoginContent(),
     );
   }
