@@ -19,7 +19,7 @@ class _MenuState extends State<Menu> {
 
   Future<void> _logOut() async {
     await Provider.of<AuthenticationStorageService>(context).logOut();
-    Navigator.of(context).pushReplacementNamed(Routes.login);
+    Navigator.of(context).pushReplacementNamed(Routes.login.toString());
   }
 
   @override

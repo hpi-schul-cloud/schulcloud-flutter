@@ -3,16 +3,16 @@ import 'package:provider/provider.dart';
 
 import 'package:schulcloud/app/services.dart';
 import 'package:schulcloud/app/widgets.dart';
-import 'package:schulcloud/courses/bloc.dart';
-import 'package:schulcloud/courses/data/course.dart';
 
+import '../bloc.dart';
+import '../data.dart';
 import 'course_card.dart';
 
 class CoursesScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return ProxyProvider<ApiService, Bloc>(
-      builder: (_, api, __) => Bloc(api: api),
+    return ProxyProvider<NetworkService, Bloc>(
+      builder: (_, network, __) => Bloc(network: network),
       child: Scaffold(
         body: CourseGrid(),
         bottomNavigationBar: MyAppBar(),

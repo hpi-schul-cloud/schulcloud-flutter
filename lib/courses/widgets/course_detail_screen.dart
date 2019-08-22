@@ -3,32 +3,28 @@ import 'package:provider/provider.dart';
 
 import 'package:schulcloud/app/services.dart';
 import 'package:schulcloud/app/widgets/app_bar.dart';
-import 'package:schulcloud/courses/bloc.dart';
-import 'package:schulcloud/courses/data/lesson.dart';
-import 'package:schulcloud/courses/widgets/lesson_screen.dart';
+
+import '../bloc.dart';
+import '../data.dart';
+import 'lesson_screen.dart';
 
 class CourseDetailScreen extends StatelessWidget {
   final Course course;
 
-  CourseDetailScreen({this.course});
+  CourseDetailScreen({@required this.course}) : assert(course != null);
 
   @override
   Widget build(BuildContext context) {
-    return ProxyProvider<ApiService, Bloc>(
-      builder: (_, api, __) => Bloc(api: api),
+    return ProxyProvider<NetworkService, Bloc>(
+      builder: (_, network, __) => Bloc(network: network),
       child: Scaffold(
         appBar: AppBar(
           iconTheme: IconThemeData(color: Colors.black),
-          title: Text(
-            course.name,
-            style: TextStyle(color: Colors.black),
-          ),
+          title: Text(course.name, style: TextStyle(color: Colors.black)),
           backgroundColor: course.color,
         ),
         bottomNavigationBar: MyAppBar(),
-        body: LessonList(
-          course: course,
-        ),
+        body: LessonList(course: course),
       ),
     );
   }
@@ -37,12 +33,12 @@ class CourseDetailScreen extends StatelessWidget {
 class LessonList extends StatelessWidget {
   final Course course;
 
-  const LessonList({this.course});
+  const LessonList({@required this.course}) : assert(course != null);
 
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<List<Lesson>>(
-      stream: Provider.of<Bloc>(context).getLessons(course.id),
+      stream: Provider.of<Bloc>(context).getLessonsOfCourse(course.id),
       builder: (context, snapshot) {
         if (!snapshot.hasData)
           return Center(child: CircularProgressIndicator());
