@@ -1,6 +1,7 @@
 import 'dart:ui';
 
-import 'package:schulcloud/core/data.dart';
+import 'package:repository/repository.dart';
+import 'package:repository_hive/repository_hive.dart';
 
 /// A service that offers storage of an email and an access token. It doesn't do
 /// the actual login.
@@ -17,7 +18,7 @@ class AuthenticationStorageService {
   AuthenticationStorageService() {
     _repo = CachedRepository<String>(
       cache: _inMemory,
-      source: SharedPreferences('authentication'),
+      source: HiveRepository('authentication'),
     )..loadItemsIntoCache().then((_) {
         _isLoaded = true;
         _onLoadedListeners.forEach((listener) => listener());
