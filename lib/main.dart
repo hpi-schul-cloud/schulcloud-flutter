@@ -21,10 +21,12 @@ void main() {
           builder: (_, authStorage, __) =>
               NetworkService(authStorage: authStorage),
         ),
-        ProxyProvider2<AuthenticationStorageService, NetworkService,
-            UserService>(
-          builder: (_, authStorage, network, __) =>
-              UserService(authStorage: authStorage, network: network),
+        ProxyProvider<NetworkService, UserService>(
+          builder: (_, network, __) => UserService(network: network),
+        ),
+        ProxyProvider2<AuthenticationStorageService, UserService, MeService>(
+          builder: (_, authStorage, user, __) =>
+              MeService(authStorage: authStorage, user: user),
         ),
         Provider<NavigationService>(
           builder: (_) => NavigationService(),

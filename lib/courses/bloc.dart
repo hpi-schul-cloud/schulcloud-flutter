@@ -9,12 +9,14 @@ import 'data.dart';
 
 class Bloc {
   final NetworkService network;
+  final UserService user;
   Repository<Course> _courses;
 
   Bloc({
     @required this.network,
+    @required this.user,
   }) : _courses = CachedRepository<Course>(
-          source: CourseDownloader(network: network),
+          source: CourseDownloader(network: network, user: user),
           cache: InMemoryStorage<Course>(),
         );
 
@@ -30,11 +32,13 @@ class Bloc {
 
 class CourseDownloader extends Repository<Course> {
   final NetworkService network;
+  final UserService user;
   List<Course> _courses;
   Future<void> _downloader;
 
   CourseDownloader({
     @required this.network,
+    @required this.user,
   }) : super(isFinite: true, isMutable: false) {
     _downloader = _downloadCourses();
   }
@@ -52,7 +56,7 @@ class CourseDownloader extends Repository<Course> {
         description: data['description'],
         teachers: await Future.wait([
           for (String id in data['teacherIds'])
-            fetchUser(network, Id<User>(id)),
+            user.fetchUser(Id<User>(id)).first,
         ]),
         color: hexStringToColor(data['color']),
       );
@@ -139,22 +143,6 @@ class LessonDownloader extends Repository<Lesson> {
       type: type,
       text: type == ContentType.text ? data['content']['text'] : null,
       url: type != ContentType.text ? data['content']['url'] : null,
-    );
-  }
-
-  Future<User> getUser(Id<User> id) async {
-    var response = await network.get('users/$id');
-    var data = json.decode(response.body);
-
-    // For now, the [avatarBackgroundColor] and [avatarInitials] are not saved.
-    // Not sure if we'll need it.
-    return User(
-      id: Id<User>(data['_id']),
-      firstName: data['firstName'],
-      lastName: data['lastName'],
-      email: data['email'],
-      schoolToken: data['schoolId'],
-      displayName: data['displayName'],
     );
   }
 }

@@ -41,7 +41,7 @@ class _MenuState extends State<Menu> {
 
   Widget _buildUserInfo() {
     return StreamBuilder<User>(
-      stream: Provider.of<UserService>(context).userStream,
+      stream: Provider.of<MeService>(context).meStream,
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
           return Container(color: Colors.red);
