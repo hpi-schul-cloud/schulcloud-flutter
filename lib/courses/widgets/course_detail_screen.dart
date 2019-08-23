@@ -15,8 +15,8 @@ class CourseDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ProxyProvider<NetworkService, Bloc>(
-      builder: (_, network, __) => Bloc(network: network),
+    return ProxyProvider2<NetworkService, UserService, Bloc>(
+      builder: (_, network, user, __) => Bloc(network: network, user: user),
       child: Scaffold(
         appBar: AppBar(
           iconTheme: IconThemeData(color: Colors.black),
@@ -79,9 +79,10 @@ class LessonList extends StatelessWidget {
 
   void _pushLessonScreen({BuildContext context, Lesson lesson, Course course}) {
     Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) =>
-                LessonScreen(course: course, lesson: lesson)));
+      context,
+      MaterialPageRoute(
+        builder: (context) => LessonScreen(course: course, lesson: lesson),
+      ),
+    );
   }
 }

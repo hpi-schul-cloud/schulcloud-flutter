@@ -11,8 +11,8 @@ import 'course_card.dart';
 class CoursesScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return ProxyProvider<NetworkService, Bloc>(
-      builder: (_, network, __) => Bloc(network: network),
+    return ProxyProvider2<NetworkService, UserService, Bloc>(
+      builder: (_, network, user, __) => Bloc(network: network, user: user),
       child: Scaffold(
         body: CourseGrid(),
         bottomNavigationBar: MyAppBar(),
