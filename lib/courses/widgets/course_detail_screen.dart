@@ -102,27 +102,11 @@ class LessonList extends StatelessWidget {
 MaterialPageRoute showCourseFiles(Course course) {
   return MaterialPageRoute(
       builder: (context) => ProxyProvider<ApiService, FilesService>(
-            builder: (_, api, __) =>
-                FilesService(api: api, owner: course.id.toString()),
-            child: Scaffold(
-              appBar: AppBar(
-                title: Text(course.name),
-                backgroundColor: course.color,
-              ),
-              bottomNavigationBar: MyAppBar(
-                actions: <Widget>[
-                  IconButton(
-                    icon: Icon(
-                      Icons.school,
-                      color: Colors.white,
-                    ),
-                    onPressed: () => Navigator.pop(context),
-                  )
-                ],
-              ),
-              body: FilesView(
-                owner: course.id.toString(),
-              ),
-            ),
-          ));
+          builder: (_, api, __) =>
+              FilesService(api: api, owner: course.id.toString()),
+          child: FilesView(
+            owner: course.id.toString(),
+            appBarColor: course.color,
+            appBarTitle: course.name,
+          )));
 }

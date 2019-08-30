@@ -1,7 +1,6 @@
 import 'package:provider/provider.dart';
 
 import 'package:flutter/material.dart';
-import 'package:schulcloud/app/data/user.dart';
 
 import 'package:schulcloud/app/services.dart';
 import 'package:schulcloud/app/services/files.dart';
@@ -98,15 +97,10 @@ class CourseFilesList extends StatelessWidget {
                           return ProxyProvider<ApiService, FilesService>(
                             builder: (_, api, __) =>
                                 FilesService(api: api, owner: c.id.toString()),
-                            child: Scaffold(
-                              appBar: AppBar(
-                                title: Text(c.name),
-                                backgroundColor: c.color,
-                              ),
-                              body: FilesView(
-                                owner: c.id.toString(),
-                              ),
-                              bottomNavigationBar: MyAppBar(),
+                            child: FilesView(
+                              owner: c.id.toString(),
+                              appBarColor: c.color,
+                              appBarTitle: c.name,
                             ),
                           );
                         }));
