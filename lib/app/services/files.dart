@@ -12,8 +12,6 @@ import 'package:schulcloud/courses/entities.dart';
 
 import '../data/file.dart';
 
-/// This service provides access to files on the schulcloud server.
-/// Files can be fetched by owner or owner type.
 class FilesService {
   final ApiService api;
   final String owner;

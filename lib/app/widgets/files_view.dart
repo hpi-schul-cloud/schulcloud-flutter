@@ -76,7 +76,7 @@ class _FilesViewState extends State<FilesView> {
                         leading: Icon(Icons.note),
                         onTap: () {
                           Scaffold.of(context).showSnackBar(SnackBar(
-                            content: Text('Downloaded file ${file.name}'),
+                            content: Text('Downloading file ${file.name}'),
                           ));
                           Provider.of<FilesService>(context)
                               .downloadFile(file.id, fileName: file.name);
