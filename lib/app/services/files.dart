@@ -1,6 +1,5 @@
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:rxdart/rxdart.dart';
 
 import 'package:flutter/material.dart';
 
