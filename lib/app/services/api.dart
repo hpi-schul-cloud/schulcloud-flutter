@@ -8,6 +8,7 @@ import 'package:schulcloud/courses/entities.dart';
 import 'package:schulcloud/news/entities.dart';
 
 import '../data/user.dart';
+import '../data/file.dart';
 import 'network.dart';
 
 /// Wraps all the api network calls into nice little type-safe functions.
@@ -47,6 +48,37 @@ class ApiService {
     }).toList();
   }
 
+  Future<List<File>> listFiles(
+      {String owner, String ownerType, String parent}) async {
+    Map<String, String> queries = Map();
+    if (owner != null) queries['owner'] = owner;
+    if (parent != null) queries['parent'] = parent;
+    var response = await network.get('fileStorage', parameters: queries);
+
+    var body = json.decode(response.body);
+    return (body as List<dynamic>).where((f) => f['name'] != null).map((data) {
+      return File(
+        id: Id<File>(data['_id']),
+        name: data['name'] ?? data['_id'],
+        ownerType: data['refOwnerModel'],
+        ownerId: data['owner'],
+        isDirectory: data['isDirectory'],
+        parent: data['parent'],
+        size: data['size'],
+      );
+    }).toList();
+  }
+
+  /// The signed URL is the URL used to actually download a file
+  /// instead of just viewing its JSON representation provided by the API.
+  Future<String> getSignedUrl({Id<File> id}) async {
+    var response = await network.get('fileStorage/signedUrl',
+        parameters: {'download': null, 'file': id.toString()});
+
+    var body = json.decode(response.body);
+    return body['url'];
+  }
+
   Future<List<Course>> listCourses() async {
     var response = await network.get('courses');
 
@@ -57,7 +89,7 @@ class ApiService {
       return Course(
         id: Id<Course>(data['_id']),
         name: data['name'],
-        description: data['description'],
+        description: data['description'] ?? 'No description provided',
         teachers: await Future.wait(
             [for (String id in data['teacherIds']) getUser(Id<User>(id))]),
         color: hexStringToColor(data['color']),

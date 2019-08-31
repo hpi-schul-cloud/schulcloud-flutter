@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'package:schulcloud/app/services.dart';
+import 'package:schulcloud/app/services/files.dart';
 import 'package:schulcloud/app/widgets/app_bar.dart';
+import 'package:schulcloud/app/widgets/files_view.dart';
 import 'package:schulcloud/courses/bloc.dart';
 import 'package:schulcloud/courses/data/lesson.dart';
 import 'package:schulcloud/courses/widgets/lesson_screen.dart';
@@ -25,7 +27,14 @@ class CourseDetailScreen extends StatelessWidget {
           ),
           backgroundColor: course.color,
         ),
-        bottomNavigationBar: MyAppBar(),
+        bottomNavigationBar: MyAppBar(
+          actions: <Widget>[
+            IconButton(
+              icon: Icon(Icons.folder),
+              onPressed: () => _showCourseFiles(context, course),
+            )
+          ],
+        ),
         body: LessonList(
           course: course,
         ),
@@ -88,4 +97,18 @@ class LessonList extends StatelessWidget {
             builder: (context) =>
                 LessonScreen(course: course, lesson: lesson)));
   }
+}
+
+void _showCourseFiles(BuildContext context, Course course) {
+  Navigator.push(
+      context,
+      MaterialPageRoute(
+          builder: (context) => ProxyProvider<ApiService, FilesService>(
+              builder: (_, api, __) =>
+                  FilesService(api: api, owner: course.id.toString()),
+              child: FilesView(
+                owner: course.id.toString(),
+                appBarColor: course.color,
+                appBarTitle: course.name,
+              ))));
 }
