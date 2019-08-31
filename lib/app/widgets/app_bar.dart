@@ -39,15 +39,18 @@ class _MyAppBarState extends State<MyAppBar> {
           height: 56,
           padding: const EdgeInsets.symmetric(horizontal: 8),
           alignment: Alignment.center,
-          child: Row(
-            children: <Widget>[
-              IconButton(
-                icon: Icon(Icons.menu, color: Colors.white),
-                onPressed: _showMenu,
-              ),
-              Spacer(),
-              ...widget.actions
-            ],
+          child: IconTheme(
+            data: IconThemeData(color: Colors.white),
+            child: Row(
+              children: <Widget>[
+                IconButton(
+                  icon: Icon(Icons.menu),
+                  onPressed: _showMenu,
+                ),
+                Spacer(),
+                ...widget.actions
+              ],
+            ),
           ),
         ),
       ),

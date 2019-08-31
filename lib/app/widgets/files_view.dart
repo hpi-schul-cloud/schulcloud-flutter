@@ -44,28 +44,7 @@ class _FilesViewState extends State<FilesView> {
                   .map((file) => ListTile(
                         title: Text(file.name),
                         leading: Icon(Icons.folder),
-                        onTap: () {
-                          setState(() {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      ProxyProvider<ApiService, FilesService>(
-                                    builder: (_, api, __) => FilesService(
-                                        api: api,
-                                        owner: widget.owner,
-                                        parent: file.id.toString()),
-                                    child: FilesView(
-                                      owner: widget.owner,
-                                      parent: file.id.toString(),
-                                      appBarColor: widget.appBarColor,
-                                      appBarTitle:
-                                          '${widget.appBarTitle} > ${file.name}',
-                                    ),
-                                  ),
-                                ));
-                          });
-                        },
+                        onTap: () => _openFolder(file),
                       )),
               Divider(),
               ...snapshot.data
@@ -74,18 +53,39 @@ class _FilesViewState extends State<FilesView> {
                         title: Text(file.name),
                         subtitle: Text('${(file.size / 1000).round()}kB'),
                         leading: Icon(Icons.note),
-                        onTap: () {
-                          Scaffold.of(context).showSnackBar(SnackBar(
-                            content: Text('Downloading file ${file.name}'),
-                          ));
-                          Provider.of<FilesService>(context)
-                              .downloadFile(file.id, fileName: file.name);
-                        },
+                        onTap: () => _downloadFile(file),
                       ))
             ],
           );
         },
       ),
     );
+  }
+
+  void _openFolder(File file) {
+    setState(() {
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ProxyProvider<ApiService, FilesService>(
+              builder: (_, api, __) => FilesService(
+                  api: api, owner: widget.owner, parent: file.id.toString()),
+              child: FilesView(
+                owner: widget.owner,
+                parent: file.id.toString(),
+                appBarColor: widget.appBarColor,
+                appBarTitle: '${widget.appBarTitle} > ${file.name}',
+              ),
+            ),
+          ));
+    });
+  }
+
+  void _downloadFile(File file) {
+    Scaffold.of(context).showSnackBar(SnackBar(
+      content: Text('Downloading file ${file.name}'),
+    ));
+    Provider.of<FilesService>(context)
+        .downloadFile(file.id, fileName: file.name);
   }
 }

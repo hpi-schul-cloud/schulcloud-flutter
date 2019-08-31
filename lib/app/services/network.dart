@@ -52,13 +52,10 @@ class NetworkService {
     };
   }
 
-  Future<http.Response> get(String path, {Map<String, String> queries}) async {
-    var combiner = '?';
-    if (queries != null && queries.isNotEmpty) {
-      for (var query in queries.keys) {
-        path += '$combiner$query=${queries[query]}';
-        combiner = '&';
-      }
+  Future<http.Response> get(String path,
+      {Map<String, String> parameters = const {}}) async {
+    if (parameters.isNotEmpty) {
+      path += '?' + parameters.keys.map((p) => '$p=${parameters[p]}').join('&');
     }
     return await _makeCall(
       path,

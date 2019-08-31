@@ -30,8 +30,8 @@ class CourseDetailScreen extends StatelessWidget {
         bottomNavigationBar: MyAppBar(
           actions: <Widget>[
             IconButton(
-              icon: Icon(Icons.folder, color: Colors.white),
-              onPressed: () => Navigator.push(context, showCourseFiles(course)),
+              icon: Icon(Icons.folder),
+              onPressed: () => _showCourseFiles(context, course),
             )
           ],
         ),
@@ -99,14 +99,16 @@ class LessonList extends StatelessWidget {
   }
 }
 
-MaterialPageRoute showCourseFiles(Course course) {
-  return MaterialPageRoute(
-      builder: (context) => ProxyProvider<ApiService, FilesService>(
-          builder: (_, api, __) =>
-              FilesService(api: api, owner: course.id.toString()),
-          child: FilesView(
-            owner: course.id.toString(),
-            appBarColor: course.color,
-            appBarTitle: course.name,
-          )));
+void _showCourseFiles(BuildContext context, Course course) {
+  Navigator.push(
+      context,
+      MaterialPageRoute(
+          builder: (context) => ProxyProvider<ApiService, FilesService>(
+              builder: (_, api, __) =>
+                  FilesService(api: api, owner: course.id.toString()),
+              child: FilesView(
+                owner: course.id.toString(),
+                appBarColor: course.color,
+                appBarTitle: course.name,
+              ))));
 }

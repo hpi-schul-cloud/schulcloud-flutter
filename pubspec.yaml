@@ -10,7 +10,8 @@ dependencies:
   flutter:
     sdk: flutter
   cupertino_icons: ^0.1.2
-  flutter_downloader: ^1.1.9
+  # The current version of flutter_downloader, 1.2.1, causes the build to fail. Until this is fixed, we rely on an older version.
+  flutter_downloader: 1.1.9
   flutter_villains: ^1.2.0
   http: ^0.12.0
   json_annotation: ^2.0.0

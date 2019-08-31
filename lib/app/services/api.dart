@@ -53,7 +53,7 @@ class ApiService {
     Map<String, String> queries = Map();
     if (owner != null) queries['owner'] = owner;
     if (parent != null) queries['parent'] = parent;
-    var response = await network.get('fileStorage', queries: queries);
+    var response = await network.get('fileStorage', parameters: queries);
 
     var body = json.decode(response.body);
     return (body as List<dynamic>).where((f) => f['name'] != null).map((data) {
@@ -69,9 +69,11 @@ class ApiService {
     }).toList();
   }
 
+  /// The signed URL is the URL used to actually download a file
+  /// instead of just viewing its JSON representation provided by the API.
   Future<String> getSignedUrl({Id<File> id}) async {
     var response = await network.get('fileStorage/signedUrl',
-        queries: {'download': null, 'file': id.toString()});
+        parameters: {'download': null, 'file': id.toString()});
 
     var body = json.decode(response.body);
     return body['url'];

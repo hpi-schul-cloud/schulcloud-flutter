@@ -31,9 +31,6 @@ class FilesService {
   Stream<List<File>> getFiles() =>
       streamToBehaviorSubject(_files.fetchAllItems());
 
-  BehaviorSubject<File> getFileAtIndex(int index) =>
-      streamToBehaviorSubject(_files.fetch(Id('file_$index')));
-
   Future<List<Course>> getCourses() async => await api.listCourses();
 
   void downloadFile(Id<File> id, {fileName: String}) async {
@@ -46,7 +43,7 @@ class FilesService {
     FlutterDownloader.enqueue(
       url: signedUrl,
       savedDir: '/sdcard/Download',
-      fileName: (fileName != null) ? fileName : id.toString(),
+      fileName: fileName ?? id.toString(),
       showNotification: true,
       openFileFromNotification: true,
     );

@@ -42,26 +42,28 @@ class UserFilesCard extends StatelessWidget {
           subtitle: Text(
               'Your personal files. By default, only you can access them, but they may be shared with others.'),
           leading: Icon(Icons.person),
-          onTap: () => Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => ProxyProvider<ApiService, FilesService>(
-                  builder: (_, api, __) => FilesService(
-                      api: api,
-                      owner: Provider.of<UserService>(context).userId),
-                  child: Scaffold(
-                    appBar: AppBar(
-                      title: Text('My files'),
-                    ),
-                    body: FilesView(
-                        owner: Provider.of<UserService>(context).userId),
-                    bottomNavigationBar: MyAppBar(),
-                  ),
-                ),
-              )),
+          onTap: () => _showPersonalFiles(context),
         ),
       ),
     );
+  }
+
+  void _showPersonalFiles(BuildContext context) {
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => ProxyProvider<ApiService, FilesService>(
+            builder: (_, api, __) => FilesService(
+                api: api, owner: Provider.of<UserService>(context).userId),
+            child: Scaffold(
+              appBar: AppBar(
+                title: Text('My files'),
+              ),
+              body: FilesView(owner: Provider.of<UserService>(context).userId),
+              bottomNavigationBar: MyAppBar(),
+            ),
+          ),
+        ));
   }
 }
 
@@ -91,25 +93,26 @@ class CourseFilesList extends StatelessWidget {
                         Icons.folder,
                         color: c.color,
                       ),
-                      onTap: () {
-                        Navigator.push(context,
-                            MaterialPageRoute(builder: (context) {
-                          return ProxyProvider<ApiService, FilesService>(
-                            builder: (_, api, __) =>
-                                FilesService(api: api, owner: c.id.toString()),
-                            child: FilesView(
-                              owner: c.id.toString(),
-                              appBarColor: c.color,
-                              appBarTitle: c.name,
-                            ),
-                          );
-                        }));
-                      },
+                      onTap: () => _showCourseFiles(context, c),
                     ))
                 .toList()
           ],
         ));
       },
     );
+  }
+
+  void _showCourseFiles(BuildContext context, Course course) {
+    Navigator.push(context, MaterialPageRoute(builder: (context) {
+      return ProxyProvider<ApiService, FilesService>(
+        builder: (_, api, __) =>
+            FilesService(api: api, owner: course.id.toString()),
+        child: FilesView(
+          owner: course.id.toString(),
+          appBarColor: course.color,
+          appBarTitle: course.name,
+        ),
+      );
+    }));
   }
 }

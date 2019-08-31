@@ -9,6 +9,8 @@ part 'file.g.dart';
 class File extends Entity<File> {
   final Id<File> id;
   final String name;
+
+  /// Describes the type of entity this file belongs to. This will usually be "user" or "course".
   final String ownerType;
   final String ownerId;
   final bool isDirectory;
