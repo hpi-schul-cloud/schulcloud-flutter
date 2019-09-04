@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:schulcloud/core/data.dart';
 import 'package:schulcloud/core/utils.dart';
 import 'package:schulcloud/courses/entities.dart';
+import 'package:schulcloud/homework/data/homework.dart';
 import 'package:schulcloud/news/entities.dart';
 
 import '../data/user.dart';
@@ -136,6 +137,39 @@ class ApiService {
       text: type == ContentType.text ? data['content']['text'] : null,
       url: type != ContentType.text ? data['content']['url'] : null,
     );
+  }
+
+  Future<List<Homework>> listHomework() async {
+    var response = await network.get('homework');
+    var body = json.decode(response.body);
+
+    return Future.wait((body['data'] as List<dynamic>)
+        .map(
+          (data) async => Homework(
+            id: Id(data['_id']),
+            schoolId: data['schoolId'],
+            teacherId: data['teacherId'],
+            name: data['name'],
+            description: data['description'],
+            availableDate:
+                DateTime.tryParse(data['availableDate']) ?? DateTime.now(),
+            dueDate: DateTime.parse(data['dueDate']) ?? DateTime.now(),
+            courseId: Course(
+              id: Id<Course>(data['courseId']['_id']),
+              name: data['courseId']['name'],
+              description:
+                  data['courseId']['description'] ?? 'No description provided',
+              teachers: await Future.wait([
+                for (String id in data['courseId']['teacherIds'])
+                  getUser(Id<User>(id))
+              ]),
+              color: hexStringToColor(data['courseId']['color']),
+            ),
+            lessonId: data['lessonId'],
+            private: data['private'],
+          ),
+        )
+        .toList());
   }
 
   /*Future<Article> getArticle(Id<Article> id) async {
