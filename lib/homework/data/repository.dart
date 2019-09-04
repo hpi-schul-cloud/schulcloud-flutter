@@ -33,3 +33,34 @@ class HomeworkDownloader extends Repository<Homework> {
     if (_homework != null) yield _homework.firstWhere((h) => h.id == id);
   }
 }
+
+class SubmissionDownloader extends Repository<Submission> {
+  ApiService api;
+  List<Submission> _submissions;
+  Future<void> _downloader;
+
+  SubmissionDownloader({@required this.api})
+      : super(isFinite: true, isMutable: false) {
+    _downloader = _loadSubmissions();
+  }
+
+  Future<void> _loadSubmissions() async {
+    _submissions = await api.listSubmissions();
+  }
+
+  @override
+  Stream<List<RepositoryEntry<Submission>>> fetchAllEntries() async* {
+    if (_submissions == null) await _downloader;
+    yield _submissions
+        .map((s) => RepositoryEntry(
+              id: s.id,
+              item: s,
+            ))
+        .toList();
+  }
+
+  @override
+  Stream<Submission> fetch(Id<Submission> id) async* {
+    if (_submissions != null) yield _submissions.firstWhere((s) => s.id == id);
+  }
+}

@@ -10,15 +10,23 @@ import 'package:schulcloud/homework/data/repository.dart';
 class Bloc {
   final ApiService api;
   Repository<Homework> _homework;
+  Repository<Submission> _submissions;
 
   Bloc({@required this.api})
       : _homework = CachedRepository<Homework>(
           source: HomeworkDownloader(api: api),
           cache: InMemoryStorage(),
+        ),
+        _submissions = CachedRepository<Submission>(
+          source: SubmissionDownloader(api: api),
+          cache: InMemoryStorage(),
         );
 
   Stream<List<Homework>> getHomework() =>
       streamToBehaviorSubject(_homework.fetchAllItems());
+
+  Stream<List<Submission>> listSubmissions() =>
+      streamToBehaviorSubject(_submissions.fetchAllItems());
 
   void refresh() => _homework.clear();
 }

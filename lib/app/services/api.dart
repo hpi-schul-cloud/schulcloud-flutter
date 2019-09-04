@@ -165,11 +165,28 @@ class ApiService {
               ]),
               color: hexStringToColor(data['courseId']['color']),
             ),
-            lessonId: data['lessonId'],
+            lessonId: Id(data['lessonId']),
             private: data['private'],
           ),
         )
         .toList());
+  }
+
+  Future<List<Submission>> listSubmissions() async {
+    var response = await network.get('submissions');
+    var body = json.decode(response.body);
+
+    return (body['data'] as List<dynamic>)
+        .map((data) => Submission(
+              id: Id(data['_id']),
+              schoolId: data['schoolId'],
+              homeworkId: Id(data['homeworkId']),
+              userId: Id(data['userId']),
+              comment: data['comment'],
+              grade: data['grade'],
+              gradeComment: data['gradeComment'],
+            ))
+        .toList();
   }
 
   /*Future<Article> getArticle(Id<Article> id) async {
