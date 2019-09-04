@@ -30,17 +30,21 @@ class HomeworkList extends StatelessWidget {
         if (!snapshot.hasData)
           return Center(child: CircularProgressIndicator());
 
-        var assignments =
-            groupBy<Homework, DateTime>(snapshot.data, (h) => h.dueDate);
+        var assignments = groupBy<Homework, String>(
+            snapshot.data, (h) => _dateFromDateTime(h.dueDate));
         return ListView(
-          children: [
+          children: ListTile.divideTiles(context: context, tiles: [
             for (var key in assignments.keys) ...[
-              Text(key.toString()),
+              ListTile(
+                title: Text(key),
+              ),
               ...assignments[key].map((h) => HomeworkCard(h))
             ]
-          ],
+          ]).toList(),
         );
       },
     );
   }
+
+  String _dateFromDateTime(DateTime dt) => '${dt.year}-${dt.month}-${dt.day}';
 }
