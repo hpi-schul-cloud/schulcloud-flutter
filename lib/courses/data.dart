@@ -3,6 +3,8 @@ import 'package:hive/hive.dart';
 import 'package:repository/repository.dart';
 import 'package:schulcloud/app/data.dart';
 
+part 'data.g.dart';
+
 @HiveType()
 enum ContentType {
   @HiveField(0)

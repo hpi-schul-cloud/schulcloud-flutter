@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 import 'package:repository/repository.dart';
-import 'package:repository_hive/repository_hive.dart';
 import 'package:rxdart/subjects.dart';
 
 import '../data.dart';

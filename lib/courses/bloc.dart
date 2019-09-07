@@ -1,8 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
-import 'package:schulcloud/app/services.dart';
-import 'package:schulcloud/app/utils.dart';
+import 'package:schulcloud/app/app.dart';
 import 'package:repository/repository.dart';
 
 import 'data.dart';

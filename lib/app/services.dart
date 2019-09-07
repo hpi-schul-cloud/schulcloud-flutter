@@ -3,5 +3,3 @@ export 'services/me.dart';
 export 'services/navigation.dart';
 export 'services/network.dart';
 export 'services/user.dart';
-
-export 'data.dart';

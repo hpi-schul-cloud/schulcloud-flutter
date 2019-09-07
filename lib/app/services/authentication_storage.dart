@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:repository/repository.dart';
 import 'package:repository_hive/repository_hive.dart';
 
@@ -10,38 +8,25 @@ class AuthenticationStorageService {
   static const _tokenId = Id<String>('token');
 
   final _inMemory = InMemoryStorage<String>();
-  CachedRepository<String> _repo;
-
-  bool _isLoaded = false;
-  final _onLoadedListeners = <VoidCallback>{};
+  CachedRepository<String> _storage;
 
   AuthenticationStorageService() {
-    _repo = CachedRepository<String>(
+    _storage = CachedRepository<String>(
       cache: _inMemory,
       source: HiveRepository('authentication'),
-    )..loadItemsIntoCache().then((_) {
-        _isLoaded = true;
-        _onLoadedListeners.forEach((listener) => listener());
-      });
+    );
   }
 
-  void addOnLoadedListener(VoidCallback listener) {
-    assert(listener != null);
-
-    if (_isLoaded)
-      listener();
-    else
-      this._onLoadedListeners.add(listener);
-  }
+  Future<void> initialize() => _storage.loadItemsIntoCache();
 
   String get email => _inMemory.get(_emailId);
   String get token => _inMemory.get(_tokenId);
   bool get isAuthenticated => token != null;
 
-  set email(String email) => _repo.update(_emailId, email);
-  set token(String token) => _repo.update(_tokenId, token);
+  set email(String email) => _storage.update(_emailId, email);
+  set token(String token) => _storage.update(_tokenId, token);
 
   Stream<String> get tokenStream => _inMemory.fetch(_tokenId);
 
-  Future<void> logOut() => _repo.clear();
+  Future<void> logOut() => _storage.clear();
 }

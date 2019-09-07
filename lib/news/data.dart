@@ -2,6 +2,8 @@ import 'package:flutter/foundation.dart';
 import 'package:repository/repository.dart';
 import 'package:hive/hive.dart';
 
+part 'data.g.dart';
+
 @immutable
 @HiveType()
 class Article {

@@ -1,18 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'package:schulcloud/app/services.dart';
-import 'package:schulcloud/app/services/navigation.dart';
-
+import 'app/services.dart';
+import 'app/utils.dart';
 import 'courses/courses.dart';
 import 'dashboard/dashboard.dart';
+import 'hive.dart';
 import 'login/login.dart';
 import 'news/news.dart';
 import 'routes.dart';
 
 void main() {
-  runApp(
-    MultiProvider(
+  runApp(SplashScreenTask(
+    task: initializeHive,
+    builder: (_) => RootWidget(),
+  ));
+}
+
+class RootWidget extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MultiProvider(
       providers: [
         Provider<AuthenticationStorageService>(
           builder: (_) => AuthenticationStorageService(),
@@ -33,8 +41,8 @@ void main() {
         )
       ],
       child: SchulCloudApp(),
-    ),
-  );
+    );
+  }
 }
 
 const _textTheme = const TextTheme(
@@ -69,53 +77,34 @@ class SchulCloudApp extends StatelessWidget {
       initialRoute: Routes.splashScreen.name,
       navigatorObservers: [
         MyNavigatorObserver(
-            navigationService: Provider.of<NavigationService>(context))
+          navigationService: Provider.of<NavigationService>(context),
+        ),
       ],
       routes: {
         Routes.splashScreen.name: (_) => SplashScreen(),
         Routes.dashboard.name: (_) => DashboardScreen(),
         Routes.login.name: (_) => LoginScreen(),
         Routes.news.name: (_) => NewsScreen(),
-        Routes.courses.name: (_) => CoursesScreen()
+        Routes.courses.name: (_) => CoursesScreen(),
       },
     );
   }
 }
 
-/// A screen that shows a loading spinner (that should probably be changed into
-/// the Schul-Cloud logo or something similar). When the [AuthStorageService] is
-/// ready (when it loaded stuff from the [SharedPreferences]), it either
-/// redirects to the loading screen or the dashboard.
-class SplashScreen extends StatefulWidget {
-  @override
-  _SplashScreenState createState() => _SplashScreenState();
-}
-
-class _SplashScreenState extends State<SplashScreen>
-    with SingleTickerProviderStateMixin {
-  @override
-  void initState() {
-    super.initState();
-    Future.delayed(Duration.zero, initialize);
-  }
-
-  void initialize() {
-    var authStorage = Provider.of<AuthenticationStorageService>(context);
-
-    authStorage.addOnLoadedListener(() {
-      if (!this.mounted) return;
-      Navigator.of(context).pushReplacementNamed(authStorage.isAuthenticated
-          ? Routes.dashboard.name
-          : Routes.login.name);
-    });
-  }
-
-  @override
+/// When the [AuthStorageService] is ready, this screen automatically either
+/// redirects to the [LoginScreen] or the [DashboardScreen].
+class SplashScreen extends StatelessWidget {
   Widget build(BuildContext context) {
-    return Container(
-      color: Colors.white,
-      alignment: Alignment.center,
-      child: GestureDetector(child: CircularProgressIndicator()),
+    return SplashScreenTask(
+      task: () async {
+        print('Navigator');
+        var authStorage = Provider.of<AuthenticationStorageService>(context);
+        await authStorage.initialize();
+        Navigator.of(context).pushReplacementNamed(authStorage.isAuthenticated
+            ? Routes.dashboard.name
+            : Routes.login.name);
+      },
+      builder: (_) => Container(color: Colors.yellow),
     );
   }
 }
