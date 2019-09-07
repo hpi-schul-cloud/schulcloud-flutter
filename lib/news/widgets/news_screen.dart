@@ -29,7 +29,11 @@ class ArticleList extends StatelessWidget {
       stream: Provider.of<Bloc>(context).getArticles(),
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
-          return Container(color: Colors.red);
+          return Container(
+            color: Colors.white,
+            alignment: Alignment.center,
+            child: CircularProgressIndicator(),
+          );
         }
         return ListView(
           children: snapshot.data.map((article) {
