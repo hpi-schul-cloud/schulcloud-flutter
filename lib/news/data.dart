@@ -50,6 +50,7 @@ class Article {
 }
 
 @immutable
+@HiveType()
 class Author {
   @HiveField(0)
   final Id<Author> id;

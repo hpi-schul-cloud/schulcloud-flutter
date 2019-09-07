@@ -1,3 +1,2 @@
-export 'data.dart'
-    show ContentTypeAdapter, ContentAdapter, CourseAdapter, LessonAdapter;
+export 'data.dart';
 export 'widgets/courses_screen.dart';

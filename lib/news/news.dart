@@ -1,2 +1,2 @@
-export 'data.dart' show ArticleAdapter;
+export 'data.dart';
 export 'widgets/news_screen.dart';
