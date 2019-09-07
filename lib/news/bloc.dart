@@ -49,7 +49,7 @@ class ArticleDownloader extends Repository<Article> {
         ),
         section: 'Section',
         published: DateTime.parse(data['displayAt']),
-        content: data['content'],
+        content: _removeHtmlTags(data['content']),
       );
     }).toList();
 
@@ -68,5 +68,24 @@ class ArticleDownloader extends Repository<Article> {
   Stream<Article> fetch(Id<Article> id) async* {
     if (_articles == null) await _downloader;
     yield _articles.firstWhere((a) => a.id == id);
+  }
+
+  static int _tagStart = '<'.runes.first;
+  static int _tagEnd = '>'.runes.first;
+
+  String _removeHtmlTags(String text) {
+    var buffer = StringBuffer();
+    var isInTag = false;
+
+    for (var rune in text.codeUnits) {
+      if (rune == _tagStart) {
+        isInTag = true;
+      } else if (rune == _tagEnd) {
+        isInTag = false;
+      } else if (!isInTag) {
+        buffer.writeCharCode(rune);
+      }
+    }
+    return buffer.toString();
   }
 }
