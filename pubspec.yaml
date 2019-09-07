@@ -1,7 +1,10 @@
 name: schulcloud
 description: A Flutter–based mobile app for the HPI Schul–Cloud.
-
 version: 1.0.0+1
+authors:
+  - Clemens Tiedt
+  - Marcel Garus <marcel.garus@gmail.com>
+homepage: https://github.com/schul-cloud/schulcloud-flutter
 
 environment:
   sdk: ">=2.3.0 <3.0.0"
@@ -15,9 +18,9 @@ dependencies:
   http: ^0.12.0
   path_provider: ^1.1.0
   provider: ^3.0.0
-  repository: ^0.0.1
-  repository_hive: ^0.0.1
-  repository_shared_preferences: ^0.0.1
+  repository: ^1.0.0
+  repository_hive: ^1.0.1
+  repository_shared_preferences: ^1.0.1
   rxdart: ^0.22.0
   transparent_image: ^1.0.0
   webview_flutter: ^0.3.10+4
@@ -27,7 +30,10 @@ dev_dependencies:
     sdk: flutter
 
   build_runner: ^1.0.0
-  hive_generator: any
+  hive_generator:
+    git:
+      url: git://github.com/marcelgarus/hive.git
+      path: hive_generator
   json_serializable: ^3.0.0
   test: any
 
