@@ -12,14 +12,31 @@ class HomeworkCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      child: Material(
-        elevation: 2,
+    return Material(
+      elevation: 2,
+      child: InkWell(
+        enableFeedback: true,
+        excludeFromSemantics: true,
+        onTap: () => _showHomeworkDetailScreen(context, homework),
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              if (DateTime.now().isAfter(homework.dueDate))
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: <Widget>[
+                    Icon(
+                      Icons.flag,
+                      color: Colors.red,
+                    ),
+                    Text(
+                      'Overdue',
+                      style: TextStyle(color: Colors.red),
+                    ),
+                  ],
+                ),
               Text(
                 homework.name,
                 style: Theme.of(context).textTheme.headline,
@@ -40,7 +57,6 @@ class HomeworkCard extends StatelessWidget {
           ),
         ),
       ),
-      onTap: () => _showHomeworkDetailScreen(context, homework),
     );
   }
 
