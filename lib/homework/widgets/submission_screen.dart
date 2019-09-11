@@ -30,14 +30,23 @@ class _SubmissionScreenState extends State<SubmissionScreen>
       bottomNavigationBar: MyAppBar(),
       appBar: AppBar(
         backgroundColor: widget.homework.courseId.color,
+        iconTheme: IconThemeData(color: Colors.black),
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Text(widget.homework.name),
-            Text(widget.homework.courseId.name),
+            Text(
+              widget.homework.name,
+              style: TextStyle(color: Colors.black),
+            ),
+            Text(
+              widget.homework.courseId.name,
+              style: TextStyle(color: Colors.black),
+            ),
           ],
         ),
         bottom: TabBar(
+          labelColor: Colors.black,
+          labelStyle: TextStyle(fontSize: 16),
           controller: _tabController,
           tabs: <Widget>[
             Tab(text: 'Submission'),

@@ -30,13 +30,21 @@ class HomeworkList extends StatelessWidget {
         if (!snapshot.hasData)
           return Center(child: CircularProgressIndicator());
 
-        var assignments = groupBy<Homework, String>(
-            snapshot.data, (h) => _dateFromDateTime(h.dueDate));
+        var assignments = groupBy<Homework, DateTime>(
+          snapshot.data,
+          (Homework h) => DateTime(
+            h.dueDate.year,
+            h.dueDate.month,
+            h.dueDate.day,
+          ),
+        );
+        var dates = assignments.keys.toList();
+        dates.sort((a, b) => b.compareTo(a));
         return ListView(
           children: ListTile.divideTiles(context: context, tiles: [
-            for (var key in assignments.keys) ...[
+            for (var key in dates) ...[
               ListTile(
-                title: Text(key),
+                title: Text(_dateFromDateTime(key)),
               ),
               ...assignments[key].map((h) => HomeworkCard(h))
             ]
@@ -46,5 +54,5 @@ class HomeworkList extends StatelessWidget {
     );
   }
 
-  String _dateFromDateTime(DateTime dt) => '${dt.year}-${dt.month}-${dt.day}';
+  String _dateFromDateTime(DateTime dt) => '${dt.day}.${dt.month}.${dt.year}';
 }

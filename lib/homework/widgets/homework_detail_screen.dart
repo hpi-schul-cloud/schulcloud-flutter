@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
+
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
+
 import 'package:schulcloud/app/services.dart';
 import 'package:schulcloud/app/widgets.dart';
 import 'package:schulcloud/homework/bloc.dart';
@@ -20,12 +23,19 @@ class HomeworkDetailScreen extends StatelessWidget {
         builder: (context) => Scaffold(
           bottomNavigationBar: MyAppBar(),
           appBar: AppBar(
+            iconTheme: IconThemeData(color: Colors.black),
             backgroundColor: homework.courseId.color,
             title: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                Text(homework.name),
-                Text(homework.courseId.name),
+                Text(
+                  homework.name,
+                  style: TextStyle(color: Colors.black),
+                ),
+                Text(
+                  homework.courseId.name,
+                  style: TextStyle(color: Colors.black),
+                ),
               ],
             ),
           ),
@@ -42,6 +52,11 @@ class HomeworkDetailScreen extends StatelessWidget {
                           .body1
                           .copyWith(fontSize: 20),
                       data: homework.description,
+                      onLinkTap: (link) async {
+                        if (await canLaunch(link)) {
+                          await launch(link);
+                        }
+                      },
                     ),
                     if (snapshot.data != null)
                       Align(
