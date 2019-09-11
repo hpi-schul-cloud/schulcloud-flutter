@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:schulcloud/courses/entities.dart';
+import 'package:schulcloud/courses/widgets/course_detail_screen.dart';
 import 'package:schulcloud/homework/data/homework.dart';
 import 'package:schulcloud/homework/widgets/homework_detail_screen.dart';
 
@@ -31,7 +33,8 @@ class HomeworkCard extends StatelessWidget {
                 backgroundColor: homework.courseId.color,
                 avatar: Icon(Icons.school),
                 label: Text(homework.courseId.name),
-                onPressed: () {},
+                onPressed: () =>
+                    _showCourseDetailScreen(context, homework.courseId),
               ),
             ],
           ),
@@ -47,6 +50,15 @@ class HomeworkCard extends StatelessWidget {
         MaterialPageRoute(
             builder: (context) => HomeworkDetailScreen(
                   homework: homework,
+                )));
+  }
+
+  void _showCourseDetailScreen(BuildContext context, Course course) {
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => CourseDetailScreen(
+                  course: course,
                 )));
   }
 }

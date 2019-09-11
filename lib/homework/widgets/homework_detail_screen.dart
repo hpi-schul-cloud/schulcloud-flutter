@@ -29,13 +29,10 @@ class HomeworkDetailScreen extends StatelessWidget {
               ],
             ),
           ),
-          body: StreamBuilder<List<Submission>>(
-              stream: Provider.of<Bloc>(context).listSubmissions(),
+          body: StreamBuilder<Submission>(
+              stream:
+                  Provider.of<Bloc>(context).submissionForHomework(homework.id),
               builder: (context, snapshot) {
-                Submission submission;
-                if (snapshot.hasData)
-                  submission = snapshot.data
-                      .firstWhere((s) => s.homeworkId == homework.id);
                 return ListView(
                   children: <Widget>[
                     Html(
@@ -46,15 +43,21 @@ class HomeworkDetailScreen extends StatelessWidget {
                           .copyWith(fontSize: 20),
                       data: homework.description,
                     ),
-                    if (submission != null)
+                    if (snapshot.data != null)
                       Align(
                         alignment: Alignment.centerRight,
                         child: Padding(
                           padding: const EdgeInsets.all(16),
                           child: RaisedButton(
-                            child: Text('My submission'),
+                            child: Text(
+                              'My submission',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .button
+                                  .copyWith(color: Colors.white),
+                            ),
                             onPressed: () => _showSubmissionScreen(
-                                context, homework, submission),
+                                context, homework, snapshot.data),
                           ),
                         ),
                       )

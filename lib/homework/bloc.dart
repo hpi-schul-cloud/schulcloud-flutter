@@ -28,5 +28,15 @@ class Bloc {
   Stream<List<Submission>> listSubmissions() =>
       streamToBehaviorSubject(_submissions.fetchAllItems());
 
+  Stream<Submission> submissionForHomework(Id<Homework> homeworkId) async* {
+    var submission;
+    await for (var s in _submissions.fetchAllItems()) {
+      submission = submission ??
+          s.firstWhere((i) => i.homeworkId == homeworkId, orElse: () => null);
+      if (submission != null) break;
+    }
+    yield submission;
+  }
+
   void refresh() => _homework.clear();
 }
