@@ -24,7 +24,7 @@ class HomeworkDetailScreen extends StatelessWidget {
           bottomNavigationBar: MyAppBar(),
           appBar: AppBar(
             iconTheme: IconThemeData(color: Colors.black),
-            backgroundColor: homework.courseId.color,
+            backgroundColor: homework.course.color,
             title: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
@@ -33,7 +33,7 @@ class HomeworkDetailScreen extends StatelessWidget {
                   style: TextStyle(color: Colors.black),
                 ),
                 Text(
-                  homework.courseId.name,
+                  homework.course.name,
                   style: TextStyle(color: Colors.black),
                 ),
               ],

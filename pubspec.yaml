@@ -15,6 +15,7 @@ dependencies:
   flutter_html: ^0.10.4
   flutter_villains: ^1.2.0
   http: ^0.12.0
+  intl: ^0.16.0
   json_annotation: ^2.0.0
   path_provider: ^1.1.0
   permission_handler: ^3.2.2

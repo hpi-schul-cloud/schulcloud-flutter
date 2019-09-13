@@ -20,7 +20,7 @@ class Homework {
   final DateTime createdAt;
   final DateTime updatedAt;
   final String teacherId;
-  final Course courseId;
+  final Course course;
   final Id<Lesson> lessonId;
   final bool private;
   final bool publicSubmissions;
@@ -37,7 +37,7 @@ class Homework {
     this.description,
     this.createdAt,
     this.updatedAt,
-    this.courseId,
+    this.course,
     this.lessonId,
     this.private,
     this.publicSubmissions,

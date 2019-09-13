@@ -16,8 +16,7 @@ class HomeworkCard extends StatelessWidget {
       elevation: 2,
       child: InkWell(
         enableFeedback: true,
-        excludeFromSemantics: true,
-        onTap: () => _showHomeworkDetailScreen(context, homework),
+        onTap: () => _showHomeworkDetailScreen(context),
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Column(
@@ -47,11 +46,11 @@ class HomeworkCard extends StatelessWidget {
                     : homework.description,
               ),
               ActionChip(
-                backgroundColor: homework.courseId.color,
+                backgroundColor: homework.course.color,
                 avatar: Icon(Icons.school),
-                label: Text(homework.courseId.name),
+                label: Text(homework.course.name),
                 onPressed: () =>
-                    _showCourseDetailScreen(context, homework.courseId),
+                    _showCourseDetailScreen(context, homework.course),
               ),
             ],
           ),
@@ -60,7 +59,7 @@ class HomeworkCard extends StatelessWidget {
     );
   }
 
-  void _showHomeworkDetailScreen(BuildContext context, Homework homework) {
+  void _showHomeworkDetailScreen(BuildContext context) {
     Navigator.push(
         context,
         MaterialPageRoute(

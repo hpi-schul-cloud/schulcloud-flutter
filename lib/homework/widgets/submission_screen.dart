@@ -14,62 +14,52 @@ class SubmissionScreen extends StatefulWidget {
   _SubmissionScreenState createState() => _SubmissionScreenState();
 }
 
-class _SubmissionScreenState extends State<SubmissionScreen>
-    with SingleTickerProviderStateMixin {
-  TabController _tabController;
-
-  @override
-  void initState() {
-    super.initState();
-    _tabController = TabController(vsync: this, length: 2);
-  }
-
+class _SubmissionScreenState extends State<SubmissionScreen> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      bottomNavigationBar: MyAppBar(),
-      appBar: AppBar(
-        backgroundColor: widget.homework.courseId.color,
-        iconTheme: IconThemeData(color: Colors.black),
-        title: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Text(
-              widget.homework.name,
-              style: TextStyle(color: Colors.black),
-            ),
-            Text(
-              widget.homework.courseId.name,
-              style: TextStyle(color: Colors.black),
-            ),
-          ],
-        ),
-        bottom: TabBar(
-          labelColor: Colors.black,
-          labelStyle: TextStyle(fontSize: 16),
-          controller: _tabController,
-          tabs: <Widget>[
-            Tab(text: 'Submission'),
-            Tab(text: 'Feedback'),
-          ],
-        ),
-      ),
-      body: TabBarView(
-        controller: _tabController,
-        children: <Widget>[
-          ListView(
+    return DefaultTabController(
+      length: 2,
+      child: Scaffold(
+        bottomNavigationBar: MyAppBar(),
+        appBar: AppBar(
+          backgroundColor: widget.homework.course.color,
+          iconTheme: IconThemeData(color: Colors.black),
+          title: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              Html(
-                padding: EdgeInsets.all(8),
-                defaultTextStyle:
-                    Theme.of(context).textTheme.body1.copyWith(fontSize: 20),
-                data: widget.submission.comment,
+              Text(
+                widget.homework.name,
+                style: TextStyle(color: Colors.black),
+              ),
+              Text(
+                widget.homework.course.name,
+                style: TextStyle(color: Colors.black),
               ),
             ],
           ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: ListView(
+          bottom: TabBar(
+            labelColor: Colors.black,
+            labelStyle: TextStyle(fontSize: 16),
+            tabs: <Widget>[
+              Tab(text: 'Submission'),
+              Tab(text: 'Feedback'),
+            ],
+          ),
+        ),
+        body: TabBarView(
+          children: <Widget>[
+            ListView(
+              children: <Widget>[
+                Html(
+                  padding: EdgeInsets.all(8),
+                  defaultTextStyle:
+                      Theme.of(context).textTheme.body1.copyWith(fontSize: 20),
+                  data: widget.submission.comment,
+                ),
+              ],
+            ),
+            ListView(
+              padding: EdgeInsets.all(8),
               children: <Widget>[
                 if (widget.submission.grade != null)
                   Text('Grade: ${widget.submission.grade}'),
@@ -80,8 +70,8 @@ class _SubmissionScreenState extends State<SubmissionScreen>
                 ),
               ],
             ),
-          )
-        ],
+          ],
+        ),
       ),
     );
   }

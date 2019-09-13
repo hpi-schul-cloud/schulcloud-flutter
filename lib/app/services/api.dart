@@ -153,8 +153,8 @@ class ApiService {
             description: data['description'],
             availableDate:
                 DateTime.tryParse(data['availableDate']) ?? DateTime.now(),
-            dueDate: DateTime.parse(data['dueDate']) ?? DateTime.now(),
-            courseId: Course(
+            dueDate: DateTime.parse(data['dueDate']),
+            course: Course(
               id: Id<Course>(data['courseId']['_id']),
               name: data['courseId']['name'],
               description:

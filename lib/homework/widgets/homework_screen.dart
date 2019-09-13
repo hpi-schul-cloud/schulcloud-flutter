@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:collection/collection.dart' show groupBy;
 import 'package:schulcloud/app/widgets.dart';
@@ -54,6 +55,5 @@ class HomeworkList extends StatelessWidget {
     );
   }
 
-  String _dateFromDateTime(DateTime dt) =>
-      '${(dt.day < 10) ? "0" : ""}${dt.day}.${(dt.month < 10) ? "0" : ""}${dt.month}.${dt.year}';
+  String _dateFromDateTime(DateTime dt) => DateFormat.yMMMd().format(dt);
 }
