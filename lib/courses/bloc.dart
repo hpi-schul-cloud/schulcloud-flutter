@@ -54,12 +54,12 @@ class CourseDownloader extends Repository<Course> {
         name: data['name'],
         description: data['description'],
         teachers: await Future.wait([
-          for (String id in data['teacherIds'])
-            user.fetchUser(Id<User>(id)).first,
+          for (String id in data['teacherIds']) user.fetchUser(Id<User>(id)),
         ]),
         color: hexStringToColor(data['color']),
       );
     }));
+    print('Courses done');
   }
 
   @override

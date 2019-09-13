@@ -18,7 +18,7 @@ dependencies:
   http: ^0.12.0
   path_provider: ^1.1.0
   provider: ^3.0.0
-  repository: ^1.0.0
+  repository: ^1.0.2
   repository_hive: ^1.0.1
   repository_shared_preferences: ^1.0.1
   rxdart: ^0.22.0

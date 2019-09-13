@@ -14,11 +14,12 @@ class UserService {
 
   UserService({@required this.network})
       : _storage = CachedRepository(
+          strategy: CacheStrategy.onlyFetchFromSourceIfNotInCache,
           source: _UserDownloader(network: network),
           cache: InMemoryStorage<User>(),
         );
 
-  Stream<User> fetchUser(Id<User> id) => _storage.fetch(id);
+  Future<User> fetchUser(Id<User> id) => _storage.fetch(id).first;
 }
 
 class _UserDownloader extends Repository<User> {

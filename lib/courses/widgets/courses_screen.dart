@@ -29,6 +29,7 @@ class CourseGrid extends StatelessWidget {
       builder: (context, snapshot) {
         if (!snapshot.hasData)
           return Center(child: CircularProgressIndicator());
+        if (!snapshot.hasError) return Center(child: Text(snapshot.error));
 
         return GridView.count(
           childAspectRatio: 1.5,
