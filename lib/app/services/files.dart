@@ -1,39 +1,33 @@
+import 'dart:convert';
+
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:repository/repository.dart';
 
 import 'package:flutter/material.dart';
 
-import 'package:schulcloud/app/data/file_repository.dart';
-import 'package:schulcloud/app/services.dart';
-import 'package:schulcloud/core/data.dart';
-import 'package:schulcloud/core/data/utils.dart';
-import 'package:schulcloud/courses/entities.dart';
-
-import '../data/file.dart';
+import 'package:schulcloud/app/app.dart';
 
 class FilesService {
-  final ApiService api;
+  final NetworkService network;
   final String owner;
   final String parent;
   Repository<File> _files;
 
-  FilesService({@required this.api, this.owner, this.parent})
+  FilesService({@required this.network, this.owner, this.parent})
       : _files = CachedRepository(
           source: FileDownloader(
-            api: api,
+            network: network,
             owner: owner,
             parent: parent,
           ),
           cache: InMemoryStorage(),
         );
 
-  Stream<List<File>> getFiles() =>
-      streamToBehaviorSubject(_files.fetchAllItems());
-
-  Future<List<Course>> getCourses() async => await api.listCourses();
+  Stream<List<File>> getFiles() => _files.fetchAllItems();
 
   void downloadFile(Id<File> id, {fileName: String}) async {
-    var signedUrl = await api.getSignedUrl(id: id);
+    var signedUrl = await _getSignedUrl(id: id);
     PermissionStatus permissions = await PermissionHandler()
         .checkPermissionStatus(PermissionGroup.storage);
     while (permissions.value == 0) {
@@ -46,5 +40,15 @@ class FilesService {
       showNotification: true,
       openFileFromNotification: true,
     );
+  }
+
+  /// The signed URL is the URL used to actually download a file
+  /// instead of just viewing its JSON representation provided by the API.
+  Future<String> _getSignedUrl({Id<File> id}) async {
+    var response = await network.get('fileStorage/signedUrl',
+        parameters: {'download': null, 'file': id.toString()});
+
+    var body = json.decode(response.body);
+    return body['url'];
   }
 }

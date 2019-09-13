@@ -1,18 +1,13 @@
-import 'package:provider/provider.dart';
-
 import 'package:flutter/material.dart';
-
-import 'package:schulcloud/app/services.dart';
-import 'package:schulcloud/app/services/files.dart';
-import 'package:schulcloud/app/widgets.dart';
-import 'package:schulcloud/app/widgets/files_view.dart';
-import 'package:schulcloud/courses/entities.dart';
+import 'package:provider/provider.dart';
+import 'package:schulcloud/app/app.dart';
+import 'package:schulcloud/courses/data.dart';
 
 class FilesScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return ProxyProvider<ApiService, FilesService>(
-      builder: (_, api, __) => FilesService(api: api),
+    return ProxyProvider<NetworkService, FilesService>(
+      builder: (_, network, __) => FilesService(network: network),
       child: Scaffold(
         appBar: AppBar(
           title: Text('Files'),
@@ -32,15 +27,15 @@ class FilesScreen extends StatelessWidget {
 class UserFilesCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return ProxyProvider2<ApiService, AuthenticationStorageService,
-        UserService>(
-      builder: (_, api, authStorage, __) =>
-          UserService(api: api, authStorage: authStorage),
+    return ProxyProvider<NetworkService, UserService>(
+      builder: (_, network, __) => UserService(network: network),
       child: Card(
         child: ListTile(
           title: Text('My files'),
           subtitle: Text(
-              'Your personal files. By default, only you can access them, but they may be shared with others.'),
+            'Your personal files. By default, only you can access them, but '
+            'they may be shared with others.',
+          ),
           leading: Icon(Icons.person),
           onTap: () => _showPersonalFiles(context),
         ),
@@ -50,20 +45,23 @@ class UserFilesCard extends StatelessWidget {
 
   void _showPersonalFiles(BuildContext context) {
     Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => ProxyProvider<ApiService, FilesService>(
-            builder: (_, api, __) => FilesService(
-                api: api, owner: Provider.of<UserService>(context).userId),
-            child: Scaffold(
-              appBar: AppBar(
-                title: Text('My files'),
-              ),
-              body: FilesView(owner: Provider.of<UserService>(context).userId),
-              bottomNavigationBar: MyAppBar(),
-            ),
+      context,
+      MaterialPageRoute(
+        builder: (context) => ProxyProvider<NetworkService, FilesService>(
+          builder: (_, network, __) => FilesService(
+            network: network,
+            owner: Provider.of<MeService>(context).me.id.toString(),
           ),
-        ));
+          child: Scaffold(
+            appBar: AppBar(title: Text('My files')),
+            body: FilesView(
+              owner: Provider.of<MeService>(context).me.id.toString(),
+            ),
+            bottomNavigationBar: MyAppBar(),
+          ),
+        ),
+      ),
+    );
   }
 }
 
@@ -71,7 +69,7 @@ class CourseFilesList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<List<Course>>(
-      future: Provider.of<FilesService>(context).getCourses(),
+      future: Future.value(<Course>[]),
       builder: (context, snapshot) {
         if (!snapshot.hasData)
           return Center(child: CircularProgressIndicator());
@@ -89,10 +87,7 @@ class CourseFilesList extends StatelessWidget {
             ...snapshot.data
                 .map((c) => ListTile(
                       title: Text(c.name),
-                      leading: Icon(
-                        Icons.folder,
-                        color: c.color,
-                      ),
+                      leading: Icon(Icons.folder, color: c.color),
                       onTap: () => _showCourseFiles(context, c),
                     ))
                 .toList()
@@ -104,9 +99,9 @@ class CourseFilesList extends StatelessWidget {
 
   void _showCourseFiles(BuildContext context, Course course) {
     Navigator.push(context, MaterialPageRoute(builder: (context) {
-      return ProxyProvider<ApiService, FilesService>(
-        builder: (_, api, __) =>
-            FilesService(api: api, owner: course.id.toString()),
+      return ProxyProvider<NetworkService, FilesService>(
+        builder: (_, network, __) =>
+            FilesService(network: network, owner: course.id.toString()),
         child: FilesView(
           owner: course.id.toString(),
           appBarColor: course.color,

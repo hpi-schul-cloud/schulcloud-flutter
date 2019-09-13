@@ -28,7 +28,7 @@ class MeService {
       _meSubject.add(null);
     else {
       final id = Id<User>(_decodeTokenToUser(token));
-      final me = await user.fetchUser(id).first;
+      final me = await user.fetchUser(id);
       _meSubject.add(me);
     }
   }
