@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'package:schulcloud/app/services.dart';
-import 'package:schulcloud/app/widgets/app_bar.dart';
+import 'package:schulcloud/app/app.dart';
 
+import '../bloc.dart';
+import '../data.dart';
+import 'lesson_screen.dart';
 import '../bloc.dart';
 import '../data.dart';
 import 'lesson_screen.dart';
@@ -23,7 +25,14 @@ class CourseDetailScreen extends StatelessWidget {
           title: Text(course.name, style: TextStyle(color: Colors.black)),
           backgroundColor: course.color,
         ),
-        bottomNavigationBar: MyAppBar(),
+        bottomNavigationBar: MyAppBar(
+          actions: <Widget>[
+            IconButton(
+              icon: Icon(Icons.folder),
+              onPressed: () => _showCourseFiles(context, course),
+            ),
+          ],
+        ),
         body: LessonList(course: course),
       ),
     );
@@ -85,4 +94,23 @@ class LessonList extends StatelessWidget {
       ),
     );
   }
+}
+
+void _showCourseFiles(BuildContext context, Course course) {
+  Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (context) => ProxyProvider<NetworkService, FilesService>(
+        builder: (_, network, __) => FilesService(
+          network: network,
+          owner: course.id.toString(),
+        ),
+        child: FilesView(
+          owner: course.id.toString(),
+          appBarColor: course.color,
+          appBarTitle: course.name,
+        ),
+      ),
+    ),
+  );
 }

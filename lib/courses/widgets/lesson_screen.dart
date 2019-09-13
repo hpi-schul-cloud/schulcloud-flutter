@@ -45,7 +45,7 @@ class _LessonScreenState extends State<LessonScreen> {
       bottomNavigationBar: MyAppBar(
         actions: <Widget>[
           IconButton(
-            icon: Icon(Icons.web, color: Colors.white),
+            icon: Icon(Icons.web),
             onPressed: () => _showLessonContentMenu(),
           )
         ],

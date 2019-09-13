@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'app/services.dart';
-import 'app/utils.dart';
+import 'package:schulcloud/app/app.dart';
+import 'package:schulcloud/files/widgets/files_screen.dart';
+
 import 'courses/courses.dart';
 import 'dashboard/dashboard.dart';
 import 'hive.dart';
@@ -85,7 +86,8 @@ class SchulCloudApp extends StatelessWidget {
         Routes.dashboard.name: (_) => DashboardScreen(),
         Routes.login.name: (_) => LoginScreen(),
         Routes.news.name: (_) => NewsScreen(),
-        Routes.courses.name: (_) => CoursesScreen(),
+        Routes.files.name: (_) => FilesScreen(),
+        Routes.courses.name: (_) => CoursesScreen()
       },
     );
   }

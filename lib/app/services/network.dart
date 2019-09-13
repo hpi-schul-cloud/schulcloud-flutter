@@ -52,7 +52,11 @@ class NetworkService {
     };
   }
 
-  Future<http.Response> get(String path) async {
+  Future<http.Response> get(String path,
+      {Map<String, String> parameters = const {}}) async {
+    if (parameters.isNotEmpty) {
+      path += '?' + parameters.keys.map((p) => '$p=${parameters[p]}').join('&');
+    }
     return await _makeCall(
       path,
       (url) async => await http.get(url, headers: getHeaders()),

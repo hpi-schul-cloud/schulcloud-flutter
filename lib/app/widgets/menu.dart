@@ -94,6 +94,12 @@ class _MenuState extends State<Menu> {
         isActive: widget.activeScreen == Routes.courses,
       ),
       NavigationItem(
+        iconBuilder: (color) => Icon(Icons.folder, color: color),
+        text: 'Files',
+        onPressed: () => _navigateTo(Routes.files),
+        isActive: widget.activeScreen == Routes.files,
+      ),
+      NavigationItem(
         iconBuilder: (color) => Icon(Icons.list, color: color),
         text: 'Login',
         onPressed: () => _navigateTo(Routes.login),
