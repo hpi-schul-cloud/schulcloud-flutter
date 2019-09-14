@@ -27,9 +27,11 @@ class CourseGrid extends StatelessWidget {
     return StreamBuilder<List<Course>>(
       stream: Provider.of<Bloc>(context).getCourses(),
       builder: (context, snapshot) {
-        if (!snapshot.hasData)
+        if (snapshot.hasError) {
+          return Center(child: Text('An error occurred:\n${snapshot.error}'));
+        } else if (!snapshot.hasData) {
           return Center(child: CircularProgressIndicator());
-        if (!snapshot.hasError) return Center(child: Text(snapshot.error));
+        }
 
         return GridView.count(
           childAspectRatio: 1.5,
