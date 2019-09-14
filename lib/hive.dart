@@ -9,6 +9,8 @@ bool _isHiveInitialized = false;
 
 Future<void> initializeHive() async {
   if (_isHiveInitialized) return;
+  _isHiveInitialized = true;
+
   var dir = await getApplicationDocumentsDirectory();
 
   Hive
@@ -30,8 +32,6 @@ Future<void> initializeHive() async {
     // News module
     ..registerAdapter(ArticleAdapter(), 70)
     ..registerAdapter(AuthorAdapter(), 71);
-
-  _isHiveInitialized = true;
 }
 
 class IdAdapter<T> extends TypeAdapter<Id<T>> {
