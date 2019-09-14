@@ -72,7 +72,7 @@ class HomeworkDownloader extends CollectionDownloader<Homework> {
             ]),
             color: hexStringToColor(data['courseId']['color']),
           ),
-          lessonId: Id(data['lessonId']),
+          lessonId: Id(data['lessonId'] ?? ''),
           private: data['private'],
         ),
     ];

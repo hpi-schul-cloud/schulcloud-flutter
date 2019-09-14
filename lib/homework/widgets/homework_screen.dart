@@ -24,8 +24,11 @@ class HomeworkList extends StatelessWidget {
     return StreamBuilder<List<Homework>>(
       stream: Provider.of<Bloc>(context).getHomework(),
       builder: (context, snapshot) {
-        if (!snapshot.hasData)
+        if (snapshot.hasError) {
+          return Center(child: Text('Error occurred: ${snapshot.error}'));
+        } else if (!snapshot.hasData) {
           return Center(child: CircularProgressIndicator());
+        }
 
         var assignments = groupBy<Homework, DateTime>(
           snapshot.data,
