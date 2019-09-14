@@ -43,7 +43,6 @@ class _MenuState extends State<Menu> {
     return StreamBuilder<User>(
       stream: Provider.of<MeService>(context).meStream,
       builder: (context, snapshot) {
-        var meService = Provider.of<MeService>(context);
         if (!snapshot.hasData) {
           return Text('Not logged in yet.');
         }

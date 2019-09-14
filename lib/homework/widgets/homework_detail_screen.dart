@@ -1,24 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
-
 import 'package:provider/provider.dart';
+import 'package:schulcloud/app/app.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import 'package:schulcloud/app/services.dart';
-import 'package:schulcloud/app/widgets.dart';
-import 'package:schulcloud/homework/bloc.dart';
-import 'package:schulcloud/homework/data/homework.dart';
-import 'package:schulcloud/homework/widgets/submission_screen.dart';
+import '../bloc.dart';
+import '../data.dart';
+import 'submission_screen.dart';
 
 class HomeworkDetailScreen extends StatelessWidget {
   final Homework homework;
 
-  const HomeworkDetailScreen({Key key, this.homework}) : super(key: key);
+  const HomeworkDetailScreen({Key key, @required this.homework})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return ProxyProvider<ApiService, Bloc>(
-      builder: (_, api, __) => Bloc(api: api),
+    return ProxyProvider2<NetworkService, UserService, Bloc>(
+      builder: (_, network, user, __) => Bloc(network: network, user: user),
       child: Builder(
         builder: (context) => Scaffold(
           bottomNavigationBar: MyAppBar(),
@@ -85,13 +84,15 @@ class HomeworkDetailScreen extends StatelessWidget {
   }
 
   void _showSubmissionScreen(
-      BuildContext context, Homework homework, Submission submission) {
-    Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) => SubmissionScreen(
-                  homework: homework,
-                  submission: submission,
-                )));
+    BuildContext context,
+    Homework homework,
+    Submission submission,
+  ) {
+    Navigator.of(context).push(MaterialPageRoute(
+      builder: (context) => SubmissionScreen(
+        homework: homework,
+        submission: submission,
+      ),
+    ));
   }
 }

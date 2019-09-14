@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
-import 'package:schulcloud/courses/entities.dart';
-import 'package:schulcloud/courses/widgets/course_detail_screen.dart';
-import 'package:schulcloud/homework/data/homework.dart';
-import 'package:schulcloud/homework/widgets/homework_detail_screen.dart';
+import 'package:schulcloud/app/app.dart';
+import 'package:schulcloud/courses/courses.dart';
+
+import '../data.dart';
+import 'homework_detail_screen.dart';
 
 class HomeworkCard extends StatelessWidget {
   final Homework homework;
@@ -26,25 +27,15 @@ class HomeworkCard extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: <Widget>[
-                    Icon(
-                      Icons.flag,
-                      color: Colors.red,
-                    ),
-                    Text(
-                      'Overdue',
-                      style: TextStyle(color: Colors.red),
-                    ),
+                    Icon(Icons.flag, color: Colors.red),
+                    Text('Overdue', style: TextStyle(color: Colors.red)),
                   ],
                 ),
               Text(
                 homework.name,
                 style: Theme.of(context).textTheme.headline,
               ),
-              Html(
-                data: homework.description.length > 200
-                    ? homework.description.substring(0, 200) + '...'
-                    : homework.description,
-              ),
+              Html(data: limitString(homework.description, 200)),
               ActionChip(
                 backgroundColor: homework.course.color,
                 avatar: Icon(Icons.school),
@@ -60,20 +51,14 @@ class HomeworkCard extends StatelessWidget {
   }
 
   void _showHomeworkDetailScreen(BuildContext context) {
-    Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) => HomeworkDetailScreen(
-                  homework: homework,
-                )));
+    Navigator.of(context).push(MaterialPageRoute(
+      builder: (context) => HomeworkDetailScreen(homework: homework),
+    ));
   }
 
   void _showCourseDetailScreen(BuildContext context, Course course) {
-    Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) => CourseDetailScreen(
-                  course: course,
-                )));
+    Navigator.of(context).push(MaterialPageRoute(
+      builder: (context) => CourseDetailScreen(course: course),
+    ));
   }
 }

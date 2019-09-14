@@ -1,30 +1,56 @@
-import 'package:flutter/foundation.dart';
-import 'package:json_annotation/json_annotation.dart';
-import 'package:schulcloud/app/data/file.dart';
-import 'package:schulcloud/app/data/user.dart';
-import 'package:schulcloud/core/data.dart';
-import 'package:schulcloud/courses/bloc.dart';
+import 'package:meta/meta.dart';
+import 'package:schulcloud/app/app.dart';
+import 'package:schulcloud/courses/courses.dart';
+import 'package:repository/repository.dart';
+import 'package:hive/hive.dart';
 
-import '../../courses/entities.dart';
+part 'data.g.dart';
 
-part 'homework.g.dart';
-
-@JsonSerializable()
-class Homework {
+@HiveType()
+class Homework extends Entity {
+  @HiveField(0)
   final Id<Homework> id;
+
+  @HiveField(1)
   final String name;
+
+  @HiveField(2)
   final String schoolId;
+
+  @HiveField(3)
   final DateTime dueDate;
+
+  @HiveField(4)
   final DateTime availableDate;
+
+  @HiveField(5)
   final String description;
+
+  @HiveField(6)
   final DateTime createdAt;
+
+  @HiveField(7)
   final DateTime updatedAt;
+
+  @HiveField(8)
   final String teacherId;
+
+  @HiveField(9)
   final Course course;
+
+  @HiveField(10)
   final Id<Lesson> lessonId;
+
+  @HiveField(11)
   final bool private;
+
+  @HiveField(12)
   final bool publicSubmissions;
+
+  @HiveField(13)
   final bool teamSubmissions;
+
+  @HiveField(14)
   final int maxTeamMembers;
 
   Homework({
@@ -49,30 +75,44 @@ class Homework {
         assert(dueDate != null),
         assert(availableDate != null),
         assert(teacherId != null);
-
-  factory Homework.fromJson(Map<String, dynamic> data) =>
-      _$HomeworkFromJson(data);
-  Map<String, dynamic> toJson() => _$HomeworkToJson(this);
 }
 
-class HomeworkSerializer extends Serializer<Homework> {
-  const HomeworkSerializer()
-      : super(fromJson: _$HomeworkFromJson, toJson: _$HomeworkToJson);
-}
-
-@JsonSerializable()
-class Submission {
+@HiveType()
+class Submission extends Entity {
+  @HiveField(0)
   final Id<Submission> id;
+
+  @HiveField(1)
   final String schoolId;
+
+  @HiveField(2)
   final Id<Homework> homeworkId;
+
+  @HiveField(3)
   final Id<User> userId;
+
+  @HiveField(4)
   final DateTime createdAt;
+
+  @HiveField(5)
   final DateTime updatedAt;
+
+  @HiveField(6)
   final String comment;
+
+  @HiveField(7)
   final int grade;
+
+  @HiveField(8)
   final String gradeComment;
+
+  @HiveField(9)
   final List<Id<User>> teamMembers;
+
+  @HiveField(10)
   final List<Id<File>> fileIds;
+
+  @HiveField(11)
   final List<String> comments;
 
   Submission({
@@ -92,13 +132,4 @@ class Submission {
         assert(schoolId != null),
         assert(homeworkId != null),
         assert(userId != null);
-
-  factory Submission.fromJson(Map<String, dynamic> data) =>
-      _$SubmissionFromJson(data);
-  Map<String, dynamic> toJson() => _$SubmissionToJson(this);
-}
-
-class SubmissionSerializer extends Serializer<Submission> {
-  const SubmissionSerializer()
-      : super(fromJson: _$SubmissionFromJson, toJson: _$SubmissionToJson);
 }

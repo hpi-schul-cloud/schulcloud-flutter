@@ -1,42 +1,105 @@
+import 'dart:convert';
+
 import 'package:flutter/foundation.dart';
-import 'package:schulcloud/app/services.dart';
-import 'package:schulcloud/core/data.dart';
-import 'package:schulcloud/core/data/repositories.dart';
-import 'package:schulcloud/core/data/repository.dart';
-import 'package:schulcloud/core/data/utils.dart';
-import 'package:schulcloud/homework/data/homework.dart';
-import 'package:schulcloud/homework/data/repository.dart';
+import 'package:schulcloud/app/app.dart';
+import 'package:schulcloud/courses/courses.dart';
+import 'package:repository/repository.dart';
+
+import 'data.dart';
 
 class Bloc {
-  final ApiService api;
+  final NetworkService network;
+  final UserService user;
   Repository<Homework> _homework;
   Repository<Submission> _submissions;
 
-  Bloc({@required this.api})
-      : _homework = CachedRepository<Homework>(
-          source: HomeworkDownloader(api: api),
+  Bloc({@required this.network, @required this.user})
+      : assert(network != null),
+        assert(user != null),
+        _homework = CachedRepository<Homework>(
+          source: HomeworkDownloader(network: network, user: user),
           cache: InMemoryStorage(),
         ),
         _submissions = CachedRepository<Submission>(
-          source: SubmissionDownloader(api: api),
+          source: SubmissionDownloader(network: network),
           cache: InMemoryStorage(),
         );
 
-  Stream<List<Homework>> getHomework() =>
-      streamToBehaviorSubject(_homework.fetchAllItems());
+  Stream<List<Homework>> getHomework() => _homework.fetchAllItems();
 
-  Stream<List<Submission>> listSubmissions() =>
-      streamToBehaviorSubject(_submissions.fetchAllItems());
+  Stream<List<Submission>> listSubmissions() => _submissions.fetchAllItems();
 
   Stream<Submission> submissionForHomework(Id<Homework> homeworkId) async* {
-    var submission;
-    await for (var s in _submissions.fetchAllItems()) {
-      submission = submission ??
-          s.firstWhere((i) => i.homeworkId == homeworkId, orElse: () => null);
-      if (submission != null) break;
-    }
-    yield submission;
+    yield await _submissions
+        .fetchAllItems()
+        .map((all) => all.firstWhere(
+            (submission) => submission.homeworkId == homeworkId,
+            orElse: () => null))
+        .firstWhere((fittingSubmission) => fittingSubmission != null);
   }
+}
 
-  void refresh() => _homework.clear();
+class HomeworkDownloader extends CollectionDownloader<Homework> {
+  UserService user;
+  NetworkService network;
+
+  HomeworkDownloader({@required this.user, @required this.network});
+
+  @override
+  Future<List<Homework>> downloadAll() async {
+    var response = await network.get('homework');
+    var body = json.decode(response.body);
+
+    return [
+      for (var data in body['data'] as List<dynamic>)
+        Homework(
+          id: Id(data['_id']),
+          schoolId: data['schoolId'],
+          teacherId: data['teacherId'],
+          name: data['name'],
+          description: data['description'],
+          availableDate:
+              DateTime.tryParse(data['availableDate']) ?? DateTime.now(),
+          dueDate: DateTime.parse(data['dueDate']),
+          course: Course(
+            id: Id<Course>(data['courseId']['_id']),
+            name: data['courseId']['name'],
+            description:
+                data['courseId']['description'] ?? 'No description provided',
+            teachers: await Future.wait([
+              for (String id in data['courseId']['teacherIds'])
+                user.fetchUser(Id<User>(id)),
+            ]),
+            color: hexStringToColor(data['courseId']['color']),
+          ),
+          lessonId: Id(data['lessonId']),
+          private: data['private'],
+        ),
+    ];
+  }
+}
+
+class SubmissionDownloader extends CollectionDownloader<Submission> {
+  NetworkService network;
+
+  SubmissionDownloader({@required this.network});
+
+  @override
+  Future<List<Submission>> downloadAll() async {
+    var response = await network.get('submissions');
+    var body = json.decode(response.body);
+
+    return [
+      for (var data in body['data'] as List<dynamic>)
+        Submission(
+          id: Id(data['_id']),
+          schoolId: data['schoolId'],
+          homeworkId: Id(data['homeworkId']),
+          userId: Id(data['userId']),
+          comment: data['comment'],
+          grade: data['grade'],
+          gradeComment: data['gradeComment'],
+        ),
+    ];
+  }
 }

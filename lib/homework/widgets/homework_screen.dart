@@ -1,23 +1,19 @@
+import 'package:collection/collection.dart' show groupBy;
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:collection/collection.dart' show groupBy;
-import 'package:schulcloud/app/widgets.dart';
-import 'package:schulcloud/homework/data/homework.dart';
+import 'package:schulcloud/app/app.dart';
 
-import '../../app/services.dart';
 import '../bloc.dart';
+import '../data.dart';
 import 'homework_card.dart';
 
 class HomeworkScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return ProxyProvider<ApiService, Bloc>(
-      builder: (_, api, __) => Bloc(api: api),
-      child: Scaffold(
-        bottomNavigationBar: MyAppBar(),
-        body: HomeworkList(),
-      ),
+    return ProxyProvider2<NetworkService, UserService, Bloc>(
+      builder: (_, network, user, __) => Bloc(network: network, user: user),
+      child: Scaffold(bottomNavigationBar: MyAppBar(), body: HomeworkList()),
     );
   }
 }
@@ -44,9 +40,7 @@ class HomeworkList extends StatelessWidget {
         return ListView(
           children: ListTile.divideTiles(context: context, tiles: [
             for (var key in dates) ...[
-              ListTile(
-                title: Text(_dateFromDateTime(key)),
-              ),
+              ListTile(title: Text(_dateFromDateTime(key))),
               ...assignments[key].map((h) => HomeworkCard(h))
             ]
           ]).toList(),
