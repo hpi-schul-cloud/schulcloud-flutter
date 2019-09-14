@@ -9,9 +9,7 @@ class FilesScreen extends StatelessWidget {
     return ProxyProvider<NetworkService, FilesService>(
       builder: (_, network, __) => FilesService(network: network),
       child: Scaffold(
-        appBar: AppBar(
-          title: Text('Files'),
-        ),
+        appBar: AppBar(title: Text('Files')),
         body: ListView(
           children: <Widget>[
             UserFilesCard(),
@@ -57,7 +55,7 @@ class UserFilesCard extends StatelessWidget {
             body: FilesView(
               owner: Provider.of<MeService>(context).me.id.toString(),
             ),
-            bottomNavigationBar: MyAppBar(),
+            //bottomNavigationBar: MyAppBar(),
           ),
         ),
       ),
@@ -69,7 +67,7 @@ class CourseFilesList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<List<Course>>(
-      future: Future.value(<Course>[]),
+      future: Future.value([]),
       builder: (context, snapshot) {
         if (!snapshot.hasData)
           return Center(child: CircularProgressIndicator());
