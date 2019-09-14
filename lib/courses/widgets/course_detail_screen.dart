@@ -6,9 +6,6 @@ import 'package:schulcloud/app/app.dart';
 import '../bloc.dart';
 import '../data.dart';
 import 'lesson_screen.dart';
-import '../bloc.dart';
-import '../data.dart';
-import 'lesson_screen.dart';
 
 class CourseDetailScreen extends StatelessWidget {
   final Course course;
