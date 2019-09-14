@@ -17,7 +17,11 @@ class AuthenticationStorageService {
     );
   }
 
-  Future<void> initialize() => _storage.loadItemsIntoCache();
+  Future<void> initialize() async {
+    await _inMemory.update(_emailId, '');
+    await _inMemory.update(_tokenId, '');
+    await _storage.loadItemsIntoCache();
+  }
 
   String get email => _inMemory.get(_emailId);
   String get token => _inMemory.get(_tokenId);

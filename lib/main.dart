@@ -12,34 +12,47 @@ import 'news/news.dart';
 import 'routes.dart';
 
 void main() {
-  runApp(SplashScreenTask(
-    task: initializeHive,
-    builder: (_) => RootWidget(),
-  ));
+  runApp(ServicesProvider());
 }
 
-class RootWidget extends StatelessWidget {
+class ServicesProvider extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        Provider<AuthenticationStorageService>(
-          builder: (_) => AuthenticationStorageService(),
+        // Initializes hive and offers a service that stores the email and
+        // password.
+        FutureProvider<AuthenticationStorageService>(
+          builder: (context) async {
+            await initializeHive();
+            var authStorage = AuthenticationStorageService();
+            await authStorage.initialize();
+            return authStorage;
+          },
         ),
+        // This service offers network calls and automatically enriches the
+        // header using the authentication provided by the
+        // [AuthenticationStorageService].
         ProxyProvider<AuthenticationStorageService, NetworkService>(
-          builder: (_, authStorage, __) =>
-              NetworkService(authStorage: authStorage),
+          builder: (_, authStorage, __) => authStorage == null
+              ? null
+              : NetworkService(authStorage: authStorage),
         ),
+        // This service offers fetching of users.
         ProxyProvider<NetworkService, UserService>(
-          builder: (_, network, __) => UserService(network: network),
+          builder: (_, network, __) =>
+              network == null ? null : UserService(network: network),
         ),
+        // This service offers fetching of the currently logged in user.
         ProxyProvider2<AuthenticationStorageService, UserService, MeService>(
           builder: (_, authStorage, user, __) =>
-              MeService(authStorage: authStorage, user: user),
+              authStorage == null || user == null
+                  ? null
+                  : MeService(authStorage: authStorage, user: user),
+          dispose: (_, me) => me?.dispose(),
         ),
-        Provider<NavigationService>(
-          builder: (_) => NavigationService(),
-        )
+        // This service saves the current route.
+        Provider<NavigationService>.value(value: NavigationService()),
       ],
       child: SchulCloudApp(),
     );
@@ -93,20 +106,32 @@ class SchulCloudApp extends StatelessWidget {
   }
 }
 
-/// When the [AuthStorageService] is ready, this screen automatically either
-/// redirects to the [LoginScreen] or the [DashboardScreen].
+/// This splash screen waits for all the services to be initialized. When they
+/// are, it automatically redirects either to the [LoginScreen] or the
+/// [DashboardScreen] based on whether the user is logged in.
 class SplashScreen extends StatelessWidget {
   Widget build(BuildContext context) {
-    return SplashScreenTask(
-      task: () async {
-        print('Navigator');
+    var areAllServicesInitialized = {
+      Provider.of<AuthenticationStorageService>(context),
+      Provider.of<NetworkService>(context),
+      Provider.of<UserService>(context),
+      Provider.of<MeService>(context),
+      Provider.of<NavigationService>(context),
+    }.every((service) => service != null);
+
+    if (areAllServicesInitialized) {
+      Future.microtask(() {
         var authStorage = Provider.of<AuthenticationStorageService>(context);
-        await authStorage.initialize();
-        Navigator.of(context).pushReplacementNamed(authStorage.isAuthenticated
-            ? Routes.dashboard.name
-            : Routes.login.name);
-      },
-      builder: (_) => Container(color: Colors.yellow),
+        var targetRoute =
+            authStorage.isAuthenticated ? Routes.dashboard : Routes.login;
+        Navigator.of(context).pushReplacementNamed(targetRoute.name);
+      });
+    }
+
+    return Container(
+      color: Colors.white,
+      alignment: Alignment.center,
+      child: CircularProgressIndicator(),
     );
   }
 }
