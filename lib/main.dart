@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 
 import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/files/widgets/files_screen.dart';
+import 'package:schulcloud/homework/widgets/homework_screen.dart';
 
 import 'courses/courses.dart';
 import 'dashboard/dashboard.dart';
@@ -100,7 +101,8 @@ class SchulCloudApp extends StatelessWidget {
         Routes.login.name: (_) => LoginScreen(),
         Routes.news.name: (_) => NewsScreen(),
         Routes.files.name: (_) => FilesScreen(),
-        Routes.courses.name: (_) => CoursesScreen()
+        Routes.courses.name: (_) => CoursesScreen(),
+        Routes.homework.name: (_) => HomeworkScreen(),
       },
     );
   }

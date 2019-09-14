@@ -14,9 +14,10 @@ class Routes {
   static const news = const Routes._internal('news');
   static const courses = const Routes._internal('courses');
   static const files = const Routes._internal('files');
+  static const homework = const Routes._internal('homework');
 
   static List<Routes> get values =>
-      [splashScreen, login, dashboard, news, courses, files];
+      [splashScreen, login, dashboard, news, courses, files, homework];
   String get name => _name;
   static Routes fromString(String name) =>
       values.firstWhere((route) => route.name == name);
