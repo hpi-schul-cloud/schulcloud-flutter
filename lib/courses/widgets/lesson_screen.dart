@@ -10,7 +10,9 @@ class LessonScreen extends StatefulWidget {
   final Course course;
   final Lesson lesson;
 
-  LessonScreen({this.course, this.lesson});
+  LessonScreen({@required this.course, @required this.lesson})
+      : assert(course != null),
+        assert(lesson != null);
 
   @override
   _LessonScreenState createState() => _LessonScreenState();
@@ -47,7 +49,7 @@ class _LessonScreenState extends State<LessonScreen> {
           IconButton(
             icon: Icon(Icons.web),
             onPressed: () => _showLessonContentMenu(),
-          )
+          ),
         ],
       ),
       body: Padding(
@@ -66,29 +68,25 @@ class _LessonScreenState extends State<LessonScreen> {
     return 'data:text/html;base64,$encoded';
   }
 
-  String _textOrUrl(Content content) {
-    return content.isText ? _createBase64Source(content.text) : content.url;
-  }
+  String _textOrUrl(Content content) =>
+      content.isText ? _createBase64Source(content.text) : content.url;
 
   Widget _buildBottomSheetContent() {
     return Column(
       mainAxisSize: MainAxisSize.min,
-      children: widget.lesson.contents
-          .map((content) => _buildBottomSheetItem(content))
-          .toList(),
-    );
-  }
-
-  Widget _buildBottomSheetItem(Content content) {
-    return NavigationItem(
-      iconBuilder: (color) => Icon(Icons.textsms),
-      text: content.title,
-      onPressed: () {
-        if (_controller == null) return;
-        _controller.loadUrl(_textOrUrl(content));
-        Navigator.pop(context);
-      },
-      isActive: false,
+      children: [
+        for (var content in widget.lesson.contents)
+          NavigationItem(
+            iconBuilder: (color) => Icon(Icons.textsms),
+            text: content.title,
+            onPressed: () {
+              if (_controller == null) return;
+              _controller.loadUrl(_textOrUrl(content));
+              Navigator.pop(context);
+            },
+            isActive: false,
+          ),
+      ],
     );
   }
 }

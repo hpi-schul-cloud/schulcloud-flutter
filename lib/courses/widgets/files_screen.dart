@@ -16,8 +16,8 @@ class FilesScreen extends StatelessWidget {
         bottomNavigationBar: MyAppBar(),
         body: ListView(
           children: <Widget>[
-            UserFilesCard(),
-            CourseFilesList(),
+            _UserFilesCard(),
+            _CourseFilesList(),
           ],
         ),
       ),
@@ -25,7 +25,14 @@ class FilesScreen extends StatelessWidget {
   }
 }
 
-class UserFilesCard extends StatelessWidget {
+class _UserFilesCard extends StatelessWidget {
+  void _showPersonalFiles(BuildContext context) {
+    Navigator.of(context).push(MaterialPageRoute(
+      builder: (context) =>
+          FileBrowser(owner: Provider.of<MeService>(context).me),
+    ));
+  }
+
   @override
   Widget build(BuildContext context) {
     return ProxyProvider<NetworkService, UserService>(
@@ -43,16 +50,15 @@ class UserFilesCard extends StatelessWidget {
       ),
     );
   }
-
-  void _showPersonalFiles(BuildContext context) {
-    Navigator.of(context).push(MaterialPageRoute(
-      builder: (context) =>
-          FileBrowser(owner: Provider.of<MeService>(context).me),
-    ));
-  }
 }
 
-class CourseFilesList extends StatelessWidget {
+class _CourseFilesList extends StatelessWidget {
+  void _showCourseFiles(BuildContext context, Course course) {
+    Navigator.of(context).push(MaterialPageRoute(
+      builder: (context) => FileBrowser(owner: course),
+    ));
+  }
+
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<List<Course>>(
@@ -62,31 +68,26 @@ class CourseFilesList extends StatelessWidget {
           return Center(child: CircularProgressIndicator());
 
         return Card(
-            child: Column(
-          children: [
-            ListTile(
-              title: Text('Course Files'),
-              leading: Icon(Icons.school),
-              subtitle: Text(
-                  'The files from courses you are enrolled in. Anyone in the course (including teachers) has access to them.'),
-            ),
-            Divider(),
-            ...snapshot.data
-                .map((c) => ListTile(
-                      title: Text(c.name),
-                      leading: Icon(Icons.folder, color: c.color),
-                      onTap: () => _showCourseFiles(context, c),
-                    ))
-                .toList()
-          ],
-        ));
+          child: Column(
+            children: [
+              ListTile(
+                title: Text('Course Files'),
+                leading: Icon(Icons.school),
+                subtitle: Text(
+                    'The files from courses you are enrolled in. Anyone in '
+                    'the course (including teachers) has access to them.'),
+              ),
+              Divider(),
+              for (var course in snapshot.data)
+                ListTile(
+                  title: Text(course.name),
+                  leading: Icon(Icons.folder, color: course.color),
+                  onTap: () => _showCourseFiles(context, course),
+                ),
+            ],
+          ),
+        );
       },
     );
-  }
-
-  void _showCourseFiles(BuildContext context, Course course) {
-    Navigator.of(context).push(MaterialPageRoute(
-      builder: (context) => FileBrowser(owner: course),
-    ));
   }
 }

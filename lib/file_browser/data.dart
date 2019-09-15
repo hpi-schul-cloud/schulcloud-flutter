@@ -3,7 +3,7 @@ import 'package:repository/repository.dart';
 import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/courses/courses.dart';
 
-class File extends Entity {
+class File implements Entity {
   final Id<File> id;
 
   /// The name of this file.

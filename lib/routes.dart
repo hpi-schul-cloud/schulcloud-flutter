@@ -20,5 +20,5 @@ class Routes {
       [splashScreen, login, dashboard, news, courses, files, homework];
   String get name => _name;
   static Routes fromString(String name) =>
-      values.firstWhere((route) => route.name == name);
+      values.firstWhere((route) => route.name == name, orElse: () => null);
 }

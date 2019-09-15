@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:flutter/foundation.dart';
+import 'package:meta/meta.dart';
 import 'package:repository/repository.dart';
 
 import '../data.dart';
@@ -13,13 +13,14 @@ class UserService {
   final Repository<User> _storage;
 
   UserService({@required this.network})
-      : _storage = CachedRepository(
+      : assert(network != null),
+        _storage = CachedRepository(
           strategy: CacheStrategy.onlyFetchFromSourceIfNotInCache,
           source: _UserDownloader(network: network),
           cache: InMemoryStorage<User>(),
         );
 
-  Future<User> fetchUser(Id<User> id) => _storage.fetch(id).first;
+  Future<User> getUser(Id<User> id) => _storage.fetch(id).first;
 }
 
 class _UserDownloader extends Repository<User> {

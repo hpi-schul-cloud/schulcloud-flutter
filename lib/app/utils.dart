@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:intl/intl.dart';
 import 'package:repository/repository.dart';
 
 /// Converts a hex string (like, '#ffdd00') to a [Color].
@@ -25,6 +26,29 @@ String formatFileSize(int bytes) {
   }
 
   return '${(bytes / power).toStringAsFixed(1)} ${units[index]}';
+}
+
+/// Converts a DateTime to a string.
+String dateTimeToString(DateTime dt) => DateFormat.yMMMd().format(dt);
+
+/// Removes html tags from a string.
+String removeHtmlTags(String text) {
+  int _tagStart = '<'.runes.first;
+  int _tagEnd = '>'.runes.first;
+
+  var buffer = StringBuffer();
+  var isInTag = false;
+
+  for (var rune in text.codeUnits) {
+    if (rune == _tagStart) {
+      isInTag = true;
+    } else if (rune == _tagEnd) {
+      isInTag = false;
+    } else if (!isInTag) {
+      buffer.writeCharCode(rune);
+    }
+  }
+  return buffer.toString();
 }
 
 /// An error indicating that a permission wasn't granted by the user.

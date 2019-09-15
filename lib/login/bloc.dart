@@ -12,14 +12,17 @@ class Bloc {
   final AuthenticationStorageService authStorage;
   final NetworkService network;
 
-  Bloc({@required this.authStorage, @required this.network});
+  Bloc({@required this.authStorage, @required this.network})
+      : assert(authStorage != null),
+        assert(network != null);
 
   bool isEmailValid(String email) => RegExp(emailRegExp).hasMatch(email);
   bool isPasswordValid(String password) => password.isNotEmpty;
 
   Future<void> login(String email, String password) async {
-    if (!isEmailValid(email) || !isPasswordValid(password))
+    if (!isEmailValid(email) || !isPasswordValid(password)) {
       throw InvalidLoginSyntaxError();
+    }
 
     authStorage.email = email;
 
@@ -28,8 +31,7 @@ class Bloc {
       'username': email,
       'password': password,
     });
-    authStorage.token =
-        (json.decode(response.body) as Map<String, dynamic>)['accessToken'];
+    authStorage.token = json.decode(response.body)['accessToken'];
   }
 
   Future<void> loginAsDemoStudent() =>

@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
-import 'package:schulcloud/app/services.dart';
-import 'package:schulcloud/app/widgets.dart';
+import 'package:schulcloud/app/app.dart';
 
 import '../bloc.dart';
 import 'button.dart';
@@ -23,8 +21,7 @@ class LoginContent extends StatefulWidget {
   _LoginContentState createState() => _LoginContentState();
 }
 
-class _LoginContentState extends State<LoginContent>
-    with BlocConsumer<Bloc, LoginContent> {
+class _LoginContentState extends State<LoginContent> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _alreadyTriedToSignIn = false;
@@ -33,7 +30,7 @@ class _LoginContentState extends State<LoginContent>
   bool _isPasswordValid = true;
   String _ambientError;
 
-  void _checkSyntax() {
+  void _checkSyntax(Bloc bloc) {
     setState(() {
       _isEmailValid =
           !_alreadyTriedToSignIn || bloc.isEmailValid(_emailController.text);
@@ -61,15 +58,15 @@ class _LoginContentState extends State<LoginContent>
     }
   }
 
-  Future<void> _login() async {
+  Future<void> _login(Bloc bloc) async {
     await _executeLogin(() async {
-      _checkSyntax();
+      _checkSyntax(bloc);
       if (_isEmailValid && _isPasswordValid)
         await bloc.login(_emailController.text, _passwordController.text);
     });
   }
 
-  Future<void> _loginAsDemoStudent() =>
+  Future<void> _loginAsDemoStudent(Bloc bloc) =>
       _executeLogin(() => bloc.loginAsDemoStudent());
 
   /*Future<void> _loginAsDemoTeacher() =>
@@ -83,9 +80,12 @@ class _LoginContentState extends State<LoginContent>
           child: SingleChildScrollView(
             padding: const EdgeInsets.all(16),
             physics: ClampingScrollPhysics(),
-            child: Container(
+            child: SizedBox(
               width: 400,
-              child: Column(children: _buildContent()),
+              child: Consumer<Bloc>(
+                builder: (context, bloc, __) =>
+                    Column(children: _buildContent(bloc)),
+              ),
             ),
           ),
         ),
@@ -93,27 +93,27 @@ class _LoginContentState extends State<LoginContent>
     );
   }
 
-  List<Widget> _buildContent() {
+  List<Widget> _buildContent(Bloc bloc) {
     return [
       FlutterLogo(size: 100, colors: Colors.red),
       SizedBox(height: 16),
-      LoginInput(
+      _LoginInput(
         controller: _emailController,
         label: 'Email',
         error: _isEmailValid ? null : 'Enter an email address.',
-        onChanged: _checkSyntax,
+        onChanged: () => _checkSyntax(bloc),
       ),
       SizedBox(height: 16),
-      LoginInput(
+      _LoginInput(
         controller: _passwordController,
         label: 'Password',
         obscureText: true,
         error: _isPasswordValid ? null : 'Enter a password.',
-        onChanged: _checkSyntax,
+        onChanged: () => _checkSyntax(bloc),
       ),
       SizedBox(height: 16),
       Button(
-        onPressed: _login,
+        onPressed: () => _login(bloc),
         isLoading: _isLoading,
         child: Padding(
           padding: const EdgeInsets.all(12),
@@ -130,27 +130,28 @@ class _LoginContentState extends State<LoginContent>
       Text("Don't have an account yet? Try it out!"),
       SizedBox(height: 8),
       OutlineButton(
-        onPressed: _loginAsDemoStudent,
+        onPressed: () => _loginAsDemoStudent(bloc),
         child: Text('Demo as a student'),
       ),
     ];
   }
 }
 
-class LoginInput extends StatelessWidget {
-  LoginInput({
-    @required this.controller,
-    @required this.label,
-    this.error,
-    this.obscureText = false,
-    this.onChanged,
-  });
-
+class _LoginInput extends StatelessWidget {
   final TextEditingController controller;
   final String label;
   final String error;
   final bool obscureText;
   final VoidCallback onChanged;
+
+  _LoginInput({
+    @required this.controller,
+    @required this.label,
+    this.error,
+    this.obscureText = false,
+    this.onChanged,
+  })  : assert(controller != null),
+        assert(label != null);
 
   @override
   Widget build(BuildContext context) {

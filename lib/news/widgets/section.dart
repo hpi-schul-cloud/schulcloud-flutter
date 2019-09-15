@@ -7,9 +7,9 @@ import 'theme.dart';
 ///
 /// The colors and padding come from the enclosing [ArticleTheme].
 class Section extends StatelessWidget {
-  const Section({@required this.child}) : assert(child != null);
-
   final Widget child;
+
+  const Section({@required this.child}) : assert(child != null);
 
   @override
   Widget build(BuildContext context) {

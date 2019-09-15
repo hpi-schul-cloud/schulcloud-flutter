@@ -4,21 +4,19 @@ import 'package:schulcloud/app/services/navigation.dart';
 
 import 'menu.dart';
 
-class MyAppBar extends StatefulWidget {
+/// A custom version of an app bar intended to be displayed at the bottom of
+/// the screen.
+class MyAppBar extends StatelessWidget {
   final List<Widget> actions;
 
   MyAppBar({this.actions = const []}) : assert(actions != null);
 
-  @override
-  _MyAppBarState createState() => _MyAppBarState();
-}
-
-class _MyAppBarState extends State<MyAppBar> {
-  Future<void> _showMenu() async {
+  Future<void> _showMenu(BuildContext context) async {
     String targetScreen = await showModalBottomSheet(
       context: context,
       builder: (context) => Menu(
-          activeScreen: Provider.of<NavigationService>(context).activeScreen),
+        activeScreen: Provider.of<NavigationService>(context).activeScreen,
+      ),
     );
 
     if (targetScreen != null) {
@@ -45,10 +43,10 @@ class _MyAppBarState extends State<MyAppBar> {
               children: <Widget>[
                 IconButton(
                   icon: Icon(Icons.menu),
-                  onPressed: _showMenu,
+                  onPressed: () => _showMenu(context),
                 ),
                 Spacer(),
-                ...widget.actions
+                ...actions,
               ],
             ),
           ),

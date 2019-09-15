@@ -15,14 +15,14 @@ class NewsScreen extends StatelessWidget {
     return ProxyProvider<NetworkService, Bloc>(
       builder: (_, network, __) => Bloc(network: network),
       child: Scaffold(
-        body: ArticleList(),
+        body: _ArticleList(),
         bottomNavigationBar: MyAppBar(),
       ),
     );
   }
 }
 
-class ArticleList extends StatelessWidget {
+class _ArticleList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<List<Article>>(
@@ -36,12 +36,13 @@ class ArticleList extends StatelessWidget {
           );
         }
         return ListView(
-          children: snapshot.data.map((article) {
-            return Padding(
-              padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
-              child: ArticlePreview(article: article),
-            );
-          }).toList(),
+          children: [
+            for (var article in snapshot.data)
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+                child: ArticlePreview(article: article),
+              ),
+          ],
         );
       },
     );

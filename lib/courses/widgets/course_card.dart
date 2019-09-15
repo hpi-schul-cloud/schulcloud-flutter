@@ -6,24 +6,29 @@ import 'course_detail_screen.dart';
 class CourseCard extends StatelessWidget {
   final Course course;
 
-  CourseCard({this.course});
+  CourseCard({@required this.course}) : assert(course != null);
+
+  void _openDetailsScreen(BuildContext context) {
+    Navigator.of(context).push(MaterialPageRoute(
+      builder: (context) => CourseDetailScreen(course: course),
+    ));
+  }
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () =>
-          Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-        return CourseDetailScreen(course: course);
-      })),
+      onTap: () => _openDetailsScreen(context),
       child: Card(
         child: Column(
           children: <Widget>[
             Container(
               decoration: BoxDecoration(
-                  borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(4),
-                      topRight: Radius.circular(4)),
-                  color: course.color),
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(4),
+                  topRight: Radius.circular(4),
+                ),
+                color: course.color,
+              ),
               height: 32,
             ),
             ListTile(

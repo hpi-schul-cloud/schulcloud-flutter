@@ -6,19 +6,17 @@ import 'package:schulcloud/routes.dart';
 import '../data.dart';
 import '../services.dart';
 
-class Menu extends StatefulWidget {
+/// A menu displaying the current user and [NavigationItem]s.
+class Menu extends StatelessWidget {
   final Routes activeScreen;
 
-  const Menu({this.activeScreen});
-  @override
-  _MenuState createState() => _MenuState();
-}
+  const Menu({@required this.activeScreen}) : assert(activeScreen != null);
 
-class _MenuState extends State<Menu> {
-  void _navigateTo(Routes target) => Navigator.pop(context, target.name);
+  void _navigateTo(BuildContext context, Routes target) =>
+      Navigator.pop(context, target.name);
 
-  Future<void> _logOut() async {
-    await Provider.of<AuthenticationStorageService>(context).logOut();
+  Future<void> _logOut(BuildContext context) async {
+    await Provider.of<AuthenticationStorageService>(context).clear();
     Navigator.of(context).pushReplacementNamed(Routes.login.toString());
   }
 
@@ -30,16 +28,16 @@ class _MenuState extends State<Menu> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
-          _buildUserInfo(),
+          _buildUserInfo(context),
           Divider(),
-          ..._buildNavigationItems(),
+          ..._buildNavigationItems(context),
           SizedBox(height: 12),
         ],
       ),
     );
   }
 
-  Widget _buildUserInfo() {
+  Widget _buildUserInfo(BuildContext context) {
     return StreamBuilder<User>(
       stream: Provider.of<MeService>(context).meStream,
       builder: (context, snapshot) {
@@ -50,7 +48,7 @@ class _MenuState extends State<Menu> {
 
         return Row(
           children: <Widget>[
-            SizedBox(width: 16.0 + 8),
+            SizedBox(width: 24),
             Expanded(
               child: Column(
                 mainAxisSize: MainAxisSize.min,
@@ -64,7 +62,7 @@ class _MenuState extends State<Menu> {
             IconButton(icon: Icon(Icons.settings), onPressed: () {}),
             IconButton(
               icon: Icon(Icons.airline_seat_legroom_reduced),
-              onPressed: _logOut,
+              onPressed: () => _logOut(context),
             ),
             SizedBox(width: 8),
           ],
@@ -73,49 +71,54 @@ class _MenuState extends State<Menu> {
     );
   }
 
-  List<Widget> _buildNavigationItems() {
+  List<Widget> _buildNavigationItems(BuildContext context) {
     return [
       NavigationItem(
         iconBuilder: (color) => Icon(Icons.dashboard, color: color),
         text: 'Dashboard',
-        onPressed: () => _navigateTo(Routes.dashboard),
-        isActive: widget.activeScreen == Routes.dashboard,
+        onPressed: () => _navigateTo(context, Routes.dashboard),
+        isActive: activeScreen == Routes.dashboard,
       ),
       NavigationItem(
         iconBuilder: (color) => Icon(Icons.new_releases, color: color),
         text: 'News',
-        onPressed: () => _navigateTo(Routes.news),
-        isActive: widget.activeScreen == Routes.news,
+        onPressed: () => _navigateTo(context, Routes.news),
+        isActive: activeScreen == Routes.news,
       ),
       NavigationItem(
         iconBuilder: (color) => Icon(Icons.school, color: color),
         text: 'Courses',
-        onPressed: () => _navigateTo(Routes.courses),
-        isActive: widget.activeScreen == Routes.courses,
+        onPressed: () => _navigateTo(context, Routes.courses),
+        isActive: activeScreen == Routes.courses,
       ),
       NavigationItem(
         iconBuilder: (color) => Icon(Icons.playlist_add_check, color: color),
         text: 'Assignments',
-        onPressed: () => _navigateTo(Routes.homework),
-        isActive: widget.activeScreen == Routes.homework,
+        onPressed: () => _navigateTo(context, Routes.homework),
+        isActive: activeScreen == Routes.homework,
       ),
       NavigationItem(
         iconBuilder: (color) => Icon(Icons.folder, color: color),
         text: 'Files',
-        onPressed: () => _navigateTo(Routes.files),
-        isActive: widget.activeScreen == Routes.files,
+        onPressed: () => _navigateTo(context, Routes.files),
+        isActive: activeScreen == Routes.files,
       ),
       NavigationItem(
         iconBuilder: (color) => Icon(Icons.list, color: color),
         text: 'Login',
-        onPressed: () => _navigateTo(Routes.login),
-        isActive: widget.activeScreen == Routes.login,
+        onPressed: () => _navigateTo(context, Routes.login),
+        isActive: activeScreen == Routes.login,
       ),
     ];
   }
 }
 
 class NavigationItem extends StatelessWidget {
+  final Widget Function(Color color) iconBuilder;
+  final String text;
+  final VoidCallback onPressed;
+  final bool isActive;
+
   NavigationItem({
     @required this.iconBuilder,
     @required this.text,
@@ -126,16 +129,11 @@ class NavigationItem extends StatelessWidget {
         assert(onPressed != null),
         assert(isActive != null);
 
-  final Widget Function(Color color) iconBuilder;
-  final String text;
-  final VoidCallback onPressed;
-  final bool isActive;
-
   @override
   Widget build(BuildContext context) {
     var color = isActive ? Theme.of(context).primaryColor : Colors.black;
 
-    return Container(
+    return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8),
       child: Material(
         borderRadius: BorderRadius.circular(8),

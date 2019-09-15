@@ -37,8 +37,9 @@ class FileBrowser extends StatelessWidget {
       await Provider.of<Bloc>(context).downloadFile(file);
     } on PermissionNotGranted catch (_) {
       Scaffold.of(context).showSnackBar(SnackBar(
-        content:
-            Text('You need to grant storage permission to download files.'),
+        content: Text(
+          'You need to grant storage permission to download files.',
+        ),
       ));
     }
   }
@@ -72,11 +73,13 @@ class FileBrowser extends StatelessWidget {
                 }
                 return ListView(
                   children: [
-                    ...snapshot.data.where((file) => file.isDirectory).map(
-                        (file) => FileTile(file: file, onTap: _openDirectory)),
+                    for (var file in snapshot.data)
+                      if (file.isDirectory)
+                        FileTile(file: file, onTap: _openDirectory),
                     Divider(),
-                    ...snapshot.data.where((file) => file.isNotDirectory).map(
-                        (file) => FileTile(file: file, onTap: _downloadFile)),
+                    for (var file in snapshot.data)
+                      if (file.isNotDirectory)
+                        FileTile(file: file, onTap: _downloadFile),
                   ],
                 );
               },

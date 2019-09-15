@@ -21,7 +21,7 @@ class Bloc {
   })  : assert(network != null),
         assert(owner != null),
         _files =
-            FolderDownloader(network: network, owner: owner, parent: parent);
+            _FolderDownloader(network: network, owner: owner, parent: parent);
 
   Stream<List<File>> getFiles() => _files.fetchAllItems();
 
@@ -59,12 +59,12 @@ class Bloc {
   }
 }
 
-class FolderDownloader extends CollectionDownloader<File> {
+class _FolderDownloader extends CollectionDownloader<File> {
   NetworkService network;
   Entity owner;
   File parent;
 
-  FolderDownloader({
+  _FolderDownloader({
     @required this.network,
     @required this.owner,
     this.parent,

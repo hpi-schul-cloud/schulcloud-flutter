@@ -32,5 +32,5 @@ class AuthenticationStorageService {
 
   Stream<String> get tokenStream => _inMemory.fetch(_tokenId);
 
-  Future<void> logOut() => _storage.clear();
+  Future<void> clear() => _storage.clear();
 }

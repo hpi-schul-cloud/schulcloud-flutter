@@ -1,12 +1,13 @@
 import 'package:flutter/foundation.dart';
 import 'package:repository/repository.dart';
 import 'package:hive/hive.dart';
+import 'package:schulcloud/app/app.dart';
 
 part 'data.g.dart';
 
 @immutable
 @HiveType()
-class Article {
+class Article implements Entity {
   @HiveField(0)
   final Id<Article> id;
 
@@ -51,7 +52,7 @@ class Article {
 
 @immutable
 @HiveType()
-class Author {
+class Author implements Entity {
   @HiveField(0)
   final Id<Author> id;
 

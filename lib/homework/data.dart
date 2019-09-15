@@ -8,7 +8,7 @@ import 'package:schulcloud/file_browser/file_browser.dart';
 part 'data.g.dart';
 
 @HiveType()
-class Homework extends Entity {
+class Homework implements Entity {
   @HiveField(0)
   final Id<Homework> id;
 
@@ -79,7 +79,7 @@ class Homework extends Entity {
 }
 
 @HiveType()
-class Submission extends Entity {
+class Submission implements Entity {
   @HiveField(0)
   final Id<Submission> id;
 
