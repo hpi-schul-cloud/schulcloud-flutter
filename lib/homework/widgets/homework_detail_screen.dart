@@ -49,7 +49,7 @@ class HomeworkDetailScreen extends StatelessWidget {
             ),
           ),
           body: StreamBuilder<Submission>(
-            stream: bloc.submissionForHomework(homework.id),
+            stream: bloc.getSubmissionForHomework(homework.id),
             builder: (context, snapshot) {
               var textTheme = Theme.of(context).textTheme;
               return ListView(

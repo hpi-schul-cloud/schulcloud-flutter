@@ -10,7 +10,7 @@ import '../services.dart';
 class Menu extends StatelessWidget {
   final Routes activeScreen;
 
-  const Menu({@required this.activeScreen}) : assert(activeScreen != null);
+  const Menu({@required this.activeScreen});
 
   void _navigateTo(BuildContext context, Routes target) =>
       Navigator.pop(context, target.name);

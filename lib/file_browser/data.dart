@@ -8,6 +8,7 @@ class File implements Entity {
 
   /// The name of this file.
   final String name;
+  String get path => "${parent?.path ?? owner.id}/name";
 
   /// The size in byte.
   final int size;
@@ -34,4 +35,7 @@ class File implements Entity {
         assert(owner != null),
         assert(owner is User || owner is Course),
         assert(isDirectory != null);
+
+  operator ==(Object other) => other is File && path == other.path;
+  int get hashCode => path.hashCode;
 }

@@ -11,41 +11,33 @@ class FilesScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return ProxyProvider2<NetworkService, UserService, Bloc>(
       builder: (_, network, user, __) => Bloc(network: network, user: user),
-      child: Scaffold(
-        appBar: AppBar(title: Text('Files')),
-        bottomNavigationBar: MyAppBar(),
-        body: ListView(
-          children: <Widget>[
-            _UserFilesCard(),
-            _CourseFilesList(),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _UserFilesCard extends StatelessWidget {
-  void _showPersonalFiles(BuildContext context) {
-    Navigator.of(context).push(MaterialPageRoute(
-      builder: (context) =>
-          FileBrowser(owner: Provider.of<MeService>(context).me),
-    ));
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return ProxyProvider<NetworkService, UserService>(
-      builder: (_, network, __) => UserService(network: network),
-      child: Card(
-        child: ListTile(
-          title: Text('My files'),
-          subtitle: Text(
-            'Your personal files. By default, only you can access them, but '
-            'they may be shared with others.',
+      child: DefaultTabController(
+        length: 2,
+        child: Scaffold(
+          appBar: AppBar(
+            backgroundColor: Colors.white,
+            flexibleSpace: Align(
+              alignment: Alignment.bottomCenter,
+              child: TabBar(
+                indicatorSize: TabBarIndicatorSize.label,
+                indicatorColor: Theme.of(context).primaryColor,
+                //indicatorPadding: const EdgeInsets.symmetric(horizontal: 8),
+                indicatorWeight: 4,
+                labelColor: Colors.black,
+                tabs: <Widget>[
+                  Tab(text: 'My files'),
+                  Tab(text: 'Course files'),
+                ],
+              ),
+            ),
           ),
-          leading: Icon(Icons.person),
-          onTap: () => _showPersonalFiles(context),
+          bottomNavigationBar: MyAppBar(),
+          body: TabBarView(
+            children: <Widget>[
+              FileBrowser(owner: Provider.of<MeService>(context).me),
+              _CourseFilesList(),
+            ],
+          ),
         ),
       ),
     );
@@ -64,28 +56,23 @@ class _CourseFilesList extends StatelessWidget {
     return StreamBuilder<List<Course>>(
       stream: Provider.of<Bloc>(context).getCourses(),
       builder: (context, snapshot) {
-        if (!snapshot.hasData)
-          return Center(child: CircularProgressIndicator());
-
-        return Card(
-          child: Column(
-            children: [
-              ListTile(
-                title: Text('Course Files'),
-                leading: Icon(Icons.school),
-                subtitle: Text(
-                    'The files from courses you are enrolled in. Anyone in '
-                    'the course (including teachers) has access to them.'),
-              ),
-              Divider(),
+        return ListView(
+          children: <Widget>[
+            FileListHeader(
+                icon: Icon(Icons.school, size: 48),
+                text: 'These are the files from courses you are enrolled in. '
+                    'Anyone in the course (including teachers) has access to them.'),
+            if (!snapshot.hasData) ...[
+              SizedBox(height: 16),
+              Center(child: CircularProgressIndicator())
+            ] else
               for (var course in snapshot.data)
                 ListTile(
                   title: Text(course.name),
                   leading: Icon(Icons.folder, color: course.color),
                   onTap: () => _showCourseFiles(context, course),
                 ),
-            ],
-          ),
+          ],
         );
       },
     );

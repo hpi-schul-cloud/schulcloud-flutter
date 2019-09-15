@@ -33,7 +33,7 @@ class MeService {
       _meSubject.add(null);
     } else {
       final id = Id<User>(_decodeTokenToUser(token));
-      final me = await user.fetchUser(id);
+      final me = await user.getUser(id);
       _meSubject.add(me);
     }
   }
