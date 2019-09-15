@@ -1,8 +1,9 @@
+import 'package:hive/hive.dart';
 import 'package:meta/meta.dart';
+import 'package:repository/repository.dart';
 import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/courses/courses.dart';
-import 'package:repository/repository.dart';
-import 'package:hive/hive.dart';
+import 'package:schulcloud/file_browser/file_browser.dart';
 
 part 'data.g.dart';
 

@@ -1,15 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
 import 'package:schulcloud/app/app.dart';
-import 'package:schulcloud/files/widgets/files_screen.dart';
-import 'package:schulcloud/homework/widgets/homework_screen.dart';
+import 'package:schulcloud/courses/courses.dart';
+import 'package:schulcloud/dashboard/dashboard.dart';
+import 'package:schulcloud/homework/homework.dart';
+import 'package:schulcloud/login/login.dart';
+import 'package:schulcloud/news/news.dart';
 
-import 'courses/courses.dart';
-import 'dashboard/dashboard.dart';
 import 'hive.dart';
-import 'login/login.dart';
-import 'news/news.dart';
 import 'routes.dart';
 
 void main() {

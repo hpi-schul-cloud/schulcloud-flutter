@@ -1,22 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:schulcloud/app/app.dart';
-import 'package:schulcloud/courses/data.dart';
+import 'package:schulcloud/file_browser/file_browser.dart';
+
+import '../bloc.dart';
+import '../data.dart';
 
 class FilesScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return ProxyProvider<NetworkService, FilesService>(
-      builder: (_, network, __) => FilesService(network: network),
+    return ProxyProvider2<NetworkService, UserService, Bloc>(
+      builder: (_, network, user, __) => Bloc(network: network, user: user),
       child: Scaffold(
         appBar: AppBar(title: Text('Files')),
+        bottomNavigationBar: MyAppBar(),
         body: ListView(
           children: <Widget>[
             UserFilesCard(),
             CourseFilesList(),
           ],
         ),
-        bottomNavigationBar: MyAppBar(),
       ),
     );
   }
@@ -42,32 +45,18 @@ class UserFilesCard extends StatelessWidget {
   }
 
   void _showPersonalFiles(BuildContext context) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => ProxyProvider<NetworkService, FilesService>(
-          builder: (_, network, __) => FilesService(
-            network: network,
-            owner: Provider.of<MeService>(context).me.id.toString(),
-          ),
-          child: Scaffold(
-            appBar: AppBar(title: Text('My files')),
-            body: FilesView(
-              owner: Provider.of<MeService>(context).me.id.toString(),
-            ),
-            //bottomNavigationBar: MyAppBar(),
-          ),
-        ),
-      ),
-    );
+    Navigator.of(context).push(MaterialPageRoute(
+      builder: (context) =>
+          FileBrowser(owner: Provider.of<MeService>(context).me),
+    ));
   }
 }
 
 class CourseFilesList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<Course>>(
-      future: Future.value([]),
+    return StreamBuilder<List<Course>>(
+      stream: Provider.of<Bloc>(context).getCourses(),
       builder: (context, snapshot) {
         if (!snapshot.hasData)
           return Center(child: CircularProgressIndicator());
@@ -96,16 +85,8 @@ class CourseFilesList extends StatelessWidget {
   }
 
   void _showCourseFiles(BuildContext context, Course course) {
-    Navigator.push(context, MaterialPageRoute(builder: (context) {
-      return ProxyProvider<NetworkService, FilesService>(
-        builder: (_, network, __) =>
-            FilesService(network: network, owner: course.id.toString()),
-        child: FilesView(
-          owner: course.id.toString(),
-          appBarColor: course.color,
-          appBarTitle: course.name,
-        ),
-      );
-    }));
+    Navigator.of(context).push(MaterialPageRoute(
+      builder: (context) => FileBrowser(owner: course),
+    ));
   }
 }

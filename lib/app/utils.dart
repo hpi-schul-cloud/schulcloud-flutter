@@ -13,9 +13,29 @@ String limitString(String string, int maxLength) {
       : string;
 }
 
+/// Prints a file size given in byte as a string.
+String formatFileSize(int bytes) {
+  const units = ['B', 'kB', 'MB', 'GB', 'TB', 'YB'];
+
+  int index = 0;
+  int power = 1;
+  while (bytes < 1000 * power && index < units.length - 1) {
+    power *= 1000;
+    index++;
+  }
+
+  return '${(bytes / power).toStringAsFixed(1)} ${units[index]}';
+}
+
+/// An error indicating that a permission wasn't granted by the user.
+class PermissionNotGranted<T> implements Exception {
+  String toString() => "A permission wasn't granted by the user.";
+}
+
 /// A special kind of item that also carries its id.
 abstract class Entity {
-  Id<Entity> id;
+  Id<Entity> get id;
+  const Entity();
 }
 
 abstract class CollectionDownloader<Item extends Entity>

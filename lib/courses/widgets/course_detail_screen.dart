@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
 import 'package:schulcloud/app/app.dart';
+import 'package:schulcloud/file_browser/file_browser.dart';
 
 import '../bloc.dart';
 import '../data.dart';
@@ -94,20 +94,7 @@ class LessonList extends StatelessWidget {
 }
 
 void _showCourseFiles(BuildContext context, Course course) {
-  Navigator.push(
-    context,
-    MaterialPageRoute(
-      builder: (context) => ProxyProvider<NetworkService, FilesService>(
-        builder: (_, network, __) => FilesService(
-          network: network,
-          owner: course.id.toString(),
-        ),
-        child: FilesView(
-          owner: course.id.toString(),
-          appBarColor: course.color,
-          appBarTitle: course.name,
-        ),
-      ),
-    ),
-  );
+  Navigator.of(context).push(MaterialPageRoute(
+    builder: (context) => FileBrowser(owner: course),
+  ));
 }
