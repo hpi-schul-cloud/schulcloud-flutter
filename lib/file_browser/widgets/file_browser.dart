@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
@@ -6,27 +8,30 @@ import 'package:schulcloud/courses/courses.dart';
 
 import '../bloc.dart';
 import '../data.dart';
-import 'file_list_header.dart';
 
 class FileBrowser extends StatelessWidget {
   final Entity owner;
   final File parent;
 
+  /// Whether this widget is embedded into another screen. If [true], doesn't
+  /// show an app bar or bottom app bar.
+  final bool isEmbedded;
+
   FileBrowser({
     @required this.owner,
     this.parent,
+    this.isEmbedded = false,
   })  : assert(owner != null),
         assert(owner is Course || owner is User),
-        assert(parent == null || parent.isDirectory);
-
-  bool get isPersonalFilesRoot => parent == null && owner is User;
+        assert(parent == null || parent.isDirectory),
+        assert(isEmbedded != null);
 
   Course get ownerAsCourse => owner is Course ? owner as Course : null;
 
   void _openDirectory(BuildContext context, File file) {
     assert(file.isDirectory);
 
-    Navigator.of(context).push(MaterialPageRoute(
+    Navigator.of(context).push(CupertinoPageRoute(
       builder: (context) => FileBrowser(owner: owner, parent: file),
     ));
   }
@@ -56,7 +61,7 @@ class FileBrowser extends StatelessWidget {
       child: Consumer<Bloc>(
         builder: (context, bloc, __) {
           return Scaffold(
-            appBar: isPersonalFilesRoot
+            appBar: isEmbedded
                 ? null
                 : AppBar(
                     backgroundColor: ownerAsCourse?.color,
@@ -66,7 +71,7 @@ class FileBrowser extends StatelessWidget {
                     ),
                     iconTheme: IconThemeData(color: Colors.black),
                   ),
-            bottomNavigationBar: isPersonalFilesRoot ? null : MyAppBar(),
+            bottomNavigationBar: isEmbedded ? null : MyAppBar(),
             body: StreamBuilder<List<File>>(
               stream: bloc.getFiles(),
               builder: _buildContent,
@@ -79,43 +84,62 @@ class FileBrowser extends StatelessWidget {
 
   Widget _buildContent(
       BuildContext context, AsyncSnapshot<List<File>> snapshot) {
-    return ListView(
-      children: [
-        if (isPersonalFilesRoot)
-          FileListHeader(
-            icon: Icon(Icons.person_outline, size: 48),
-            text: 'These are your personal files.\n'
-                'By default, only you can access them, but they '
-                'may be shared with others.',
-          ),
-        if (!snapshot.hasData) ...[
-          SizedBox(height: 16),
-          if (snapshot.hasError)
-            Center(child: Text('An error occurred: ${snapshot.error}'))
-          else
-            Center(child: CircularProgressIndicator())
-        ] else if (snapshot.data.isEmpty) ...[
-          SizedBox(height: 32),
-          Icon(Icons.beach_access, size: 48),
-          SizedBox(height: 8),
-          Center(child: Text('This place is empty.')),
-        ] else ...[
-          for (var file in snapshot.data)
-            if (file.isDirectory) _FileTile(file: file, onTap: _openDirectory),
-          for (var file in snapshot.data)
-            if (file.isNotDirectory)
-              _FileTile(file: file, onTap: _downloadFile),
-        ]
-      ],
+    if (snapshot.hasError) {
+      return Center(child: Text('An error occurred: ${snapshot.error}'));
+    }
+    if (snapshot.hasData && snapshot.data.isEmpty) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Icon(Icons.beach_access, size: 52),
+            SizedBox(height: 16),
+            Text('No items.', style: TextStyle(fontSize: 20)),
+          ],
+        ),
+      );
+    }
+    return AnimatedCrossFade(
+      duration: Duration(milliseconds: 500),
+      crossFadeState: snapshot.hasData
+          ? CrossFadeState.showSecond
+          : CrossFadeState.showFirst,
+      firstChild: Container(
+        padding: EdgeInsets.only(top: 32),
+        alignment: Alignment.topCenter,
+        child: CircularProgressIndicator(),
+      ),
+      secondChild: ListView(children: _buildFiles(snapshot.data ?? [])),
     );
+  }
+
+  List<Widget> _buildFiles(List<File> files) {
+    int index = 0;
+    Duration getDelay(int index) =>
+        Duration(milliseconds: (80 * sqrt(index)).round());
+    return [
+      for (var file in files)
+        FadeIn(
+          delay: getDelay(index++),
+          child: FileTile(
+              file: file,
+              onTap: file.isDirectory ? _openDirectory : _downloadFile),
+        ),
+      SizedBox(height: 16),
+      FadeIn(
+        delay: getDelay(index + 1),
+        child: Center(child: Text('$index items in total')),
+      ),
+      SizedBox(height: 16),
+    ];
   }
 }
 
-class _FileTile extends StatelessWidget {
+class FileTile extends StatelessWidget {
   final File file;
   final void Function(BuildContext context, File file) onTap;
 
-  _FileTile({Key key, @required this.file, @required this.onTap})
+  FileTile({Key key, @required this.file, @required this.onTap})
       : assert(file != null),
         assert(onTap != null),
         super(key: key);
@@ -129,31 +153,4 @@ class _FileTile extends StatelessWidget {
       onTap: () => onTap(context, file),
     );
   }
-}
-
-class FileBrowserRoute extends PageRouteBuilder {
-  final Widget page;
-
-  FileBrowserRoute({this.page})
-      : super(
-          pageBuilder: (
-            BuildContext context,
-            Animation<double> animation,
-            Animation<double> secondaryAnimation,
-          ) =>
-              page,
-          transitionsBuilder: (
-            BuildContext context,
-            Animation<double> animation,
-            Animation<double> secondaryAnimation,
-            Widget child,
-          ) =>
-              SlideTransition(
-            position: Tween<Offset>(
-              begin: const Offset(-1, 0),
-              end: Offset.zero,
-            ).animate(animation),
-            child: child,
-          ),
-        );
 }

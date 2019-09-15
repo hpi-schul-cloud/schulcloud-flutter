@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:schulcloud/app/app.dart';
@@ -21,7 +22,6 @@ class FilesScreen extends StatelessWidget {
               child: TabBar(
                 indicatorSize: TabBarIndicatorSize.label,
                 indicatorColor: Theme.of(context).primaryColor,
-                //indicatorPadding: const EdgeInsets.symmetric(horizontal: 8),
                 indicatorWeight: 4,
                 labelColor: Colors.black,
                 tabs: <Widget>[
@@ -34,7 +34,7 @@ class FilesScreen extends StatelessWidget {
           bottomNavigationBar: MyAppBar(),
           body: TabBarView(
             children: <Widget>[
-              FileBrowser(owner: Provider.of<MeService>(context).me),
+              _UserFilesList(),
               _CourseFilesList(),
             ],
           ),
@@ -44,9 +44,31 @@ class FilesScreen extends StatelessWidget {
   }
 }
 
+class _UserFilesList extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: <Widget>[
+        FileListHeader(
+          icon: Icon(Icons.person_outline, size: 48),
+          text: 'These are your personal files.\n'
+              'By default, only you can access them, but they '
+              'may be shared with others.',
+        ),
+        Expanded(
+          child: FileBrowser(
+            owner: Provider.of<MeService>(context).me,
+            isEmbedded: true,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
 class _CourseFilesList extends StatelessWidget {
   void _showCourseFiles(BuildContext context, Course course) {
-    Navigator.of(context).push(MaterialPageRoute(
+    Navigator.of(context).push(CupertinoPageRoute(
       builder: (context) => FileBrowser(owner: course),
     ));
   }
@@ -75,6 +97,31 @@ class _CourseFilesList extends StatelessWidget {
           ],
         );
       },
+    );
+  }
+}
+
+class FileListHeader extends StatelessWidget {
+  final Widget icon;
+  final String text;
+
+  FileListHeader({@required this.icon, @required this.text})
+      : assert(icon != null),
+        assert(text != null);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      color: Colors.black12,
+      height: 100,
+      child: Row(
+        children: <Widget>[
+          icon,
+          SizedBox(width: 16),
+          Expanded(child: Text(text, style: TextStyle(fontSize: 16))),
+        ],
+      ),
     );
   }
 }

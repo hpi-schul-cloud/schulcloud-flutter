@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:schulcloud/routes.dart';
 
 import '../data.dart';
-import '../services.dart';
+import '../app.dart';
 
 /// A menu displaying the current user and [NavigationItem]s.
 class Menu extends StatelessWidget {

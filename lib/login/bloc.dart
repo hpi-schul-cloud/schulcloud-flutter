@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
-import 'package:schulcloud/app/services.dart';
+import 'package:schulcloud/app/app.dart';
 
 class InvalidLoginSyntaxError {}
 
