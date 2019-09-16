@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:rxdart/rxdart.dart';
 import 'package:schulcloud/courses/courses.dart';
 import 'package:schulcloud/dashboard/dashboard.dart';
 import 'package:schulcloud/homework/homework.dart';
@@ -57,8 +58,31 @@ class LoggedInScreen extends StatefulWidget {
 
 class _LoggedInScreenState extends State<LoggedInScreen> {
   final _navigatorKey = GlobalKey<NavigatorState>();
+  NavigatorState get navigator => _navigatorKey.currentState;
+
+  /// When the user navigates (via the menu or pressing the back button), we
+  /// add the new screen to the stream. The menu listens to the stream to
+  /// highlight the appropriate item.
+  BehaviorSubject<Screen> _controller;
+  Stream<Screen> _screenStream;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = BehaviorSubject<Screen>();
+    _screenStream = _controller.stream;
+  }
+
+  @override
+  void dispose() {
+    _controller?.close();
+    super.dispose();
+  }
 
   void _navigateTo(Screen screen) {
+    print('Navigating to $screen.');
+    _controller.add(screen);
+
     var targetScreenBuilder = {
       Screen.dashboard: (_) => DashboardScreen(),
       Screen.news: (_) => NewsScreen(),
@@ -67,29 +91,47 @@ class _LoggedInScreenState extends State<LoggedInScreen> {
       Screen.homework: (_) => HomeworkScreen(),
     }[screen];
 
-    _navigatorKey.currentState
+    navigator
       ..popUntil((_) => true)
       ..pushReplacement(MaterialPageRoute(
         builder: targetScreenBuilder,
       ));
   }
 
+  /// When the user tries to pop, we first try to pop with the inner navigator.
+  /// If that's not possible (we are at a top-level location), we go to the
+  /// dashboard. Only if we were already there, we pop (aka close the app).
+  Future<bool> _onWillPop() async {
+    if (navigator.canPop()) {
+      navigator.pop();
+      return false;
+    } else if (_controller.value != Screen.dashboard) {
+      _navigateTo(Screen.dashboard);
+      return false;
+    } else {
+      return true;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: <Widget>[
-        Expanded(
-          child: Navigator(
-            key: _navigatorKey,
-            onGenerateRoute: (_) =>
-                MaterialPageRoute(builder: (_) => DashboardScreen()),
-            observers: [
-              HeroController(),
-            ],
+    return WillPopScope(
+      onWillPop: _onWillPop,
+      child: Column(
+        children: <Widget>[
+          Expanded(
+            child: Navigator(
+              key: _navigatorKey,
+              onGenerateRoute: (_) =>
+                  MaterialPageRoute(builder: (_) => DashboardScreen()),
+              observers: [
+                HeroController(),
+              ],
+            ),
           ),
-        ),
-        MyAppBar(onNavigate: _navigateTo),
-      ],
+          MyAppBar(onNavigate: _navigateTo, activeScreenStream: _screenStream),
+        ],
+      ),
     );
   }
 }

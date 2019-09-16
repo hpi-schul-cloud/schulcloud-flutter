@@ -7,9 +7,10 @@ import 'schulcloud_app.dart';
 
 /// A menu displaying the current user and [NavigationItem]s.
 class Menu extends StatelessWidget {
-  final Screen activeScreen;
+  final Stream<Screen> activeScreenStream;
 
-  const Menu({@required this.activeScreen});
+  const Menu({@required this.activeScreenStream})
+      : assert(activeScreenStream != null);
 
   void _navigateTo(BuildContext context, Screen target) =>
       Navigator.pop(context, target);
@@ -24,14 +25,20 @@ class Menu extends StatelessWidget {
     return Material(
       color: Colors.white,
       elevation: 12,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          _buildUserInfo(context),
-          Divider(),
-          ..._buildNavigationItems(context),
-          SizedBox(height: 12),
-        ],
+      child: StreamBuilder<Screen>(
+        stream: activeScreenStream,
+        builder: (context, snapshot) {
+          var activeScreen = snapshot.data;
+          return Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              _buildUserInfo(context),
+              Divider(),
+              ..._buildNavigationItems(context, activeScreen),
+              SizedBox(height: 12),
+            ],
+          );
+        },
       ),
     );
   }
@@ -70,38 +77,23 @@ class Menu extends StatelessWidget {
     );
   }
 
-  List<Widget> _buildNavigationItems(BuildContext context) {
+  List<Widget> _buildNavigationItems(
+      BuildContext context, Screen activeScreen) {
+    Widget buildItem(Screen screen, String text, IconData iconData) {
+      return NavigationItem(
+        iconBuilder: (color) => Icon(iconData, color: color),
+        text: text,
+        onPressed: () => _navigateTo(context, screen),
+        isActive: activeScreen == screen,
+      );
+    }
+
     return [
-      NavigationItem(
-        iconBuilder: (color) => Icon(Icons.dashboard, color: color),
-        text: 'Dashboard',
-        onPressed: () => _navigateTo(context, Screen.dashboard),
-        isActive: activeScreen == Screen.dashboard,
-      ),
-      NavigationItem(
-        iconBuilder: (color) => Icon(Icons.new_releases, color: color),
-        text: 'News',
-        onPressed: () => _navigateTo(context, Screen.news),
-        isActive: activeScreen == Screen.news,
-      ),
-      NavigationItem(
-        iconBuilder: (color) => Icon(Icons.school, color: color),
-        text: 'Courses',
-        onPressed: () => _navigateTo(context, Screen.courses),
-        isActive: activeScreen == Screen.courses,
-      ),
-      NavigationItem(
-        iconBuilder: (color) => Icon(Icons.playlist_add_check, color: color),
-        text: 'Assignments',
-        onPressed: () => _navigateTo(context, Screen.homework),
-        isActive: activeScreen == Screen.homework,
-      ),
-      NavigationItem(
-        iconBuilder: (color) => Icon(Icons.folder, color: color),
-        text: 'Files',
-        onPressed: () => _navigateTo(context, Screen.files),
-        isActive: activeScreen == Screen.files,
-      ),
+      buildItem(Screen.dashboard, 'Dashboard', Icons.dashboard),
+      buildItem(Screen.news, 'News', Icons.new_releases),
+      buildItem(Screen.courses, 'Courses', Icons.school),
+      buildItem(Screen.homework, 'Assignments', Icons.playlist_add_check),
+      buildItem(Screen.files, 'Files', Icons.folder),
     ];
   }
 }

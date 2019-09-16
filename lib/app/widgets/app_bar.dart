@@ -8,10 +8,12 @@ import 'schulcloud_app.dart';
 /// [_MyAppBarState]. The [MyAppBarActions] does that.
 class MyAppBar extends StatefulWidget {
   final void Function(Screen route) onNavigate;
+  final Stream<Screen> activeScreenStream;
   final List<Widget> actions;
 
   MyAppBar({
     @required this.onNavigate,
+    @required this.activeScreenStream,
     this.actions = const [],
   })  : assert(onNavigate != null),
         assert(actions != null);
@@ -21,7 +23,6 @@ class MyAppBar extends StatefulWidget {
 }
 
 class _MyAppBarState extends State<MyAppBar> {
-  Screen activeScreen = Screen.dashboard;
   final _actionsByState = <State<MyAppBarActions>, List<Widget>>{};
   final _actions = <Widget>[];
 
@@ -38,11 +39,10 @@ class _MyAppBarState extends State<MyAppBar> {
   Future<void> _showMenu(BuildContext context) async {
     Screen target = await showModalBottomSheet(
       context: context,
-      builder: (context) => Menu(activeScreen: activeScreen),
+      builder: (context) => Menu(activeScreenStream: widget.activeScreenStream),
     );
     if (target != null) {
       widget.onNavigate(target);
-      setState(() => activeScreen = target);
     }
   }
 
