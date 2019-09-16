@@ -31,7 +31,6 @@ class FilesScreen extends StatelessWidget {
               ),
             ),
           ),
-          bottomNavigationBar: MyAppBar(),
           body: TabBarView(
             children: <Widget>[
               _UserFilesList(),
@@ -68,7 +67,7 @@ class _UserFilesList extends StatelessWidget {
 
 class _CourseFilesList extends StatelessWidget {
   void _showCourseFiles(BuildContext context, Course course) {
-    Navigator.of(context).push(CupertinoPageRoute(
+    Navigator.of(context).push(FileBrowserPageRoute(
       builder: (context) => FileBrowser(owner: course),
     ));
   }

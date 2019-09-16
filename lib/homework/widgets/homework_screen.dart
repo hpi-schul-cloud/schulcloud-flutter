@@ -12,7 +12,7 @@ class HomeworkScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return ProxyProvider2<NetworkService, UserService, Bloc>(
       builder: (_, network, user, __) => Bloc(network: network, user: user),
-      child: Scaffold(bottomNavigationBar: MyAppBar(), body: _HomeworkList()),
+      child: Scaffold(body: _HomeworkList()),
     );
   }
 }

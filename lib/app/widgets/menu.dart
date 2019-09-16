@@ -1,23 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'package:schulcloud/routes.dart';
-
 import '../data.dart';
 import '../app.dart';
+import 'schulcloud_app.dart';
 
 /// A menu displaying the current user and [NavigationItem]s.
 class Menu extends StatelessWidget {
-  final Routes activeScreen;
+  final Screen activeScreen;
 
   const Menu({@required this.activeScreen});
 
-  void _navigateTo(BuildContext context, Routes target) =>
-      Navigator.pop(context, target.name);
+  void _navigateTo(BuildContext context, Screen target) =>
+      Navigator.pop(context, target);
 
   Future<void> _logOut(BuildContext context) async {
     await Provider.of<AuthenticationStorageService>(context).clear();
-    Navigator.of(context).pushReplacementNamed(Routes.login.toString());
+    //Navigator.of(context).pushReplacementNamed(LoginScreen());
   }
 
   @override
@@ -76,38 +75,32 @@ class Menu extends StatelessWidget {
       NavigationItem(
         iconBuilder: (color) => Icon(Icons.dashboard, color: color),
         text: 'Dashboard',
-        onPressed: () => _navigateTo(context, Routes.dashboard),
-        isActive: activeScreen == Routes.dashboard,
+        onPressed: () => _navigateTo(context, Screen.dashboard),
+        isActive: activeScreen == Screen.dashboard,
       ),
       NavigationItem(
         iconBuilder: (color) => Icon(Icons.new_releases, color: color),
         text: 'News',
-        onPressed: () => _navigateTo(context, Routes.news),
-        isActive: activeScreen == Routes.news,
+        onPressed: () => _navigateTo(context, Screen.news),
+        isActive: activeScreen == Screen.news,
       ),
       NavigationItem(
         iconBuilder: (color) => Icon(Icons.school, color: color),
         text: 'Courses',
-        onPressed: () => _navigateTo(context, Routes.courses),
-        isActive: activeScreen == Routes.courses,
+        onPressed: () => _navigateTo(context, Screen.courses),
+        isActive: activeScreen == Screen.courses,
       ),
       NavigationItem(
         iconBuilder: (color) => Icon(Icons.playlist_add_check, color: color),
         text: 'Assignments',
-        onPressed: () => _navigateTo(context, Routes.homework),
-        isActive: activeScreen == Routes.homework,
+        onPressed: () => _navigateTo(context, Screen.homework),
+        isActive: activeScreen == Screen.homework,
       ),
       NavigationItem(
         iconBuilder: (color) => Icon(Icons.folder, color: color),
         text: 'Files',
-        onPressed: () => _navigateTo(context, Routes.files),
-        isActive: activeScreen == Routes.files,
-      ),
-      NavigationItem(
-        iconBuilder: (color) => Icon(Icons.list, color: color),
-        text: 'Login',
-        onPressed: () => _navigateTo(context, Routes.login),
-        isActive: activeScreen == Routes.login,
+        onPressed: () => _navigateTo(context, Screen.files),
+        isActive: activeScreen == Screen.files,
       ),
     ];
   }

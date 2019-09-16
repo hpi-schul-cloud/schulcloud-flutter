@@ -8,6 +8,8 @@ import 'package:schulcloud/courses/courses.dart';
 
 import '../bloc.dart';
 import '../data.dart';
+import 'app_bar.dart';
+import 'page_route.dart';
 
 class FileBrowser extends StatelessWidget {
   final Entity owner;
@@ -31,7 +33,8 @@ class FileBrowser extends StatelessWidget {
   void _openDirectory(BuildContext context, File file) {
     assert(file.isDirectory);
 
-    Navigator.of(context).push(CupertinoPageRoute(
+    Navigator.of(context).push(FileBrowserPageRoute(
+      //title: file.name,
       builder: (context) => FileBrowser(owner: owner, parent: file),
     ));
   }
@@ -59,22 +62,26 @@ class FileBrowser extends StatelessWidget {
       builder: (_, network, __) =>
           Bloc(network: network, owner: owner, parent: parent),
       child: Consumer<Bloc>(
-        builder: (context, bloc, __) {
+        builder: (context, bloc, _) {
           return Scaffold(
             appBar: isEmbedded
                 ? null
-                : AppBar(
-                    backgroundColor: ownerAsCourse?.color,
-                    title: Text(
-                      parent?.name ?? ownerAsCourse?.name ?? 'My files',
-                      style: TextStyle(color: Colors.black),
+                : PreferredSize(
+                    preferredSize: AppBar().preferredSize,
+                    child: FileBrowserAppBar(
+                      backgroundColor: ownerAsCourse?.color,
+                      title: parent?.name ?? ownerAsCourse?.name ?? 'My files',
                     ),
-                    iconTheme: IconThemeData(color: Colors.black),
                   ),
-            bottomNavigationBar: isEmbedded ? null : MyAppBar(),
-            body: StreamBuilder<List<File>>(
-              stream: bloc.getFiles(),
-              builder: _buildContent,
+            body: Material(
+              child: StreamBuilder<List<File>>(
+                stream: bloc.getFiles(),
+                builder: _buildContent,
+              ),
+            ),
+            floatingActionButton: FloatingActionButton(
+              child: Icon(Icons.file_upload),
+              onPressed: () {},
             ),
           );
         },
@@ -100,7 +107,7 @@ class FileBrowser extends StatelessWidget {
       );
     }
     return AnimatedCrossFade(
-      duration: Duration(milliseconds: 500),
+      duration: Duration(milliseconds: 200),
       crossFadeState: snapshot.hasData
           ? CrossFadeState.showSecond
           : CrossFadeState.showFirst,

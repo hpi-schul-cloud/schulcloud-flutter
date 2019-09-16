@@ -12,10 +12,7 @@ class NewsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return ProxyProvider<NetworkService, Bloc>(
       builder: (_, network, __) => Bloc(network: network),
-      child: Scaffold(
-        body: _ArticleList(),
-        bottomNavigationBar: MyAppBar(),
-      ),
+      child: Scaffold(body: _ArticleList()),
     );
   }
 }

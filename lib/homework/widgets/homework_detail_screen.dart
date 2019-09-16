@@ -33,7 +33,6 @@ class HomeworkDetailScreen extends StatelessWidget {
       builder: (_, network, user, __) => Bloc(network: network, user: user),
       child: Consumer<Bloc>(
         builder: (context, bloc, _) => Scaffold(
-          bottomNavigationBar: MyAppBar(),
           appBar: AppBar(
             iconTheme: IconThemeData(color: Colors.black),
             backgroundColor: homework.course.color,

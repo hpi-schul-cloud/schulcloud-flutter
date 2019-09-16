@@ -11,7 +11,7 @@ class CoursesScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return ProxyProvider2<NetworkService, UserService, Bloc>(
       builder: (_, network, user, __) => Bloc(network: network, user: user),
-      child: Scaffold(body: _CourseGrid(), bottomNavigationBar: MyAppBar()),
+      child: Scaffold(body: _CourseGrid()),
     );
   }
 }

@@ -28,15 +28,15 @@ class CourseDetailScreen extends StatelessWidget {
           title: Text(course.name, style: TextStyle(color: Colors.black)),
           backgroundColor: course.color,
         ),
-        bottomNavigationBar: MyAppBar(
+        body: MyAppBarActions(
           actions: <Widget>[
             IconButton(
               icon: Icon(Icons.folder),
               onPressed: () => _showCourseFiles(context, course),
             ),
           ],
+          child: _LessonList(course: course),
         ),
-        body: _LessonList(course: course),
       ),
     );
   }

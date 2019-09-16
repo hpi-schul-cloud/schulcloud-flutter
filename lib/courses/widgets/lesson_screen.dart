@@ -44,20 +44,20 @@ class _LessonScreenState extends State<LessonScreen> {
         ),
         backgroundColor: widget.course.color,
       ),
-      bottomNavigationBar: MyAppBar(
+      body: MyAppBarActions(
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.web),
             onPressed: () => _showLessonContentMenu(),
           ),
         ],
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: WebView(
-          initialUrl: _textOrUrl(widget.lesson.contents[0]),
-          onWebViewCreated: (controller) => _controller = controller,
-          javascriptMode: JavascriptMode.unrestricted,
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: WebView(
+            initialUrl: _textOrUrl(widget.lesson.contents[0]),
+            onWebViewCreated: (controller) => _controller = controller,
+            javascriptMode: JavascriptMode.unrestricted,
+          ),
         ),
       ),
     );

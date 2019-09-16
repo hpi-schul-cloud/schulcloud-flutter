@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
-import 'package:schulcloud/app/app.dart';
 
 import '../data.dart';
 
@@ -22,7 +21,6 @@ class SubmissionScreen extends StatelessWidget {
     return DefaultTabController(
       length: 2,
       child: Scaffold(
-        bottomNavigationBar: MyAppBar(),
         appBar: AppBar(
           backgroundColor: homework.course.color,
           iconTheme: IconThemeData(color: Colors.black),
