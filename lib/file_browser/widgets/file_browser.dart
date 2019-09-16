@@ -79,10 +79,6 @@ class FileBrowser extends StatelessWidget {
                 builder: _buildContent,
               ),
             ),
-            floatingActionButton: FloatingActionButton(
-              child: Icon(Icons.file_upload),
-              onPressed: () {},
-            ),
           );
         },
       ),
