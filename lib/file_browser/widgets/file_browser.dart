@@ -11,6 +11,14 @@ import '../data.dart';
 import 'app_bar.dart';
 import 'page_route.dart';
 
+const _loadingContent = const Align(
+  alignment: Alignment.topCenter,
+  child: Padding(
+    padding: EdgeInsets.only(top: 32),
+    child: CircularProgressIndicator(),
+  ),
+);
+
 class FileBrowser extends StatelessWidget {
   final Entity owner;
   final File parent;
@@ -86,32 +94,35 @@ class FileBrowser extends StatelessWidget {
 
   Widget _buildContent(
       BuildContext context, AsyncSnapshot<List<File>> snapshot) {
-    if (snapshot.hasError) {
-      return Center(child: Text('An error occurred: ${snapshot.error}'));
+    Widget buildContent() {
+      if (snapshot.hasError) {
+        return Center(child: Text('An error occurred: ${snapshot.error}'));
+      }
+      if (snapshot.hasData && snapshot.data.isEmpty) {
+        return Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Icon(Icons.beach_access, size: 52),
+              SizedBox(height: 16),
+              Text('No items.', style: TextStyle(fontSize: 20)),
+            ],
+          ),
+        );
+      }
+      if (snapshot.hasData) {
+        return _buildFiles(snapshot.data);
+      }
+      return Container();
     }
-    if (snapshot.hasData && snapshot.data.isEmpty) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Icon(Icons.beach_access, size: 52),
-            SizedBox(height: 16),
-            Text('No items.', style: TextStyle(fontSize: 20)),
-          ],
-        ),
-      );
-    }
+
     return AnimatedCrossFade(
       duration: Duration(milliseconds: 200),
-      crossFadeState: snapshot.hasData
-          ? CrossFadeState.showSecond
-          : CrossFadeState.showFirst,
-      firstChild: Container(
-        padding: EdgeInsets.only(top: 32),
-        alignment: Alignment.topCenter,
-        child: CircularProgressIndicator(),
-      ),
-      secondChild: snapshot.hasData ? _buildFiles(snapshot.data) : Container(),
+      crossFadeState: snapshot.connectionState == ConnectionState.waiting
+          ? CrossFadeState.showFirst
+          : CrossFadeState.showSecond,
+      firstChild: _loadingContent,
+      secondChild: buildContent(),
     );
   }
 
