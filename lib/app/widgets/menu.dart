@@ -25,6 +25,10 @@ class Menu extends StatelessWidget {
     return Material(
       color: Colors.white,
       elevation: 12,
+      borderRadius: BorderRadius.only(
+        topLeft: Radius.circular(16),
+        topRight: Radius.circular(16),
+      ),
       child: StreamBuilder<Screen>(
         stream: activeScreenStream,
         builder: (context, snapshot) {
@@ -32,6 +36,7 @@ class Menu extends StatelessWidget {
           return Column(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
+              SizedBox(height: 8),
               _buildUserInfo(context),
               Divider(),
               ..._buildNavigationItems(context, activeScreen),
@@ -60,7 +65,7 @@ class Menu extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(user.name, style: TextStyle(fontSize: 16)),
+                  Text(user.name, style: TextStyle(fontSize: 20)),
                   Text(user.email, style: TextStyle(fontSize: 12)),
                 ],
               ),

@@ -1,3 +1,6 @@
+import 'dart:ui';
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'menu.dart';
@@ -37,10 +40,13 @@ class _MyAppBarState extends State<MyAppBar> {
   }
 
   Future<void> _showMenu(BuildContext context) async {
-    Screen target = await showModalBottomSheet(
-      context: context,
-      builder: (context) => Menu(activeScreenStream: widget.activeScreenStream),
-    );
+    Screen target = await Navigator.of(context).push(PageRouteBuilder(
+      pageBuilder: (_, __, ___) =>
+          Menu(activeScreenStream: widget.activeScreenStream),
+      opaque: false,
+      maintainState: true,
+      transitionsBuilder: _customDialogTransitionBuilder,
+    ));
     if (target != null) {
       widget.onNavigate(target);
     }
@@ -50,7 +56,7 @@ class _MyAppBarState extends State<MyAppBar> {
   Widget build(BuildContext context) {
     return Material(
       color: Theme.of(context).primaryColor,
-      elevation: 6,
+      elevation: 12,
       child: Container(
         height: 56,
         padding: const EdgeInsets.symmetric(horizontal: 8),
@@ -103,4 +109,33 @@ class _MyAppBarActionsState extends State<MyAppBarActions> {
 
   @override
   Widget build(BuildContext context) => widget.child;
+}
+
+Widget _customDialogTransitionBuilder(
+  BuildContext context,
+  Animation<double> animation,
+  Animation<double> secondaryAnimation,
+  Widget child,
+) {
+  return Stack(
+    children: <Widget>[
+      FadeTransition(
+        opacity: animation,
+        child: GestureDetector(
+          onTap: () => Navigator.of(context).pop(),
+          child: Container(color: Colors.black45),
+        ),
+      ),
+      SlideTransition(
+        position: Tween<Offset>(
+          begin: const Offset(0, 1),
+          end: Offset.zero,
+        ).animate(CurvedAnimation(
+          parent: animation,
+          curve: Curves.easeOutQuad,
+        )),
+        child: Align(alignment: Alignment.bottomCenter, child: child),
+      ),
+    ],
+  );
 }
