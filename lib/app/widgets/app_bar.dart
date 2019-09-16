@@ -122,7 +122,7 @@ Widget _customDialogTransitionBuilder(
       FadeTransition(
         opacity: animation,
         child: GestureDetector(
-          onTap: () => Navigator.of(context).pop(),
+          onTap: () => Navigator.of(context).popUntil((route) => route.isFirst),
           child: Container(color: Colors.black45),
         ),
       ),
