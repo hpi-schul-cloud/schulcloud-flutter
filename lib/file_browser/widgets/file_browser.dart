@@ -34,7 +34,6 @@ class FileBrowser extends StatelessWidget {
     assert(file.isDirectory);
 
     Navigator.of(context).push(FileBrowserPageRoute(
-      //title: file.name,
       builder: (context) => FileBrowser(owner: owner, parent: file),
     ));
   }
@@ -112,29 +111,35 @@ class FileBrowser extends StatelessWidget {
         alignment: Alignment.topCenter,
         child: CircularProgressIndicator(),
       ),
-      secondChild: ListView(children: _buildFiles(snapshot.data ?? [])),
+      secondChild: snapshot.hasData ? _buildFiles(snapshot.data) : Container(),
     );
   }
 
-  List<Widget> _buildFiles(List<File> files) {
+  Widget _buildFiles(List<File> files) {
     int index = 0;
     Duration getDelay(int index) =>
         Duration(milliseconds: (80 * sqrt(index)).round());
-    return [
-      for (var file in files)
-        FadeIn(
-          delay: getDelay(index++),
-          child: FileTile(
-              file: file,
-              onTap: file.isDirectory ? _openDirectory : _downloadFile),
-        ),
-      SizedBox(height: 16),
-      FadeIn(
-        delay: getDelay(index + 1),
-        child: Center(child: Text('$index items in total')),
+
+    return FadeInAnchor(
+      child: ListView(
+        children: [
+          for (var file in files)
+            FadeIn(
+              delay: getDelay(index++),
+              child: FileTile(
+                file: file,
+                onTap: file.isDirectory ? _openDirectory : _downloadFile,
+              ),
+            ),
+          SizedBox(height: 16),
+          FadeIn(
+            delay: getDelay(index + 1),
+            child: Center(child: Text('$index items in total')),
+          ),
+          SizedBox(height: 16),
+        ],
       ),
-      SizedBox(height: 16),
-    ];
+    );
   }
 }
 
