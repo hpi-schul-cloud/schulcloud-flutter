@@ -7,6 +7,7 @@ import 'package:schulcloud/news/news.dart';
 
 import 'app_bar.dart';
 import 'splash_screen.dart';
+import 'page_route.dart';
 
 const _textTheme = const TextTheme(
   title: TextStyle(fontWeight: FontWeight.bold),
@@ -93,7 +94,7 @@ class _LoggedInScreenState extends State<LoggedInScreen> {
 
     navigator
       ..popUntil((_) => true)
-      ..pushReplacement(MaterialPageRoute(
+      ..pushReplacement(TopLevelPageRoute(
         builder: targetScreenBuilder,
       ));
   }
