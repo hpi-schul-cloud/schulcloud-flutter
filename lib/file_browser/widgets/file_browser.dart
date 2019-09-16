@@ -133,6 +133,7 @@ class FileBrowser extends StatelessWidget {
 
     return FadeInAnchor(
       child: ListView(
+        shrinkWrap: true,
         children: [
           for (var file in files)
             FadeIn(
