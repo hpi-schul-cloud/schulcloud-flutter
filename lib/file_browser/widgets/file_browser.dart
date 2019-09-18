@@ -118,9 +118,9 @@ class FileBrowser extends StatelessWidget {
 
     return AnimatedCrossFade(
       duration: Duration(milliseconds: 200),
-      crossFadeState: snapshot.connectionState == ConnectionState.waiting
-          ? CrossFadeState.showFirst
-          : CrossFadeState.showSecond,
+      crossFadeState: snapshot.hasData || snapshot.hasError
+          ? CrossFadeState.showSecond
+          : CrossFadeState.showFirst,
       firstChild: _loadingContent,
       secondChild: buildContent(),
     );
