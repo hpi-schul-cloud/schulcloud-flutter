@@ -34,9 +34,7 @@ class FileBrowserPageRoute<T> extends PageRoute<T> {
   FileBrowserPageRoute({
     @required this.builder,
     RouteSettings settings,
-    this.maintainState = true,
   })  : assert(builder != null),
-        assert(maintainState != null),
         assert(opaque),
         super(settings: settings, fullscreenDialog: false);
 
@@ -44,7 +42,7 @@ class FileBrowserPageRoute<T> extends PageRoute<T> {
   final WidgetBuilder builder;
 
   @override
-  final bool maintainState;
+  bool get maintainState => true;
 
   @override
   Duration get transitionDuration => const Duration(milliseconds: 400);
