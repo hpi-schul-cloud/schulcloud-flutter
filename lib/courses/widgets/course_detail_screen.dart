@@ -13,7 +13,7 @@ class CourseDetailScreen extends StatelessWidget {
   CourseDetailScreen({@required this.course}) : assert(course != null);
 
   void _showCourseFiles(BuildContext context, Course course) {
-    Navigator.of(context).push(MaterialPageRoute(
+    Navigator.of(context).push(FileBrowserPageRoute(
       builder: (context) => FileBrowser(owner: course),
     ));
   }
