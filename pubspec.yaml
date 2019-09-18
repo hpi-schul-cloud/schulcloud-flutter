@@ -14,6 +14,7 @@ dependencies:
     sdk: flutter
 
   cupertino_icons: ^0.1.2
+  flare_flutter: ^1.5.8
   # The current version of flutter_downloader, 1.2.1, causes the build to fail. Until this is fixed, we rely on an older version.
   flutter_downloader: 1.1.9
   flutter_html: ^0.10.4
@@ -46,6 +47,9 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+
+  assets:
+  - assets/empty_state.flr
 
   fonts:
   - family: PT Sans
