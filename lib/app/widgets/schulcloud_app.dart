@@ -81,7 +81,12 @@ class _LoggedInScreenState extends State<LoggedInScreen> {
   }
 
   void _navigateTo(Screen screen) {
-    print('Navigating to $screen.');
+    // If we are at the root of a screen and try to change to the same screen,
+    // we just stay here.
+    if (!navigator.canPop() && screen == _controller.value) {
+      return;
+    }
+
     _controller.add(screen);
 
     var targetScreenBuilder = {
