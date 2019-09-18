@@ -50,12 +50,8 @@ class UserFilesCard extends StatelessWidget {
             network: network,
             owner: Provider.of<MeService>(context).me.id.toString(),
           ),
-          child: Scaffold(
-            appBar: AppBar(title: Text('My files')),
-            body: FilesView(
-              owner: Provider.of<MeService>(context).me.id.toString(),
-            ),
-            //bottomNavigationBar: MyAppBar(),
+          child: FilesView(
+            owner: Provider.of<MeService>(context).me.id.toString(),
           ),
         ),
       ),

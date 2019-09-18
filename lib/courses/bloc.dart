@@ -22,10 +22,7 @@ class Bloc {
   Stream<List<Course>> getCourses() => _courses.fetchAllItems();
 
   Stream<List<Lesson>> getLessonsOfCourse(Id<Course> courseId) {
-    return CachedRepository<Lesson>(
-      source: LessonDownloader(network: network, courseId: courseId),
-      cache: InMemoryStorage<Lesson>(),
-    ).fetchAllItems();
+    return LessonDownloader(network: network, courseId: courseId).fetchAllItems();
   }
 }
 
@@ -59,7 +56,6 @@ class CourseDownloader extends Repository<Course> {
         color: hexStringToColor(data['color']),
       );
     }));
-    print('Courses done');
   }
 
   @override
