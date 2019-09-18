@@ -57,7 +57,7 @@ class _UserFilesList extends StatelessWidget {
         Expanded(
           child: FileBrowser(
             owner: Provider.of<MeService>(context).me,
-            isEmbedded: true,
+            showAppBar: false,
           ),
         ),
       ],

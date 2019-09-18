@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
@@ -24,17 +25,17 @@ class FileBrowser extends StatelessWidget {
   final File parent;
 
   /// Whether this widget is embedded into another screen. If [true], doesn't
-  /// show an app bar or bottom app bar.
-  final bool isEmbedded;
+  /// show an app bar.
+  final bool showAppBar;
 
   FileBrowser({
     @required this.owner,
     this.parent,
-    this.isEmbedded = false,
+    this.showAppBar = true,
   })  : assert(owner != null),
         assert(owner is Course || owner is User),
         assert(parent == null || parent.isDirectory),
-        assert(isEmbedded != null);
+        assert(showAppBar != null);
 
   Course get ownerAsCourse => owner is Course ? owner as Course : null;
 
@@ -71,7 +72,7 @@ class FileBrowser extends StatelessWidget {
       child: Consumer<Bloc>(
         builder: (context, bloc, _) {
           return Scaffold(
-            appBar: isEmbedded
+            appBar: showAppBar
                 ? null
                 : PreferredSize(
                     preferredSize: AppBar().preferredSize,
@@ -103,7 +104,12 @@ class FileBrowser extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              Icon(Icons.beach_access, size: 52),
+              FlareActor(
+                "assets/empty_state.flr",
+                alignment: Alignment.center,
+                fit: BoxFit.contain,
+                animation: "idle",
+              ),
               SizedBox(height: 16),
               Text('No items.', style: TextStyle(fontSize: 20)),
             ],
