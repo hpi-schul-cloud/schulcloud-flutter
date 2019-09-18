@@ -6,20 +6,20 @@ import 'package:flutter/material.dart';
 import 'menu.dart';
 import 'schulcloud_app.dart';
 
+final _appBarKey = GlobalKey();
+
 /// A custom version of an app bar intended to be displayed at the bottom of
 /// the screen. You can also also [register] and [unregister] actions on the
 /// [_MyAppBarState]. The [MyAppBarActions] does that.
 class MyAppBar extends StatefulWidget {
   final void Function(Screen route) onNavigate;
   final Stream<Screen> activeScreenStream;
-  final List<Widget> actions;
 
   MyAppBar({
     @required this.onNavigate,
     @required this.activeScreenStream,
-    this.actions = const [],
   })  : assert(onNavigate != null),
-        assert(actions != null);
+        super(key: _appBarKey);
 
   @override
   _MyAppBarState createState() => _MyAppBarState();
@@ -30,13 +30,21 @@ class _MyAppBarState extends State<MyAppBar> {
   final _actions = <Widget>[];
 
   void register(State<MyAppBarActions> state, List<Widget> actions) {
-    _actions.addAll(actions);
-    _actionsByState[state] = actions;
+    Future.microtask(() {
+      setState(() {
+        _actions.addAll(actions);
+        _actionsByState[state] = actions;
+      });
+    });
   }
 
   void unregister(State<MyAppBarActions> state) {
-    final actionsToRemove = _actionsByState.remove(state);
-    _actions.removeWhere(actionsToRemove.contains);
+    Future.microtask(() {
+      setState(() {
+        final actionsToRemove = _actionsByState.remove(state);
+        _actions.removeWhere(actionsToRemove.contains);
+      });
+    });
   }
 
   Future<void> _showMenu(BuildContext context) async {
@@ -70,7 +78,7 @@ class _MyAppBarState extends State<MyAppBar> {
                 onPressed: () => _showMenu(context),
               ),
               Spacer(),
-              ...widget.actions,
+              ..._actions,
             ],
           ),
         ),
@@ -92,8 +100,7 @@ class MyAppBarActions extends StatefulWidget {
 }
 
 class _MyAppBarActionsState extends State<MyAppBarActions> {
-  _MyAppBarState _findEnclosingMyAppBar() =>
-      context.ancestorStateOfType(TypeMatcher<MyAppBar>());
+  _MyAppBarState _findEnclosingMyAppBar() => _appBarKey.currentState;
 
   @override
   void initState() {
