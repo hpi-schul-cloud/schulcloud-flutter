@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 
 import 'package:schulcloud/routes.dart';
 
-import '../data/user.dart';
+import '../data.dart';
 import '../services.dart';
 
 class Menu extends StatefulWidget {
@@ -16,6 +16,11 @@ class Menu extends StatefulWidget {
 
 class _MenuState extends State<Menu> {
   void _navigateTo(Routes target) => Navigator.pop(context, target.name);
+
+  Future<void> _logOut() async {
+    await Provider.of<AuthenticationStorageService>(context).logOut();
+    //Navigator.of(context).pushReplacementNamed(Routes.login.toString());
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -36,10 +41,10 @@ class _MenuState extends State<Menu> {
 
   Widget _buildUserInfo() {
     return StreamBuilder<User>(
-      stream: Provider.of<UserService>(context).userStream,
+      stream: Provider.of<MeService>(context).meStream,
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
-          return Container(color: Colors.red);
+          return Text('Not logged in yet.');
         }
         var user = snapshot.data;
 
@@ -58,8 +63,9 @@ class _MenuState extends State<Menu> {
             ),
             IconButton(icon: Icon(Icons.settings), onPressed: () {}),
             IconButton(
-                icon: Icon(Icons.airline_seat_legroom_reduced),
-                onPressed: () {}),
+              icon: Icon(Icons.airline_seat_legroom_reduced),
+              onPressed: _logOut,
+            ),
             SizedBox(width: 8),
           ],
         );

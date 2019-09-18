@@ -3,16 +3,16 @@ import 'package:provider/provider.dart';
 
 import 'package:schulcloud/app/services.dart';
 import 'package:schulcloud/app/widgets.dart';
-import 'package:schulcloud/courses/bloc.dart';
-import 'package:schulcloud/courses/data/course.dart';
 
+import '../bloc.dart';
+import '../data.dart';
 import 'course_card.dart';
 
 class CoursesScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return ProxyProvider<ApiService, Bloc>(
-      builder: (_, api, __) => Bloc(api: api),
+    return ProxyProvider2<NetworkService, UserService, Bloc>(
+      builder: (_, network, user, __) => Bloc(network: network, user: user),
       child: Scaffold(
         body: CourseGrid(),
         bottomNavigationBar: MyAppBar(),
@@ -27,8 +27,11 @@ class CourseGrid extends StatelessWidget {
     return StreamBuilder<List<Course>>(
       stream: Provider.of<Bloc>(context).getCourses(),
       builder: (context, snapshot) {
-        if (!snapshot.hasData)
+        if (snapshot.hasError) {
+          return Center(child: Text('An error occurred:\n${snapshot.error}'));
+        } else if (!snapshot.hasData) {
           return Center(child: CircularProgressIndicator());
+        }
 
         return GridView.count(
           childAspectRatio: 1.5,

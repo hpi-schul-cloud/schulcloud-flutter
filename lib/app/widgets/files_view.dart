@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'package:schulcloud/app/services.dart';
-import 'package:schulcloud/app/services/files.dart';
-import 'package:schulcloud/app/data/file.dart';
-import 'package:schulcloud/app/widgets/app_bar.dart';
+import '../services.dart';
+import '../data.dart';
+import 'app_bar.dart';
 
 class FilesView extends StatefulWidget {
   final String owner;
@@ -67,9 +66,12 @@ class _FilesViewState extends State<FilesView> {
       Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => ProxyProvider<ApiService, FilesService>(
-              builder: (_, api, __) => FilesService(
-                  api: api, owner: widget.owner, parent: file.id.toString()),
+            builder: (context) => ProxyProvider<NetworkService, FilesService>(
+              builder: (_, network, __) => FilesService(
+                network: network,
+                owner: widget.owner,
+                parent: file.id.toString(),
+              ),
               child: FilesView(
                 owner: widget.owner,
                 parent: file.id.toString(),

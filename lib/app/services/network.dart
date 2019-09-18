@@ -39,7 +39,7 @@ class NetworkService {
       }
 
       throw UnimplementedError(
-          'We should handle status code ${response.statusCode}');
+          'We should handle status code ${response.statusCode}. Body: ${response.body}');
     } on SocketException catch (_) {
       throw NoConnectionToServerError();
     }

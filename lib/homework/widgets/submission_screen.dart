@@ -1,14 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
-import 'package:schulcloud/app/widgets/app_bar.dart';
-import 'package:schulcloud/homework/data/homework.dart';
+import 'package:schulcloud/app/app.dart';
+
+import '../data.dart';
 
 class SubmissionScreen extends StatefulWidget {
   final Homework homework;
   final Submission submission;
 
-  const SubmissionScreen({Key key, this.submission, this.homework})
-      : super(key: key);
+  const SubmissionScreen({
+    Key key,
+    @required this.submission,
+    @required this.homework,
+  }) : super(key: key);
 
   @override
   _SubmissionScreenState createState() => _SubmissionScreenState();

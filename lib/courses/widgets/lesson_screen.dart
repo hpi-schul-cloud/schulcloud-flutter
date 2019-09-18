@@ -1,11 +1,10 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:schulcloud/app/widgets.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
-import 'package:schulcloud/app/widgets.dart';
-import 'package:schulcloud/courses/data/content.dart';
-import 'package:schulcloud/courses/entities.dart';
+import '../data.dart';
 
 class LessonScreen extends StatefulWidget {
   final Course course;
@@ -19,6 +18,16 @@ class LessonScreen extends StatefulWidget {
 
 class _LessonScreenState extends State<LessonScreen> {
   WebViewController _controller;
+
+  void _showLessonContentMenu() {
+    showModalBottomSheet(
+      context: context,
+      builder: (_) => BottomSheet(
+        builder: (_) => _buildBottomSheetContent(),
+        onClosing: () {},
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +46,7 @@ class _LessonScreenState extends State<LessonScreen> {
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.web),
-            onPressed: () => _showLessonContentMenu(context: context),
+            onPressed: () => _showLessonContentMenu(),
           )
         ],
       ),
@@ -58,39 +67,28 @@ class _LessonScreenState extends State<LessonScreen> {
   }
 
   String _textOrUrl(Content content) {
-    if (content.isText) {
-      return _createBase64Source(content.text);
-    } else if (!content.isTypeKnown) {
-      return _createBase64Source('<p>Dieser Datentyp ist unbekannt</p>');
-    } else {
-      return content.url;
-    }
+    return content.isText ? _createBase64Source(content.text) : content.url;
   }
 
-  void _showLessonContentMenu({BuildContext context}) {
-    showModalBottomSheet(
-        context: context,
-        builder: (context) {
-          return BottomSheet(
-            builder: (context) {
-              return Column(
-                mainAxisSize: MainAxisSize.min,
-                children: widget.lesson.contents
-                    .map((content) => NavigationItem(
-                          iconBuilder: (color) => Icon(Icons.textsms),
-                          text: content.title,
-                          onPressed: () {
-                            if (_controller == null) return null;
-                            _controller.loadUrl(_textOrUrl(content));
-                            Navigator.pop(context);
-                          },
-                          isActive: false,
-                        ))
-                    .toList(),
-              );
-            },
-            onClosing: () {},
-          );
-        });
+  Widget _buildBottomSheetContent() {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: widget.lesson.contents
+          .map((content) => _buildBottomSheetItem(content))
+          .toList(),
+    );
+  }
+
+  Widget _buildBottomSheetItem(Content content) {
+    return NavigationItem(
+      iconBuilder: (color) => Icon(Icons.textsms),
+      text: content.title,
+      onPressed: () {
+        if (_controller == null) return;
+        _controller.loadUrl(_textOrUrl(content));
+        Navigator.pop(context);
+      },
+      isActive: false,
+    );
   }
 }

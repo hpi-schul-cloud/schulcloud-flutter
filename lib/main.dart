@@ -1,42 +1,63 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'package:schulcloud/app/services.dart';
-import 'package:schulcloud/app/services/navigation.dart';
+import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/files/widgets/files_screen.dart';
 import 'package:schulcloud/homework/widgets/homework_screen.dart';
 
 import 'courses/courses.dart';
 import 'dashboard/dashboard.dart';
+import 'hive.dart';
 import 'login/login.dart';
 import 'news/news.dart';
 import 'routes.dart';
 
 void main() {
-  runApp(
-    MultiProvider(
+  runApp(ServicesProvider());
+}
+
+class ServicesProvider extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MultiProvider(
       providers: [
-        Provider<AuthenticationStorageService>(
-          builder: (_) => AuthenticationStorageService(),
+        // Initializes hive and offers a service that stores the email and
+        // password.
+        FutureProvider<AuthenticationStorageService>(
+          builder: (context) async {
+            await initializeHive();
+            var authStorage = AuthenticationStorageService();
+            await authStorage.initialize();
+            return authStorage;
+          },
         ),
+        // This service offers network calls and automatically enriches the
+        // header using the authentication provided by the
+        // [AuthenticationStorageService].
         ProxyProvider<AuthenticationStorageService, NetworkService>(
-          builder: (_, authStorage, __) =>
-              NetworkService(authStorage: authStorage),
+          builder: (_, authStorage, __) => authStorage == null
+              ? null
+              : NetworkService(authStorage: authStorage),
         ),
-        ProxyProvider<NetworkService, ApiService>(
-          builder: (_, network, __) => ApiService(network: network),
+        // This service offers fetching of users.
+        ProxyProvider<NetworkService, UserService>(
+          builder: (_, network, __) =>
+              network == null ? null : UserService(network: network),
         ),
-        ProxyProvider2<AuthenticationStorageService, ApiService, UserService>(
-          builder: (_, authStorage, api, __) =>
-              UserService(authStorage: authStorage, api: api),
+        // This service offers fetching of the currently logged in user.
+        ProxyProvider2<AuthenticationStorageService, UserService, MeService>(
+          builder: (_, authStorage, user, __) =>
+              authStorage == null || user == null
+                  ? null
+                  : MeService(authStorage: authStorage, user: user),
+          dispose: (_, me) => me?.dispose(),
         ),
-        Provider<NavigationService>(
-          builder: (_) => NavigationService(),
-        )
+        // This service saves the current route.
+        Provider<NavigationService>.value(value: NavigationService()),
       ],
       child: SchulCloudApp(),
-    ),
-  );
+    );
+  }
 }
 
 const _textTheme = const TextTheme(
@@ -71,7 +92,8 @@ class SchulCloudApp extends StatelessWidget {
       initialRoute: Routes.splashScreen.name,
       navigatorObservers: [
         MyNavigatorObserver(
-            navigationService: Provider.of<NavigationService>(context))
+          navigationService: Provider.of<NavigationService>(context),
+        ),
       ],
       routes: {
         Routes.splashScreen.name: (_) => SplashScreen(),
@@ -86,40 +108,32 @@ class SchulCloudApp extends StatelessWidget {
   }
 }
 
-/// A screen that shows a loading spinner (that should probably be changed into
-/// the Schul-Cloud logo or something similar). When the [AuthStorageService] is
-/// ready (when it loaded stuff from the [SharedPreferences]), it either
-/// redirects to the loading screen or the dashboard.
-class SplashScreen extends StatefulWidget {
-  @override
-  _SplashScreenState createState() => _SplashScreenState();
-}
-
-class _SplashScreenState extends State<SplashScreen>
-    with SingleTickerProviderStateMixin {
-  @override
-  void initState() {
-    super.initState();
-    Future.delayed(Duration.zero, initialize);
-  }
-
-  void initialize() {
-    var authStorage = Provider.of<AuthenticationStorageService>(context);
-
-    authStorage.addOnLoadedListener(() {
-      if (!this.mounted) return;
-      Navigator.of(context).pushReplacementNamed(authStorage.isAuthenticated
-          ? Routes.dashboard.name
-          : Routes.login.name);
-    });
-  }
-
-  @override
+/// This splash screen waits for all the services to be initialized. When they
+/// are, it automatically redirects either to the [LoginScreen] or the
+/// [DashboardScreen] based on whether the user is logged in.
+class SplashScreen extends StatelessWidget {
   Widget build(BuildContext context) {
+    var areAllServicesInitialized = {
+      Provider.of<AuthenticationStorageService>(context),
+      Provider.of<NetworkService>(context),
+      Provider.of<UserService>(context),
+      Provider.of<MeService>(context),
+      Provider.of<NavigationService>(context),
+    }.every((service) => service != null);
+
+    if (areAllServicesInitialized) {
+      Future.microtask(() {
+        var authStorage = Provider.of<AuthenticationStorageService>(context);
+        var targetRoute =
+            authStorage.isAuthenticated ? Routes.dashboard : Routes.login;
+        Navigator.of(context).pushReplacementNamed(targetRoute.name);
+      });
+    }
+
     return Container(
       color: Colors.white,
       alignment: Alignment.center,
-      child: GestureDetector(child: CircularProgressIndicator()),
+      child: CircularProgressIndicator(),
     );
   }
 }

@@ -1,7 +1,10 @@
 name: schulcloud
 description: A Flutter–based mobile app for the HPI Schul–Cloud.
-
 version: 1.0.0+1
+authors:
+  - Clemens Tiedt
+  - Marcel Garus <marcel.garus@gmail.com>
+homepage: https://github.com/schul-cloud/schulcloud-flutter
 
 environment:
   sdk: ">=2.3.0 <3.0.0"
@@ -9,6 +12,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+
   cupertino_icons: ^0.1.2
   # The current version of flutter_downloader, 1.2.1, causes the build to fail. Until this is fixed, we rely on an older version.
   flutter_downloader: 1.1.9
@@ -20,9 +24,10 @@ dependencies:
   path_provider: ^1.1.0
   permission_handler: ^3.2.2
   provider: ^3.0.0
+  repository: ^1.0.3
+  repository_hive: ^1.0.2
+  repository_shared_preferences: ^1.0.2
   rxdart: ^0.22.0
-  shared_preferences: ^0.5.3
-  sqflite: ^1.1.6
   transparent_image: ^1.0.0
   url_launcher: ^5.1.2
   webview_flutter: ^0.3.10+4
@@ -30,9 +35,14 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+
   build_runner: ^1.0.0
+  hive_generator:
+    git:
+      url: git://github.com/marcelgarus/hive.git
+      path: hive_generator
   json_serializable: ^3.0.0
-  test: ^1.6.0
+  test: any
 
 flutter:
   uses-material-design: true

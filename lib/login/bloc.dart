@@ -1,5 +1,6 @@
-import 'package:flutter/foundation.dart';
+import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
 import 'package:schulcloud/app/services.dart';
 
 class InvalidLoginSyntaxError {}
@@ -9,9 +10,9 @@ class Bloc {
       r"^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?)*$";
 
   final AuthenticationStorageService authStorage;
-  final ApiService api;
+  final NetworkService network;
 
-  Bloc({@required this.authStorage, @required this.api});
+  Bloc({@required this.authStorage, @required this.network});
 
   bool isEmailValid(String email) => RegExp(emailRegExp).hasMatch(email);
   bool isPasswordValid(String password) => password.isNotEmpty;
@@ -20,9 +21,15 @@ class Bloc {
     if (!isEmailValid(email) || !isPasswordValid(password))
       throw InvalidLoginSyntaxError();
 
-    // The login throws an exception if it wasn't successful.
     authStorage.email = email;
-    authStorage.token = await api.login(email, password);
+
+    // The login throws an exception if it wasn't successful.
+    var response = await network.post('authentication', body: {
+      'username': email,
+      'password': password,
+    });
+    authStorage.token =
+        (json.decode(response.body) as Map<String, dynamic>)['accessToken'];
   }
 
   Future<void> loginAsDemoStudent() =>

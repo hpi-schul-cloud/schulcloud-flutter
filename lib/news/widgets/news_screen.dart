@@ -5,14 +5,15 @@ import 'package:schulcloud/app/services.dart';
 import 'package:schulcloud/app/widgets.dart';
 
 import '../bloc.dart';
+import '../data.dart';
 import 'article_preview.dart';
 
 /// A screen that displays a list of articles.
 class NewsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return ProxyProvider<ApiService, Bloc>(
-      builder: (_, api, __) => Bloc(api: api),
+    return ProxyProvider<NetworkService, Bloc>(
+      builder: (_, network, __) => Bloc(network: network),
       child: Scaffold(
         body: ArticleList(),
         bottomNavigationBar: MyAppBar(),
@@ -28,7 +29,11 @@ class ArticleList extends StatelessWidget {
       stream: Provider.of<Bloc>(context).getArticles(),
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
-          return Container(color: Colors.red);
+          return Container(
+            color: Colors.white,
+            alignment: Alignment.center,
+            child: CircularProgressIndicator(),
+          );
         }
         return ListView(
           children: snapshot.data.map((article) {

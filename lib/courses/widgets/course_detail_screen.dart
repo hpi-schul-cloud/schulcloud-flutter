@@ -1,30 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'package:schulcloud/app/services.dart';
-import 'package:schulcloud/app/services/files.dart';
-import 'package:schulcloud/app/widgets/app_bar.dart';
-import 'package:schulcloud/app/widgets/files_view.dart';
-import 'package:schulcloud/courses/bloc.dart';
-import 'package:schulcloud/courses/data/lesson.dart';
-import 'package:schulcloud/courses/widgets/lesson_screen.dart';
+import 'package:schulcloud/app/app.dart';
+
+import '../bloc.dart';
+import '../data.dart';
+import 'lesson_screen.dart';
 
 class CourseDetailScreen extends StatelessWidget {
   final Course course;
 
-  CourseDetailScreen({this.course});
+  CourseDetailScreen({@required this.course}) : assert(course != null);
 
   @override
   Widget build(BuildContext context) {
-    return ProxyProvider<ApiService, Bloc>(
-      builder: (_, api, __) => Bloc(api: api),
+    return ProxyProvider2<NetworkService, UserService, Bloc>(
+      builder: (_, network, user, __) => Bloc(network: network, user: user),
       child: Scaffold(
         appBar: AppBar(
           iconTheme: IconThemeData(color: Colors.black),
-          title: Text(
-            course.name,
-            style: TextStyle(color: Colors.black),
-          ),
+          title: Text(course.name, style: TextStyle(color: Colors.black)),
           backgroundColor: course.color,
         ),
         bottomNavigationBar: MyAppBar(
@@ -32,12 +27,10 @@ class CourseDetailScreen extends StatelessWidget {
             IconButton(
               icon: Icon(Icons.folder),
               onPressed: () => _showCourseFiles(context, course),
-            )
+            ),
           ],
         ),
-        body: LessonList(
-          course: course,
-        ),
+        body: LessonList(course: course),
       ),
     );
   }
@@ -46,12 +39,12 @@ class CourseDetailScreen extends StatelessWidget {
 class LessonList extends StatelessWidget {
   final Course course;
 
-  const LessonList({this.course});
+  const LessonList({@required this.course}) : assert(course != null);
 
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<List<Lesson>>(
-      stream: Provider.of<Bloc>(context).getLessons(course.id),
+      stream: Provider.of<Bloc>(context).getLessonsOfCourse(course.id),
       builder: (context, snapshot) {
         if (!snapshot.hasData)
           return Center(child: CircularProgressIndicator());
@@ -92,23 +85,29 @@ class LessonList extends StatelessWidget {
 
   void _pushLessonScreen({BuildContext context, Lesson lesson, Course course}) {
     Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) =>
-                LessonScreen(course: course, lesson: lesson)));
+      context,
+      MaterialPageRoute(
+        builder: (context) => LessonScreen(course: course, lesson: lesson),
+      ),
+    );
   }
 }
 
 void _showCourseFiles(BuildContext context, Course course) {
   Navigator.push(
-      context,
-      MaterialPageRoute(
-          builder: (context) => ProxyProvider<ApiService, FilesService>(
-              builder: (_, api, __) =>
-                  FilesService(api: api, owner: course.id.toString()),
-              child: FilesView(
-                owner: course.id.toString(),
-                appBarColor: course.color,
-                appBarTitle: course.name,
-              ))));
+    context,
+    MaterialPageRoute(
+      builder: (context) => ProxyProvider<NetworkService, FilesService>(
+        builder: (_, network, __) => FilesService(
+          network: network,
+          owner: course.id.toString(),
+        ),
+        child: FilesView(
+          owner: course.id.toString(),
+          appBarColor: course.color,
+          appBarTitle: course.name,
+        ),
+      ),
+    ),
+  );
 }
