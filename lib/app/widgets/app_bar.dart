@@ -10,7 +10,7 @@ final _appBarKey = GlobalKey();
 
 /// A custom version of an app bar intended to be displayed at the bottom of
 /// the screen. You can also also [register] and [unregister] actions on the
-/// [_MyAppBarState]. The [MyAppBarActions] does that.
+/// [_MyAppBarState]. The [AppBarActions] does that.
 class MyAppBar extends StatefulWidget {
   final void Function(Screen route) onNavigate;
   final Stream<Screen> activeScreenStream;
@@ -26,10 +26,10 @@ class MyAppBar extends StatefulWidget {
 }
 
 class _MyAppBarState extends State<MyAppBar> {
-  final _actionsByState = <State<MyAppBarActions>, List<Widget>>{};
+  final _actionsByState = <State<AppBarActions>, List<Widget>>{};
   final _actions = <Widget>[];
 
-  void register(State<MyAppBarActions> state, List<Widget> actions) {
+  void register(State<AppBarActions> state, List<Widget> actions) {
     Future.microtask(() {
       setState(() {
         _actions.addAll(actions);
@@ -38,7 +38,7 @@ class _MyAppBarState extends State<MyAppBar> {
     });
   }
 
-  void unregister(State<MyAppBarActions> state) {
+  void unregister(State<AppBarActions> state) {
     Future.microtask(() {
       setState(() {
         final actionsToRemove = _actionsByState.remove(state);
@@ -88,18 +88,18 @@ class _MyAppBarState extends State<MyAppBar> {
 }
 
 /// A widget that adds actions to the enclosing [MyAppBar].
-class MyAppBarActions extends StatefulWidget {
+class AppBarActions extends StatefulWidget {
   final List<Widget> actions;
   final Widget child;
 
-  MyAppBarActions({@required this.actions, @required this.child})
+  AppBarActions({@required this.actions, @required this.child})
       : assert(actions != null),
         assert(child != null);
 
-  _MyAppBarActionsState createState() => _MyAppBarActionsState();
+  _AppBarActionsState createState() => _AppBarActionsState();
 }
 
-class _MyAppBarActionsState extends State<MyAppBarActions> {
+class _AppBarActionsState extends State<AppBarActions> {
   _MyAppBarState _findEnclosingMyAppBar() => _appBarKey.currentState;
 
   @override

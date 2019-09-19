@@ -44,7 +44,7 @@ class _LessonScreenState extends State<LessonScreen> {
         ),
         backgroundColor: widget.course.color,
       ),
-      body: MyAppBarActions(
+      body: AppBarActions(
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.web),

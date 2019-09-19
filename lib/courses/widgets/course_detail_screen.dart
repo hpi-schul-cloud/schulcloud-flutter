@@ -28,7 +28,7 @@ class CourseDetailScreen extends StatelessWidget {
           title: Text(course.name, style: TextStyle(color: Colors.black)),
           backgroundColor: course.color,
         ),
-        body: MyAppBarActions(
+        body: AppBarActions(
           actions: <Widget>[
             IconButton(
               icon: Icon(Icons.folder),
