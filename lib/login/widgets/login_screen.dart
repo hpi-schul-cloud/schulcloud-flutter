@@ -8,7 +8,7 @@ import 'button.dart';
 class LoginScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return ProxyProvider2<AuthenticationStorageService, NetworkService, Bloc>(
+    return ProxyProvider2<StorageService, NetworkService, Bloc>(
       builder: (_, authStorage, network, __) =>
           Bloc(authStorage: authStorage, network: network),
       child: LoginContent(),
@@ -48,7 +48,9 @@ class _LoginContentState extends State<LoginContent> {
       setState(() => _ambientError = null);
 
       // Logged in.
-      Navigator.of(context).pushReplacementNamed('dashboard');
+      Navigator.of(context).pushReplacement(TopLevelPageRoute(
+        builder: (_) => LoggedInScreen(),
+      ));
     } on NoConnectionToServerError catch (_) {
       setState(() => _ambientError = "No connection to the server.");
     } on AuthenticationError catch (_) {

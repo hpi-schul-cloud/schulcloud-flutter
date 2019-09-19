@@ -11,7 +11,7 @@ import 'schulcloud_app.dart';
 class SplashScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     var areAllServicesInitialized = {
-      Provider.of<AuthenticationStorageService>(context),
+      Provider.of<StorageService>(context),
       Provider.of<NetworkService>(context),
       Provider.of<UserService>(context),
       Provider.of<MeService>(context),
@@ -19,10 +19,10 @@ class SplashScreen extends StatelessWidget {
 
     if (areAllServicesInitialized) {
       Future.microtask(() {
-        var authStorage = Provider.of<AuthenticationStorageService>(context);
+        var authStorage = Provider.of<StorageService>(context);
         Navigator.of(context).pushReplacement(MaterialPageRoute(
           builder: (_) =>
-              authStorage.isAuthenticated ? LoggedInScreen() : LoginScreen(),
+              authStorage.hasToken ? LoggedInScreen() : LoginScreen(),
         ));
       });
     }

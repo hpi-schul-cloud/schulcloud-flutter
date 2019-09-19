@@ -9,7 +9,7 @@ class Bloc {
   static const emailRegExp =
       r"^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?)*$";
 
-  final AuthenticationStorageService authStorage;
+  final StorageService authStorage;
   final NetworkService network;
 
   Bloc({@required this.authStorage, @required this.network})

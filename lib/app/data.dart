@@ -44,3 +44,36 @@ class User implements Entity {
         assert(schoolToken != null),
         assert(displayName != null);
 }
+
+/// App-wide data to be stored by the [StorageService].
+@HiveType()
+class StorageData {
+  @HiveField(0)
+  final String email;
+
+  @HiveField(1)
+  final String token;
+
+  StorageData({
+    this.email,
+    this.token,
+  });
+
+  StorageData copy(
+      MutableStorageData Function(MutableStorageData data) builder) {
+    MutableStorageData data = builder(
+      MutableStorageData()
+        ..email = email
+        ..token = token,
+    );
+    return StorageData(
+      email: data.email,
+      token: data.token,
+    );
+  }
+}
+
+class MutableStorageData {
+  String email;
+  String token;
+}

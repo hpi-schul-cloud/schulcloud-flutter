@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:meta/meta.dart';
 import 'package:http/http.dart' as http;
 
-import 'authentication_storage.dart';
+import 'storage.dart';
 
 class NoConnectionToServerError {}
 
@@ -16,9 +16,9 @@ class AuthenticationError {}
 class NetworkService {
   static const String apiUrl = "https://api.schul-cloud.org";
 
-  final AuthenticationStorageService authStorage;
+  final StorageService storage;
 
-  NetworkService({@required this.authStorage}) : assert(authStorage != null);
+  NetworkService({@required this.storage}) : assert(storage != null);
 
   Future<void> _ensureConnectionExists() =>
       InternetAddress.lookup(apiUrl.substring(apiUrl.lastIndexOf('/') + 1));
@@ -49,8 +49,7 @@ class NetworkService {
   }
 
   Map<String, String> _getHeaders() => {
-        if (authStorage.isAuthenticated)
-          'Authorization': 'Bearer ${authStorage.token}',
+        if (storage.hasToken) 'Authorization': 'Bearer ${storage.token}',
       };
 
   /// Makes an http get request to the api.

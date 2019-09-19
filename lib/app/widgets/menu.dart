@@ -16,7 +16,7 @@ class Menu extends StatelessWidget {
       Navigator.pop(context, target);
 
   Future<void> _logOut(BuildContext context) async {
-    await Provider.of<AuthenticationStorageService>(context).clear();
+    await Provider.of<StorageService>(context).clear();
     //Navigator.of(context).pushReplacementNamed(LoginScreen());
   }
 

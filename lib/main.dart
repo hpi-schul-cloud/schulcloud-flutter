@@ -13,23 +13,21 @@ class ServicesProvider extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        // Initializes hive and offers a service that stores the email and
-        // password.
-        FutureProvider<AuthenticationStorageService>(
+        // Initializes hive and offers a service that stores app-wide data.
+        FutureProvider<StorageService>(
           builder: (context) async {
             await initializeHive();
-            var authStorage = AuthenticationStorageService();
-            await authStorage.initialize();
-            return authStorage;
+            var storage = StorageService();
+            await storage.initialize();
+            return storage;
           },
         ),
         // This service offers network calls and automatically enriches the
         // header using the authentication provided by the
         // [AuthenticationStorageService].
-        ProxyProvider<AuthenticationStorageService, NetworkService>(
-          builder: (_, authStorage, __) => authStorage == null
-              ? null
-              : NetworkService(authStorage: authStorage),
+        ProxyProvider<StorageService, NetworkService>(
+          builder: (_, storage, __) =>
+              storage == null ? null : NetworkService(storage: storage),
         ),
         // This service offers fetching of users.
         ProxyProvider<NetworkService, UserService>(
@@ -37,11 +35,10 @@ class ServicesProvider extends StatelessWidget {
               network == null ? null : UserService(network: network),
         ),
         // This service offers fetching of the currently logged in user.
-        ProxyProvider2<AuthenticationStorageService, UserService, MeService>(
-          builder: (_, authStorage, user, __) =>
-              authStorage == null || user == null
-                  ? null
-                  : MeService(authStorage: authStorage, user: user),
+        ProxyProvider2<StorageService, UserService, MeService>(
+          builder: (_, storage, user, __) => storage == null || user == null
+              ? null
+              : MeService(storage: storage, user: user),
           dispose: (_, me) => me?.dispose(),
         ),
       ],
