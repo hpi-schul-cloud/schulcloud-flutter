@@ -46,9 +46,9 @@ class MeService {
     }
   }
 
-  // A JWT token exists of a header, body and claim (signature), all separated
-  // by dots and encoded in base64. For now, we don't verify the claim, but
-  // just decode the body.
+  // A JWT token consists of a header, body and claim (signature), all
+  // separated by dots and encoded in base64. For now, we don't verify the
+  // claim, but just decode the body.
   static String _decodeTokenToUser(String jwtEncoded) {
     var encodedBody = jwtEncoded.split('.')[1];
     var body = String.fromCharCodes(base64.decode(encodedBody));
