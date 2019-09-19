@@ -12,13 +12,16 @@ class NoItemsWidget extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          FlareActor(
-            "assets/empty_state.flr",
-            alignment: Alignment.center,
-            fit: BoxFit.contain,
-            animation: "idle",
+          SizedBox(
+            width: 100,
+            height: 100,
+            child: FlareActor(
+              "assets/empty_state.flr",
+              alignment: Alignment.center,
+              fit: BoxFit.contain,
+              animation: "idle",
+            ),
           ),
-          SizedBox(height: 16),
           if (text != null) Text(text, style: TextStyle(fontSize: 20)),
         ],
       ),
