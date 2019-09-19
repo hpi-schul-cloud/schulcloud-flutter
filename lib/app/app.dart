@@ -7,5 +7,6 @@ export 'utils.dart';
 export 'widgets/app_bar.dart' show MyAppBarActions;
 export 'widgets/fade_in.dart';
 export 'widgets/menu.dart' show NavigationItem;
+export 'widgets/no_items_widget.dart';
 export 'widgets/placeholder_text.dart';
 export 'widgets/schulcloud_app.dart';

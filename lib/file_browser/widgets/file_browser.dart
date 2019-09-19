@@ -100,21 +100,7 @@ class FileBrowser extends StatelessWidget {
         return Center(child: Text('An error occurred: ${snapshot.error}'));
       }
       if (snapshot.hasData && snapshot.data.isEmpty) {
-        return Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              FlareActor(
-                "assets/empty_state.flr",
-                alignment: Alignment.center,
-                fit: BoxFit.contain,
-                animation: "idle",
-              ),
-              SizedBox(height: 16),
-              Text('No items.', style: TextStyle(fontSize: 20)),
-            ],
-          ),
-        );
+        return NoItemsWidget();
       }
       if (snapshot.hasData) {
         return _buildFiles(snapshot.data);
