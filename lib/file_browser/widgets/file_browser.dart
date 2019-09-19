@@ -1,6 +1,5 @@
 import 'dart:math';
 
-import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
@@ -73,14 +72,14 @@ class FileBrowser extends StatelessWidget {
         builder: (context, bloc, _) {
           return Scaffold(
             appBar: showAppBar
-                ? null
-                : PreferredSize(
+                ? PreferredSize(
                     preferredSize: AppBar().preferredSize,
                     child: FileBrowserAppBar(
                       backgroundColor: ownerAsCourse?.color,
                       title: parent?.name ?? ownerAsCourse?.name ?? 'My files',
                     ),
-                  ),
+                  )
+                : null,
             body: Material(
               child: StreamBuilder<List<File>>(
                 stream: bloc.getFiles(),
