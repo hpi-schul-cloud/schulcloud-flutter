@@ -96,7 +96,7 @@ class _SubmissionDownloader extends CollectionDownloader<Submission> {
           id: Id(data['_id']),
           schoolId: data['schoolId'],
           homeworkId: Id(data['homeworkId']),
-          userId: Id(data['userId']),
+          studentId: Id(data['studentId']),
           comment: data['comment'],
           grade: data['grade'],
           gradeComment: data['gradeComment'],

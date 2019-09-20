@@ -26,8 +26,8 @@ class Bloc {
   Stream<List<File>> getFiles() => _files.fetchAllItems();
 
   Future<void> downloadFile(File file) async {
-    var signedUrl = await _getSignedUrl(id: file.id);
     await ensureStoragePermissionGranted();
+    var signedUrl = await _getSignedUrl(id: file.id);
 
     FlutterDownloader.enqueue(
       url: signedUrl,
@@ -49,7 +49,7 @@ class Bloc {
   Future<void> ensureStoragePermissionGranted() async {
     PermissionStatus permissions = await PermissionHandler()
         .checkPermissionStatus(PermissionGroup.storage);
-    bool isGranted() => permissions.value != null;
+    bool isGranted() => permissions.value != 0;
 
     if (isGranted()) return;
     await PermissionHandler().requestPermissions([PermissionGroup.storage]);
