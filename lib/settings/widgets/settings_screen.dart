@@ -29,16 +29,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
           FutureBuilder<PackageInfo>(
             future: PackageInfo.fromPlatform(),
             builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                var info = snapshot.data;
-                return ListTile(
-                  leading: Icon(Icons.update),
-                  title: Text('Version'),
-                  subtitle: Text('${info.version}+${info.buildNumber}'),
-                );
-              } else {
-                return Container();
-              }
+              return ListTile(
+                leading: Icon(Icons.update),
+                title: Text('Version'),
+                subtitle: Text(
+                  snapshot.hasData
+                      ? '${snapshot.data.version}+${snapshot.data.buildNumber}'
+                      : snapshot.hasError
+                          ? snapshot.error.toString()
+                          : 'Unknown',
+                ),
+              );
             },
           ),
           ListTile(
@@ -54,7 +55,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ListTile(
             leading: Icon(Icons.code),
             title: Text('This app is open source'),
-            subtitle: Text('Tap to go to the repository.'),
             onTap: () => tryLaunchingUrl(
                 'https://github.com/schul-cloud/schulcloud-flutter'),
           ),
