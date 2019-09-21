@@ -15,7 +15,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
   void initState() {
     super.initState();
     LicenseRegistry.addLicense(() async* {
-      print('Registering license.');
       yield EmptyStateLicense();
     });
   }
