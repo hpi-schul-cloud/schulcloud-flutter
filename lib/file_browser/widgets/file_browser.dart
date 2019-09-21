@@ -49,15 +49,19 @@ class FileBrowser extends StatelessWidget {
   Future<void> _downloadFile(BuildContext context, File file) async {
     assert(file.isNotDirectory);
 
-    Scaffold.of(context).showSnackBar(SnackBar(
-      content: Text('Downloading file ${file.name}'),
-    ));
     try {
       await Provider.of<Bloc>(context).downloadFile(file);
+      Scaffold.of(context).showSnackBar(SnackBar(
+        content: Text('Downloading ${file.name}'),
+      ));
     } on PermissionNotGranted catch (_) {
       Scaffold.of(context).showSnackBar(SnackBar(
         content: Text(
-          'You need to grant storage permission to download files.',
+          "To download files, we need to access your storage.",
+        ),
+        action: SnackBarAction(
+          label: 'Allow',
+          onPressed: Provider.of<Bloc>(context).ensureStoragePermissionGranted,
         ),
       ));
     }
