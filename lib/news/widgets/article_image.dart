@@ -5,13 +5,14 @@ import 'package:transparent_image/transparent_image.dart';
 ///
 /// If the [image] is [null], a placeholder is displayed.
 class ArticleImageView extends StatelessWidget {
+  final String imageUrl;
+  final Color placeholderColor;
+
   const ArticleImageView({
     @required this.imageUrl,
     this.placeholderColor = Colors.black12,
-  }) : assert(placeholderColor != null);
-
-  final String imageUrl;
-  final Color placeholderColor;
+  })  : assert(imageUrl != null),
+        assert(placeholderColor != null);
 
   bool get _showPlaceholder => imageUrl == null;
 
@@ -40,13 +41,14 @@ class ArticleImageView extends StatelessWidget {
 ///
 /// If the [image] is [null], a placeholder is displayed.
 class GradientArticleImageView extends StatelessWidget {
+  final String imageUrl;
+  final Color color;
+
   GradientArticleImageView({
     @required this.imageUrl,
     this.color = Colors.purple,
-  });
-
-  final String imageUrl;
-  final Color color;
+  })  : assert(imageUrl != null),
+        assert(color != null);
 
   @override
   Widget build(BuildContext context) {

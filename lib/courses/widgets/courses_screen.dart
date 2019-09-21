@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
-import 'package:schulcloud/app/services.dart';
-import 'package:schulcloud/app/widgets.dart';
+import 'package:schulcloud/app/app.dart';
 
 import '../bloc.dart';
 import '../data.dart';
@@ -13,15 +11,12 @@ class CoursesScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return ProxyProvider2<NetworkService, UserService, Bloc>(
       builder: (_, network, user, __) => Bloc(network: network, user: user),
-      child: Scaffold(
-        body: CourseGrid(),
-        bottomNavigationBar: MyAppBar(),
-      ),
+      child: Scaffold(body: _CourseGrid()),
     );
   }
 }
 
-class CourseGrid extends StatelessWidget {
+class _CourseGrid extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<List<Course>>(
@@ -36,9 +31,9 @@ class CourseGrid extends StatelessWidget {
         return GridView.count(
           childAspectRatio: 1.5,
           crossAxisCount: 2,
-          children: snapshot.data
-              .map((course) => CourseCard(course: course))
-              .toList(),
+          children: [
+            for (var course in snapshot.data) CourseCard(course: course),
+          ],
         );
       },
     );

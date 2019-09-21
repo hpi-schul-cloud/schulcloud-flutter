@@ -1,16 +1,14 @@
-import 'dart:convert';
-
 import 'package:hive/hive.dart';
 import 'package:meta/meta.dart';
 import 'package:repository/repository.dart';
 
-import 'services.dart';
+import 'utils.dart';
 
 part 'data.g.dart';
 
 @immutable
 @HiveType()
-class User {
+class User implements Entity {
   @HiveField(0)
   final Id<User> id;
 
@@ -47,74 +45,35 @@ class User {
         assert(displayName != null);
 }
 
-class File {
-  final Id<File> id;
-  final String name;
+/// App-wide data to be stored by the [StorageService].
+@HiveType()
+class StorageData {
+  @HiveField(0)
+  final String email;
 
-  /// Describes the type of entity this file belongs to. This will usually be
-  /// "user" or "course".
-  final String ownerType;
-  final String ownerId;
-  final bool isDirectory;
-  final String parent;
-  final int size;
+  @HiveField(1)
+  final String token;
 
-  File({
-    @required this.id,
-    @required this.name,
-    @required this.ownerType,
-    @required this.ownerId,
-    @required this.isDirectory,
-    @required this.parent,
-    this.size,
-  })  : assert(id != null),
-        assert(name != null),
-        assert(ownerType != null),
-        assert(ownerId != null),
-        assert(isDirectory != null);
+  StorageData({
+    this.email,
+    this.token,
+  });
+
+  StorageData copy(
+      MutableStorageData Function(MutableStorageData data) builder) {
+    MutableStorageData data = builder(
+      MutableStorageData()
+        ..email = email
+        ..token = token,
+    );
+    return StorageData(
+      email: data.email,
+      token: data.token,
+    );
+  }
 }
 
-class FileDownloader extends Repository<File> {
-  NetworkService network;
-  List<File> _files;
-  Future<void> _downloader;
-  String owner;
-  String parent;
-
-  FileDownloader({@required this.network, this.owner, this.parent})
-      : super(isFinite: true, isMutable: false) {
-    _downloader = _loadFiles();
-  }
-
-  Future<void> _loadFiles() async {
-    Map<String, String> queries = Map();
-    if (owner != null) queries['owner'] = owner;
-    if (parent != null) queries['parent'] = parent;
-    var response = await network.get('fileStorage', parameters: queries);
-
-    var body = json.decode(response.body);
-    _files = [
-      for (var data in (body as List<dynamic>).where((f) => f['name'] != null))
-        File(
-          id: Id<File>(data['_id']),
-          name: data['name'] ?? data['_id'],
-          ownerType: data['refOwnerModel'],
-          ownerId: data['owner'],
-          isDirectory: data['isDirectory'],
-          parent: data['parent'],
-          size: data['size'],
-        )
-    ];
-  }
-
-  @override
-  Stream<Map<Id<File>, File>> fetchAll() async* {
-    if (_files == null) await _downloader;
-    yield {for (var file in _files) file.id: file};
-  }
-
-  @override
-  Stream<File> fetch(Id<File> id) async* {
-    if (_files != null) yield _files.firstWhere((f) => f.id == id);
-  }
+class MutableStorageData {
+  String email;
+  String token;
 }

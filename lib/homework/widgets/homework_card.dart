@@ -9,7 +9,19 @@ import 'homework_detail_screen.dart';
 class HomeworkCard extends StatelessWidget {
   final Homework homework;
 
-  const HomeworkCard(this.homework);
+  const HomeworkCard({@required this.homework}) : assert(homework != null);
+
+  void _showHomeworkDetailScreen(BuildContext context) {
+    Navigator.of(context).push(MaterialPageRoute(
+      builder: (context) => HomeworkDetailScreen(homework: homework),
+    ));
+  }
+
+  void _showCourseDetailScreen(BuildContext context, Course course) {
+    Navigator.of(context).push(MaterialPageRoute(
+      builder: (context) => CourseDetailScreen(course: course),
+    ));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -48,17 +60,5 @@ class HomeworkCard extends StatelessWidget {
         ),
       ),
     );
-  }
-
-  void _showHomeworkDetailScreen(BuildContext context) {
-    Navigator.of(context).push(MaterialPageRoute(
-      builder: (context) => HomeworkDetailScreen(homework: homework),
-    ));
-  }
-
-  void _showCourseDetailScreen(BuildContext context, Course course) {
-    Navigator.of(context).push(MaterialPageRoute(
-      builder: (context) => CourseDetailScreen(course: course),
-    ));
   }
 }

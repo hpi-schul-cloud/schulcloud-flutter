@@ -13,9 +13,9 @@ import 'theme.dart';
 /// If a landscape image is provided, it's displayed above the headline.
 /// If a portrait image is provided, it's displayed below it.
 class ArticleScreen extends StatelessWidget {
-  ArticleScreen({@required this.article}) : assert(article != null);
-
   final Article article;
+
+  ArticleScreen({@required this.article}) : assert(article != null);
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +34,9 @@ class ArticleScreen extends StatelessWidget {
               padding: MediaQuery.of(context).padding +
                   EdgeInsets.symmetric(horizontal: margin) +
                   const EdgeInsets.symmetric(vertical: 16),
-              children: <Widget>[ArticleView(article: article)],
+              children: <Widget>[
+                ArticleView(article: article),
+              ],
             ),
           );
         },
@@ -44,9 +46,9 @@ class ArticleScreen extends StatelessWidget {
 }
 
 class ArticleView extends StatefulWidget {
-  const ArticleView({@required this.article}) : assert(article != null);
-
   final Article article;
+
+  const ArticleView({@required this.article}) : assert(article != null);
 
   @override
   _ArticleViewState createState() => _ArticleViewState();
@@ -60,9 +62,6 @@ class _ArticleViewState extends State<ArticleView> {
     } else {
       return _buildWithLandscapeImage();
     }
-    /* else {
-      return _buildWithPortraitImage();
-    }*/
   }
 
   Widget _buildWithoutImage() {
@@ -117,46 +116,6 @@ class _ArticleViewState extends State<ArticleView> {
       ],
     );
   }
-
-  /*Widget _buildWithPortraitImage() {
-    var padding = Provider.of<ArticleTheme>(context).padding;
-
-    return Stack(
-      children: <Widget>[
-        Positioned(
-          top: 180,
-          right: 0,
-          width: 220,
-          child: _buildImage(),
-        ),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Section(child: Text(widget.article.section)),
-            HeadlineBox(
-              title: Text(widget.article.title),
-              smallText: Text(widget.article.published.toString()),
-            ),
-            Transform.translate(
-              offset: Offset(padding, -13.5),
-              child: AuthorView(author: widget.article.author),
-            ),
-            SizedBox(height: 8),
-            _buildContent(context),
-          ],
-        ),
-      ],
-    );
-  }
-
-  Widget _buildImage() {
-    return widget.article == null
-        ? ArticleImageView(imageUrl: null)
-        : Hero(
-            tag: widget.article,
-            child: ArticleImageView(imageUrl: widget.article?.imageUrl),
-          );
-  }*/
 
   Widget _buildContent(BuildContext context) {
     var padding = Provider.of<ArticleTheme>(context).padding;

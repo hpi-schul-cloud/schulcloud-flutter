@@ -1,59 +1,148 @@
+import 'dart:ui';
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:schulcloud/app/services/navigation.dart';
 
 import 'menu.dart';
+import 'schulcloud_app.dart';
 
+final _appBarKey = GlobalKey();
+
+/// A custom version of an app bar intended to be displayed at the bottom of
+/// the screen. You can also also [register] and [unregister] actions on the
+/// [_MyAppBarState]. The [AppBarActions] does that.
 class MyAppBar extends StatefulWidget {
-  final List<Widget> actions;
+  final void Function(Screen route) onNavigate;
+  final Stream<Screen> activeScreenStream;
 
-  MyAppBar({this.actions = const []}) : assert(actions != null);
+  MyAppBar({
+    @required this.onNavigate,
+    @required this.activeScreenStream,
+  })  : assert(onNavigate != null),
+        super(key: _appBarKey);
 
   @override
   _MyAppBarState createState() => _MyAppBarState();
 }
 
 class _MyAppBarState extends State<MyAppBar> {
-  Future<void> _showMenu() async {
-    String targetScreen = await showModalBottomSheet(
-      context: context,
-      builder: (context) => Menu(
-          activeScreen: Provider.of<NavigationService>(context).activeScreen),
-    );
+  final _actionsByState = <State<AppBarActions>, List<Widget>>{};
+  final _actions = <Widget>[];
 
-    if (targetScreen != null) {
-      Navigator.of(context)
-        ..popUntil((_) => true)
-        ..pushReplacementNamed(targetScreen);
+  void register(State<AppBarActions> state, List<Widget> actions) {
+    Future.microtask(() {
+      setState(() {
+        _actions.addAll(actions);
+        _actionsByState[state] = actions;
+      });
+    });
+  }
+
+  void unregister(State<AppBarActions> state) {
+    Future.microtask(() {
+      setState(() {
+        final actionsToRemove = _actionsByState.remove(state);
+        _actions.removeWhere(actionsToRemove.contains);
+      });
+    });
+  }
+
+  Future<void> _showMenu(BuildContext context) async {
+    Screen target = await Navigator.of(context).push(PageRouteBuilder(
+      pageBuilder: (_, __, ___) =>
+          Menu(activeScreenStream: widget.activeScreenStream),
+      opaque: false,
+      maintainState: true,
+      transitionsBuilder: _customDialogTransitionBuilder,
+    ));
+    if (target != null) {
+      widget.onNavigate(target);
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Hero(
-      tag: 'bottom_app_bar',
-      child: Material(
-        color: Theme.of(context).primaryColor,
-        elevation: 6,
-        child: Container(
-          height: 56,
-          padding: const EdgeInsets.symmetric(horizontal: 8),
-          alignment: Alignment.center,
-          child: IconTheme(
-            data: IconThemeData(color: Colors.white),
-            child: Row(
-              children: <Widget>[
-                IconButton(
-                  icon: Icon(Icons.menu),
-                  onPressed: _showMenu,
-                ),
-                Spacer(),
-                ...widget.actions
-              ],
-            ),
+    return Material(
+      color: Theme.of(context).primaryColor,
+      elevation: 12,
+      child: Container(
+        height: 56,
+        padding: const EdgeInsets.symmetric(horizontal: 8),
+        alignment: Alignment.center,
+        child: IconTheme(
+          data: IconThemeData(color: Colors.white),
+          child: Row(
+            children: <Widget>[
+              IconButton(
+                icon: Icon(Icons.menu),
+                onPressed: () => _showMenu(context),
+              ),
+              Spacer(),
+              ..._actions,
+            ],
           ),
         ),
       ),
     );
   }
+}
+
+/// A widget that adds actions to the enclosing [MyAppBar].
+class AppBarActions extends StatefulWidget {
+  final List<Widget> actions;
+  final Widget child;
+
+  AppBarActions({@required this.actions, @required this.child})
+      : assert(actions != null),
+        assert(child != null);
+
+  _AppBarActionsState createState() => _AppBarActionsState();
+}
+
+class _AppBarActionsState extends State<AppBarActions> {
+  _MyAppBarState _findEnclosingMyAppBar() => _appBarKey.currentState;
+
+  @override
+  void initState() {
+    super.initState();
+    _findEnclosingMyAppBar().register(this, widget.actions);
+  }
+
+  @override
+  void dispose() {
+    _findEnclosingMyAppBar().unregister(this);
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) => widget.child;
+}
+
+Widget _customDialogTransitionBuilder(
+  BuildContext context,
+  Animation<double> animation,
+  Animation<double> secondaryAnimation,
+  Widget child,
+) {
+  return Stack(
+    children: <Widget>[
+      FadeTransition(
+        opacity: animation,
+        child: GestureDetector(
+          onTap: () => Navigator.of(context).popUntil((route) => route.isFirst),
+          child: Container(color: Colors.black45),
+        ),
+      ),
+      SlideTransition(
+        position: Tween<Offset>(
+          begin: const Offset(0, 1),
+          end: Offset.zero,
+        ).animate(CurvedAnimation(
+          parent: animation,
+          curve: Curves.easeOutQuad,
+        )),
+        child: Align(alignment: Alignment.bottomCenter, child: child),
+      ),
+    ],
+  );
 }

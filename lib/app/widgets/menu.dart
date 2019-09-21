@@ -1,25 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'package:schulcloud/routes.dart';
-
 import '../data.dart';
-import '../services.dart';
+import '../app.dart';
+import 'schulcloud_app.dart';
 
-class Menu extends StatefulWidget {
-  final Routes activeScreen;
+/// A menu displaying the current user and [NavigationItem]s.
+class Menu extends StatelessWidget {
+  final Stream<Screen> activeScreenStream;
 
-  const Menu({this.activeScreen});
-  @override
-  _MenuState createState() => _MenuState();
-}
+  const Menu({@required this.activeScreenStream})
+      : assert(activeScreenStream != null);
 
-class _MenuState extends State<Menu> {
-  void _navigateTo(Routes target) => Navigator.pop(context, target.name);
+  void _navigateTo(BuildContext context, Screen target) =>
+      Navigator.pop(context, target);
 
-  Future<void> _logOut() async {
-    await Provider.of<AuthenticationStorageService>(context).logOut();
-    //Navigator.of(context).pushReplacementNamed(Routes.login.toString());
+  Future<void> _logOut(BuildContext context) async {
+    await Provider.of<StorageService>(context).clear();
+    //Navigator.of(context).pushReplacementNamed(LoginScreen());
   }
 
   @override
@@ -27,19 +25,30 @@ class _MenuState extends State<Menu> {
     return Material(
       color: Colors.white,
       elevation: 12,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          _buildUserInfo(),
-          Divider(),
-          ..._buildNavigationItems(),
-          SizedBox(height: 12),
-        ],
+      borderRadius: BorderRadius.only(
+        topLeft: Radius.circular(16),
+        topRight: Radius.circular(16),
+      ),
+      child: StreamBuilder<Screen>(
+        stream: activeScreenStream,
+        builder: (context, snapshot) {
+          var activeScreen = snapshot.data;
+          return Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              SizedBox(height: 8),
+              _buildUserInfo(context),
+              Divider(),
+              ..._buildNavigationItems(context, activeScreen),
+              SizedBox(height: 12),
+            ],
+          );
+        },
       ),
     );
   }
 
-  Widget _buildUserInfo() {
+  Widget _buildUserInfo(BuildContext context) {
     return StreamBuilder<User>(
       stream: Provider.of<MeService>(context).meStream,
       builder: (context, snapshot) {
@@ -50,13 +59,13 @@ class _MenuState extends State<Menu> {
 
         return Row(
           children: <Widget>[
-            SizedBox(width: 16.0 + 8),
+            SizedBox(width: 24),
             Expanded(
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(user.name, style: TextStyle(fontSize: 16)),
+                  Text(user.name, style: TextStyle(fontSize: 20)),
                   Text(user.email, style: TextStyle(fontSize: 12)),
                 ],
               ),
@@ -64,7 +73,7 @@ class _MenuState extends State<Menu> {
             IconButton(icon: Icon(Icons.settings), onPressed: () {}),
             IconButton(
               icon: Icon(Icons.airline_seat_legroom_reduced),
-              onPressed: _logOut,
+              onPressed: () => _logOut(context),
             ),
             SizedBox(width: 8),
           ],
@@ -73,49 +82,33 @@ class _MenuState extends State<Menu> {
     );
   }
 
-  List<Widget> _buildNavigationItems() {
+  List<Widget> _buildNavigationItems(
+      BuildContext context, Screen activeScreen) {
+    Widget buildItem(Screen screen, String text, IconData iconData) {
+      return NavigationItem(
+        iconBuilder: (color) => Icon(iconData, color: color),
+        text: text,
+        onPressed: () => _navigateTo(context, screen),
+        isActive: activeScreen == screen,
+      );
+    }
+
     return [
-      NavigationItem(
-        iconBuilder: (color) => Icon(Icons.dashboard, color: color),
-        text: 'Dashboard',
-        onPressed: () => _navigateTo(Routes.dashboard),
-        isActive: widget.activeScreen == Routes.dashboard,
-      ),
-      NavigationItem(
-        iconBuilder: (color) => Icon(Icons.new_releases, color: color),
-        text: 'News',
-        onPressed: () => _navigateTo(Routes.news),
-        isActive: widget.activeScreen == Routes.news,
-      ),
-      NavigationItem(
-        iconBuilder: (color) => Icon(Icons.school, color: color),
-        text: 'Courses',
-        onPressed: () => _navigateTo(Routes.courses),
-        isActive: widget.activeScreen == Routes.courses,
-      ),
-      NavigationItem(
-        iconBuilder: (color) => Icon(Icons.playlist_add_check, color: color),
-        text: 'Assignments',
-        onPressed: () => _navigateTo(Routes.homework),
-        isActive: widget.activeScreen == Routes.homework,
-      ),
-      NavigationItem(
-        iconBuilder: (color) => Icon(Icons.folder, color: color),
-        text: 'Files',
-        onPressed: () => _navigateTo(Routes.files),
-        isActive: widget.activeScreen == Routes.files,
-      ),
-      NavigationItem(
-        iconBuilder: (color) => Icon(Icons.list, color: color),
-        text: 'Login',
-        onPressed: () => _navigateTo(Routes.login),
-        isActive: widget.activeScreen == Routes.login,
-      ),
+      buildItem(Screen.dashboard, 'Dashboard', Icons.dashboard),
+      buildItem(Screen.news, 'News', Icons.new_releases),
+      buildItem(Screen.courses, 'Courses', Icons.school),
+      buildItem(Screen.homework, 'Assignments', Icons.playlist_add_check),
+      buildItem(Screen.files, 'Files', Icons.folder),
     ];
   }
 }
 
 class NavigationItem extends StatelessWidget {
+  final Widget Function(Color color) iconBuilder;
+  final String text;
+  final VoidCallback onPressed;
+  final bool isActive;
+
   NavigationItem({
     @required this.iconBuilder,
     @required this.text,
@@ -126,16 +119,11 @@ class NavigationItem extends StatelessWidget {
         assert(onPressed != null),
         assert(isActive != null);
 
-  final Widget Function(Color color) iconBuilder;
-  final String text;
-  final VoidCallback onPressed;
-  final bool isActive;
-
   @override
   Widget build(BuildContext context) {
     var color = isActive ? Theme.of(context).primaryColor : Colors.black;
 
-    return Container(
+    return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8),
       child: Material(
         borderRadius: BorderRadius.circular(8),

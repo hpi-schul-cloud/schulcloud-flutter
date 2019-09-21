@@ -1,13 +1,14 @@
+import 'package:hive/hive.dart';
 import 'package:meta/meta.dart';
+import 'package:repository/repository.dart';
 import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/courses/courses.dart';
-import 'package:repository/repository.dart';
-import 'package:hive/hive.dart';
+import 'package:schulcloud/file_browser/file_browser.dart';
 
 part 'data.g.dart';
 
 @HiveType()
-class Homework extends Entity {
+class Homework implements Entity {
   @HiveField(0)
   final Id<Homework> id;
 
@@ -78,7 +79,7 @@ class Homework extends Entity {
 }
 
 @HiveType()
-class Submission extends Entity {
+class Submission implements Entity {
   @HiveField(0)
   final Id<Submission> id;
 
@@ -89,7 +90,7 @@ class Submission extends Entity {
   final Id<Homework> homeworkId;
 
   @HiveField(3)
-  final Id<User> userId;
+  final Id<User> studentId;
 
   @HiveField(4)
   final DateTime createdAt;
@@ -119,7 +120,7 @@ class Submission extends Entity {
     @required this.id,
     @required this.schoolId,
     @required this.homeworkId,
-    @required this.userId,
+    @required this.studentId,
     this.createdAt,
     this.updatedAt,
     this.comment,
@@ -131,5 +132,5 @@ class Submission extends Entity {
   })  : assert(id != null),
         assert(schoolId != null),
         assert(homeworkId != null),
-        assert(userId != null);
+        assert(studentId != null);
 }

@@ -10,6 +10,7 @@ import 'data.dart';
 class Bloc {
   final NetworkService network;
   final UserService user;
+
   Repository<Homework> _homework;
   Repository<Submission> _submissions;
 
@@ -17,19 +18,19 @@ class Bloc {
       : assert(network != null),
         assert(user != null),
         _homework = CachedRepository<Homework>(
-          source: HomeworkDownloader(network: network, user: user),
+          source: _HomeworkDownloader(network: network, user: user),
           cache: InMemoryStorage(),
         ),
         _submissions = CachedRepository<Submission>(
-          source: SubmissionDownloader(network: network),
+          source: _SubmissionDownloader(network: network),
           cache: InMemoryStorage(),
         );
 
   Stream<List<Homework>> getHomework() => _homework.fetchAllItems();
 
-  Stream<List<Submission>> listSubmissions() => _submissions.fetchAllItems();
+  Stream<List<Submission>> getSubmissions() => _submissions.fetchAllItems();
 
-  Stream<Submission> submissionForHomework(Id<Homework> homeworkId) async* {
+  Stream<Submission> getSubmissionForHomework(Id<Homework> homeworkId) async* {
     yield await _submissions
         .fetchAllItems()
         .map((all) => all.firstWhere(
@@ -39,11 +40,11 @@ class Bloc {
   }
 }
 
-class HomeworkDownloader extends CollectionDownloader<Homework> {
+class _HomeworkDownloader extends CollectionDownloader<Homework> {
   UserService user;
   NetworkService network;
 
-  HomeworkDownloader({@required this.user, @required this.network});
+  _HomeworkDownloader({@required this.user, @required this.network});
 
   @override
   Future<List<Homework>> downloadAll() async {
@@ -66,10 +67,10 @@ class HomeworkDownloader extends CollectionDownloader<Homework> {
             name: data['courseId']['name'],
             description:
                 data['courseId']['description'] ?? 'No description provided',
-            teachers: await Future.wait([
+            teachers: [
               for (String id in data['courseId']['teacherIds'])
-                user.fetchUser(Id<User>(id)),
-            ]),
+                await user.getUser(Id<User>(id)),
+            ],
             color: hexStringToColor(data['courseId']['color']),
           ),
           lessonId: Id(data['lessonId'] ?? ''),
@@ -79,10 +80,10 @@ class HomeworkDownloader extends CollectionDownloader<Homework> {
   }
 }
 
-class SubmissionDownloader extends CollectionDownloader<Submission> {
+class _SubmissionDownloader extends CollectionDownloader<Submission> {
   NetworkService network;
 
-  SubmissionDownloader({@required this.network});
+  _SubmissionDownloader({@required this.network});
 
   @override
   Future<List<Submission>> downloadAll() async {
@@ -95,7 +96,7 @@ class SubmissionDownloader extends CollectionDownloader<Submission> {
           id: Id(data['_id']),
           schoolId: data['schoolId'],
           homeworkId: Id(data['homeworkId']),
-          userId: Id(data['userId']),
+          studentId: Id(data['studentId']),
           comment: data['comment'],
           grade: data['grade'],
           gradeComment: data['gradeComment'],

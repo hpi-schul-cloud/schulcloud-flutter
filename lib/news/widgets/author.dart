@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:schulcloud/app/widgets.dart';
+import 'package:schulcloud/app/app.dart';
 
 import '../data.dart';
 
@@ -8,9 +8,9 @@ import '../data.dart';
 ///
 /// If the [author] is [null], a placeholder is displayed.
 class AuthorView extends StatefulWidget {
-  const AuthorView({@required this.author});
-
   final Author author;
+
+  const AuthorView({@required this.author}) : assert(author != null);
 
   @override
   _AuthorViewState createState() => _AuthorViewState();
@@ -34,6 +34,21 @@ class _AuthorViewState extends State<AuthorView> {
     );
   }
 
+  Widget _buildName() {
+    return Container(
+      alignment: Alignment.centerLeft,
+      padding: EdgeInsets.only(left: hasPhoto ? 40 : 0),
+      child: Container(
+        color: Colors.white,
+        padding: EdgeInsets.fromLTRB(hasPhoto ? 28 : 0, 4, 8, 4),
+        child: TextOrPlaceholder(
+          isPlaceholder ? null : 'von ${author.name}',
+          style: Theme.of(context).textTheme.caption.copyWith(fontSize: 16),
+        ),
+      ),
+    );
+  }
+
   Widget _buildAvatar() {
     return Align(
       alignment: Alignment.centerLeft,
@@ -48,23 +63,6 @@ class _AuthorViewState extends State<AuthorView> {
           backgroundColor: Colors.grey,
           backgroundImage: NetworkImage(author.photoUrl),
         ),
-      ),
-    );
-  }
-
-  Widget _buildName() {
-    final style = Theme.of(context).textTheme.caption.copyWith(fontSize: 16);
-    final text = isPlaceholder
-        ? PlaceholderText(showPadding: false, style: style)
-        : Text('von ${author.name}', style: style);
-
-    return Container(
-      alignment: Alignment.centerLeft,
-      padding: EdgeInsets.only(left: hasPhoto ? 40 : 0),
-      child: Container(
-        color: Colors.white,
-        padding: EdgeInsets.fromLTRB(hasPhoto ? 28 : 0, 4, 8, 4),
-        child: text,
       ),
     );
   }

@@ -1,6 +1,5 @@
 import 'package:collection/collection.dart' show groupBy;
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:schulcloud/app/app.dart';
 
@@ -13,12 +12,12 @@ class HomeworkScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return ProxyProvider2<NetworkService, UserService, Bloc>(
       builder: (_, network, user, __) => Bloc(network: network, user: user),
-      child: Scaffold(bottomNavigationBar: MyAppBar(), body: HomeworkList()),
+      child: Scaffold(body: _HomeworkList()),
     );
   }
 }
 
-class HomeworkList extends StatelessWidget {
+class _HomeworkList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<List<Homework>>(
@@ -32,25 +31,23 @@ class HomeworkList extends StatelessWidget {
 
         var assignments = groupBy<Homework, DateTime>(
           snapshot.data,
-          (Homework h) => DateTime(
-            h.dueDate.year,
-            h.dueDate.month,
-            h.dueDate.day,
-          ),
+          (Homework h) =>
+              DateTime(h.dueDate.year, h.dueDate.month, h.dueDate.day),
         );
-        var dates = assignments.keys.toList();
-        dates.sort((a, b) => b.compareTo(a));
+        var dates = assignments.keys.toList()..sort((a, b) => b.compareTo(a));
         return ListView(
-          children: ListTile.divideTiles(context: context, tiles: [
-            for (var key in dates) ...[
-              ListTile(title: Text(_dateFromDateTime(key))),
-              ...assignments[key].map((h) => HomeworkCard(h))
-            ]
-          ]).toList(),
+          children: ListTile.divideTiles(
+            context: context,
+            tiles: [
+              for (var key in dates) ...[
+                ListTile(title: Text(dateTimeToString(key))),
+                for (var homework in assignments[key])
+                  HomeworkCard(homework: homework),
+              ],
+            ],
+          ).toList(),
         );
       },
     );
   }
-
-  String _dateFromDateTime(DateTime dt) => DateFormat.yMMMd().format(dt);
 }

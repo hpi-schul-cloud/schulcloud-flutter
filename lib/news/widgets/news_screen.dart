@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
-import 'package:schulcloud/app/services.dart';
-import 'package:schulcloud/app/widgets.dart';
+import 'package:schulcloud/app/app.dart';
 
 import '../bloc.dart';
 import '../data.dart';
@@ -14,15 +12,12 @@ class NewsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return ProxyProvider<NetworkService, Bloc>(
       builder: (_, network, __) => Bloc(network: network),
-      child: Scaffold(
-        body: ArticleList(),
-        bottomNavigationBar: MyAppBar(),
-      ),
+      child: Scaffold(body: _ArticleList()),
     );
   }
 }
 
-class ArticleList extends StatelessWidget {
+class _ArticleList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<List<Article>>(
@@ -36,12 +31,13 @@ class ArticleList extends StatelessWidget {
           );
         }
         return ListView(
-          children: snapshot.data.map((article) {
-            return Padding(
-              padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
-              child: ArticlePreview(article: article),
-            );
-          }).toList(),
+          children: [
+            for (var article in snapshot.data)
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+                child: ArticlePreview(article: article),
+              ),
+          ],
         );
       },
     );

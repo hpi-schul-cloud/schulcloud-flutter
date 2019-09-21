@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:repository/repository.dart';
-import 'package:schulcloud/app/data.dart';
+import 'package:schulcloud/app/app.dart';
 
 part 'data.g.dart';
 
@@ -19,7 +19,7 @@ enum ContentType {
 
 @immutable
 @HiveType()
-class Content {
+class Content implements Entity {
   @HiveField(0)
   final Id<Content> id;
 
@@ -50,7 +50,7 @@ class Content {
 
 @immutable
 @HiveType()
-class Course {
+class Course implements Entity {
   @HiveField(0)
   final Id<Course> id;
 
@@ -80,7 +80,7 @@ class Course {
 }
 
 @HiveType()
-class Lesson {
+class Lesson implements Entity {
   @HiveField(0)
   final Id<Lesson> id;
 

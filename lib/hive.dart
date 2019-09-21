@@ -16,6 +16,7 @@ Future<void> initializeHive() async {
   Hive
     ..init(dir.path)
     ..registerAdapter(IdAdapter<User>(), 40)
+    ..registerAdapter(IdAdapter<StorageData>(), 47)
     ..registerAdapter(IdAdapter<ContentType>(), 41)
     ..registerAdapter(IdAdapter<Content>(), 42)
     ..registerAdapter(IdAdapter<Course>(), 43)
@@ -24,6 +25,7 @@ Future<void> initializeHive() async {
     ..registerAdapter(IdAdapter<Author>(), 46)
     // App module
     ..registerAdapter(UserAdapter(), 51)
+    ..registerAdapter(StorageDataAdapter(), 52)
     // Courses module
     ..registerAdapter(ContentTypeAdapter(), 60)
     ..registerAdapter(ContentAdapter(), 61)

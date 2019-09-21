@@ -7,14 +7,14 @@ import 'theme.dart';
 ///
 /// The colors and padding come from the enclosing [ArticleTheme].
 class HeadlineBox extends StatelessWidget {
+  final Widget title;
+  final Widget smallText;
+
   const HeadlineBox({
     @required this.title,
     @required this.smallText,
   })  : assert(title != null),
         assert(smallText != null);
-
-  final Widget title;
-  final Widget smallText;
 
   @override
   Widget build(BuildContext context) {

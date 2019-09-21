@@ -1,119 +1,80 @@
 import 'dart:convert';
 
-import 'package:flutter/foundation.dart';
-import 'package:schulcloud/app/app.dart';
+import 'package:meta/meta.dart';
 import 'package:repository/repository.dart';
+import 'package:schulcloud/app/app.dart';
 
 import 'data.dart';
 
 class Bloc {
   final NetworkService network;
   final UserService user;
+
   Repository<Course> _courses;
 
-  Bloc({
-    @required this.network,
-    @required this.user,
-  }) : _courses = CachedRepository<Course>(
-          source: CourseDownloader(network: network, user: user),
+  Bloc({@required this.network, @required this.user})
+      : assert(network != null),
+        assert(user != null),
+        _courses = CachedRepository<Course>(
+          source: _CourseDownloader(network: network, user: user),
           cache: InMemoryStorage<Course>(),
         );
 
   Stream<List<Course>> getCourses() => _courses.fetchAllItems();
 
-  Stream<List<Lesson>> getLessonsOfCourse(Id<Course> courseId) {
-    return LessonDownloader(network: network, courseId: courseId).fetchAllItems();
-  }
+  Stream<List<Lesson>> getLessonsOfCourse(Id<Course> courseId) =>
+      _LessonDownloader(network: network, courseId: courseId).fetchAllItems();
 }
 
-class CourseDownloader extends Repository<Course> {
+class _CourseDownloader extends CollectionDownloader<Course> {
   final NetworkService network;
   final UserService user;
-  List<Course> _courses;
-  Future<void> _downloader;
 
-  CourseDownloader({
-    @required this.network,
-    @required this.user,
-  }) : super(isFinite: true, isMutable: false) {
-    _downloader = _downloadCourses();
-  }
+  _CourseDownloader({@required this.network, @required this.user});
 
-  Future<void> _downloadCourses() async {
+  @override
+  Future<List<Course>> downloadAll() async {
     var response = await network.get('courses');
     var body = json.decode(response.body);
 
-    _courses =
-        await Future.wait((body['data'] as List<dynamic>).map((data) async {
-      data = data as Map<String, dynamic>;
-      return Course(
-        id: Id<Course>(data['_id']),
-        name: data['name'],
-        description: data['description'],
-        teachers: await Future.wait([
-          for (String id in data['teacherIds']) user.fetchUser(Id<User>(id)),
-        ]),
-        color: hexStringToColor(data['color']),
-      );
-    }));
-  }
-
-  @override
-  Stream<Map<Id<Course>, Course>> fetchAll() async* {
-    if (_courses == null) await _downloader;
-    yield {
-      for (var course in _courses) course.id: course,
-    };
-  }
-
-  @override
-  Stream<Course> fetch(Id<Course> id) async* {
-    if (_courses == null) await _downloader;
-    yield _courses.firstWhere((c) => c.id == id);
+    return [
+      for (var data in body['data'] as List<dynamic>)
+        Course(
+          id: Id<Course>(data['_id']),
+          name: data['name'],
+          description: data['description'],
+          teachers: [
+            for (String id in data['teacherIds'])
+              await user.getUser(Id<User>(id)),
+          ],
+          color: hexStringToColor(data['color']),
+        ),
+    ];
   }
 }
 
-class LessonDownloader extends Repository<Lesson> {
+class _LessonDownloader extends CollectionDownloader<Lesson> {
   final NetworkService network;
   final Id<Course> courseId;
-  List<Lesson> _lessons;
-  Future<void> _downloader;
 
-  LessonDownloader({
-    @required this.network,
-    @required this.courseId,
-  }) : super(isFinite: true, isMutable: false) {
-    _downloader = _downloadLessons();
-  }
+  _LessonDownloader({@required this.network, @required this.courseId});
 
-  Future<void> _downloadLessons() async {
+  @override
+  Future<List<Lesson>> downloadAll() async {
     var response = await network.get('lessons?courseId=$courseId');
     var body = json.decode(response.body);
 
-    _lessons = (body['data'] as List<dynamic>).map((data) {
-      return Lesson(
-        id: Id<Lesson>(data['_id']),
-        name: data['name'],
-        contents: (data['contents'] as List<dynamic>)
-            .map((content) => _createContent(content))
-            .where((c) => c != null)
-            .toList(),
-      );
-    }).toList();
-  }
-
-  @override
-  Stream<Map<Id<Lesson>, Lesson>> fetchAll() async* {
-    if (_lessons == null) await _downloader;
-    yield {
-      for (var lesson in _lessons) lesson.id: lesson,
-    };
-  }
-
-  @override
-  Stream<Lesson> fetch(Id<Lesson> id) async* {
-    if (_lessons == null) await _downloader;
-    yield _lessons.firstWhere((lesson) => lesson.id == id);
+    return [
+      for (var data in body['data'] as List<dynamic>)
+        Lesson(
+          id: Id<Lesson>(data['_id']),
+          name: data['name'],
+          contents: (data['contents'] as List<dynamic>)
+              .map((content) => _createContent(content))
+              .where((c) => c != null)
+              .toList(),
+        ),
+    ];
   }
 
   static Content _createContent(Map<String, dynamic> data) {
@@ -131,7 +92,6 @@ class LessonDownloader extends Repository<Lesson> {
       default:
         return null;
     }
-    assert(type != null);
     return Content(
       id: Id<Content>(data['_id']),
       title: data['title'] != '' ? data['title'] : 'Ohne Titel',
