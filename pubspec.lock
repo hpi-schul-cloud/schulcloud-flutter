@@ -234,16 +234,14 @@ packages:
       name: hive
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.4.1+1"
+    version: "1.0.0"
   hive_generator:
     dependency: "direct dev"
     description:
-      path: hive_generator
-      ref: HEAD
-      resolved-ref: "0e71330e2fa88276fdfa9e7bc50f78526b6c2809"
-      url: "git://github.com/marcelgarus/hive.git"
-    source: git
-    version: "0.4.0+2"
+      name: hive_generator
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.5.2"
   html:
     dependency: transitive
     description:
@@ -467,7 +465,7 @@ packages:
       name: repository_hive
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.0.2"
+    version: "1.0.3"
   repository_shared_preferences:
     dependency: "direct main"
     description:
