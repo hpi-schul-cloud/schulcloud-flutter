@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:intl/intl.dart';
 import 'package:repository/repository.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 /// Converts a hex string (like, '#ffdd00') to a [Color].
 Color hexStringToColor(String hex) =>
@@ -49,6 +50,15 @@ String removeHtmlTags(String text) {
     }
   }
   return buffer.toString();
+}
+
+/// Tries launching a url.
+Future<bool> tryLaunchingUrl(String url) async {
+  if (await canLaunch(url)) {
+    await launch(url);
+    return true;
+  }
+  return false;
 }
 
 /// An error indicating that a permission wasn't granted by the user.

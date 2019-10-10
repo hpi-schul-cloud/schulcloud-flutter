@@ -2,8 +2,10 @@ name: schulcloud
 description: A Flutter–based mobile app for the HPI Schul–Cloud.
 version: 1.0.0+1
 authors:
-  - Clemens Tiedt
   - Marcel Garus <marcel.garus@gmail.com>
+  - Andrea Nathansen
+  - Maxim Renz
+  - Clemens Tiedt
 homepage: https://github.com/schul-cloud/schulcloud-flutter
 
 environment:
@@ -22,6 +24,7 @@ dependencies:
   http: ^0.12.0
   intl: ^0.16.0
   json_annotation: ^2.0.0
+  package_info: ^0.4.0+3
   path_provider: ^1.1.0
   permission_handler: ^3.2.2
   provider: ^3.0.0

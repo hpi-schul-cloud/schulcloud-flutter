@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:provider/provider.dart';
 import 'package:schulcloud/app/app.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import '../bloc.dart';
 import '../data.dart';
@@ -57,11 +56,7 @@ class HomeworkDetailScreen extends StatelessWidget {
                     padding: const EdgeInsets.all(8),
                     defaultTextStyle: textTheme.body1.copyWith(fontSize: 20),
                     data: homework.description,
-                    onLinkTap: (link) async {
-                      if (await canLaunch(link)) {
-                        await launch(link);
-                      }
-                    },
+                    onLinkTap: tryLaunchingUrl,
                   ),
                   if (snapshot.data != null)
                     Container(

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:schulcloud/settings/settings.dart';
 import 'package:schulcloud/login/login.dart';
 
 import '../data.dart';
@@ -15,6 +16,12 @@ class Menu extends StatelessWidget {
 
   void _navigateTo(BuildContext context, Screen target) =>
       Navigator.pop(context, target);
+
+  void _openSettings(BuildContext context) {
+    Navigator.of(context).push(MaterialPageRoute(
+      builder: (_) => SettingsScreen(),
+    ));
+  }
 
   Future<void> _logOut(BuildContext context) async {
     await Provider.of<StorageService>(context).clear();
@@ -73,7 +80,10 @@ class Menu extends StatelessWidget {
                 ],
               ),
             ),
-            IconButton(icon: Icon(Icons.settings), onPressed: () {}),
+            IconButton(
+              icon: Icon(Icons.settings),
+              onPressed: () => _openSettings(context),
+            ),
             IconButton(
               icon: Icon(Icons.airline_seat_legroom_reduced),
               onPressed: () => _logOut(context),
