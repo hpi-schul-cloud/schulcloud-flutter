@@ -41,10 +41,7 @@ dev_dependencies:
     sdk: flutter
 
   build_runner: ^1.0.0
-  hive_generator:
-    git:
-      url: git://github.com/marcelgarus/hive.git
-      path: hive_generator
+  hive_generator: ^0.5.2
   json_serializable: ^3.0.0
   test: any
 

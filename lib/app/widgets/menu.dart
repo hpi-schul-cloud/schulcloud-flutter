@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:schulcloud/settings/settings.dart';
+import 'package:schulcloud/login/login.dart';
 
 import '../data.dart';
 import '../app.dart';
@@ -24,7 +25,9 @@ class Menu extends StatelessWidget {
 
   Future<void> _logOut(BuildContext context) async {
     await Provider.of<StorageService>(context).clear();
-    //Navigator.of(context).pushReplacementNamed(LoginScreen());
+    Navigator.of(context).pushReplacement(TopLevelPageRoute(
+      builder: (_) => LoginScreen(),
+    ));
   }
 
   @override
