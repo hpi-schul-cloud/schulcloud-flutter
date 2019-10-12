@@ -1,3 +1,4 @@
+import 'package:cached_listview/cached_listview.dart';
 import 'package:collection/collection.dart' show groupBy;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -12,42 +13,40 @@ class HomeworkScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return ProxyProvider2<NetworkService, UserService, Bloc>(
       builder: (_, network, user, __) => Bloc(network: network, user: user),
-      child: Scaffold(body: _HomeworkList()),
-    );
-  }
-}
+      child: Scaffold(
+        body: Consumer<Bloc>(
+          builder: (context, bloc, _) {
+            return CachedCustomScrollView(
+              controller: bloc.homework,
+              emptyStateBuilder: (_) => Center(child: Text('Nuffin here')),
+              errorBannerBuilder: (_, error) =>
+                  Container(height: 48, color: Colors.red),
+              errorScreenBuilder: (_, error) => Container(color: Colors.red),
+              itemSliversBuilder: (context, List<Homework> homework) {
+                var assignments = groupBy<Homework, DateTime>(
+                  homework,
+                  (Homework h) =>
+                      DateTime(h.dueDate.year, h.dueDate.month, h.dueDate.day),
+                );
 
-class _HomeworkList extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return StreamBuilder<List<Homework>>(
-      stream: Provider.of<Bloc>(context).getHomework(),
-      builder: (context, snapshot) {
-        if (snapshot.hasError) {
-          return Center(child: Text('Error occurred: ${snapshot.error}'));
-        } else if (!snapshot.hasData) {
-          return Center(child: CircularProgressIndicator());
-        }
-
-        var assignments = groupBy<Homework, DateTime>(
-          snapshot.data,
-          (Homework h) =>
-              DateTime(h.dueDate.year, h.dueDate.month, h.dueDate.day),
-        );
-        var dates = assignments.keys.toList()..sort((a, b) => b.compareTo(a));
-        return ListView(
-          children: ListTile.divideTiles(
-            context: context,
-            tiles: [
-              for (var key in dates) ...[
-                ListTile(title: Text(dateTimeToString(key))),
-                for (var homework in assignments[key])
-                  HomeworkCard(homework: homework),
-              ],
-            ],
-          ).toList(),
-        );
-      },
+                var dates = assignments.keys.toList()
+                  ..sort((a, b) => b.compareTo(a));
+                return [
+                  SliverList(
+                    delegate: SliverChildListDelegate([
+                      for (var key in dates) ...[
+                        ListTile(title: Text(dateTimeToString(key))),
+                        for (var homework in assignments[key])
+                          HomeworkCard(homework: homework),
+                      ],
+                    ]),
+                  ),
+                ];
+              },
+            );
+          },
+        ),
+      ),
     );
   }
 }

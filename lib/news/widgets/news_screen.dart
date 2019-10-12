@@ -1,9 +1,9 @@
+import 'package:cached_listview/cached_listview.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:schulcloud/app/app.dart';
 
 import '../bloc.dart';
-import '../data.dart';
 import 'article_preview.dart';
 
 /// A screen that displays a list of articles.
@@ -12,34 +12,23 @@ class NewsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return ProxyProvider<NetworkService, Bloc>(
       builder: (_, network, __) => Bloc(network: network),
-      child: Scaffold(body: _ArticleList()),
-    );
-  }
-}
-
-class _ArticleList extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return StreamBuilder<List<Article>>(
-      stream: Provider.of<Bloc>(context).getArticles(),
-      builder: (context, snapshot) {
-        if (!snapshot.hasData) {
-          return Container(
-            color: Colors.white,
-            alignment: Alignment.center,
-            child: CircularProgressIndicator(),
-          );
-        }
-        return ListView(
-          children: [
-            for (var article in snapshot.data)
-              Padding(
+      child: Scaffold(
+        body: Consumer<Bloc>(
+          builder: (context, bloc, _) {
+            return CachedListView(
+              controller: bloc.articles,
+              emptyStateBuilder: (_) => Center(child: Text('Nuffin here')),
+              errorBannerBuilder: (_, error) =>
+                  Container(height: 48, color: Colors.red),
+              errorScreenBuilder: (_, error) => Container(color: Colors.red),
+              itemBuilder: (_, article) => Padding(
                 padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
                 child: ArticlePreview(article: article),
               ),
-          ],
-        );
-      },
+            );
+          },
+        ),
+      ),
     );
   }
 }

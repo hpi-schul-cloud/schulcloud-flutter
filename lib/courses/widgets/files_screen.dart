@@ -1,3 +1,4 @@
+import 'package:cached_listview/cached_listview.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -74,29 +75,41 @@ class _CourseFilesList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<List<Course>>(
-      stream: Provider.of<Bloc>(context).getCourses(),
-      builder: (context, snapshot) {
-        return ListView(
-          children: <Widget>[
-            FileListHeader(
-                icon: Icon(Icons.school, size: 48),
-                text: 'These are the files from courses you are enrolled in. '
-                    'Anyone in the course (including teachers) has access to them.'),
-            if (!snapshot.hasData) ...[
-              SizedBox(height: 16),
-              Center(child: CircularProgressIndicator())
-            ] else
-              for (var course in snapshot.data)
+    return CachedCustomScrollView(
+      controller: Provider.of<Bloc>(context).courses,
+      emptyStateBuilder: (_) => Center(child: Text('No courses.')),
+      errorBannerBuilder: (_, error) =>
+          Container(color: Colors.red, height: 48),
+      errorScreenBuilder: (_, error) => Container(color: Colors.red),
+      headerSliversBuilder: (_) => [SliverToBoxAdapter(child: _buildHeader())],
+      loadingScreenBuilder: (_) => Column(
+        children: <Widget>[
+          _buildHeader(),
+          Expanded(child: Center(child: CircularProgressIndicator())),
+        ],
+      ),
+      itemSliversBuilder: (_, courses) {
+        return [
+          SliverList(
+            delegate: SliverChildListDelegate([
+              for (var course in courses)
                 ListTile(
                   title: Text(course.name),
                   leading: Icon(Icons.folder, color: course.color),
                   onTap: () => _showCourseFiles(context, course),
                 ),
-          ],
-        );
+            ]),
+          )
+        ];
       },
     );
+  }
+
+  Widget _buildHeader() {
+    return FileListHeader(
+        icon: Icon(Icons.school, size: 48),
+        text: 'These are the files from courses you are enrolled in. '
+            'Anyone in the course (including teachers) has access to them.');
   }
 }
 

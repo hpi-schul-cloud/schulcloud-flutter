@@ -15,12 +15,14 @@ dependencies:
   flutter:
     sdk: flutter
 
+  cached_listview: ^1.1.5
   cupertino_icons: ^0.1.2
   flare_flutter: ^1.5.8
   # The current version of flutter_downloader, 1.2.1, causes the build to fail. Until this is fixed, we rely on an older version.
   flutter_downloader: 1.1.9
   flutter_html: ^0.10.4
   flutter_villains: ^1.2.0
+  hive: ^1.0.0
   http: ^0.12.0
   intl: ^0.16.0
   json_annotation: ^2.0.0

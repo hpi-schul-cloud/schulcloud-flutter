@@ -1,3 +1,4 @@
+import 'package:cached_listview/cached_listview.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:schulcloud/app/app.dart';
@@ -18,6 +19,12 @@ class CourseDetailScreen extends StatelessWidget {
     ));
   }
 
+  void _showLessonScreen({BuildContext context, Lesson lesson, Course course}) {
+    Navigator.of(context).push(MaterialPageRoute(
+      builder: (context) => LessonScreen(course: course, lesson: lesson),
+    ));
+  }
+
   @override
   Widget build(BuildContext context) {
     return ProxyProvider2<NetworkService, UserService, Bloc>(
@@ -35,55 +42,40 @@ class CourseDetailScreen extends StatelessWidget {
               onPressed: () => _showCourseFiles(context, course),
             ),
           ],
-          child: _LessonList(course: course),
+          child: Consumer<Bloc>(
+            builder: (context, bloc, _) {
+              return CachedCustomScrollView(
+                controller: bloc.getLessonsOfCourse(course.id),
+                emptyStateBuilder: (_) =>
+                    Center(child: Text('No courses to see.')),
+                errorBannerBuilder: (_, error) =>
+                    Container(height: 48, color: Colors.red),
+                errorScreenBuilder: (_, error) => Container(color: Colors.red),
+                itemSliversBuilder: (context, lessons) {
+                  return [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 18, horizontal: 12),
+                      child: Text(course.description,
+                          style: TextStyle(fontSize: 20)),
+                    ),
+                    for (var lesson in lessons)
+                      ListTile(
+                        title:
+                            Text(lesson.name, style: TextStyle(fontSize: 20)),
+                        onTap: () => _showLessonScreen(
+                          context: context,
+                          lesson: lesson,
+                          course: course,
+                        ),
+                      )
+                  ];
+                },
+              );
+            },
+          ),
         ),
       ),
-    );
-  }
-}
-
-class _LessonList extends StatelessWidget {
-  final Course course;
-
-  const _LessonList({@required this.course}) : assert(course != null);
-
-  void _showLessonScreen({BuildContext context, Lesson lesson, Course course}) {
-    Navigator.of(context).push(MaterialPageRoute(
-      builder: (context) => LessonScreen(course: course, lesson: lesson),
-    ));
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return StreamBuilder<List<Lesson>>(
-      stream: Provider.of<Bloc>(context).getLessonsOfCourse(course.id),
-      builder: (context, snapshot) {
-        if (!snapshot.hasData) {
-          return Center(child: CircularProgressIndicator());
-        }
-
-        var tiles = [
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 12),
-            child: Text(course.description, style: TextStyle(fontSize: 20)),
-          ),
-          for (var lesson in snapshot.data)
-            ListTile(
-              title: Text(lesson.name, style: TextStyle(fontSize: 20)),
-              onTap: () => _showLessonScreen(
-                context: context,
-                lesson: lesson,
-                course: course,
-              ),
-            ),
-        ];
-
-        return ListView.separated(
-          itemCount: tiles.length,
-          itemBuilder: (_, index) => tiles[index],
-          separatorBuilder: (_, __) => Divider(),
-        );
-      },
     );
   }
 }

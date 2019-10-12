@@ -1,6 +1,9 @@
 import 'dart:ui';
 
+import 'package:cached_listview/cached_listview.dart';
+import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
+import 'package:meta/meta.dart';
 import 'package:repository/repository.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -70,6 +73,50 @@ class PermissionNotGranted<T> implements Exception {
 abstract class Entity {
   Id<Entity> get id;
   const Entity();
+}
+
+class HiveCacheController<Item extends Entity> extends CacheController<Item> {
+  final String name;
+
+  HiveCacheController({
+    @required this.name,
+    @required Future<List<Item>> Function() fetcher,
+  }) : super(
+          saveToCache: (items) async {
+            // When fetching items, they are returned sorted by their keys.
+            // Integer keys can only go to 255, so we need to use Strings as
+            // the only other alternative.
+            // So we generate strings that are stored in the order of the
+            // items.
+            var box = await Hive.openBox(name);
+            await box.clear();
+            await box.putAll({
+              for (var i = 0; i < items.length; i++)
+                _generateHiveKey(i): items[i],
+            });
+          },
+          loadFromCache: () async {
+            var box = await Hive.openBox(name);
+            var items = box.toMap().values.toList().cast<Item>();
+            if (items.isEmpty) {
+              throw Exception('Item not in cache.');
+            } else {
+              return items;
+            }
+          },
+          fetcher: fetcher,
+        );
+
+  static _generateHiveKey(int index) {
+    const chars = 'abcdefghijklmnopqrstuvwxyz';
+    var key = '';
+
+    for (var i = 0; i < 10; i++) {
+      key += chars[index % chars.length];
+      index ~/= chars.length;
+    }
+    return key;
+  }
 }
 
 abstract class CollectionDownloader<Item extends Entity>

@@ -85,6 +85,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "6.7.1"
+  cached_listview:
+    dependency: "direct main"
+    description:
+      name: cached_listview
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.1.5"
   charcode:
     dependency: transitive
     description:
@@ -229,7 +236,7 @@ packages:
     source: hosted
     version: "0.2.0"
   hive:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: hive
       url: "https://pub.dartlang.org"
@@ -452,6 +459,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.1.5"
+  pull_to_refresh:
+    dependency: transitive
+    description:
+      name: pull_to_refresh
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.5.6"
   quiver:
     dependency: transitive
     description:

@@ -50,6 +50,8 @@ class HomeworkDetailScreen extends StatelessWidget {
             stream: bloc.getSubmissionForHomework(homework.id),
             builder: (context, snapshot) {
               var textTheme = Theme.of(context).textTheme;
+              var submission = snapshot.data;
+
               return ListView(
                 children: <Widget>[
                   Html(
@@ -58,7 +60,7 @@ class HomeworkDetailScreen extends StatelessWidget {
                     data: homework.description,
                     onLinkTap: tryLaunchingUrl,
                   ),
-                  if (snapshot.data != null)
+                  if (submission != null)
                     Container(
                       alignment: Alignment.centerRight,
                       padding: const EdgeInsets.all(16),
@@ -68,7 +70,7 @@ class HomeworkDetailScreen extends StatelessWidget {
                           style: textTheme.button.copyWith(color: Colors.white),
                         ),
                         onPressed: () => _showSubmissionScreen(
-                            context, homework, snapshot.data),
+                            context, homework, submission),
                       ),
                     ),
                 ],
