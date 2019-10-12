@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
-import 'package:repository/repository.dart';
 import 'package:schulcloud/app/app.dart';
 
 part 'data.g.dart';

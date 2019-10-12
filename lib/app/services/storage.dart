@@ -1,37 +1,16 @@
-import 'package:repository/repository.dart';
-import 'package:repository_hive/repository_hive.dart';
-
-import '../data.dart';
+import 'package:streaming_shared_preferences/streaming_shared_preferences.dart';
 
 /// A service that offers storage of app-wide data.
 class StorageService {
-  static const _dataId = Id<StorageData>('data');
-
-  final _inMemory = InMemoryStorage<StorageData>();
-  CachedRepository<StorageData> _storage;
-
-  StorageService() {
-    _storage = CachedRepository<StorageData>(
-      cache: _inMemory,
-      source: HiveRepository('dataStorage'),
-    );
-  }
+  StreamingSharedPreferences _prefs;
+  Preference<String> email;
+  Preference<String> token;
 
   Future<void> initialize() async {
-    await _inMemory.update(_dataId, StorageData());
-    await _storage.loadItemsIntoCache();
+    _prefs = await StreamingSharedPreferences.instance;
+    email = _prefs.getString('email', defaultValue: null);
+    token = _prefs.getString('token', defaultValue: null);
   }
 
-  StorageData get data => _inMemory.get(_dataId);
-  Stream<StorageData> get dataStream => _inMemory.fetch(_dataId);
-  set data(StorageData data) => _storage.update(_dataId, data);
-
-  get email => data.email;
-  get token => data.token;
-  get hasToken => token != null;
-
-  set email(String email) => data = data.copy((data) => data..email = email);
-  set token(String token) => data = data.copy((data) => data..token = token);
-
-  Future<void> clear() => _storage.clear();
+  Future<void> clear() => _prefs.clear();
 }

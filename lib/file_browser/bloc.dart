@@ -1,9 +1,9 @@
 import 'dart:convert';
 
+import 'package:cached_listview/cached_listview.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:meta/meta.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:repository/repository.dart';
 import 'package:schulcloud/app/app.dart';
 
 import 'data.dart';
@@ -12,7 +12,7 @@ class Bloc {
   NetworkService network;
   Entity owner;
   File parent;
-  Repository<File> _files;
+  CacheController<File> files;
 
   Bloc({
     @required this.network,
@@ -20,10 +20,32 @@ class Bloc {
     this.parent,
   })  : assert(network != null),
         assert(owner != null),
-        _files =
-            _FolderDownloader(network: network, owner: owner, parent: parent);
+        files = CacheController(
+          loadFromCache: () => throw UnsupportedError('Not supported'),
+          saveToCache: (files) async {},
+          fetcher: () async {
+            var queries = <String, String>{
+              'owner': owner.id.toString(),
+              if (parent != null) 'parent': parent.id.toString(),
+            };
+            var response =
+                await network.get('fileStorage', parameters: queries);
 
-  Stream<List<File>> getFiles() => _files.fetchAllItems();
+            var body = json.decode(response.body);
+            return [
+              for (var data in (body as List<dynamic>)
+                  .where((file) => file['name'] != null))
+                File(
+                  id: Id(data['_id']),
+                  name: data['name'],
+                  owner: owner,
+                  isDirectory: data['isDirectory'],
+                  parent: parent,
+                  size: data['size'],
+                ),
+            ];
+          },
+        );
 
   Future<void> downloadFile(File file) async {
     await ensureStoragePermissionGranted();
@@ -40,7 +62,7 @@ class Bloc {
 
   /// The signed URL is the URL used to actually download a file instead of
   /// just viewing its JSON representation.
-  Future<String> _getSignedUrl({Id<File> id}) async {
+  Future<String> _getSignedUrl({Id id}) async {
     var response = await network.get('fileStorage/signedUrl',
         parameters: {'download': null, 'file': id.toString()});
     return json.decode(response.body)['url'];
@@ -56,41 +78,5 @@ class Bloc {
     if (!isGranted()) {
       throw PermissionNotGranted();
     }
-  }
-}
-
-class _FolderDownloader extends CollectionDownloader<File> {
-  NetworkService network;
-  Entity owner;
-  File parent;
-
-  _FolderDownloader({
-    @required this.network,
-    @required this.owner,
-    this.parent,
-  })  : assert(network != null),
-        assert(owner != null);
-
-  @override
-  Future<List<File>> downloadAll() async {
-    var queries = <String, String>{
-      'owner': owner.id.toString(),
-      if (parent != null) 'parent': parent.id.toString(),
-    };
-    var response = await network.get('fileStorage', parameters: queries);
-
-    var body = json.decode(response.body);
-    return [
-      for (var data
-          in (body as List<dynamic>).where((file) => file['name'] != null))
-        File(
-          id: Id<File>(data['_id']),
-          name: data['name'],
-          owner: owner,
-          isDirectory: data['isDirectory'],
-          parent: parent,
-          size: data['size'],
-        ),
-    ];
   }
 }

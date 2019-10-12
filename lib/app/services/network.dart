@@ -49,7 +49,8 @@ class NetworkService {
   }
 
   Map<String, String> _getHeaders() => {
-        if (storage.hasToken) 'Authorization': 'Bearer ${storage.token}',
+        if (storage.token.getValue() != null)
+          'Authorization': 'Bearer ${storage.token}',
       };
 
   /// Makes an http get request to the api.

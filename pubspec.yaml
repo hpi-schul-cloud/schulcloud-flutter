@@ -30,10 +30,8 @@ dependencies:
   path_provider: ^1.1.0
   permission_handler: ^3.2.2
   provider: ^3.0.0
-  repository: ^1.0.3
-  repository_hive: ^1.0.2
-  repository_shared_preferences: ^1.0.2
   rxdart: ^0.22.0
+  streaming_shared_preferences: ^1.0.1
   transparent_image: ^1.0.0
   url_launcher: ^5.1.2
   webview_flutter: ^0.3.10+4

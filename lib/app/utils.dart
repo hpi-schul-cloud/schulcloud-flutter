@@ -1,11 +1,14 @@
+import 'dart:convert';
 import 'dart:ui';
 
 import 'package:cached_listview/cached_listview.dart';
 import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
 import 'package:meta/meta.dart';
-import 'package:repository/repository.dart';
 import 'package:url_launcher/url_launcher.dart';
+
+import 'data.dart';
+import 'services/network.dart';
 
 /// Converts a hex string (like, '#ffdd00') to a [Color].
 Color hexStringToColor(String hex) =>
@@ -69,13 +72,21 @@ class PermissionNotGranted<T> implements Exception {
   String toString() => "A permission wasn't granted by the user.";
 }
 
+class Id<T> {
+  final String id;
+
+  Id(this.id);
+
+  String toString() => id;
+}
+
 /// A special kind of item that also carries its id.
 abstract class Entity {
-  Id<Entity> get id;
+  Id get id;
   const Entity();
 }
 
-class HiveCacheController<Item extends Entity> extends CacheController<Item> {
+class HiveCacheController<Item> extends CacheController<Item> {
   final String name;
 
   HiveCacheController({
@@ -119,33 +130,18 @@ class HiveCacheController<Item extends Entity> extends CacheController<Item> {
   }
 }
 
-abstract class CollectionDownloader<Item extends Entity>
-    extends Repository<Item> {
-  Future<List<Item>> _downloader;
-  Map<Id<Item>, Item> _items;
+Future<User> fetchUser(NetworkService network, Id<User> id) async {
+  var response = await network.get('users/$id');
+  var data = json.decode(response.body);
 
-  CollectionDownloader() : super(isFinite: true, isMutable: false);
-
-  Future<void> _ensureItemsAreDownloaded() async {
-    _downloader ??= downloadAll();
-    _items ??= {for (var item in await _downloader) item.id: item};
-  }
-
-  @override
-  Stream<Item> fetch(Id<Item> id) async* {
-    await _ensureItemsAreDownloaded();
-    if (_items.containsKey(id)) {
-      yield _items[id];
-    } else {
-      throw ItemNotFound(id);
-    }
-  }
-
-  @override
-  Stream<Map<Id<Item>, Item>> fetchAll() async* {
-    await _ensureItemsAreDownloaded();
-    yield _items;
-  }
-
-  Future<List<Item>> downloadAll();
+  // For now, the [avatarBackgroundColor] and [avatarInitials] are not saved.
+  // Not sure if we'll need it.
+  return User(
+    id: Id(data['_id']),
+    firstName: data['firstName'],
+    lastName: data['lastName'],
+    email: data['email'],
+    schoolToken: data['schoolId'],
+    displayName: data['displayName'],
+  );
 }

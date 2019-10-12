@@ -1,5 +1,4 @@
 import 'package:meta/meta.dart';
-import 'package:repository/repository.dart';
 import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/courses/courses.dart';
 

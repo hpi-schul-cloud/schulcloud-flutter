@@ -24,7 +24,7 @@ class Bloc {
       throw InvalidLoginSyntaxError();
     }
 
-    authStorage.email = email;
+    authStorage.email.setValue(email);
 
     // The login throws an exception if it wasn't successful.
     var response = await network.post('authentication', body: {

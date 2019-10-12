@@ -4,7 +4,6 @@ import 'package:cached_listview/cached_listview.dart';
 import 'package:flutter/foundation.dart';
 import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/courses/courses.dart';
-import 'package:repository/repository.dart';
 
 import 'data.dart';
 
@@ -12,9 +11,8 @@ class Bloc {
   CacheController<Homework> homework;
   CacheController<Submission> submissions;
 
-  Bloc({@required NetworkService network, @required UserService user})
+  Bloc({@required NetworkService network})
       : assert(network != null),
-        assert(user != null),
         homework = HiveCacheController<Homework>(
           name: 'homework',
           fetcher: () async {
@@ -39,7 +37,7 @@ class Bloc {
                         'No description provided',
                     teachers: [
                       for (String id in data['courseId']['teacherIds'])
-                        await user.getUser(Id<User>(id)),
+                        await fetchUser(network, Id<User>(id)),
                     ],
                     color: hexStringToColor(data['courseId']['color']),
                   ),

@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:cached_listview/cached_listview.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
@@ -10,14 +11,6 @@ import '../bloc.dart';
 import '../data.dart';
 import 'app_bar.dart';
 import 'page_route.dart';
-
-const _loadingContent = const Align(
-  alignment: Alignment.topCenter,
-  child: Padding(
-    padding: EdgeInsets.only(top: 32),
-    child: CircularProgressIndicator(),
-  ),
-);
 
 class FileBrowser extends StatelessWidget {
   final Entity owner;
@@ -85,66 +78,45 @@ class FileBrowser extends StatelessWidget {
                   )
                 : null,
             body: Material(
-              child: StreamBuilder<List<File>>(
-                stream: bloc.getFiles(),
-                builder: _buildContent,
+              child: CachedCustomScrollView(
+                controller: bloc.files,
+                emptyStateBuilder: (_) => NoItemsWidget(),
+                errorBannerBuilder: (_, __) => Container(),
+                errorScreenBuilder: (_, error) => Center(
+                  child: Text('An error occureed: $error'),
+                ),
+                itemSliversBuilder: (_, files) {
+                  int index = 0;
+                  Duration getDelay(int index) =>
+                      Duration(milliseconds: (80 * sqrt(index)).round());
+
+                  return [
+                    SliverList(
+                      delegate: SliverChildListDelegate([
+                        for (var file in files)
+                          FadeIn(
+                            delay: getDelay(index++),
+                            child: FileTile(
+                              file: file,
+                              onTap: file.isDirectory
+                                  ? _openDirectory
+                                  : _downloadFile,
+                            ),
+                          ),
+                        SizedBox(height: 16),
+                        FadeIn(
+                          delay: getDelay(index + 1),
+                          child: Center(child: Text('$index items in total')),
+                        ),
+                        SizedBox(height: 16),
+                      ]),
+                    ),
+                  ];
+                },
               ),
             ),
           );
         },
-      ),
-    );
-  }
-
-  Widget _buildContent(
-      BuildContext context, AsyncSnapshot<List<File>> snapshot) {
-    Widget buildContent() {
-      if (snapshot.hasError) {
-        return Center(child: Text('An error occurred: ${snapshot.error}'));
-      }
-      if (snapshot.hasData && snapshot.data.isEmpty) {
-        return NoItemsWidget();
-      }
-      if (snapshot.hasData) {
-        return _buildFiles(snapshot.data);
-      }
-      return Container();
-    }
-
-    return AnimatedCrossFade(
-      duration: Duration(milliseconds: 200),
-      crossFadeState: snapshot.hasData || snapshot.hasError
-          ? CrossFadeState.showSecond
-          : CrossFadeState.showFirst,
-      firstChild: _loadingContent,
-      secondChild: buildContent(),
-    );
-  }
-
-  Widget _buildFiles(List<File> files) {
-    int index = 0;
-    Duration getDelay(int index) =>
-        Duration(milliseconds: (80 * sqrt(index)).round());
-
-    return FadeInAnchor(
-      child: ListView(
-        shrinkWrap: true,
-        children: [
-          for (var file in files)
-            FadeIn(
-              delay: getDelay(index++),
-              child: FileTile(
-                file: file,
-                onTap: file.isDirectory ? _openDirectory : _downloadFile,
-              ),
-            ),
-          SizedBox(height: 16),
-          FadeIn(
-            delay: getDelay(index + 1),
-            child: Center(child: Text('$index items in total')),
-          ),
-          SizedBox(height: 16),
-        ],
       ),
     );
   }

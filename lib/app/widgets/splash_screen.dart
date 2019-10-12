@@ -13,16 +13,16 @@ class SplashScreen extends StatelessWidget {
     var areAllServicesInitialized = {
       Provider.of<StorageService>(context),
       Provider.of<NetworkService>(context),
-      Provider.of<UserService>(context),
       Provider.of<MeService>(context),
     }.every((service) => service != null);
 
     if (areAllServicesInitialized) {
       Future.microtask(() {
-        var authStorage = Provider.of<StorageService>(context);
+        var storage = Provider.of<StorageService>(context);
         Navigator.of(context).pushReplacement(MaterialPageRoute(
-          builder: (_) =>
-              authStorage.hasToken ? LoggedInScreen() : LoginScreen(),
+          builder: (_) => storage.token.getValue() != null
+              ? LoggedInScreen()
+              : LoginScreen(),
         ));
       });
     }

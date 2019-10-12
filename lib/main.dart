@@ -29,16 +29,12 @@ class ServicesProvider extends StatelessWidget {
           builder: (_, storage, __) =>
               storage == null ? null : NetworkService(storage: storage),
         ),
-        // This service offers fetching of users.
-        ProxyProvider<NetworkService, UserService>(
-          builder: (_, network, __) =>
-              network == null ? null : UserService(network: network),
-        ),
         // This service offers fetching of the currently logged in user.
-        ProxyProvider2<StorageService, UserService, MeService>(
-          builder: (_, storage, user, __) => storage == null || user == null
-              ? null
-              : MeService(storage: storage, user: user),
+        ProxyProvider2<NetworkService, StorageService, MeService>(
+          builder: (_, network, storage, __) =>
+              network == null || storage == null
+                  ? null
+                  : MeService(network: network, storage: storage),
           dispose: (_, me) => me?.dispose(),
         ),
       ],

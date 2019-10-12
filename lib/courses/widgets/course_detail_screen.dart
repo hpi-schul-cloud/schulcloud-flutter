@@ -27,8 +27,8 @@ class CourseDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ProxyProvider2<NetworkService, UserService, Bloc>(
-      builder: (_, network, user, __) => Bloc(network: network, user: user),
+    return ProxyProvider<NetworkService, Bloc>(
+      builder: (_, network, __) => Bloc(network: network),
       child: Scaffold(
         appBar: AppBar(
           iconTheme: IconThemeData(color: Colors.black),
@@ -53,22 +53,26 @@ class CourseDetailScreen extends StatelessWidget {
                 errorScreenBuilder: (_, error) => Container(color: Colors.red),
                 itemSliversBuilder: (context, lessons) {
                   return [
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 18, horizontal: 12),
-                      child: Text(course.description,
-                          style: TextStyle(fontSize: 20)),
-                    ),
-                    for (var lesson in lessons)
-                      ListTile(
-                        title:
-                            Text(lesson.name, style: TextStyle(fontSize: 20)),
-                        onTap: () => _showLessonScreen(
-                          context: context,
-                          lesson: lesson,
-                          course: course,
+                    SliverList(
+                      delegate: SliverChildListDelegate([
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 18, horizontal: 12),
+                          child: Text(course.description,
+                              style: TextStyle(fontSize: 20)),
                         ),
-                      )
+                        for (var lesson in lessons)
+                          ListTile(
+                            title: Text(lesson.name,
+                                style: TextStyle(fontSize: 20)),
+                            onTap: () => _showLessonScreen(
+                              context: context,
+                              lesson: lesson,
+                              course: course,
+                            ),
+                          ),
+                      ]),
+                    )
                   ];
                 },
               );

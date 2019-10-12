@@ -1,37 +1,27 @@
 import 'dart:convert';
 
 import 'package:meta/meta.dart';
-import 'package:repository/repository.dart';
 import 'package:rxdart/subjects.dart';
 
 import '../data.dart';
+import '../utils.dart';
+import 'network.dart';
 import 'storage.dart';
-import 'user.dart';
 
 /// A service which offers information about the currently logged in user by
-/// listening to the [StorageService]'s [tokenStream] and requesting the
-/// currently logged  in user from the [UserService] anytime the token changes.
+/// listening to the [StorageService]'s [token] and requesting the currently
+/// logged in user anytime the token changes.
 class MeService {
+  final NetworkService network;
   final StorageService storage;
-  final UserService user;
 
   final _meSubject = BehaviorSubject<User>();
   Stream<User> get meStream => _meSubject.stream;
   User get me => _meSubject.value;
 
-  MeService({@required this.storage, @required this.user})
-      : assert(storage != null),
-        assert(user != null) {
-    storage.dataStream.map((data) => data.token).distinct().listen(
-      _updateUser,
-      onError: (error) {
-        if (error is ItemNotFound) {
-          _updateUser(null);
-        } else {
-          throw error;
-        }
-      },
-    );
+  MeService({@required this.network, @required this.storage})
+      : assert(storage != null) {
+    storage.token.distinct().listen(_updateUser);
   }
 
   void dispose() => _meSubject.close();
@@ -40,8 +30,8 @@ class MeService {
     if (token == null) {
       _meSubject.add(null);
     } else {
-      final id = Id<User>(_decodeTokenToUser(token));
-      final me = await user.getUser(id);
+      final id = Id(_decodeTokenToUser(token));
+      final me = await fetchUser(network, id);
       _meSubject.add(me);
     }
   }

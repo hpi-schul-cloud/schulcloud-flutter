@@ -1,7 +1,6 @@
 import 'package:flutter/painting.dart';
 import 'package:hive/hive.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:repository/repository.dart';
 import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/courses/courses.dart';
 import 'package:schulcloud/homework/homework.dart';
@@ -17,11 +16,16 @@ Future<void> initializeHive() async {
 
   Hive
     ..init(dir.path)
-    ..registerAdapter(IdAdapter(), 40)
+    ..registerAdapter(IdAdapter<User>(), 40)
+    ..registerAdapter(IdAdapter<ContentType>(), 41)
+    ..registerAdapter(IdAdapter<Content>(), 42)
+    ..registerAdapter(IdAdapter<Course>(), 43)
+    ..registerAdapter(IdAdapter<Lesson>(), 44)
+    ..registerAdapter(IdAdapter<Article>(), 45)
+    ..registerAdapter(IdAdapter<Author>(), 46)
     ..registerAdapter(ColorAdapter(), 48)
     // App module
     ..registerAdapter(UserAdapter(), 51)
-    ..registerAdapter(StorageDataAdapter(), 52)
     // Courses module
     ..registerAdapter(ContentTypeAdapter(), 60)
     ..registerAdapter(ContentAdapter(), 61)
@@ -35,9 +39,9 @@ Future<void> initializeHive() async {
     ..registerAdapter(AuthorAdapter(), 71);
 }
 
-class IdAdapter extends TypeAdapter<Id> {
+class IdAdapter<T> extends TypeAdapter<Id<T>> {
   @override
-  Id read(BinaryReader reader) => Id(reader.readString());
+  Id<T> read(BinaryReader reader) => Id<T>(reader.readString());
 
   @override
   void write(BinaryWriter writer, Id obj) => writer.writeString(obj.id);

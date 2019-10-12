@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:cached_listview/cached_listview.dart';
 import 'package:flutter/foundation.dart';
-import 'package:repository/repository.dart';
 import 'package:schulcloud/app/app.dart';
 
 import 'data.dart';

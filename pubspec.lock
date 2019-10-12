@@ -473,27 +473,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.0.5"
-  repository:
-    dependency: "direct main"
-    description:
-      name: repository
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.0.3"
-  repository_hive:
-    dependency: "direct main"
-    description:
-      name: repository_hive
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.0.3"
-  repository_shared_preferences:
-    dependency: "direct main"
-    description:
-      name: repository_shared_preferences
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.0.2"
   rxdart:
     dependency: "direct main"
     description:
@@ -590,6 +569,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.0.19"
+  streaming_shared_preferences:
+    dependency: "direct main"
+    description:
+      name: streaming_shared_preferences
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.1"
   string_scanner:
     dependency: transitive
     description:
