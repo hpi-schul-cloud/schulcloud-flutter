@@ -1,37 +1,37 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:schulcloud/app/app.dart';
 
-import 'package:schulcloud/app/widgets.dart';
-
-import '../entities.dart';
+import '../data.dart';
 import 'article_image.dart';
 import 'article_screen.dart';
 import 'section.dart';
 import 'theme.dart';
 
-class ArticlePreview extends StatefulWidget {
+class ArticlePreview extends StatelessWidget {
+  final Article article;
+  final bool showPicture;
+  final bool showDetailedDate;
+
   ArticlePreview({
     @required this.article,
     this.showPicture = true,
     this.showDetailedDate = false,
-  })  : assert(showPicture != null),
+  })  : assert(article != null),
+        assert(showPicture != null),
         assert(showDetailedDate != null);
 
   factory ArticlePreview.placeholder() {
     return ArticlePreview(article: null, showPicture: false);
   }
 
-  final Article article;
-  final bool showPicture;
-  final bool showDetailedDate;
+  bool get _isPlaceholder => article == null;
 
-  @override
-  _ArticlePreviewState createState() => _ArticlePreviewState();
-}
-
-class _ArticlePreviewState extends State<ArticlePreview> {
-  Article get article => widget.article;
-  bool get isPlaceholder => article == null;
+  void _openArticle(BuildContext context) {
+    Navigator.of(context).push(MaterialPageRoute(
+      builder: (_) => ArticleScreen(article: article),
+    ));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -42,24 +42,34 @@ class _ArticlePreviewState extends State<ArticlePreview> {
         borderRadius: BorderRadius.circular(8),
         color: Colors.white,
         child: InkWell(
-          onTap: article == null
-              ? null
-              : () {
-                  Navigator.of(context).push(MaterialPageRoute(
-                    builder: (_) => ArticleScreen(article: article),
-                  ));
-                },
-          child: Container(
+          onTap: _isPlaceholder ? null : () => _openArticle(context),
+          child: Padding(
             padding: const EdgeInsets.all(16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                _buildSection(),
+                Section(
+                  child: TextOrPlaceholder(
+                    article?.section,
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
                 _buildImage(),
                 SizedBox(height: 8),
-                _buildSmallText(),
-                _buildTitle(),
-                _buildContent(),
+                TextOrPlaceholder(
+                  _isPlaceholder
+                      ? null
+                      : 'vor 3 Tagen von ${article.author.name == 'unbekannt'}',
+                  style: TextStyle(color: Colors.black54),
+                ),
+                TextOrPlaceholder(
+                  article?.title,
+                  style: Theme.of(context).textTheme.display2,
+                ),
+                TextOrPlaceholder(
+                  _isPlaceholder ? null : limitString(article.content, 200),
+                  style: Theme.of(context).textTheme.body2,
+                ),
               ],
             ),
           ),
@@ -68,54 +78,16 @@ class _ArticlePreviewState extends State<ArticlePreview> {
     );
   }
 
-  Widget _buildSection() {
-    if (isPlaceholder)
-      return Section(child: PlaceholderText(color: Colors.white));
-    else
-      return Section(child: Text(article.section));
-  }
-
   Widget _buildImage() {
-    if (isPlaceholder)
+    if (_isPlaceholder) {
       return GradientArticleImageView(imageUrl: null);
-    else if (article.imageUrl == null)
+    } else if (article.imageUrl == null) {
       return Container();
-    else
+    } else {
       return Hero(
         tag: article,
         child: GradientArticleImageView(imageUrl: article?.imageUrl),
       );
-  }
-
-  Widget _buildSmallText() {
-    if (isPlaceholder)
-      return PlaceholderText();
-    else
-      return Text(
-        'vor 3 Tagen von ${article.author.name == 'unbekannt'}',
-        style: TextStyle(color: Colors.black54),
-      );
-  }
-
-  Widget _buildTitle() {
-    final style = Theme.of(context).textTheme.display2;
-
-    if (isPlaceholder)
-      return PlaceholderText(style: style);
-    else
-      return Text(article.title, style: style);
-  }
-
-  Widget _buildContent() {
-    final style = Theme.of(context).textTheme.body2;
-
-    if (isPlaceholder)
-      return PlaceholderText(style: style, numLines: 3);
-    else {
-      final text = article.content.length > 200
-          ? '${article.content.substring(0, 200)}...'
-          : article.content;
-      return Text(text, style: style);
     }
   }
 }

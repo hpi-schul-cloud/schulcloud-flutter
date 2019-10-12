@@ -1,37 +1,52 @@
+import 'dart:convert';
+
 import 'package:flutter/foundation.dart';
-import 'package:rxdart/rxdart.dart';
+import 'package:repository/repository.dart';
+import 'package:repository_hive/repository_hive.dart';
+import 'package:schulcloud/app/app.dart';
 
-import 'package:schulcloud/app/services.dart';
-import 'package:schulcloud/core/data.dart';
-import 'package:schulcloud/core/data/utils.dart';
-
-import 'data/repository.dart';
-import 'entities.dart';
-
-export 'entities.dart';
+import 'data.dart';
 
 class Bloc {
-  final ApiService api;
+  final NetworkService network;
+
   Repository<Article> _articles;
 
-  Bloc({@required this.api})
-      : _articles = CachedRepository<Article>(
-          source: ArticleDownloader(api: api),
-          cache: InMemoryStorage<Article>(),
+  Bloc({@required this.network})
+      : assert(network != null),
+        _articles = CachedRepository<Article>(
+          source: _ArticleDownloader(network: network),
+          cache: HiveRepository<Article>('articles'),
         );
 
-  Stream<List<Article>> getArticles() {
-    return streamToBehaviorSubject(_articles.fetchAllItems());
-  }
+  Stream<List<Article>> getArticles() => _articles.fetchAllItems();
+}
 
-  BehaviorSubject<Article> getArticleAtIndex(int index) {
-    final BehaviorSubject<Article> s =
-        streamToBehaviorSubject(_articles.fetch(Id('article_$index')));
-    s.listen((data) {
-      print(data);
-    });
-    return s;
-  }
+class _ArticleDownloader extends CollectionDownloader<Article> {
+  NetworkService network;
 
-  void refresh() => _articles.clear();
+  _ArticleDownloader({@required this.network}) : assert(network != null);
+
+  @override
+  Future<List<Article>> downloadAll() async {
+    var response = await network.get('news?');
+    var body = json.decode(response.body);
+
+    return [
+      for (var data in body['data'] as List<dynamic>)
+        Article(
+          id: Id<Article>(data['_id']),
+          title: data['title'],
+          authorId: data['creatorId'],
+          author: Author(
+            id: Id<Author>(data['creator']['_id']),
+            name:
+                '${data['creator']['firstName']} ${data['creator']['lastName']}',
+          ),
+          section: 'Section',
+          published: DateTime.parse(data['displayAt']),
+          content: removeHtmlTags(data['content']),
+        ),
+    ];
+  }
 }

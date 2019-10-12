@@ -34,7 +34,7 @@ windows/
 .packages
 .pub-cache/
 .pub/
-/build/
+build/
 
 # Android related
 **/android/**/gradle-wrapper.jar
@@ -68,6 +68,7 @@ windows/
 **/ios/Flutter/app.flx
 **/ios/Flutter/app.zip
 **/ios/Flutter/flutter_assets/
+**/ios/Flutter/flutter_export_environment.sh
 **/ios/ServiceDefinitions.json
 **/ios/Runner/GeneratedPluginRegistrant.*
 

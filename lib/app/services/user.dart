@@ -1,47 +1,49 @@
 import 'dart:convert';
 
-import 'package:flutter/foundation.dart';
+import 'package:meta/meta.dart';
+import 'package:repository/repository.dart';
 
-import 'package:schulcloud/core/data.dart';
+import '../data.dart';
+import 'network.dart';
 
-import '../data/user.dart';
-import 'api.dart';
-import 'authentication_storage.dart';
-
-/// A service that offers information about the currently logged in user. It
-/// depends on the authentication storage as well as the api service so whenever
-/// the user login credentials change, we can update the user.
+/// A service that offers retrieval and storage of users.
 class UserService {
-  final AuthenticationStorageService authStorage;
-  final ApiService api;
+  final NetworkService network;
 
-  final _userKey = Id<User>('user');
-  final _storage = InMemoryStorage<User>();
+  final Repository<User> _storage;
 
-  Stream<User> get userStream => _storage.fetch(_userKey);
-  User get user => _storage.get(_userKey);
+  UserService({@required this.network})
+      : assert(network != null),
+        _storage = CachedRepository(
+          strategy: CacheStrategy.onlyFetchFromSourceIfNotInCache,
+          source: _UserDownloader(network: network),
+          cache: InMemoryStorage<User>(),
+        );
 
-  UserService({@required this.authStorage, @required this.api}) {
-    authStorage.onCredentialsChangedStream.listen((_) => _updateUser());
-  }
+  Future<User> getUser(Id<User> id) => _storage.fetch(id).first;
+}
 
-  Future<void> _updateUser() async {
-    var token = authStorage.token;
+class _UserDownloader extends Repository<User> {
+  final NetworkService network;
 
-    if (token == null)
-      _storage.remove(_userKey);
-    else
-      _storage.update(
-          _userKey, await api.getUser(Id<User>(_decodeTokenToUser(token))));
-  }
+  _UserDownloader({@required this.network})
+      : assert(network != null),
+        super(isFinite: false, isMutable: false);
 
-  String _decodeTokenToUser(String jwtEncoded) {
-    // A JWT token exists of a header, body and claim (signature), all separated
-    // by dots and encoded in base64. For now, we don't verify the claim, but
-    // just decode the body.
-    var encodedBody = jwtEncoded.split('.')[1];
-    var body = String.fromCharCodes(base64.decode(encodedBody));
-    Map<String, dynamic> jsonBody = json.decode(body);
-    return jsonBody['userId'] as String;
+  @override
+  Stream<User> fetch(Id<User> id) async* {
+    var response = await network.get('users/$id');
+    var data = json.decode(response.body);
+
+    // For now, the [avatarBackgroundColor] and [avatarInitials] are not saved.
+    // Not sure if we'll need it.
+    yield User(
+      id: Id<User>(data['_id']),
+      firstName: data['firstName'],
+      lastName: data['lastName'],
+      email: data['email'],
+      schoolToken: data['schoolId'],
+      displayName: data['displayName'],
+    );
   }
 }
