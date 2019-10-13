@@ -1,4 +1,5 @@
-// This is a stripped-down implementation of [CupertinoPageRoute].
+// This is a stripped-down implementation of [CupertinoPageRoute] that allows
+// for swiping back anywhere on the page.
 
 import 'dart:math';
 import 'dart:ui' show lerpDouble;
