@@ -11,7 +11,15 @@ import 'page_route.dart';
 
 const _textTheme = const TextTheme(
   title: TextStyle(fontWeight: FontWeight.bold),
-  body2: TextStyle(fontSize: 20),
+  body1: TextStyle(fontSize: 16),
+  body2: TextStyle(fontSize: 16),
+  button: TextStyle(
+    color: Color(0xff373a3c),
+    fontFamily: 'PT Sans Narrow',
+    fontWeight: FontWeight.w700,
+    fontSize: 16,
+    height: 1.25,
+  ),
   display1: TextStyle(
     fontWeight: FontWeight.bold,
     fontSize: 28,
@@ -24,7 +32,18 @@ const _textTheme = const TextTheme(
   ),
 );
 
-const _mainColor = Color(0xffb10438);
+const _colorTheme = MaterialColor(0xffb10438, {
+  50: Color(0xfff9c56b),
+  100: Color(0xfff79c42),
+  200: Color(0xfff76b39),
+  300: Color(0xffde3030),
+  400: Color(0xffc81a34),
+  500: Color(0xffb10438),
+  600: Color(0xff9b0431),
+  800: Color(0xff8a0029),
+  700: Color(0xff7c0427),
+  900: Color(0xff6c0020),
+});
 
 class SchulCloudApp extends StatelessWidget {
   @override
@@ -32,9 +51,8 @@ class SchulCloudApp extends StatelessWidget {
     return MaterialApp(
       title: 'Schul-Cloud',
       theme: ThemeData(
-        primaryColor: _mainColor,
-        buttonColor: _mainColor,
-        fontFamily: 'PT Sans Narrow',
+        primarySwatch: _colorTheme,
+        fontFamily: 'PT Sans',
         textTheme: _textTheme,
       ),
       darkTheme: ThemeData(),
