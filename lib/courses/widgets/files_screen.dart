@@ -1,11 +1,9 @@
 import 'package:cached_listview/cached_listview.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/file_browser/file_browser.dart';
-import 'package:transparent_image/transparent_image.dart';
 
 import '../bloc.dart';
 import '../data.dart';
