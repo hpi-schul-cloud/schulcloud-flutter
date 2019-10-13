@@ -1,4 +1,4 @@
-import 'package:cached_listview/cached_listview.dart';
+import 'package:flutter_cached/flutter_cached.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:schulcloud/app/app.dart';
@@ -8,10 +8,10 @@ import '../bloc.dart';
 import '../data.dart';
 import 'lesson_screen.dart';
 
-class CourseDetailScreen extends StatelessWidget {
+class CourseDetailsScreen extends StatelessWidget {
   final Course course;
 
-  CourseDetailScreen({@required this.course}) : assert(course != null);
+  CourseDetailsScreen({@required this.course}) : assert(course != null);
 
   void _showCourseFiles(BuildContext context, Course course) {
     Navigator.of(context).push(FileBrowserPageRoute(
@@ -44,36 +44,43 @@ class CourseDetailScreen extends StatelessWidget {
           ],
           child: Consumer<Bloc>(
             builder: (context, bloc, _) {
-              return CachedCustomScrollView(
+              return CachedBuilder(
                 controller: bloc.getLessonsOfCourse(course.id),
-                emptyStateBuilder: (_) =>
-                    Center(child: Text('No courses to see.')),
                 errorBannerBuilder: (_, error) =>
                     Container(height: 48, color: Colors.red),
-                errorScreenBuilder: (_, error) => Container(color: Colors.red),
-                itemSliversBuilder: (context, lessons) {
-                  return [
-                    SliverList(
-                      delegate: SliverChildListDelegate([
-                        Padding(
-                          padding: const EdgeInsets.symmetric(
-                              vertical: 18, horizontal: 12),
-                          child: Text(course.description,
-                              style: TextStyle(fontSize: 20)),
+                errorScreenBuilder: (_, error) => ErrorScreen(error),
+                builder: (BuildContext context, List<Lesson> lessons) {
+                  if (lessons.isEmpty) {
+                    return EmptyStateScreen(
+                      text: "Seems like you're not enrolled in any courses.",
+                    );
+                  }
+                  return ListView(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                          vertical: 18,
+                          horizontal: 12,
                         ),
-                        for (var lesson in lessons)
-                          ListTile(
-                            title: Text(lesson.name,
-                                style: TextStyle(fontSize: 20)),
-                            onTap: () => _showLessonScreen(
-                              context: context,
-                              lesson: lesson,
-                              course: course,
-                            ),
+                        child: Text(
+                          course.description,
+                          style: TextStyle(fontSize: 20),
+                        ),
+                      ),
+                      for (var lesson in lessons)
+                        ListTile(
+                          title: Text(
+                            lesson.name,
+                            style: TextStyle(fontSize: 20),
                           ),
-                      ]),
-                    )
-                  ];
+                          onTap: () => _showLessonScreen(
+                            context: context,
+                            lesson: lesson,
+                            course: course,
+                          ),
+                        ),
+                    ],
+                  );
                 },
               );
             },

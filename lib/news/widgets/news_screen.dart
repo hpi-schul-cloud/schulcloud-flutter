@@ -1,4 +1,4 @@
-import 'package:cached_listview/cached_listview.dart';
+import 'package:flutter_cached/flutter_cached.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:schulcloud/app/app.dart';
@@ -15,16 +15,22 @@ class NewsScreen extends StatelessWidget {
       child: Scaffold(
         body: Consumer<Bloc>(
           builder: (context, bloc, _) {
-            return CachedListView(
+            return CachedBuilder(
               controller: bloc.articles,
-              emptyStateBuilder: (_) => Center(child: Text('Nuffin here')),
               errorBannerBuilder: (_, error) =>
                   Container(height: 48, color: Colors.red),
               errorScreenBuilder: (_, error) => Container(color: Colors.red),
-              itemBuilder: (_, article) => Padding(
-                padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
-                child: ArticlePreview(article: article),
-              ),
+              builder: (_, articles) {
+                return ListView.builder(
+                  itemBuilder: (context, index) {
+                    var article = articles[index];
+                    return Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+                      child: ArticlePreview(article: article),
+                    );
+                  },
+                );
+              },
             );
           },
         ),

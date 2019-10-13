@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:cached_listview/cached_listview.dart';
+import 'package:flutter_cached/flutter_cached.dart';
 import 'package:flutter/foundation.dart';
 import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/courses/courses.dart';
@@ -8,12 +8,12 @@ import 'package:schulcloud/courses/courses.dart';
 import 'data.dart';
 
 class Bloc {
-  CacheController<Homework> homework;
-  CacheController<Submission> submissions;
+  CacheController<List<Assignment>> assignments;
+  CacheController<List<Submission>> submissions;
 
   Bloc({@required NetworkService network})
       : assert(network != null),
-        homework = HiveCacheController<Homework>(
+        assignments = HiveCacheController<Assignment>(
           name: 'homework',
           fetcher: () async {
             var response = await network.get('homework');
@@ -21,7 +21,7 @@ class Bloc {
 
             return [
               for (var data in body['data'] as List<dynamic>)
-                Homework(
+                Assignment(
                   id: Id(data['_id']),
                   schoolId: data['schoolId'],
                   teacherId: data['teacherId'],
@@ -68,7 +68,8 @@ class Bloc {
           },
         );
 
-  Stream<Submission> getSubmissionForHomework(Id<Homework> homeworkId) async* {
+  Stream<Submission> getSubmissionForHomework(
+      Id<Assignment> homeworkId) async* {
     yield await submissions.updates
         .where((update) => update.hasData)
         .map((update) => update.data)

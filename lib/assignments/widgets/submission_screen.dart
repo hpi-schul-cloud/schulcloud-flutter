@@ -4,7 +4,7 @@ import 'package:flutter_html/flutter_html.dart';
 import '../data.dart';
 
 class SubmissionScreen extends StatelessWidget {
-  final Homework homework;
+  final Assignment homework;
   final Submission submission;
 
   const SubmissionScreen({

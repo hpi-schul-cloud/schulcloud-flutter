@@ -10,7 +10,7 @@ class CourseCard extends StatelessWidget {
 
   void _openDetailsScreen(BuildContext context) {
     Navigator.of(context).push(MaterialPageRoute(
-      builder: (context) => CourseDetailScreen(course: course),
+      builder: (context) => CourseDetailsScreen(course: course),
     ));
   }
 

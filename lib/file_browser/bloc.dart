@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:cached_listview/cached_listview.dart';
+import 'package:flutter_cached/flutter_cached.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:meta/meta.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -12,7 +12,7 @@ class Bloc {
   NetworkService network;
   Entity owner;
   File parent;
-  CacheController<File> files;
+  CacheController<List<File>> files;
 
   Bloc({
     @required this.network,

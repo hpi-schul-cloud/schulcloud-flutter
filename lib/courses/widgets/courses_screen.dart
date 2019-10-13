@@ -1,9 +1,10 @@
-import 'package:cached_listview/cached_listview.dart';
+import 'package:flutter_cached/flutter_cached.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:schulcloud/app/app.dart';
 
 import '../bloc.dart';
+import '../data.dart';
 import 'course_card.dart';
 
 class CoursesScreen extends StatelessWidget {
@@ -14,23 +15,25 @@ class CoursesScreen extends StatelessWidget {
       child: Scaffold(
         body: Consumer<Bloc>(
           builder: (context, bloc, _) {
-            return CachedCustomScrollView(
+            return CachedBuilder<List<Course>>(
               controller: bloc.courses,
-              emptyStateBuilder: (_) =>
-                  Center(child: Text('No courses to see.')),
               errorBannerBuilder: (_, error) =>
                   Container(height: 48, color: Colors.red),
               errorScreenBuilder: (_, error) => Container(color: Colors.red),
-              itemSliversBuilder: (context, courses) {
-                return [
-                  SliverGrid.count(
-                    childAspectRatio: 1.5,
-                    crossAxisCount: 2,
-                    children: <Widget>[
-                      for (var course in courses) CourseCard(course: course),
-                    ],
-                  ),
-                ];
+              builder: (BuildContext context, List<Course> courses) {
+                if (courses.isEmpty) {
+                  return EmptyStateScreen(
+                    text: "Seems like you're currently not enrolled in any "
+                        "courses.",
+                  );
+                }
+                return GridView.count(
+                  childAspectRatio: 1.5,
+                  crossAxisCount: 2,
+                  children: <Widget>[
+                    for (var course in courses) CourseCard(course: course),
+                  ],
+                );
               },
             );
           },

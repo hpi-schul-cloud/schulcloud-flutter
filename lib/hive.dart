@@ -2,8 +2,8 @@ import 'package:flutter/painting.dart';
 import 'package:hive/hive.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:schulcloud/app/app.dart';
+import 'package:schulcloud/assignments/assignments.dart';
 import 'package:schulcloud/courses/courses.dart';
-import 'package:schulcloud/homework/homework.dart';
 import 'package:schulcloud/news/news.dart';
 
 bool _isHiveInitialized = false;
@@ -23,6 +23,7 @@ Future<void> initializeHive() async {
     ..registerAdapter(IdAdapter<Lesson>(), 44)
     ..registerAdapter(IdAdapter<Article>(), 45)
     ..registerAdapter(IdAdapter<Author>(), 46)
+    ..registerAdapter(IdAdapter<Assignment>(), 47)
     ..registerAdapter(ColorAdapter(), 48)
     // App module
     ..registerAdapter(UserAdapter(), 51)
@@ -32,7 +33,7 @@ Future<void> initializeHive() async {
     ..registerAdapter(CourseAdapter(), 62)
     ..registerAdapter(LessonAdapter(), 63)
     // Homework module
-    ..registerAdapter(HomeworkAdapter(), 80)
+    ..registerAdapter(AssignmentAdapter(), 80)
     ..registerAdapter(SubmissionAdapter(), 81)
     // News module
     ..registerAdapter(ArticleAdapter(), 70)

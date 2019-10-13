@@ -7,9 +7,9 @@ import 'package:schulcloud/file_browser/file_browser.dart';
 part 'data.g.dart';
 
 @HiveType()
-class Homework implements Entity {
+class Assignment implements Entity {
   @HiveField(0)
-  final Id<Homework> id;
+  final Id<Assignment> id;
 
   @HiveField(1)
   final String name;
@@ -53,7 +53,7 @@ class Homework implements Entity {
   @HiveField(14)
   final int maxTeamMembers;
 
-  Homework({
+  Assignment({
     @required this.id,
     @required this.name,
     @required this.schoolId,
@@ -86,7 +86,7 @@ class Submission implements Entity {
   final String schoolId;
 
   @HiveField(2)
-  final Id<Homework> homeworkId;
+  final Id<Assignment> homeworkId;
 
   @HiveField(3)
   final Id<User> studentId;

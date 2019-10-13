@@ -1,4 +1,4 @@
-import 'package:cached_listview/cached_listview.dart';
+import 'package:flutter_cached/flutter_cached.dart';
 import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
@@ -77,48 +77,47 @@ class FileBrowser extends StatelessWidget {
                   )
                 : null,
             body: Material(
-              child: CachedCustomScrollView(
+              child: CachedBuilder(
                 controller: bloc.files,
-                emptyStateBuilder: (_) => EmptyStateScreen(
-                  text: 'Seems like there are no files here.',
-                  child: SizedBox(
-                    width: 100,
-                    height: 100,
-                    child: FlareActor(
-                      'assets/empty_states/files.flr',
-                      alignment: Alignment.center,
-                      fit: BoxFit.contain,
-                      animation: 'idle',
-                    ),
-                  ),
-                ),
                 errorBannerBuilder: (_, __) => Container(),
                 errorScreenBuilder: (_, error) => Center(
                   child: Text('An error occureed: $error'),
                 ),
-                itemSliversBuilder: (_, files) {
-                  return [
-                    SliverList(
-                      delegate: SliverChildBuilderDelegate((context, index) {
-                        if (index < files.length) {
-                          final file = files[index];
-                          return FileTile(
-                            file: file,
-                            onTap: file.isDirectory
-                                ? _openDirectory
-                                : _downloadFile,
-                          );
-                        } else if (index == files.length) {
-                          return Container(
-                            alignment: Alignment.center,
-                            padding: const EdgeInsets.all(16),
-                            child: Text('${files.length} items in total'),
-                          );
-                        }
-                        return null;
-                      }, childCount: files.length + 1),
-                    ),
-                  ];
+                builder: (BuildContext context, List<File> files) {
+                  if (files.isEmpty) {
+                    return EmptyStateScreen(
+                      text: 'Seems like there are no files here.',
+                      child: SizedBox(
+                        width: 100,
+                        height: 100,
+                        child: FlareActor(
+                          'assets/empty_states/files.flr',
+                          alignment: Alignment.center,
+                          fit: BoxFit.contain,
+                          animation: 'idle',
+                        ),
+                      ),
+                    );
+                  }
+                  return ListView.builder(
+                    itemBuilder: (context, index) {
+                      if (index < files.length) {
+                        final file = files[index];
+                        return FileTile(
+                          file: file,
+                          onTap:
+                              file.isDirectory ? _openDirectory : _downloadFile,
+                        );
+                      } else if (index == files.length) {
+                        return Container(
+                          alignment: Alignment.center,
+                          padding: const EdgeInsets.all(16),
+                          child: Text('${files.length} items in total'),
+                        );
+                      }
+                      return null;
+                    },
+                  );
                 },
               ),
             ),

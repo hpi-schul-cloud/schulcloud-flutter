@@ -7,15 +7,15 @@ import '../bloc.dart';
 import '../data.dart';
 import 'submission_screen.dart';
 
-class HomeworkDetailScreen extends StatelessWidget {
-  final Homework homework;
+class AssignmentDetailsScreen extends StatelessWidget {
+  final Assignment homework;
 
-  const HomeworkDetailScreen({Key key, @required this.homework})
+  const AssignmentDetailsScreen({Key key, @required this.homework})
       : super(key: key);
 
   void _showSubmissionScreen(
     BuildContext context,
-    Homework homework,
+    Assignment homework,
     Submission submission,
   ) {
     Navigator.of(context).push(MaterialPageRoute(

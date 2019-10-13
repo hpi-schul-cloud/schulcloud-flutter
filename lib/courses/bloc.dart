@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:cached_listview/cached_listview.dart';
+import 'package:flutter_cached/flutter_cached.dart';
 import 'package:meta/meta.dart';
 import 'package:schulcloud/app/app.dart';
 
@@ -8,7 +8,7 @@ import 'data.dart';
 
 class Bloc {
   NetworkService network;
-  CacheController<Course> courses;
+  CacheController<List<Course>> courses;
 
   Bloc({@required NetworkService network})
       : assert(network != null),
@@ -37,7 +37,7 @@ class Bloc {
 
   void dispose() => courses.dispose();
 
-  CacheController<Lesson> getLessonsOfCourse(Id courseId) =>
+  CacheController<List<Lesson>> getLessonsOfCourse(Id courseId) =>
       HiveCacheController(
         name: 'lessons',
         fetcher: () async {

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:schulcloud/assignments/assignments.dart';
 import 'package:schulcloud/courses/courses.dart';
 import 'package:schulcloud/dashboard/dashboard.dart';
-import 'package:schulcloud/homework/homework.dart';
 import 'package:schulcloud/news/news.dart';
 
 import 'app_bar.dart';

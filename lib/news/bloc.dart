@@ -1,13 +1,13 @@
 import 'dart:convert';
 
-import 'package:cached_listview/cached_listview.dart';
+import 'package:flutter_cached/flutter_cached.dart';
 import 'package:flutter/foundation.dart';
 import 'package:schulcloud/app/app.dart';
 
 import 'data.dart';
 
 class Bloc {
-  CacheController<Article> articles;
+  CacheController<List<Article>> articles;
 
   Bloc({@required NetworkService network})
       : assert(network != null),

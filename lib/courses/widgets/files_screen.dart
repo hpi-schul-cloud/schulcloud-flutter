@@ -1,4 +1,4 @@
-import 'package:cached_listview/cached_listview.dart';
+import 'package:flutter_cached/flutter_cached.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -75,30 +75,28 @@ class _CourseFilesList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CachedCustomScrollView(
-      controller: Provider.of<Bloc>(context).courses,
-      emptyStateBuilder: (_) => EmptyStateScreen(
-        text: "Seems like you're currently not enrolled in any courses.",
-      ),
-      errorBannerBuilder: (_, error) =>
-          Container(color: Colors.red, height: 48),
-      errorScreenBuilder: (_, error) => Container(color: Colors.red),
-      headerSliversBuilder: (_) => [SliverToBoxAdapter(child: _buildHeader())],
-      loadingScreenBuilder: (_) => Center(child: CircularProgressIndicator()),
-      itemSliversBuilder: (_, courses) {
-        return [
-          SliverList(
-            delegate: SliverChildBuilderDelegate((context, index) {
+    return NestedScrollView(
+      headerSliverBuilder: (_, __) => [
+        SliverToBoxAdapter(child: _buildHeader()),
+      ],
+      body: CachedBuilder(
+        controller: Provider.of<Bloc>(context).courses,
+        errorBannerBuilder: (_, error) =>
+            Container(color: Colors.red, height: 48),
+        errorScreenBuilder: (_, error) => ErrorScreen(error),
+        builder: (_, courses) {
+          return ListView.builder(
+            itemBuilder: (context, index) {
               var course = courses[index];
               return ListTile(
                 title: Text(course.name),
                 leading: Icon(Icons.folder, color: course.color),
                 onTap: () => _showCourseFiles(context, course),
               );
-            }, childCount: courses.length),
-          ),
-        ];
-      },
+            },
+          );
+        },
+      ),
     );
   }
 
