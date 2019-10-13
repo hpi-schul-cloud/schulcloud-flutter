@@ -2,13 +2,18 @@ import 'dart:convert';
 import 'dart:ui';
 
 import 'package:cached_listview/cached_listview.dart';
+import 'package:flutter/widgets.dart';
 import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
 import 'package:meta/meta.dart';
+import 'package:provider/provider.dart';
+import 'package:schulcloud/login/login.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'data.dart';
 import 'services/network.dart';
+import 'services/storage.dart';
+import 'widgets/page_route.dart';
 
 /// Converts a hex string (like, '#ffdd00') to a [Color].
 Color hexStringToColor(String hex) =>
@@ -128,6 +133,13 @@ class HiveCacheController<Item> extends CacheController<Item> {
     }
     return key;
   }
+}
+
+Future<void> logOut(BuildContext context) async {
+  await Provider.of<StorageService>(context).clear();
+  Navigator.of(context, rootNavigator: true).pushReplacement(TopLevelPageRoute(
+    builder: (_) => LoginScreen(),
+  ));
 }
 
 Future<User> fetchUser(NetworkService network, Id<User> id) async {

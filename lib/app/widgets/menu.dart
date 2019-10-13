@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:schulcloud/settings/settings.dart';
-import 'package:schulcloud/login/login.dart';
 
 import '../data.dart';
 import '../app.dart';
+import '../utils.dart';
 import 'schulcloud_app.dart';
 
 /// A menu displaying the current user and [NavigationItem]s.
@@ -20,13 +20,6 @@ class Menu extends StatelessWidget {
   void _openSettings(BuildContext context) {
     Navigator.of(context).push(MaterialPageRoute(
       builder: (_) => SettingsScreen(),
-    ));
-  }
-
-  Future<void> _logOut(BuildContext context) async {
-    await Provider.of<StorageService>(context).clear();
-    Navigator.of(context).pushReplacement(TopLevelPageRoute(
-      builder: (_) => LoginScreen(),
     ));
   }
 
@@ -59,39 +52,50 @@ class Menu extends StatelessWidget {
   }
 
   Widget _buildUserInfo(BuildContext context) {
-    return StreamBuilder<User>(
-      stream: Provider.of<MeService>(context).meStream,
-      builder: (context, snapshot) {
-        if (!snapshot.hasData) {
-          return Text('Not logged in yet.');
-        }
-        var user = snapshot.data;
-
-        return Row(
-          children: <Widget>[
-            SizedBox(width: 24),
-            Expanded(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(user.name, style: TextStyle(fontSize: 20)),
-                  Text(user.email, style: TextStyle(fontSize: 12)),
-                ],
+    return Row(
+      children: <Widget>[
+        SizedBox(width: 24),
+        Expanded(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(height: 8),
+              StreamBuilder<User>(
+                stream: Provider.of<MeService>(context).meStream,
+                builder: (context, snapshot) {
+                  return Text(
+                    snapshot.data?.name ?? '-',
+                    style: TextStyle(fontSize: 20),
+                  );
+                },
               ),
-            ),
-            IconButton(
-              icon: Icon(Icons.settings),
-              onPressed: () => _openSettings(context),
-            ),
-            IconButton(
-              icon: Icon(Icons.airline_seat_legroom_reduced),
-              onPressed: () => _logOut(context),
-            ),
-            SizedBox(width: 8),
-          ],
-        );
-      },
+              StreamBuilder<String>(
+                stream: Provider.of<StorageService>(context).email,
+                builder: (context, snapshot) {
+                  // We don't need to do extensive error handling here,
+                  // because it shouldn't be possible to open the menu
+                  // without being logged in.
+                  return Text(
+                    snapshot.data ?? '-',
+                    style: TextStyle(fontSize: 14),
+                  );
+                },
+              ),
+              SizedBox(height: 8),
+            ],
+          ),
+        ),
+        IconButton(
+          icon: Icon(Icons.settings),
+          onPressed: () => _openSettings(context),
+        ),
+        IconButton(
+          icon: Icon(Icons.airline_seat_legroom_reduced),
+          onPressed: () => logOut(context),
+        ),
+        SizedBox(width: 8),
+      ],
     );
   }
 
