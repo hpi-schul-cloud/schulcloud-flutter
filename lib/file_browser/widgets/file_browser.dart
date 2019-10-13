@@ -1,6 +1,5 @@
-import 'dart:math';
-
 import 'package:cached_listview/cached_listview.dart';
+import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
@@ -80,36 +79,44 @@ class FileBrowser extends StatelessWidget {
             body: Material(
               child: CachedCustomScrollView(
                 controller: bloc.files,
-                emptyStateBuilder: (_) => NoItemsWidget(),
+                emptyStateBuilder: (_) => EmptyStateScreen(
+                  text: 'Seems like there are no files here.',
+                  child: SizedBox(
+                    width: 100,
+                    height: 100,
+                    child: FlareActor(
+                      'assets/empty_states/files.flr',
+                      alignment: Alignment.center,
+                      fit: BoxFit.contain,
+                      animation: 'idle',
+                    ),
+                  ),
+                ),
                 errorBannerBuilder: (_, __) => Container(),
                 errorScreenBuilder: (_, error) => Center(
                   child: Text('An error occureed: $error'),
                 ),
                 itemSliversBuilder: (_, files) {
-                  int index = 0;
-                  Duration getDelay(int index) =>
-                      Duration(milliseconds: (80 * sqrt(index)).round());
-
                   return [
                     SliverList(
-                      delegate: SliverChildListDelegate([
-                        for (var file in files)
-                          FadeIn(
-                            delay: getDelay(index++),
-                            child: FileTile(
-                              file: file,
-                              onTap: file.isDirectory
-                                  ? _openDirectory
-                                  : _downloadFile,
-                            ),
-                          ),
-                        SizedBox(height: 16),
-                        FadeIn(
-                          delay: getDelay(index + 1),
-                          child: Center(child: Text('$index items in total')),
-                        ),
-                        SizedBox(height: 16),
-                      ]),
+                      delegate: SliverChildBuilderDelegate((context, index) {
+                        if (index < files.length) {
+                          final file = files[index];
+                          return FileTile(
+                            file: file,
+                            onTap: file.isDirectory
+                                ? _openDirectory
+                                : _downloadFile,
+                          );
+                        } else if (index == files.length) {
+                          return Container(
+                            alignment: Alignment.center,
+                            padding: const EdgeInsets.all(16),
+                            child: Text('${files.length} items in total'),
+                          );
+                        }
+                        return null;
+                      }, childCount: files.length + 1),
                     ),
                   ];
                 },

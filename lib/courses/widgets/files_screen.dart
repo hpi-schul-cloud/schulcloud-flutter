@@ -1,9 +1,11 @@
 import 'package:cached_listview/cached_listview.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/file_browser/file_browser.dart';
+import 'package:transparent_image/transparent_image.dart';
 
 import '../bloc.dart';
 import '../data.dart';
@@ -77,29 +79,26 @@ class _CourseFilesList extends StatelessWidget {
   Widget build(BuildContext context) {
     return CachedCustomScrollView(
       controller: Provider.of<Bloc>(context).courses,
-      emptyStateBuilder: (_) => Center(child: Text('No courses.')),
+      emptyStateBuilder: (_) => EmptyStateScreen(
+        text: "Seems like you're currently not enrolled in any courses.",
+      ),
       errorBannerBuilder: (_, error) =>
           Container(color: Colors.red, height: 48),
       errorScreenBuilder: (_, error) => Container(color: Colors.red),
       headerSliversBuilder: (_) => [SliverToBoxAdapter(child: _buildHeader())],
-      loadingScreenBuilder: (_) => Column(
-        children: <Widget>[
-          _buildHeader(),
-          Expanded(child: Center(child: CircularProgressIndicator())),
-        ],
-      ),
+      loadingScreenBuilder: (_) => Center(child: CircularProgressIndicator()),
       itemSliversBuilder: (_, courses) {
         return [
           SliverList(
-            delegate: SliverChildListDelegate([
-              for (var course in courses)
-                ListTile(
-                  title: Text(course.name),
-                  leading: Icon(Icons.folder, color: course.color),
-                  onTap: () => _showCourseFiles(context, course),
-                ),
-            ]),
-          )
+            delegate: SliverChildBuilderDelegate((context, index) {
+              var course = courses[index];
+              return ListTile(
+                title: Text(course.name),
+                leading: Icon(Icons.folder, color: course.color),
+                onTap: () => _showCourseFiles(context, course),
+              );
+            }, childCount: courses.length),
+          ),
         ];
       },
     );
