@@ -6,10 +6,13 @@ class StorageService {
   Preference<String> email;
   Preference<String> token;
 
+  bool get hasEmail => email.getValue().isNotEmpty;
+  bool get hasToken => token.getValue().isNotEmpty;
+
   Future<void> initialize() async {
     _prefs = await StreamingSharedPreferences.instance;
-    email = _prefs.getString('email', defaultValue: null);
-    token = _prefs.getString('token', defaultValue: null);
+    email = _prefs.getString('email', defaultValue: '');
+    token = _prefs.getString('token', defaultValue: '');
   }
 
   Future<void> clear() => _prefs.clear();

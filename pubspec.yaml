@@ -21,6 +21,7 @@ dependencies:
   # The current version of flutter_downloader, 1.2.1, causes the build to fail. Until this is fixed, we rely on an older version.
   flutter_downloader: 1.1.9
   flutter_html: ^0.10.4
+  flutter_svg: ^0.14.2
   flutter_villains: ^1.2.0
   hive: ^1.0.0
   http: ^0.12.0
@@ -49,15 +50,20 @@ flutter:
   uses-material-design: true
 
   assets:
-    - assets/empty_state.flr
+    - assets/empty_states/default.svg
+    - assets/empty_states/broken_pen.svg
+    - assets/empty_states/files.flr
 
   fonts:
     - family: PT Sans
       fonts:
-        - asset: assets/PT_Sans-Web-Regular.ttf
+        - asset: assets/fonts/pt_sans_regular.ttf
+          weight: 300
+        - asset: assets/fonts/pt_sans_bold.ttf
+          weight: 700
     - family: PT Sans Narrow
       fonts:
-        - asset: assets/PT_Sans-Narrow-Web-Regular.ttf
+        - asset: assets/pt_sans_narrow_regular.ttf
           weight: 300
-        - asset: assets/PT_Sans-Narrow-Web-Bold.ttf
+        - asset: assets/pt_sans_narrow_bold.ttf
           weight: 700

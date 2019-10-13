@@ -20,9 +20,7 @@ class SplashScreen extends StatelessWidget {
       Future.microtask(() {
         var storage = Provider.of<StorageService>(context);
         Navigator.of(context).pushReplacement(MaterialPageRoute(
-          builder: (_) => storage.token.getValue() != null
-              ? LoggedInScreen()
-              : LoginScreen(),
+          builder: (_) => storage.hasToken ? LoggedInScreen() : LoginScreen(),
         ));
       });
     }

@@ -27,10 +27,10 @@ class MeService {
   void dispose() => _meSubject.close();
 
   Future<void> _updateUser(String token) async {
-    if (token == null) {
+    if (token == null || token.isEmpty) {
       _meSubject.add(null);
     } else {
-      final id = Id(_decodeTokenToUser(token));
+      final id = Id<User>(_decodeTokenToUser(token));
       final me = await fetchUser(network, id);
       _meSubject.add(me);
     }

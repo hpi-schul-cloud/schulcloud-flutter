@@ -49,8 +49,8 @@ class NetworkService {
   }
 
   Map<String, String> _getHeaders() => {
-        if (storage.token.getValue() != null)
-          'Authorization': 'Bearer ${storage.token}',
+        if (storage.hasToken)
+          'Authorization': 'Bearer ${storage.token.getValue()}',
       };
 
   /// Makes an http get request to the api.
@@ -62,7 +62,8 @@ class NetworkService {
     assert(parameters != null);
 
     if (parameters.isNotEmpty) {
-      path += '?' + parameters.keys.map((p) => '$p=${parameters[p]}').join('&');
+      path +=
+          '?' + parameters.entries.map((p) => '${p.key}=${p.value}').join('&');
     }
     return await _makeCall(
       path,

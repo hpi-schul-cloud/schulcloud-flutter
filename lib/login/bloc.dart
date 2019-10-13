@@ -31,7 +31,8 @@ class Bloc {
       'username': email,
       'password': password,
     });
-    authStorage.token = json.decode(response.body)['accessToken'];
+    String token = json.decode(response.body)['accessToken'];
+    authStorage.token.setValue(token);
   }
 
   Future<void> loginAsDemoStudent() =>
