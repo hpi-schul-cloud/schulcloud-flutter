@@ -9,4 +9,5 @@ export 'widgets/menu.dart' show NavigationItem;
 export 'widgets/page_route.dart' show TopLevelPageRoute;
 export 'widgets/placeholder_text.dart';
 export 'widgets/schulcloud_app.dart' show SchulCloudApp, LoggedInScreen;
-export 'widgets/no_items_widget.dart';
+export 'widgets/empty_state.dart';
+export 'widgets/error_screen.dart';
