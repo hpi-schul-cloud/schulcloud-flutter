@@ -15,6 +15,7 @@ dependencies:
   flutter:
     sdk: flutter
 
+  analyzer: ^0.38.5
   cupertino_icons: ^0.1.2
   flare_flutter: ^1.5.8
   flutter_cached: ^2.0.0
@@ -26,7 +27,6 @@ dependencies:
   hive: ^1.0.0
   http: ^0.12.0
   intl: ^0.16.0
-  json_annotation: ^2.0.0
   package_info: ^0.4.0+3
   path_provider: ^1.1.0
   permission_handler: ^3.2.2
@@ -38,13 +38,8 @@ dependencies:
   webview_flutter: ^0.3.10+4
 
 dev_dependencies:
-  flutter_test:
-    sdk: flutter
-
   build_runner: ^1.0.0
   hive_generator: ^0.5.2
-  json_serializable: ^3.0.0
-  test: any
 
 flutter:
   uses-material-design: true
