@@ -30,14 +30,14 @@ Future<void> initializeHive() async {
     ..registerAdapter(ColorAdapter(), 48)
     // App module: 5x
     ..registerAdapter(UserAdapter(), 51)
+    // Assignments module: 8x
+    ..registerAdapter(AssignmentAdapter(), 80)
+    ..registerAdapter(SubmissionAdapter(), 81)
     // Courses module: 6x
     ..registerAdapter(ContentTypeAdapter(), 60)
     ..registerAdapter(ContentAdapter(), 61)
     ..registerAdapter(CourseAdapter(), 62)
     ..registerAdapter(LessonAdapter(), 63)
-    // Homework module: 8x
-    ..registerAdapter(AssignmentAdapter(), 80)
-    ..registerAdapter(SubmissionAdapter(), 81)
     // News module: 7x
     ..registerAdapter(ArticleAdapter(), 70)
     ..registerAdapter(AuthorAdapter(), 71)

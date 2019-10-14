@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_cached/flutter_cached.dart';
 import 'package:provider/provider.dart';
 import 'package:schulcloud/settings/settings.dart';
 
@@ -61,11 +62,11 @@ class Menu extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               SizedBox(height: 8),
-              StreamBuilder<User>(
-                stream: Provider.of<MeService>(context).meStream,
-                builder: (context, snapshot) {
+              CachedRawBuilder<User>(
+                controller: Provider.of<MeService>(context).meController,
+                builder: (context, update) {
                   return Text(
-                    snapshot.data?.name ?? '-',
+                    update.data?.name ?? '-',
                     style: TextStyle(fontSize: 20),
                   );
                 },

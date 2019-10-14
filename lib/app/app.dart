@@ -2,6 +2,7 @@ export 'data.dart';
 export 'services/storage.dart';
 export 'services/me.dart';
 export 'services/network.dart';
+export 'services/user_fetcher.dart';
 export 'utils.dart';
 export 'widgets/app_bar.dart' show AppBarActions;
 export 'widgets/fade_in.dart';

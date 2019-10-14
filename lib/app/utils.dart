@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:ui';
 
 import 'package:flutter_cached/flutter_cached.dart';
@@ -10,8 +9,6 @@ import 'package:provider/provider.dart';
 import 'package:schulcloud/login/login.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import 'data.dart';
-import 'services/network.dart';
 import 'services/storage.dart';
 import 'widgets/page_route.dart';
 
@@ -140,20 +137,4 @@ Future<void> logOut(BuildContext context) async {
   Navigator.of(context, rootNavigator: true).pushReplacement(TopLevelPageRoute(
     builder: (_) => LoginScreen(),
   ));
-}
-
-Future<User> fetchUser(NetworkService network, Id<User> id) async {
-  var response = await network.get('users/$id');
-  var data = json.decode(response.body);
-
-  // For now, the [avatarBackgroundColor] and [avatarInitials] are not saved.
-  // Not sure if we'll need it.
-  return User(
-    id: Id(data['_id']),
-    firstName: data['firstName'],
-    lastName: data['lastName'],
-    email: data['email'],
-    schoolToken: data['schoolId'],
-    displayName: data['displayName'],
-  );
 }

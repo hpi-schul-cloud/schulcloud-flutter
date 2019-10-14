@@ -11,8 +11,11 @@ class Bloc {
   CacheController<List<Assignment>> assignments;
   CacheController<List<Submission>> submissions;
 
-  Bloc({@required NetworkService network})
-      : assert(network != null),
+  Bloc({
+    @required NetworkService network,
+    @required UserFetcherService userFetcher,
+  })  : assert(network != null),
+        assert(userFetcher != null),
         assignments = HiveCacheController<Assignment>(
           name: 'homework',
           fetcher: () async {
@@ -37,7 +40,7 @@ class Bloc {
                         'No description provided',
                     teachers: [
                       for (String id in data['courseId']['teacherIds'])
-                        await fetchUser(network, Id<User>(id)),
+                        await userFetcher.fetchUser(Id<User>(id)),
                     ],
                     color: hexStringToColor(data['courseId']['color']),
                   ),
@@ -67,6 +70,11 @@ class Bloc {
             ];
           },
         );
+
+  void dispose() {
+    assignments.dispose();
+    submissions.dispose();
+  }
 
   Stream<Submission> getSubmissionForHomework(
       Id<Assignment> homeworkId) async* {

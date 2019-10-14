@@ -11,8 +11,9 @@ import '../data.dart';
 class FilesScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return ProxyProvider<NetworkService, Bloc>(
-      builder: (_, network, __) => Bloc(network: network),
+    return ProxyProvider2<NetworkService, UserFetcherService, Bloc>(
+      builder: (_, network, userFetcher, __) =>
+          Bloc(network: network, userFetcher: userFetcher),
       child: DefaultTabController(
         length: 2,
         child: Scaffold(

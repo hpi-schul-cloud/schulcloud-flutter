@@ -8,10 +8,13 @@ import 'data.dart';
 
 class Bloc {
   NetworkService network;
+  UserFetcherService userFetcher;
+
   CacheController<List<Course>> courses;
 
-  Bloc({@required NetworkService network})
+  Bloc({@required NetworkService network, @required this.userFetcher})
       : assert(network != null),
+        assert(userFetcher != null),
         this.network = network,
         courses = HiveCacheController<Course>(
           name: 'courses',
@@ -27,7 +30,7 @@ class Bloc {
                   description: data['description'],
                   teachers: [
                     for (String id in data['teacherIds'])
-                      await fetchUser(network, Id(id)),
+                      await userFetcher.fetchUser(Id<User>(id)),
                   ],
                   color: hexStringToColor(data['color']),
                 ),
@@ -37,7 +40,7 @@ class Bloc {
 
   void dispose() => courses.dispose();
 
-  CacheController<List<Lesson>> getLessonsOfCourse(Id courseId) =>
+  CacheController<List<Lesson>> getLessonsOfCourse(Id<Course> courseId) =>
       HiveCacheController(
         name: 'lessons',
         fetcher: () async {

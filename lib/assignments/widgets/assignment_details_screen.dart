@@ -28,8 +28,9 @@ class AssignmentDetailsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ProxyProvider<NetworkService, Bloc>(
-      builder: (_, network, __) => Bloc(network: network),
+    return ProxyProvider2<NetworkService, UserFetcherService, Bloc>(
+      builder: (_, network, userFetcher, __) =>
+          Bloc(network: network, userFetcher: userFetcher),
       child: Consumer<Bloc>(
         builder: (context, bloc, _) => Scaffold(
           appBar: AppBar(
