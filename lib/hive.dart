@@ -4,6 +4,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/assignments/assignments.dart';
 import 'package:schulcloud/courses/courses.dart';
+import 'package:schulcloud/file_browser/file_browser.dart';
 import 'package:schulcloud/news/news.dart';
 
 bool _isHiveInitialized = false;
@@ -16,6 +17,7 @@ Future<void> initializeHive() async {
 
   Hive
     ..init(dir.path)
+    // General: 4x
     ..registerAdapter(IdAdapter<User>(), 40)
     ..registerAdapter(IdAdapter<ContentType>(), 41)
     ..registerAdapter(IdAdapter<Content>(), 42)
@@ -24,20 +26,23 @@ Future<void> initializeHive() async {
     ..registerAdapter(IdAdapter<Article>(), 45)
     ..registerAdapter(IdAdapter<Author>(), 46)
     ..registerAdapter(IdAdapter<Assignment>(), 47)
+    ..registerAdapter(IdAdapter<File>(), 49)
     ..registerAdapter(ColorAdapter(), 48)
-    // App module
+    // App module: 5x
     ..registerAdapter(UserAdapter(), 51)
-    // Courses module
+    // Courses module: 6x
     ..registerAdapter(ContentTypeAdapter(), 60)
     ..registerAdapter(ContentAdapter(), 61)
     ..registerAdapter(CourseAdapter(), 62)
     ..registerAdapter(LessonAdapter(), 63)
-    // Homework module
+    // Homework module: 8x
     ..registerAdapter(AssignmentAdapter(), 80)
     ..registerAdapter(SubmissionAdapter(), 81)
-    // News module
+    // News module: 7x
     ..registerAdapter(ArticleAdapter(), 70)
-    ..registerAdapter(AuthorAdapter(), 71);
+    ..registerAdapter(AuthorAdapter(), 71)
+    // Files module: 9x
+    ..registerAdapter(FileAdapter(), 90);
 }
 
 class IdAdapter<T> extends TypeAdapter<Id<T>> {

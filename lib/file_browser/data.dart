@@ -1,25 +1,35 @@
+import 'package:hive/hive.dart';
 import 'package:meta/meta.dart';
 import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/courses/courses.dart';
 
+part 'data.g.dart';
+
+@HiveType()
 class File implements Entity {
+  @HiveField(0)
   final Id<File> id;
 
   /// The name of this file.
+  @HiveField(1)
   final String name;
-  String get path => "${parent?.path ?? owner.id}/name";
+  String get path => "${parent?.path ?? owner.id}/$name";
 
   /// The size in byte.
+  @HiveField(2)
   final int size;
   String get sizeAsString => formatFileSize(size);
 
   /// Either a [User] or [Course].
+  @HiveField(3)
   final Entity owner;
 
+  @HiveField(4)
   final bool isDirectory;
   bool get isNotDirectory => !isDirectory;
 
   /// The parent directory.
+  @HiveField(5)
   final File parent;
 
   File({

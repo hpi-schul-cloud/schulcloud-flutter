@@ -79,10 +79,11 @@ class FileBrowser extends StatelessWidget {
             body: Material(
               child: CachedBuilder(
                 controller: bloc.files,
-                errorBannerBuilder: (_, __) => Container(),
-                errorScreenBuilder: (_, error) => Center(
-                  child: Text('An error occureed: $error'),
+                errorBannerBuilder: (_, __) => Container(
+                  height: 48,
+                  color: Colors.red,
                 ),
+                errorScreenBuilder: (_, error) => ErrorScreen(error),
                 builder: (BuildContext context, List<File> files) {
                   if (files.isEmpty) {
                     return EmptyStateScreen(
