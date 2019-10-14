@@ -38,15 +38,14 @@ class Bloc {
     print('There are ${_allFiles.length} files saved.');
   }
 
-  void _deleteDirectoryFromCache(String directoryId) {
-    for (var fileId in _directoryContents.get(directoryId)) {
-      File file = _allFiles.get(fileId);
-      if (file.isDirectory) {
-        _deleteDirectoryFromCache(file.id.id);
+  void _deleteFromCache(String fileId) {
+    if ((_allFiles.get(fileId) as File).isDirectory) {
+      for (var id in _directoryContents.get(fileId) ?? []) {
+        _deleteFromCache(id);
       }
-      _allFiles.delete(directoryId);
-      _directoryContents.delete(directoryId);
+      _directoryContents.delete(fileId);
     }
+    _allFiles.delete(fileId);
   }
 
   Bloc({
@@ -89,18 +88,14 @@ class Bloc {
         // Compare the old to the new contents and delete the subdirectory
         // contents and the files that were in it.
         if (contentBefore != null) {
-          print('Before: $contentBefore');
-          print('After:  $contentAfter');
           var operations = await diff(contentBefore, contentAfter);
           var deletedIds =
               operations.where((op) => op.isDeletion).map((op) => op.item);
 
           for (var deletedId in deletedIds) {
-            _deleteDirectoryFromCache(deletedId);
+            _deleteFromCache(deletedId);
           }
         }
-
-        print('Now, there are ${_allFiles.length} files.');
       },
       fetcher: () async {
         var queries = <String, String>{
