@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:schulcloud/dashboard/widgets/dashboard_card.dart';
 import 'package:schulcloud/homework/widgets/dashboard_card.dart';
+import 'package:schulcloud/news/widgets/dashboard_card.dart';
 
 class DashboardScreen extends StatelessWidget {
   @override
@@ -10,14 +11,11 @@ class DashboardScreen extends StatelessWidget {
         children: <Widget>[
           SizedBox(height: 16),
           DashboardCard(
-            title: 'Stundenplan',
+            title: 'Schedule',
             child: FlutterLogo(),
           ),
           HomeworkDashboardCard(),
-          DashboardCard(
-            title: 'News',
-            child: FlutterLogo(),
-          ),
+          NewsDashboardCard(),
         ],
       ),
     );

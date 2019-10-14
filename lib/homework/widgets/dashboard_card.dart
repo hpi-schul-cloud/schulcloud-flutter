@@ -21,7 +21,10 @@ class HomeworkDashboardCard extends StatelessWidget {
             stream: Provider.of<Bloc>(context).getHomework(),
             builder: (context, snapshot) {
               if (!snapshot.hasData)
-                return Text(snapshot.error?.toString() ?? 'Loading...');
+                return Center(
+                    child: snapshot.hasError
+                        ? Text(snapshot.error.toString())
+                        : CircularProgressIndicator());
 
               var openAssignments = snapshot.data.where((h) =>
                   h.dueDate.isAfter(DateTime.now()) &&
