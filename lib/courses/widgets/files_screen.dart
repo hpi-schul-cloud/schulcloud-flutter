@@ -75,36 +75,35 @@ class _CourseFilesList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return NestedScrollView(
-      headerSliverBuilder: (_, __) => [
-        SliverToBoxAdapter(child: _buildHeader()),
-      ],
-      body: CachedBuilder(
-        controller: Provider.of<Bloc>(context).courses,
-        errorBannerBuilder: (_, error) =>
-            Container(color: Colors.red, height: 48),
-        errorScreenBuilder: (_, error) => ErrorScreen(error),
-        builder: (_, courses) {
-          return ListView.builder(
-            itemBuilder: (context, index) {
-              var course = courses[index];
-              return ListTile(
-                title: Text(course.name),
-                leading: Icon(Icons.folder, color: course.color),
-                onTap: () => _showCourseFiles(context, course),
+    return Column(
+      children: <Widget>[
+        FileListHeader(
+          icon: Icon(Icons.school, size: 48),
+          text: 'These are the files from courses you are enrolled in. '
+              'Anyone in the course (including teachers) has access to them.',
+        ),
+        Expanded(
+          child: CachedBuilder(
+            controller: Provider.of<Bloc>(context).courses,
+            errorBannerBuilder: (_, error) =>
+                Container(color: Colors.red, height: 48),
+            errorScreenBuilder: (_, error) => ErrorScreen(error),
+            builder: (BuildContext context, List<Course> courses) {
+              return ListView(
+                children: <Widget>[
+                  for (var course in courses)
+                    ListTile(
+                      title: Text(course.name),
+                      leading: Icon(Icons.folder, color: course.color),
+                      onTap: () => _showCourseFiles(context, course),
+                    ),
+                ],
               );
             },
-          );
-        },
-      ),
+          ),
+        ),
+      ],
     );
-  }
-
-  Widget _buildHeader() {
-    return FileListHeader(
-        icon: Icon(Icons.school, size: 48),
-        text: 'These are the files from courses you are enrolled in. '
-            'Anyone in the course (including teachers) has access to them.');
   }
 }
 
