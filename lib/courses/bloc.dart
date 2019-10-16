@@ -11,6 +11,7 @@ class Bloc {
   UserFetcherService userFetcher;
 
   CacheController<List<Course>> courses;
+  final _lessons = <Id<Course>, CacheController<List<Lesson>>>{};
 
   Bloc({@required NetworkService network, @required this.userFetcher})
       : assert(network != null),
@@ -38,28 +39,36 @@ class Bloc {
           },
         );
 
-  void dispose() => courses.dispose();
+  void dispose() {
+    courses.dispose();
+    for (var lesson in _lessons.values) {
+      lesson.dispose();
+    }
+  }
 
-  CacheController<List<Lesson>> getLessonsOfCourse(Id<Course> courseId) =>
-      HiveCacheController(
-        name: 'lessons',
-        fetcher: () async {
-          var response = await network.get('lessons?courseId=$courseId');
-          var body = json.decode(response.body);
+  CacheController<List<Lesson>> getLessonsOfCourse(Id<Course> courseId) {
+    return _lessons.putIfAbsent(
+        courseId,
+        () => HiveCacheController(
+              name: 'lessons of $courseId',
+              fetcher: () async {
+                var response = await network.get('lessons?courseId=$courseId');
+                var body = json.decode(response.body);
 
-          return [
-            for (var data in body['data'] as List<dynamic>)
-              Lesson(
-                id: Id(data['_id']),
-                name: data['name'],
-                contents: (data['contents'] as List<dynamic>)
-                    .map((content) => _createContent(content))
-                    .where((c) => c != null)
-                    .toList(),
-              ),
-          ];
-        },
-      );
+                return [
+                  for (var data in body['data'] as List<dynamic>)
+                    Lesson(
+                      id: Id(data['_id']),
+                      name: data['name'],
+                      contents: (data['contents'] as List<dynamic>)
+                          .map((content) => _createContent(content))
+                          .where((c) => c != null)
+                          .toList(),
+                    ),
+                ];
+              },
+            ));
+  }
 
   static Content _createContent(Map<String, dynamic> data) {
     ContentType type;
