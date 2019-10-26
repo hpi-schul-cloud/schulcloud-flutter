@@ -24,7 +24,7 @@ dependencies:
   flutter_html: ^0.10.4
   flutter_svg: ^0.14.2
   flutter_villains: ^1.2.0
-  hive: ^1.0.0
+  hive: ^1.1.1
   hive_cache: ^0.1.3
   http: ^0.12.0
   intl: ^0.16.0
@@ -51,6 +51,7 @@ flutter:
     - assets/empty_states/default.svg
     - assets/empty_states/broken_pen.svg
     - assets/empty_states/files.flr
+    - assets/logo/logo_with_text.svg
 
   fonts:
     - family: PT Sans
