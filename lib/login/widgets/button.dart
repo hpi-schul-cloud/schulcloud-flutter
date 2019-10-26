@@ -34,7 +34,7 @@ class _ButtonState<T> extends State<Button> {
       fillColor: theme.primaryColor,
       highlightColor: Colors.black.withOpacity(0.08),
       splashColor: _isLoading ? Colors.transparent : Colors.black26,
-      elevation: 2,
+      elevation: 0,
       highlightElevation: 2,
       shape: _isLoading
           ? const CircleBorder()
@@ -43,7 +43,15 @@ class _ButtonState<T> extends State<Button> {
       child: Container(
         width: _isLoading ? 52 : null,
         height: _isLoading ? 52 : null,
-        child: _isLoading ? _buildLoadingContent(theme) : widget.child,
+        child: DefaultTextStyle(
+          style: TextStyle(
+            color: Colors.white,
+            fontFamily: 'PT Sans Narrow',
+            fontWeight: FontWeight.w700,
+            height: 1.25,
+          ),
+          child: _isLoading ? _buildLoadingContent(theme) : widget.child,
+        ),
       ),
     );
   }
