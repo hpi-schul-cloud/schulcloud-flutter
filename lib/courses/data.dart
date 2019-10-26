@@ -49,7 +49,7 @@ class Content implements Entity {
 
 @immutable
 @HiveType()
-class Course implements Entity {
+class Course implements Entity, Comparable {
   @HiveField(0)
   final Id<Course> id;
 
@@ -76,6 +76,11 @@ class Course implements Entity {
         assert(description != null),
         assert(teachers != null),
         assert(color != null);
+
+  @override
+  int compareTo(other) {
+    return name.compareTo(other.name);
+  }
 }
 
 @HiveType()

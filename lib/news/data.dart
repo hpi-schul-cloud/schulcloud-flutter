@@ -6,7 +6,7 @@ part 'data.g.dart';
 
 @immutable
 @HiveType()
-class Article implements Entity {
+class Article implements Entity, Comparable {
   @HiveField(0)
   final Id<Article> id;
 
@@ -47,6 +47,11 @@ class Article implements Entity {
         assert(published != null),
         assert(section != null),
         assert(content != null);
+
+  @override
+  int compareTo(other) {
+    return published.compareTo(other.published);
+  }
 }
 
 @immutable

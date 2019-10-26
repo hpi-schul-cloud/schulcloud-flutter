@@ -9,6 +9,7 @@ void main() async {
   await initializeHive();
   final storage = StorageService();
   await storage.initialize();
+  await initializeCacheRootKeys(storage);
 
   runApp(ServicesProvider(storage: storage));
 }

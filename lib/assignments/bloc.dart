@@ -4,10 +4,9 @@ import 'package:flutter_cached/flutter_cached.dart';
 import 'package:flutter/foundation.dart';
 import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/courses/courses.dart';
+import 'package:schulcloud/hive.dart';
 
 import 'data.dart';
-
-const cacheAssignmentsKey = 'cacheAssignmentsKey';
 
 class Bloc {
   CacheController<List<Assignment>> assignments;
@@ -56,7 +55,8 @@ class Bloc {
           },
         ),
         submissions = HiveCacheController<Submission>(
-          parentKey: 'submissions',
+          storage: storage,
+          parentKey: cacheSubmissionsKey,
           fetcher: () async {
             var response = await network.get('submissions');
             var body = json.decode(response.body);

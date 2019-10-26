@@ -9,6 +9,22 @@ import 'package:schulcloud/news/news.dart';
 
 bool _isHiveInitialized = false;
 
+const cacheArticlesKey = 'articles';
+const cacheAssignmentsKey = 'sssignments';
+const cacheCoursesKey = 'courses';
+const cacheFilesKey = 'files';
+const cacheSubmissionsKey = 'submissions';
+
+Future<void> initializeCacheRootKeys(StorageService storage) async {
+  await storage.cache.setRootKeys([
+    cacheArticlesKey,
+    cacheAssignmentsKey,
+    cacheCoursesKey,
+    cacheFilesKey,
+    cacheSubmissionsKey,
+  ]);
+}
+
 Future<void> initializeHive() async {
   if (_isHiveInitialized) return;
   _isHiveInitialized = true;

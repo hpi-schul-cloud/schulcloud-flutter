@@ -5,10 +5,9 @@ import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:meta/meta.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:schulcloud/app/app.dart';
+import 'package:schulcloud/hive.dart';
 
 import 'data.dart';
-
-const cacheFilesKey = 'cacheFilesKey';
 
 class Bloc {
   NetworkService network;
@@ -17,7 +16,7 @@ class Bloc {
   CacheController<List<File>> files;
 
   Bloc({
-    StorageService storage,
+    @required StorageService storage,
     @required this.network,
     @required this.owner,
     this.parent,
@@ -27,15 +26,16 @@ class Bloc {
       storage: storage,
       parentKey: parent?.toString() ?? cacheFilesKey,
       fetcher: () async {
-        var queries = <String, String>{
+        final queries = <String, String>{
           'owner': owner.id.toString(),
           if (parent != null) 'parent': parent.id.toString(),
         };
-        var response = await network.get('fileStorage', parameters: queries);
-        var body = json.decode(response.body);
+        final response = await network.get('fileStorage', parameters: queries);
+        final body = json.decode(response.body);
+        final validFiles =
+            (body as List<dynamic>).where((file) => file['name'] != null);
         return [
-          for (var data
-              in (body as List<dynamic>).where((file) => file['name'] != null))
+          for (final data in validFiles)
             File(
               id: Id(data['_id']),
               name: data['name'],

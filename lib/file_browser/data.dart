@@ -6,7 +6,7 @@ import 'package:schulcloud/courses/courses.dart';
 part 'data.g.dart';
 
 @HiveType()
-class File implements Entity {
+class File implements Entity, Comparable {
   @HiveField(0)
   final Id<File> id;
 
@@ -47,4 +47,15 @@ class File implements Entity {
 
   operator ==(Object other) => other is File && path == other.path;
   int get hashCode => path.hashCode;
+
+  @override
+  int compareTo(other) {
+    if (other.isDirectory && this.isNotDirectory) {
+      return 1;
+    }
+    if (this.isDirectory && other.isNotDirectory) {
+      return -1;
+    }
+    return name.compareTo(other.name);
+  }
 }

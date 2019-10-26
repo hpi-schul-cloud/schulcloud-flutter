@@ -61,77 +61,107 @@ class FileBrowser extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ProxyProvider<NetworkService, Bloc>(
-      builder: (_, network, __) =>
-          Bloc(network: network, owner: owner, parent: parent),
+    return ProxyProvider2<StorageService, NetworkService, Bloc>(
+      builder: (_, storage, network, __) => Bloc(
+          storage: storage, network: network, owner: owner, parent: parent),
       child: Consumer<Bloc>(
         builder: (context, bloc, _) {
           return Scaffold(
-            appBar: showAppBar
-                ? PreferredSize(
-                    preferredSize: AppBar().preferredSize,
-                    child: FileBrowserAppBar(
-                      backgroundColor: ownerAsCourse?.color,
-                      title: parent?.name ?? ownerAsCourse?.name ?? 'My files',
-                    ),
-                  )
-                : null,
-            body: Material(
-              child: CachedBuilder(
-                controller: bloc.files,
-                errorBannerBuilder: (_, __) => Container(
-                  height: 48,
-                  color: Colors.red,
-                ),
-                errorScreenBuilder: (_, error) => ErrorScreen(error),
-                builder: (BuildContext context, List<File> files) {
-                  if (files.isEmpty) {
-                    return EmptyStateScreen(
-                      text: 'Seems like there are no files here.',
-                      child: SizedBox(
-                        width: 100,
-                        height: 100,
-                        child: FlareActor(
-                          'assets/empty_states/files.flr',
-                          alignment: Alignment.center,
-                          fit: BoxFit.contain,
-                          animation: 'idle',
-                        ),
-                      ),
-                    );
-                  }
-                  return ListView.builder(
-                    itemBuilder: (context, index) {
-                      if (index < files.length) {
-                        final file = files[index];
-                        return FileTile(
-                          file: file,
-                          onTap:
-                              file.isDirectory ? _openDirectory : _downloadFile,
-                        );
-                      } else if (index == files.length) {
-                        return Container(
-                          alignment: Alignment.center,
-                          padding: const EdgeInsets.all(16),
-                          child: Text('${files.length} items in total'),
-                        );
-                      }
-                      return null;
-                    },
-                  );
-                },
-              ),
+            appBar: _buildAppBar(),
+            body: CachedBuilder(
+              controller: bloc.files,
+              errorBannerBuilder: (_, __) =>
+                  Container(height: 48, color: Colors.red),
+              errorScreenBuilder: (_, error) => ErrorScreen(error),
+              builder: (BuildContext context, List<File> files) {
+                if (files.isEmpty) {
+                  return _buildEmptyState();
+                }
+                return FileList(
+                  files: files,
+                  onOpenDirectory: (directory) =>
+                      _openDirectory(context, directory),
+                  onDownloadFile: (file) => _downloadFile(context, file),
+                );
+              },
             ),
           );
         },
       ),
     );
   }
+
+  Widget _buildAppBar() {
+    if (!showAppBar) {
+      return null;
+    }
+    return PreferredSize(
+      preferredSize: AppBar().preferredSize,
+      child: FileBrowserAppBar(
+        backgroundColor: ownerAsCourse?.color,
+        title: parent?.name ?? ownerAsCourse?.name ?? 'My files',
+      ),
+    );
+  }
+
+  Widget _buildEmptyState() {
+    return const EmptyStateScreen(
+      text: 'Seems like there are no files here.',
+      child: SizedBox(
+        width: 100,
+        height: 100,
+        child: FlareActor(
+          'assets/empty_states/files.flr',
+          alignment: Alignment.center,
+          fit: BoxFit.contain,
+          animation: 'idle',
+        ),
+      ),
+    );
+  }
+}
+
+class FileList extends StatelessWidget {
+  const FileList({
+    Key key,
+    @required this.files,
+    @required this.onOpenDirectory,
+    @required this.onDownloadFile,
+  })  : assert(files != null),
+        assert(onOpenDirectory != null),
+        assert(onDownloadFile != null),
+        super(key: key);
+
+  final List<File> files;
+  final void Function(File directory) onOpenDirectory;
+  final void Function(File file) onDownloadFile;
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView.builder(
+      itemBuilder: (context, index) {
+        if (index < files.length) {
+          final file = files[index];
+          return FileTile(
+            file: file,
+            onTap: file.isDirectory ? onOpenDirectory : onDownloadFile,
+          );
+        } else if (index == files.length) {
+          return Container(
+            alignment: Alignment.center,
+            padding: const EdgeInsets.all(16),
+            child: Text('${files.length} items in total'),
+          );
+        }
+        return null;
+      },
+    );
+  }
 }
 
 class FileTile extends StatelessWidget {
   final File file;
-  final void Function(BuildContext context, File file) onTap;
+  final void Function(File file) onTap;
 
   FileTile({Key key, @required this.file, @required this.onTap})
       : assert(file != null),
@@ -144,7 +174,7 @@ class FileTile extends StatelessWidget {
       title: Text(file.name),
       subtitle: file.isNotDirectory ? Text(file.sizeAsString) : null,
       leading: Icon(file.isDirectory ? Icons.folder : Icons.insert_drive_file),
-      onTap: () => onTap(context, file),
+      onTap: () => onTap(file),
     );
   }
 }

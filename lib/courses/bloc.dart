@@ -3,10 +3,9 @@ import 'dart:convert';
 import 'package:flutter_cached/flutter_cached.dart';
 import 'package:meta/meta.dart';
 import 'package:schulcloud/app/app.dart';
+import 'package:schulcloud/hive.dart';
 
 import 'data.dart';
-
-const cacheCoursesKey = 'cacheCoursesKey';
 
 class Bloc {
   StorageService storage;
@@ -58,7 +57,7 @@ class Bloc {
         courseId,
         () => HiveCacheController(
               storage: storage,
-              parentKey: '$courseId',
+              parentKey: courseId.id,
               fetcher: () async {
                 var response = await network.get('lessons?courseId=$courseId');
                 var body = json.decode(response.body);

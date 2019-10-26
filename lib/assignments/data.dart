@@ -7,7 +7,7 @@ import 'package:schulcloud/file_browser/file_browser.dart';
 part 'data.g.dart';
 
 @HiveType()
-class Assignment implements Entity {
+class Assignment implements Entity, Comparable {
   @HiveField(0)
   final Id<Assignment> id;
 
@@ -75,6 +75,11 @@ class Assignment implements Entity {
         assert(dueDate != null),
         assert(availableDate != null),
         assert(teacherId != null);
+
+  @override
+  int compareTo(other) {
+    return dueDate.compareTo(other.dueDate);
+  }
 }
 
 @HiveType()

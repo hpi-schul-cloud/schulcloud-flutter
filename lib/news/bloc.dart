@@ -3,16 +3,19 @@ import 'dart:convert';
 import 'package:flutter_cached/flutter_cached.dart';
 import 'package:flutter/foundation.dart';
 import 'package:schulcloud/app/app.dart';
+import 'package:schulcloud/hive.dart';
 
 import 'data.dart';
 
 class Bloc {
   CacheController<List<Article>> articles;
 
-  Bloc({@required NetworkService network})
-      : assert(network != null),
+  Bloc({@required StorageService storage, @required NetworkService network})
+      : assert(storage != null),
+        assert(network != null),
         articles = HiveCacheController<Article>(
-          parentKey: 'articles',
+          storage: storage,
+          parentKey: cacheArticlesKey,
           fetcher: () async {
             var response = await network.get('news?');
             var body = json.decode(response.body);

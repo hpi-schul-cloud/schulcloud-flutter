@@ -104,17 +104,22 @@ class HiveCacheController<Item extends Entity>
     @required this.storage,
     @required this.parentKey,
     Future<List<Item>> Function() fetcher,
-  }) : super(
+  })  : assert(storage != null),
+        assert(parentKey != null),
+        super(
           saveToCache: (items) async {
-            await Future.wait([
-              for (var item in items)
-                storage.cache.put('${item.id}', parentKey, item),
-            ]);
+            for (var item in items) {
+              await storage.cache.put(item.id.id, parentKey, item);
+            }
           },
           loadFromCache: () async {
-            return await storage.cache.getChildrenOfType<Item>(parentKey);
+            return await storage.cache.getChildrenOfType<Item>(parentKey)
+              ..sort();
           },
-          fetcher: fetcher,
+          fetcher: () async {
+            return await fetcher()
+              ..sort();
+          },
         );
 }
 

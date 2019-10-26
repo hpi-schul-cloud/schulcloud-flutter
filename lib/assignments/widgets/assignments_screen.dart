@@ -22,9 +22,8 @@ class HomeworkScreen extends StatelessWidget {
           builder: (context, bloc, _) {
             return CachedBuilder(
               controller: bloc.assignments,
-              errorBannerBuilder: (_, error) =>
-                  Container(height: 48, color: Colors.red),
-              errorScreenBuilder: (_, error) => Container(color: Colors.red),
+              errorBannerBuilder: (_, error) => ErrorBanner(error),
+              errorScreenBuilder: (_, error) => ErrorScreen(error),
               builder: (BuildContext context, List<Assignment> homework) {
                 var assignments = groupBy<Assignment, DateTime>(
                   homework,

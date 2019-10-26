@@ -19,9 +19,8 @@ class CoursesScreen extends StatelessWidget {
           builder: (context, bloc, _) {
             return CachedBuilder<List<Course>>(
               controller: bloc.courses,
-              errorBannerBuilder: (_, error) =>
-                  Container(height: 48, color: Colors.red),
-              errorScreenBuilder: (_, error) => Container(color: Colors.red),
+              errorBannerBuilder: (_, error) => ErrorBanner(error),
+              errorScreenBuilder: (_, error) => ErrorScreen(error),
               builder: (BuildContext context, List<Course> courses) {
                 if (courses.isEmpty) {
                   return EmptyStateScreen(
