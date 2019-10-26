@@ -15,7 +15,7 @@ class EmptyStateScreen extends StatelessWidget {
   final List<Widget> actions;
   final VoidCallback onRetry;
 
-  EmptyStateScreen({
+  const EmptyStateScreen({
     @required this.text,
     this.child,
     this.actions = const [],
