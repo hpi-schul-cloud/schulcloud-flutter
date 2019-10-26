@@ -1,13 +1,22 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:meta/meta.dart';
 import 'package:http/http.dart' as http;
 
+import '../utils.dart';
 import 'storage.dart';
 
 class NoConnectionToServerError {}
 
 class AuthenticationError {}
+
+class TooManyRequestsError {
+  TooManyRequestsError({@required this.timeToWait})
+      : assert(timeToWait != null);
+
+  Duration timeToWait;
+}
 
 /// A service that offers networking post and get requests to the backend
 /// servers. It depends on the authentication storage, so if the user's token
@@ -31,13 +40,23 @@ class NetworkService {
       await _ensureConnectionExists();
       var response = await call('$apiUrl/$path');
 
+      // Succeed, if its a 2xx status code.
+      if (response.statusCode ~/ 100 == 2) {
+        return response;
+      }
+
       if (response.statusCode == 401) {
         throw AuthenticationError();
       }
 
-      // Succeed, if its a 2xx status code.
-      if (response.statusCode ~/ 100 == 2) {
-        return response;
+      if (response.statusCode == 429) {
+        throw TooManyRequestsError(
+          timeToWait: tryToParse(() {
+            return Duration(
+              seconds: json.decode(response.body)['data']['timeToWait'],
+            );
+          }, defaultValue: Duration(seconds: 10)),
+        );
       }
 
       throw UnimplementedError(
