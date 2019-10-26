@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 
 import '../services/network.dart';
 import '../utils.dart';
 import 'buttons.dart';
-import 'empty_state.dart';
 
 /// A screen that displays an [error].
 class ErrorBanner extends StatelessWidget {
