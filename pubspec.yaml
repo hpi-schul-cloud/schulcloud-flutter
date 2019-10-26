@@ -25,6 +25,7 @@ dependencies:
   flutter_svg: ^0.14.2
   flutter_villains: ^1.2.0
   hive: ^1.0.0
+  hive_cache: ^0.1.3
   http: ^0.12.0
   intl: ^0.16.0
   list_diff: ^1.1.3

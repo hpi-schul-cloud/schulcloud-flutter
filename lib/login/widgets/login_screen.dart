@@ -52,9 +52,12 @@ class _LoginContentState extends State<LoginContent> {
         builder: (_) => LoggedInScreen(),
       ));
     } on NoConnectionToServerError catch (_) {
-      setState(() => _ambientError = "No connection to the server.");
+      setState(() => _ambientError = 'No connection to the server.');
     } on AuthenticationError catch (_) {
-      setState(() => _ambientError = "Authentication failed.");
+      setState(() => _ambientError = 'Authentication failed.');
+    } on TooManyRequestsError catch (error) {
+      setState(() => _ambientError =
+          'Too many requests. Try again in ${error.timeToWait}.');
     } finally {
       setState(() => _isLoading = false);
     }

@@ -7,17 +7,22 @@ import 'package:schulcloud/courses/courses.dart';
 
 import 'data.dart';
 
+const cacheAssignmentsKey = 'cacheAssignmentsKey';
+
 class Bloc {
   CacheController<List<Assignment>> assignments;
   CacheController<List<Submission>> submissions;
 
   Bloc({
+    @required StorageService storage,
     @required NetworkService network,
     @required UserFetcherService userFetcher,
-  })  : assert(network != null),
+  })  : assert(storage != null),
+        assert(network != null),
         assert(userFetcher != null),
         assignments = HiveCacheController<Assignment>(
-          name: 'homework',
+          storage: storage,
+          parentKey: cacheAssignmentsKey,
           fetcher: () async {
             var response = await network.get('homework');
             var body = json.decode(response.body);
@@ -51,7 +56,7 @@ class Bloc {
           },
         ),
         submissions = HiveCacheController<Submission>(
-          name: 'submissions',
+          parentKey: 'submissions',
           fetcher: () async {
             var response = await network.get('submissions');
             var body = json.decode(response.body);

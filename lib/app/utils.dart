@@ -2,7 +2,6 @@ import 'dart:ui';
 
 import 'package:flutter_cached/flutter_cached.dart';
 import 'package:flutter/widgets.dart';
-import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
 import 'package:meta/meta.dart';
 import 'package:provider/provider.dart';
@@ -69,6 +68,14 @@ Future<bool> tryLaunchingUrl(String url) async {
   return false;
 }
 
+T tryToParse<T>(T Function() parser, {@required T defaultValue}) {
+  try {
+    return parser();
+  } catch (_) {
+    return defaultValue;
+  }
+}
+
 /// An error indicating that a permission wasn't granted by the user.
 class PermissionNotGranted<T> implements Exception {
   String toString() => "A permission wasn't granted by the user.";
@@ -88,48 +95,27 @@ abstract class Entity {
   const Entity();
 }
 
-class HiveCacheController<Item> extends CacheController<List<Item>> {
-  final String name;
+class HiveCacheController<Item extends Entity>
+    extends CacheController<List<Item>> {
+  final StorageService storage;
+  final String parentKey;
 
   HiveCacheController({
-    @required this.name,
-    @required Future<List<Item>> Function() fetcher,
+    @required this.storage,
+    @required this.parentKey,
+    Future<List<Item>> Function() fetcher,
   }) : super(
           saveToCache: (items) async {
-            // When fetching items, they are returned sorted by their keys.
-            // Integer keys can only go to 255, so we need to use Strings as
-            // the only other alternative.
-            // So we generate strings that are stored in the order of the
-            // items.
-            var box = await Hive.openBox(name);
-            await box.clear();
-            await box.putAll({
-              for (var i = 0; i < items.length; i++)
-                _generateHiveKey(i): items[i],
-            });
+            await Future.wait([
+              for (var item in items)
+                storage.cache.put('${item.id}', parentKey, item),
+            ]);
           },
           loadFromCache: () async {
-            var box = await Hive.openBox(name);
-            var items = box.toMap().values.toList().cast<Item>();
-            if (items.isEmpty) {
-              throw Exception('Item not in cache.');
-            } else {
-              return items;
-            }
+            return await storage.cache.getChildrenOfType<Item>(parentKey);
           },
           fetcher: fetcher,
         );
-
-  static _generateHiveKey(int index) {
-    const chars = 'abcdefghijklmnopqrstuvwxyz';
-    var key = '';
-
-    for (var i = 0; i < 10; i++) {
-      key += chars[index % chars.length];
-      index ~/= chars.length;
-    }
-    return key;
-  }
 }
 
 Future<void> logOut(BuildContext context) async {

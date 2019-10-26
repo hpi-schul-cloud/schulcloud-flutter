@@ -12,7 +12,7 @@ class Bloc {
   Bloc({@required NetworkService network})
       : assert(network != null),
         articles = HiveCacheController<Article>(
-          name: 'articles',
+          parentKey: 'articles',
           fetcher: () async {
             var response = await network.get('news?');
             var body = json.decode(response.body);

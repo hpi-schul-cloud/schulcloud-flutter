@@ -27,9 +27,10 @@ class CourseDetailsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ProxyProvider2<NetworkService, UserFetcherService, Bloc>(
-      builder: (_, network, userFetcher, __) =>
-          Bloc(network: network, userFetcher: userFetcher),
+    return ProxyProvider3<StorageService, NetworkService, UserFetcherService,
+        Bloc>(
+      builder: (_, storage, network, userFetcher, __) =>
+          Bloc(storage: storage, network: network, userFetcher: userFetcher),
       child: Scaffold(
         appBar: AppBar(
           iconTheme: IconThemeData(color: Colors.black),

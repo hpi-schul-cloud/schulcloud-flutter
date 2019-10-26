@@ -6,19 +6,26 @@ import 'package:schulcloud/app/app.dart';
 
 import 'data.dart';
 
+const cacheCoursesKey = 'cacheCoursesKey';
+
 class Bloc {
+  StorageService storage;
   NetworkService network;
   UserFetcherService userFetcher;
 
   CacheController<List<Course>> courses;
   final _lessons = <Id<Course>, CacheController<List<Lesson>>>{};
 
-  Bloc({@required NetworkService network, @required this.userFetcher})
-      : assert(network != null),
+  Bloc({
+    @required this.storage,
+    @required NetworkService network,
+    @required this.userFetcher,
+  })  : assert(network != null),
         assert(userFetcher != null),
         this.network = network,
         courses = HiveCacheController<Course>(
-          name: 'courses',
+          storage: storage,
+          parentKey: cacheCoursesKey,
           fetcher: () async {
             var response = await network.get('courses');
             var body = json.decode(response.body);
@@ -50,7 +57,8 @@ class Bloc {
     return _lessons.putIfAbsent(
         courseId,
         () => HiveCacheController(
-              name: 'lessons of $courseId',
+              storage: storage,
+              parentKey: '$courseId',
               fetcher: () async {
                 var response = await network.get('lessons?courseId=$courseId');
                 var body = json.decode(response.body);
