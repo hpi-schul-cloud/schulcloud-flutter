@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_cached/flutter_cached.dart';
-import 'package:provider/provider.dart';
+import 'package:schulcloud/login/login.dart';
 import 'package:schulcloud/settings/settings.dart';
 
-import '../data.dart';
 import '../app.dart';
-import '../utils.dart';
+import '../data.dart';
 import 'schulcloud_app.dart';
 
 /// A menu displaying the current user and [NavigationItem]s.
@@ -63,7 +62,7 @@ class Menu extends StatelessWidget {
             children: [
               SizedBox(height: 8),
               CachedRawBuilder<User>(
-                controller: Provider.of<MeService>(context).meController,
+                controller: UserFetcherService.of(context).fetchCurrentUser(),
                 builder: (context, update) {
                   return Text(
                     update.data?.name ?? '-',
@@ -72,15 +71,10 @@ class Menu extends StatelessWidget {
                 },
               ),
               StreamBuilder<String>(
-                stream: Provider.of<StorageService>(context).email,
+                stream: StorageService.of(context).email,
+                initialData: '-',
                 builder: (context, snapshot) {
-                  // We don't need to do extensive error handling here,
-                  // because it shouldn't be possible to open the menu
-                  // without being logged in.
-                  return Text(
-                    snapshot.data ?? '-',
-                    style: TextStyle(fontSize: 14),
-                  );
+                  return Text(snapshot.data, style: TextStyle(fontSize: 14));
                 },
               ),
               SizedBox(height: 8),

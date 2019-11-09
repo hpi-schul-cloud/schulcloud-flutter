@@ -1,41 +1,29 @@
-import 'dart:convert';
-
+import 'package:flutter/widgets.dart';
 import 'package:flutter_cached/flutter_cached.dart';
-import 'package:flutter/foundation.dart';
+import 'package:meta/meta.dart';
+import 'package:provider/provider.dart';
 import 'package:schulcloud/app/app.dart';
-import 'package:schulcloud/hive.dart';
 
 import 'data.dart';
 
 class Bloc {
-  CacheController<List<Article>> articles;
-
-  Bloc({@required StorageService storage, @required NetworkService network})
-      : assert(storage != null),
+  Bloc({
+    @required this.storage,
+    @required this.network,
+    @required this.userFetcher,
+  })  : assert(storage != null),
         assert(network != null),
-        articles = HiveCacheController<Article>(
-          storage: storage,
-          parentKey: cacheArticlesKey,
-          fetcher: () async {
-            var response = await network.get('news?');
-            var body = json.decode(response.body);
+        assert(userFetcher != null);
 
-            return [
-              for (var data in body['data'] as List<dynamic>)
-                Article(
-                  id: Id<Article>(data['_id']),
-                  title: data['title'],
-                  authorId: data['creatorId'],
-                  author: Author(
-                    id: Id<Author>(data['creator']['_id']),
-                    name:
-                        '${data['creator']['firstName']} ${data['creator']['lastName']}',
-                  ),
-                  section: 'Section',
-                  published: DateTime.parse(data['displayAt']),
-                  content: removeHtmlTags(data['content']),
-                ),
-            ];
-          },
-        );
+  final StorageService storage;
+  final NetworkService network;
+  final UserFetcherService userFetcher;
+
+  static Bloc of(BuildContext context) => Provider.of<Bloc>(context);
+
+  CacheController<List<Article>> fetchArticles() => fetchList(
+        storage: storage,
+        makeNetworkCall: () => network.get('news'),
+        parser: (data) => Article.fromJson(data),
+      );
 }

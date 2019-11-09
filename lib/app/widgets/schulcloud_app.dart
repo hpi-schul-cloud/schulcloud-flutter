@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:rxdart/rxdart.dart';
-import 'package:schulcloud/assignments/assignments.dart';
-import 'package:schulcloud/courses/courses.dart';
+import 'package:schulcloud/app/app.dart';
+import 'package:schulcloud/assignment/assignment.dart';
+import 'package:schulcloud/course/course.dart';
 import 'package:schulcloud/dashboard/dashboard.dart';
+import 'package:schulcloud/file/file.dart';
+import 'package:schulcloud/login/login.dart';
 import 'package:schulcloud/news/news.dart';
 
 import 'app_bar.dart';
-import 'splash_screen.dart';
 import 'page_route.dart';
 
 const _textTheme = const TextTheme(
@@ -56,7 +58,9 @@ class SchulCloudApp extends StatelessWidget {
         textTheme: _textTheme,
       ),
       darkTheme: ThemeData(),
-      home: SplashScreen(),
+      home: StorageService.of(context).hasToken
+          ? LoggedInScreen()
+          : LoginScreen(),
     );
   }
 }
@@ -112,7 +116,7 @@ class _LoggedInScreenState extends State<LoggedInScreen> {
       Screen.news: (_) => NewsScreen(),
       Screen.files: (_) => FilesScreen(),
       Screen.courses: (_) => CoursesScreen(),
-      Screen.homework: (_) => HomeworkScreen(),
+      Screen.homework: (_) => AssignmentsScreen(),
     }[screen];
 
     navigator

@@ -10,17 +10,19 @@ import 'course_card.dart';
 class CoursesScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return ProxyProvider3<StorageService, NetworkService, UserFetcherService,
-        Bloc>(
-      builder: (_, storage, network, userFetcher, __) =>
-          Bloc(storage: storage, network: network, userFetcher: userFetcher),
-      child: Scaffold(
-        body: Consumer<Bloc>(
-          builder: (context, bloc, _) {
-            return CachedBuilder<List<Course>>(
-              controller: bloc.courses,
-              errorBannerBuilder: (_, error) => ErrorBanner(error),
-              errorScreenBuilder: (_, error) => ErrorScreen(error),
+    return Provider<Bloc>.value(
+      value: Bloc(
+        storage: StorageService.of(context),
+        network: NetworkService.of(context),
+        userFetcher: UserFetcherService.of(context),
+      ),
+      child: Consumer<Bloc>(
+        builder: (_, bloc, __) {
+          return Scaffold(
+            body: CachedBuilder<List<Course>>(
+              controller: bloc.fetchCourses(),
+              errorBannerBuilder: (_, error, st) => ErrorBanner(error, st),
+              errorScreenBuilder: (_, error, st) => ErrorScreen(error, st),
               builder: (BuildContext context, List<Course> courses) {
                 if (courses.isEmpty) {
                   return EmptyStateScreen(
@@ -36,9 +38,9 @@ class CoursesScreen extends StatelessWidget {
                   ],
                 );
               },
-            );
-          },
-        ),
+            ),
+          );
+        },
       ),
     );
   }

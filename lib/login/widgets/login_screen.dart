@@ -16,7 +16,7 @@ class LoginScreen extends StatelessWidget {
         child: CustomScrollView(
           slivers: <Widget>[
             SliverList(
-              delegate: SliverChildBuilderDelegate(_buildSliver),
+              delegate: SliverChildListDelegate(_buildContent(context)),
             ),
           ],
         ),
@@ -24,16 +24,13 @@ class LoginScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildSliver(BuildContext context, int index) {
+  List<Widget> _buildContent(BuildContext context) {
     final mediaQuery = MediaQuery.of(context);
     final theme = Theme.of(context);
 
-    if (index == 0) {
-      return SizedBox(height: mediaQuery.padding.top);
-    }
-
-    if (index == 1) {
-      return ConstrainedBox(
+    return [
+      SizedBox(height: mediaQuery.padding.top),
+      ConstrainedBox(
         constraints: BoxConstraints(
           minHeight: mediaQuery.size.height -
               100 -
@@ -41,11 +38,8 @@ class LoginScreen extends StatelessWidget {
               mediaQuery.padding.top,
         ),
         child: LoginForm(),
-      );
-    }
-
-    if (index == 2) {
-      return SlantedSection(
+      ),
+      SlantedSection(
         color: theme.primaryColor,
         slantBottom: 0,
         child: Container(
@@ -54,11 +48,8 @@ class LoginScreen extends StatelessWidget {
           alignment: Alignment.center,
           child: Text('scroll down for more information'),
         ),
-      );
-    }
-
-    if (index == 3) {
-      return SlantedSection(
+      ),
+      SlantedSection(
         color: theme.primaryColor,
         slantTop: 0,
         child: Padding(
@@ -76,17 +67,12 @@ class LoginScreen extends StatelessWidget {
             textAlign: TextAlign.justify,
           ),
         ),
-      );
-    }
-
-    if (index == 4) {
-      return Container(
+      ),
+      Container(
         padding: const EdgeInsets.all(16),
         alignment: Alignment.center,
         child: Text('There could go some other information down here.'),
-      );
-    }
-
-    return null;
+      ),
+    ];
   }
 }

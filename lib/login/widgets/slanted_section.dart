@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 
-enum SlantedSectionType { onlyTopSlanted, onlyBottomSlanted, bothSlanted }
-
 class SlantedSection extends StatelessWidget {
   const SlantedSection({
     Key key,
@@ -68,9 +66,9 @@ class SlantedSectionPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(CustomPainter oldDelegate) {
-    return oldDelegate is SlantedSectionPainter &&
+    return !(oldDelegate is SlantedSectionPainter &&
         oldDelegate.color == color &&
         oldDelegate.slantTop == slantTop &&
-        oldDelegate.slantBottom == slantBottom;
+        oldDelegate.slantBottom == slantBottom);
   }
 }

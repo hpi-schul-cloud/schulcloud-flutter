@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_cached/flutter_cached.dart';
 
+import '../bloc.dart';
 import '../data.dart';
 import 'course_detail_screen.dart';
 
@@ -36,9 +38,16 @@ class CourseCard extends StatelessWidget {
                 course.name,
                 style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
-              subtitle: Text(course.teachers
-                  .map((teacher) => teacher.shortName)
-                  .join(', ')),
+              subtitle: CachedRawBuilder(
+                controllerBuilder: () =>
+                    Bloc.of(context).fetchTeachersOfCourse(course),
+                builder: (_, update) {
+                  final teachers = update.data;
+                  return Text((teachers ?? [])
+                      .map((teacher) => teacher.shortName)
+                      .join(', '));
+                },
+              ),
             )
           ],
         ),

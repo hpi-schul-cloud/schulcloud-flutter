@@ -1,12 +1,6 @@
 import 'package:flutter/material.dart';
 
 class LoginInput extends StatelessWidget {
-  final TextEditingController controller;
-  final String label;
-  final String error;
-  final bool obscureText;
-  final VoidCallback onChanged;
-
   LoginInput({
     @required this.controller,
     @required this.label,
@@ -15,6 +9,12 @@ class LoginInput extends StatelessWidget {
     this.onChanged,
   })  : assert(controller != null),
         assert(label != null);
+
+  final TextEditingController controller;
+  final String label;
+  final String error;
+  final bool obscureText;
+  final VoidCallback onChanged;
 
   @override
   Widget build(BuildContext context) {

@@ -5,18 +5,18 @@ import 'package:schulcloud/app/app.dart';
 
 class InvalidLoginSyntaxError {}
 
+const _emailRegExp =
+    r"^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?)*$";
+
 class Bloc {
-  static const emailRegExp =
-      r"^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?)*$";
-
-  final StorageService authStorage;
-  final NetworkService network;
-
   Bloc({@required this.authStorage, @required this.network})
       : assert(authStorage != null),
         assert(network != null);
 
-  bool isEmailValid(String email) => RegExp(emailRegExp).hasMatch(email);
+  final StorageService authStorage;
+  final NetworkService network;
+
+  bool isEmailValid(String email) => RegExp(_emailRegExp).hasMatch(email);
   bool isPasswordValid(String password) => password.isNotEmpty;
 
   Future<void> login(String email, String password) async {

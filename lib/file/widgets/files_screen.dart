@@ -3,18 +3,21 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:schulcloud/app/app.dart';
-import 'package:schulcloud/file_browser/file_browser.dart';
+import 'package:schulcloud/course/course.dart';
 
 import '../bloc.dart';
-import '../data.dart';
+import 'file_browser.dart';
+import 'page_route.dart';
 
 class FilesScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return ProxyProvider3<StorageService, NetworkService, UserFetcherService,
-        Bloc>(
-      builder: (_, storage, network, userFetcher, __) =>
-          Bloc(storage: storage, network: network, userFetcher: userFetcher),
+    return Provider<Bloc>.value(
+      value: Bloc(
+        storage: StorageService.of(context),
+        network: NetworkService.of(context),
+        userFetcher: UserFetcherService.of(context),
+      ),
       child: DefaultTabController(
         length: 2,
         child: Scaffold(
@@ -58,9 +61,15 @@ class _UserFilesList extends StatelessWidget {
               'may be shared with others.',
         ),
         Expanded(
-          child: FileBrowser(
-            owner: Provider.of<MeService>(context).me,
-            showAppBar: false,
+          child: CachedRawBuilder(
+            controller: UserFetcherService.of(context).fetchCurrentUser(),
+            builder: (context, CacheUpdate<User> update) {
+              if (update.hasData) {
+                return FileBrowser(owner: update.data, showAppBar: false);
+              } else {
+                return Container();
+              }
+            },
           ),
         ),
       ],
@@ -86,10 +95,9 @@ class _CourseFilesList extends StatelessWidget {
         ),
         Expanded(
           child: CachedBuilder(
-            controller: Provider.of<Bloc>(context).courses,
-            errorBannerBuilder: (_, error) =>
-                Container(color: Colors.red, height: 48),
-            errorScreenBuilder: (_, error) => ErrorScreen(error),
+            controller: Bloc.of(context).fetchCourses(),
+            errorBannerBuilder: (_, error, st) => ErrorBanner(error, st),
+            errorScreenBuilder: (_, error, st) => ErrorScreen(error, st),
             builder: (BuildContext context, List<Course> courses) {
               return ListView(
                 children: <Widget>[

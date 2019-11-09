@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
 import 'package:schulcloud/app/app.dart';
-import 'package:schulcloud/courses/courses.dart';
+import 'package:schulcloud/course/course.dart';
 
 import '../bloc.dart';
 import '../data.dart';
@@ -13,6 +13,8 @@ import 'page_route.dart';
 
 class FileBrowser extends StatelessWidget {
   final Entity owner;
+  Course get ownerAsCourse => owner is Course ? owner : null;
+
   final File parent;
 
   /// Whether this widget is embedded into another screen. If [true], doesn't
@@ -24,11 +26,8 @@ class FileBrowser extends StatelessWidget {
     this.parent,
     this.showAppBar = true,
   })  : assert(owner != null),
-        assert(owner is Course || owner is User),
         assert(parent == null || parent.isDirectory),
         assert(showAppBar != null);
-
-  Course get ownerAsCourse => owner is Course ? owner as Course : null;
 
   void _openDirectory(BuildContext context, File file) {
     assert(file.isDirectory);
@@ -42,7 +41,10 @@ class FileBrowser extends StatelessWidget {
     assert(file.isNotDirectory);
 
     try {
-      await Provider.of<Bloc>(context).downloadFile(file);
+      await Bloc.of(context).downloadFile(
+        network: Provider.of<NetworkService>(context),
+        file: file,
+      );
       Scaffold.of(context).showSnackBar(SnackBar(
         content: Text('Downloading ${file.name}'),
       ));
@@ -53,7 +55,7 @@ class FileBrowser extends StatelessWidget {
         ),
         action: SnackBarAction(
           label: 'Allow',
-          onPressed: Provider.of<Bloc>(context).ensureStoragePermissionGranted,
+          onPressed: Bloc.of(context).ensureStoragePermissionGranted,
         ),
       ));
     }
@@ -61,18 +63,20 @@ class FileBrowser extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ProxyProvider2<StorageService, NetworkService, Bloc>(
-      builder: (_, storage, network, __) => Bloc(
-          storage: storage, network: network, owner: owner, parent: parent),
+    return Provider<Bloc>.value(
+      value: Bloc(
+        storage: StorageService.of(context),
+        network: NetworkService.of(context),
+        userFetcher: UserFetcherService.of(context),
+      ),
       child: Consumer<Bloc>(
         builder: (context, bloc, _) {
           return Scaffold(
             appBar: _buildAppBar(),
-            body: CachedBuilder(
-              controller: bloc.files,
-              errorBannerBuilder: (_, __) =>
-                  Container(height: 48, color: Colors.red),
-              errorScreenBuilder: (_, error) => ErrorScreen(error),
+            body: CachedBuilder<List<File>>(
+              controller: Bloc.of(context).fetchFiles(owner.id, parent),
+              errorBannerBuilder: (_, error, st) => ErrorBanner(error, st),
+              errorScreenBuilder: (_, error, st) => ErrorScreen(error, st),
               builder: (BuildContext context, List<File> files) {
                 if (files.isEmpty) {
                   return _buildEmptyState();

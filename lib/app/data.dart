@@ -1,13 +1,36 @@
 import 'package:hive/hive.dart';
 import 'package:meta/meta.dart';
-
-import 'utils.dart';
+import 'package:schulcloud/app/app.dart';
 
 part 'data.g.dart';
 
 @immutable
 @HiveType()
 class User implements Entity {
+  User({
+    @required this.id,
+    @required this.firstName,
+    @required this.lastName,
+    @required this.email,
+    @required this.schoolId,
+    @required this.displayName,
+  })  : assert(id != null),
+        assert(firstName != null),
+        assert(lastName != null),
+        assert(email != null),
+        assert(schoolId != null),
+        assert(displayName != null);
+
+  User.fromJson(Map<String, dynamic> data)
+      : this(
+          id: Id(data['_id']),
+          firstName: data['firstName'],
+          lastName: data['lastName'],
+          email: data['email'],
+          schoolId: data['schoolId'],
+          displayName: data['displayName'],
+        );
+
   @HiveField(0)
   final Id<User> id;
 
@@ -21,25 +44,11 @@ class User implements Entity {
   final String email;
 
   @HiveField(4)
-  final String schoolToken;
+  final String schoolId;
 
   @HiveField(5)
   final String displayName;
 
   String get name => '$firstName $lastName';
   String get shortName => '${firstName[0]}. $lastName';
-
-  User({
-    @required this.id,
-    @required this.firstName,
-    @required this.lastName,
-    @required this.email,
-    @required this.schoolToken,
-    @required this.displayName,
-  })  : assert(id != null),
-        assert(firstName != null),
-        assert(lastName != null),
-        assert(email != null),
-        assert(schoolToken != null),
-        assert(displayName != null);
 }

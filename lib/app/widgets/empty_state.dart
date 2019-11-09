@@ -6,15 +6,10 @@ import 'buttons.dart';
 /// A screen with no content on it. Instead a placeholder is displayed,
 /// consisting of [child] (commonly an image) and a text underneath as well as
 /// some actions that the user can take.
-/// Trying to executed the last action again (like, fetching stuff from the
+/// Trying to execute the last action again (like, fetching stuff from the
 /// server) is a very common action, so there's an extra parameter [onRetry]
 /// that - if set - causes a "Try again" button to be displayed.
 class EmptyStateScreen extends StatelessWidget {
-  final Widget child;
-  final String text;
-  final List<Widget> actions;
-  final VoidCallback onRetry;
-
   const EmptyStateScreen({
     @required this.text,
     this.child,
@@ -22,6 +17,11 @@ class EmptyStateScreen extends StatelessWidget {
     this.onRetry,
   })  : assert(text != null),
         assert(actions != null);
+
+  final Widget child;
+  final String text;
+  final List<Widget> actions;
+  final VoidCallback onRetry;
 
   @override
   Widget build(BuildContext context) {
@@ -31,10 +31,7 @@ class EmptyStateScreen extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           child ??
-              LimitedBox(
-                maxHeight: 300,
-                child: SvgPicture.asset('assets/empty_states/default.svg'),
-              ),
+              SvgPicture.asset('assets/empty_states/default.svg', height: 300),
           Text(text, textAlign: TextAlign.center),
           if (actions.isNotEmpty || onRetry != null) ...[
             SizedBox(height: 16),

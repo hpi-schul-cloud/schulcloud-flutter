@@ -4,61 +4,63 @@ import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:provider/provider.dart';
 import 'package:schulcloud/app/app.dart';
-import 'package:schulcloud/courses/courses.dart';
+import 'package:schulcloud/course/course.dart';
 
 import '../bloc.dart';
 import '../data.dart';
 import 'assignment_details_screen.dart';
 
-class HomeworkScreen extends StatelessWidget {
+class AssignmentsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return ProxyProvider3<StorageService, NetworkService, UserFetcherService,
-        Bloc>(
-      builder: (_, storage, network, userFetcher, __) =>
-          Bloc(storage: storage, network: network, userFetcher: userFetcher),
-      child: Scaffold(
-        body: Consumer<Bloc>(
-          builder: (context, bloc, _) {
-            return CachedBuilder(
-              controller: bloc.assignments,
-              errorBannerBuilder: (_, error) => ErrorBanner(error),
-              errorScreenBuilder: (_, error) => ErrorScreen(error),
+    return Provider<Bloc>.value(
+      value: Bloc(
+        storage: StorageService.of(context),
+        network: NetworkService.of(context),
+      ),
+      child: Consumer<Bloc>(
+        builder: (_, bloc, __) {
+          return Scaffold(
+            body: CachedBuilder<List<Assignment>>(
+              controller: bloc.fetchAssignments(),
+              errorBannerBuilder: (_, error, st) => ErrorBanner(error, st),
+              errorScreenBuilder: (_, error, st) => ErrorScreen(error, st),
               builder: (BuildContext context, List<Assignment> homework) {
-                var assignments = groupBy<Assignment, DateTime>(
+                final assignments = groupBy<Assignment, DateTime>(
                   homework,
                   (Assignment h) =>
                       DateTime(h.dueDate.year, h.dueDate.month, h.dueDate.day),
                 );
 
-                var dates = assignments.keys.toList()
+                final dates = assignments.keys.toList()
                   ..sort((a, b) => b.compareTo(a));
                 return ListView(
                   children: [
-                    for (var key in dates) ...[
+                    for (final key in dates) ...[
                       ListTile(title: Text(dateTimeToString(key))),
-                      for (var homework in assignments[key])
-                        AssignmentCard(homework: homework),
+                      for (final homework in assignments[key])
+                        AssignmentCard(assignment: homework),
                     ],
                   ],
                 );
               },
-            );
-          },
-        ),
+            ),
+          );
+        },
       ),
     );
   }
 }
 
 class AssignmentCard extends StatelessWidget {
-  final Assignment homework;
+  const AssignmentCard({@required this.assignment})
+      : assert(assignment != null);
 
-  const AssignmentCard({@required this.homework}) : assert(homework != null);
+  final Assignment assignment;
 
   void _showHomeworkDetailsScreen(BuildContext context) {
     Navigator.of(context).push(MaterialPageRoute(
-      builder: (context) => AssignmentDetailsScreen(homework: homework),
+      builder: (context) => AssignmentDetailsScreen(assignment: assignment),
     ));
   }
 
@@ -80,7 +82,7 @@ class AssignmentCard extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              if (DateTime.now().isAfter(homework.dueDate))
+              if (DateTime.now().isAfter(assignment.dueDate))
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: <Widget>[
@@ -89,16 +91,25 @@ class AssignmentCard extends StatelessWidget {
                   ],
                 ),
               Text(
-                homework.name,
+                assignment.name,
                 style: Theme.of(context).textTheme.headline,
               ),
-              Html(data: limitString(homework.description, 200)),
-              ActionChip(
-                backgroundColor: homework.course.color,
-                avatar: Icon(Icons.school),
-                label: Text(homework.course.name),
-                onPressed: () =>
-                    _showCourseDetailScreen(context, homework.course),
+              Html(data: limitString(assignment.description, 200)),
+              CachedRawBuilder<Course>(
+                controllerBuilder: () =>
+                    Bloc.of(context).fetchCourseOfAssignment(assignment),
+                builder: (_, CacheUpdate<Course> update) {
+                  if (!update.hasData) {
+                    return Container();
+                  }
+                  final course = update.data;
+                  return ActionChip(
+                    backgroundColor: course.color,
+                    avatar: Icon(Icons.school),
+                    label: Text(course.name),
+                    onPressed: () => _showCourseDetailScreen(context, course),
+                  );
+                },
               ),
             ],
           ),

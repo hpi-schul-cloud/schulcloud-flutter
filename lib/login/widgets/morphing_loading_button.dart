@@ -5,8 +5,8 @@ import 'package:flutter/material.dart';
 /// This button can be given a child to display. The passed [onPressed] callback
 /// is called if the button is pressed.
 /// If [isLoading] is true, it displays a loading spinner instead.
-class Button extends StatefulWidget {
-  Button({
+class MorphingLoadingButton extends StatefulWidget {
+  MorphingLoadingButton({
     @required this.child,
     @required this.onPressed,
     this.isLoading = false,
@@ -18,10 +18,10 @@ class Button extends StatefulWidget {
   final VoidCallback onPressed;
   final bool isLoading;
 
-  _ButtonState createState() => _ButtonState();
+  _MorphingLoadingButtonState createState() => _MorphingLoadingButtonState();
 }
 
-class _ButtonState<T> extends State<Button> {
+class _MorphingLoadingButtonState<T> extends State<MorphingLoadingButton> {
   bool get _isLoading => widget.isLoading;
 
   @override
@@ -44,12 +44,7 @@ class _ButtonState<T> extends State<Button> {
         width: _isLoading ? 52 : null,
         height: _isLoading ? 52 : null,
         child: DefaultTextStyle(
-          style: TextStyle(
-            color: Colors.white,
-            fontFamily: 'PT Sans Narrow',
-            fontWeight: FontWeight.w700,
-            height: 1.25,
-          ),
+          style: Theme.of(context).textTheme.button,
           child: _isLoading ? _buildLoadingContent(theme) : widget.child,
         ),
       ),

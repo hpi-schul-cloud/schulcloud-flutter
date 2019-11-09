@@ -1,15 +1,14 @@
+import 'dart:convert';
 import 'dart:ui';
 
 import 'package:flutter_cached/flutter_cached.dart';
 import 'package:flutter/widgets.dart';
+import 'package:http/http.dart';
 import 'package:intl/intl.dart';
 import 'package:meta/meta.dart';
-import 'package:provider/provider.dart';
-import 'package:schulcloud/login/login.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'services/storage.dart';
-import 'widgets/page_route.dart';
 
 /// Converts a hex string (like, '#ffdd00') to a [Color].
 Color hexStringToColor(String hex) =>
@@ -68,14 +67,6 @@ Future<bool> tryLaunchingUrl(String url) async {
   return false;
 }
 
-T tryToParse<T>(T Function() parser, {@required T defaultValue}) {
-  try {
-    return parser();
-  } catch (_) {
-    return defaultValue;
-  }
-}
-
 /// An error indicating that a permission wasn't granted by the user.
 class PermissionNotGranted<T> implements Exception {
   String toString() => "A permission wasn't granted by the user.";
@@ -84,48 +75,63 @@ class PermissionNotGranted<T> implements Exception {
 class Id<T> {
   final String id;
 
-  Id(this.id);
+  const Id(this.id);
 
   String toString() => id;
 }
 
 /// A special kind of item that also carries its id.
 abstract class Entity {
-  Id get id;
+  Id<Entity> get id;
   const Entity();
 }
 
-class HiveCacheController<Item extends Entity>
-    extends CacheController<List<Item>> {
-  final StorageService storage;
-  final String parentKey;
+class LazyMap<K, V> {
+  final Map<K, V> _map = const {};
+  final V Function(K key) createValueForKey;
 
-  HiveCacheController({
-    @required this.storage,
-    @required this.parentKey,
-    Future<List<Item>> Function() fetcher,
-  })  : assert(storage != null),
-        assert(parentKey != null),
-        super(
-          saveToCache: (items) async {
-            for (var item in items) {
-              await storage.cache.put(item.id.id, parentKey, item);
-            }
-          },
-          loadFromCache: () async {
-            return await storage.cache.getChildrenOfType<Item>(parentKey)
-              ..sort();
-          },
-          fetcher: () async {
-            return await fetcher()
-              ..sort();
-          },
-        );
+  LazyMap(this.createValueForKey) : assert(createValueForKey != null);
+
+  V operator [](K key) => _map.putIfAbsent(key, () => createValueForKey(key));
 }
 
-Future<void> logOut(BuildContext context) async {
-  await Provider.of<StorageService>(context).clear();
-  Navigator.of(context, rootNavigator: true).pushReplacement(TopLevelPageRoute(
-    builder: (_) => LoginScreen(),
-  ));
+CacheController<T> fetchSingle<T extends Entity>({
+  @required StorageService storage,
+  Id<dynamic> parent,
+  @required Future<Response> Function() makeNetworkCall,
+  @required T Function(Map<String, dynamic> data) parser,
+}) {
+  assert(storage != null);
+  return CacheController<T>(
+    saveToCache: (item) => storage.cache.putChildrenOfType<T>(parent, [item]),
+    loadFromCache: () async {
+      return (await storage.cache.getChildrenOfType<T>(parent)).singleWhere(
+        (_) => true,
+        orElse: () => (throw NotInCacheException()),
+      );
+    },
+    fetcher: () async {
+      final response = await makeNetworkCall();
+      final data = json.decode(response.body);
+      return parser(data);
+    },
+  );
+}
+
+CacheController<List<T>> fetchList<T extends Entity>({
+  @required StorageService storage,
+  Id<dynamic> parent,
+  @required Future<Response> Function() makeNetworkCall,
+  @required T Function(Map<String, dynamic> data) parser,
+}) {
+  assert(storage != null);
+  return CacheController<List<T>>(
+    saveToCache: (items) => storage.cache.putChildrenOfType<T>(parent, items),
+    loadFromCache: () => storage.cache.getChildrenOfType<T>(parent),
+    fetcher: () async {
+      final response = await makeNetworkCall();
+      final body = json.decode(response.body);
+      return [for (final data in body['data']) parser(data)];
+    },
+  );
 }

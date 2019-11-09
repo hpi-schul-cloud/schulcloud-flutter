@@ -1,49 +1,60 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:schulcloud/app/app.dart';
-import 'package:schulcloud/app/services/user_fetcher.dart';
-
-import 'hive.dart';
 
 void main() async {
   await initializeHive();
-  final storage = StorageService();
-  await storage.initialize();
-  await initializeCacheRootKeys(storage);
-
-  runApp(ServicesProvider(storage: storage));
+  runApp(ServicesProvider());
 }
 
-class ServicesProvider extends StatelessWidget {
-  final StorageService storage;
+class ServicesProvider extends StatefulWidget {
+  @override
+  _ServicesProviderState createState() => _ServicesProviderState();
+}
 
-  ServicesProvider({@required this.storage}) : assert(storage != null);
+class _ServicesProviderState extends State<ServicesProvider> {
+  /// Offers a service that stores app-wide data in shared preferences and a
+  /// hive cache.
+  StorageService storage;
+
+  /// This service offers network calls and automatically enriches the header
+  /// using the authentication provided by the [StorageService].
+  NetworkService network;
+
+  /// This service offers getting the currently logged in user.
+  UserFetcherService userFetcher;
+
+  @override
+  void initState() {
+    super.initState();
+    () async {
+      storage = await StorageService.create();
+      network = NetworkService(storage: storage);
+      userFetcher = UserFetcherService(storage: storage, network: network);
+      setState(() {});
+    }();
+  }
 
   @override
   Widget build(BuildContext context) {
+    final allServicesInitialized = [
+      storage,
+      network,
+      userFetcher,
+    ].every((service) => service != null);
+
+    if (!allServicesInitialized) {
+      return Container(
+        color: Colors.white,
+        alignment: Alignment.center,
+        child: CircularProgressIndicator(),
+      );
+    }
     return MultiProvider(
       providers: [
-        /// Offers a service that stores app-wide data in shared preferences
-        /// and a hive cache.
         Provider<StorageService>(builder: (_) => storage),
-
-        /// This service offers network calls and automatically enriches the
-        /// header using the authentication provided by the [StorageService].
-        ProxyProvider<StorageService, NetworkService>(
-          builder: (_, storage, __) => NetworkService(storage: storage),
-        ),
-
-        /// This service offers the fetching of users.
-        ProxyProvider<NetworkService, UserFetcherService>(
-          builder: (_, network, __) => UserFetcherService(network: network),
-        ),
-
-        /// This service offers getting the currently logged in user.
-        ProxyProvider2<UserFetcherService, StorageService, MeService>(
-          builder: (_, userFetcher, storage, __) =>
-              MeService(userFetcher: userFetcher, storage: storage),
-          dispose: (_, me) => me.dispose(),
-        ),
+        Provider<NetworkService>(builder: (_) => network),
+        Provider<UserFetcherService>(builder: (_) => userFetcher),
       ],
       child: SchulCloudApp(),
     );

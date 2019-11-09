@@ -1,17 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_cached/flutter_cached.dart';
 import 'package:flutter_html/flutter_html.dart';
-import 'package:provider/provider.dart';
 import 'package:schulcloud/app/app.dart';
+import 'package:schulcloud/course/course.dart';
 
 import '../bloc.dart';
 import '../data.dart';
 import 'submission_screen.dart';
 
 class AssignmentDetailsScreen extends StatelessWidget {
-  final Assignment homework;
+  const AssignmentDetailsScreen({Key key, @required this.assignment})
+      : assert(assignment != null),
+        super(key: key);
 
-  const AssignmentDetailsScreen({Key key, @required this.homework})
-      : super(key: key);
+  final Assignment assignment;
 
   void _showSubmissionScreen(
     BuildContext context,
@@ -20,7 +22,7 @@ class AssignmentDetailsScreen extends StatelessWidget {
   ) {
     Navigator.of(context).push(MaterialPageRoute(
       builder: (context) => SubmissionScreen(
-        homework: homework,
+        assignment: homework,
         submission: submission,
       ),
     ));
@@ -28,38 +30,41 @@ class AssignmentDetailsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ProxyProvider3<StorageService, NetworkService, UserFetcherService,
-        Bloc>(
-      builder: (_, storage, network, userFetcher, __) =>
-          Bloc(storage: storage, network: network, userFetcher: userFetcher),
-      child: Consumer<Bloc>(
-        builder: (context, bloc, _) => Scaffold(
+    return CachedRawBuilder<Course>(
+      controllerBuilder: () =>
+          Bloc.of(context).fetchCourseOfAssignment(assignment),
+      builder: (_, CacheUpdate<Course> update) {
+        final course = update.data;
+        return Scaffold(
           appBar: AppBar(
             iconTheme: IconThemeData(color: Colors.black),
-            backgroundColor: homework.course.color,
+            backgroundColor: course.color,
             title: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                Text(homework.name, style: TextStyle(color: Colors.black)),
+                Text(assignment.name, style: TextStyle(color: Colors.black)),
                 Text(
-                  homework.course.name,
+                  course.name,
                   style: TextStyle(color: Colors.black),
                 ),
               ],
             ),
           ),
-          body: StreamBuilder<Submission>(
-            stream: bloc.getSubmissionForHomework(homework.id),
-            builder: (context, snapshot) {
+          body: CachedBuilder<List<Submission>>(
+            controllerBuilder: () => Bloc.of(context).fetchSubmissions(),
+            builder: (context, submissions) {
               var textTheme = Theme.of(context).textTheme;
-              var submission = snapshot.data;
+              var submission = submissions.firstWhere(
+                (submission) => submission.assignmentId == assignment.id,
+                orElse: () => null,
+              );
 
               return ListView(
                 children: <Widget>[
                   Html(
                     padding: const EdgeInsets.all(8),
                     defaultTextStyle: textTheme.body1.copyWith(fontSize: 20),
-                    data: homework.description,
+                    data: assignment.description,
                     onLinkTap: tryLaunchingUrl,
                   ),
                   if (submission != null)
@@ -72,15 +77,15 @@ class AssignmentDetailsScreen extends StatelessWidget {
                           style: textTheme.button.copyWith(color: Colors.white),
                         ),
                         onPressed: () => _showSubmissionScreen(
-                            context, homework, submission),
+                            context, assignment, submission),
                       ),
                     ),
                 ],
               );
             },
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }

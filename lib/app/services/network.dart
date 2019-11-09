@@ -1,10 +1,11 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter/widgets.dart';
 import 'package:meta/meta.dart';
 import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
 
-import '../utils.dart';
 import 'storage.dart';
 
 class NoConnectionToServerError {}
@@ -18,16 +19,19 @@ class TooManyRequestsError {
   Duration timeToWait;
 }
 
-/// A service that offers networking post and get requests to the backend
+/// A service that offers networking POST and GET requests to the backend
 /// servers. It depends on the authentication storage, so if the user's token
 /// is stored there, the requests' headers are automatically enriched with the
 /// access token.
 class NetworkService {
   static const String apiUrl = "https://api.schul-cloud.org";
 
+  NetworkService({@required this.storage}) : assert(storage != null);
+
   final StorageService storage;
 
-  NetworkService({@required this.storage}) : assert(storage != null);
+  static NetworkService of(BuildContext context) =>
+      Provider.of<NetworkService>(context);
 
   Future<void> _ensureConnectionExists() =>
       InternetAddress.lookup(apiUrl.substring(apiUrl.lastIndexOf('/') + 1));
@@ -40,7 +44,7 @@ class NetworkService {
       await _ensureConnectionExists();
       var response = await call('$apiUrl/$path');
 
-      // Succeed, if its a 2xx status code.
+      // Succeed if its a 2xx status code.
       if (response.statusCode ~/ 100 == 2) {
         return response;
       }
@@ -51,11 +55,15 @@ class NetworkService {
 
       if (response.statusCode == 429) {
         throw TooManyRequestsError(
-          timeToWait: tryToParse(() {
-            return Duration(
-              seconds: json.decode(response.body)['data']['timeToWait'],
-            );
-          }, defaultValue: Duration(seconds: 10)),
+          timeToWait: () {
+            try {
+              return Duration(
+                seconds: json.decode(response.body)['data']['timeToWait'],
+              );
+            } catch (_) {
+              return Duration(seconds: 10);
+            }
+          }(),
         );
       }
 
@@ -81,8 +89,11 @@ class NetworkService {
     assert(parameters != null);
 
     if (parameters.isNotEmpty) {
-      path +=
-          '?' + parameters.entries.map((p) => '${p.key}=${p.value}').join('&');
+      path += '?' +
+          [
+            for (final parameter in parameters.entries)
+              '${Uri.encodeComponent(parameter.key)}=${Uri.encodeComponent(parameter.value)}'
+          ].join('&');
     }
     return await _makeCall(
       path,
