@@ -6,6 +6,7 @@ import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/course/course.dart';
 
 import '../bloc.dart';
+import '../data.dart';
 import 'file_browser.dart';
 import 'page_route.dart';
 
@@ -23,24 +24,14 @@ class FilesScreen extends StatelessWidget {
         child: Scaffold(
           appBar: AppBar(
             backgroundColor: Colors.white,
-            flexibleSpace: Align(
-              alignment: Alignment.bottomCenter,
-              child: TabBar(
-                indicatorSize: TabBarIndicatorSize.label,
-                indicatorColor: Theme.of(context).primaryColor,
-                indicatorWeight: 4,
-                labelColor: Colors.black,
-                tabs: <Widget>[
-                  Tab(text: 'My files'),
-                  Tab(text: 'Course files'),
-                ],
-              ),
-            ),
+            title: Text('Files', style: TextStyle(color: Colors.black)),
           ),
-          body: TabBarView(
+          body: ListView(
+            padding: const EdgeInsets.symmetric(vertical: 16),
             children: <Widget>[
-              _UserFilesList(),
-              _CourseFilesList(),
+              _RecentFiles(),
+              _CoursesList(),
+              _UserFiles(),
             ],
           ),
         ),
@@ -49,27 +40,25 @@ class FilesScreen extends StatelessWidget {
   }
 }
 
-class _UserFilesList extends StatelessWidget {
+class _RecentFiles extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        FileListHeader(
-          icon: Icon(Icons.person_outline, size: 48),
-          text: 'These are your personal files.\n'
-              'By default, only you can access them, but they '
-              'may be shared with others.',
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Text('Recent'),
         ),
-        Expanded(
-          child: CachedRawBuilder(
-            controller: UserFetcherService.of(context).fetchCurrentUser(),
-            builder: (context, CacheUpdate<User> update) {
-              if (update.hasData) {
-                return FileBrowser(owner: update.data, showAppBar: false);
-              } else {
-                return Container();
-              }
-            },
+        SizedBox(height: 8),
+        SizedBox(
+          height: 100,
+          child: ListView(
+            scrollDirection: Axis.horizontal,
+            padding: const EdgeInsets.only(left: 16),
+            children: List.generate(10, (index) {
+              return _RecentFileCard();
+            }),
           ),
         ),
       ],
@@ -77,8 +66,74 @@ class _UserFilesList extends StatelessWidget {
   }
 }
 
-class _CourseFilesList extends StatelessWidget {
-  void _showCourseFiles(BuildContext context, Course course) {
+class _RecentFileCard extends StatelessWidget {
+  const _RecentFileCard({Key key, this.file}) : super(key: key);
+
+  final File file;
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      margin: const EdgeInsets.only(right: 8, bottom: 16),
+      child: Container(
+        width: 120,
+        padding: const EdgeInsets.all(8),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Text(file?.name ?? 'some_file.txt'),
+            Text(
+              dateTimeToString(
+                file?.updatedAt ?? DateTime.now().subtract(Duration(days: 1)),
+              ),
+              style: TextStyle(color: Colors.black54),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _CoursesList extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Text('Course files'),
+        ),
+        CachedRawBuilder(
+          controller: Bloc.of(context).fetchCourses()..fetch(),
+          builder: (BuildContext context, CacheUpdate<List<Course>> update) {
+            return GridView.extent(
+              primary: false,
+              shrinkWrap: true,
+              maxCrossAxisExtent: 300,
+              childAspectRatio: 3.2,
+              mainAxisSpacing: 8,
+              crossAxisSpacing: 8,
+              padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+              children: <Widget>[
+                for (var course in update.data ?? [])
+                  _CourseCard(course: course),
+              ],
+            );
+          },
+        ),
+      ],
+    );
+  }
+}
+
+class _CourseCard extends StatelessWidget {
+  const _CourseCard({Key key, this.course}) : super(key: key);
+
+  final Course course;
+
+  void _showCourseFiles(BuildContext context) {
     Navigator.of(context).push(FileBrowserPageRoute(
       builder: (context) => FileBrowser(owner: course),
     ));
@@ -86,58 +141,45 @@ class _CourseFilesList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: <Widget>[
-        FileListHeader(
-          icon: Icon(Icons.school, size: 48),
-          text: 'These are the files from courses you are enrolled in. '
-              'Anyone in the course (including teachers) has access to them.',
-        ),
-        Expanded(
-          child: CachedBuilder(
-            controller: Bloc.of(context).fetchCourses(),
-            errorBannerBuilder: (_, error, st) => ErrorBanner(error, st),
-            errorScreenBuilder: (_, error, st) => ErrorScreen(error, st),
-            builder: (BuildContext context, List<Course> courses) {
-              return ListView(
-                children: <Widget>[
-                  for (var course in courses)
-                    ListTile(
-                      title: Text(course.name),
-                      leading: Icon(Icons.folder, color: course.color),
-                      onTap: () => _showCourseFiles(context, course),
-                    ),
-                ],
-              );
-            },
+    return Card(
+      margin: EdgeInsets.zero,
+      child: InkWell(
+        onTap: () => _showCourseFiles(context),
+        child: Padding(
+          padding: const EdgeInsets.all(8),
+          child: Row(
+            children: <Widget>[
+              Icon(Icons.folder, color: course.color),
+              SizedBox(width: 8),
+              Expanded(child: Text(course.name)),
+            ],
           ),
         ),
-      ],
+      ),
     );
   }
 }
 
-class FileListHeader extends StatelessWidget {
-  final Widget icon;
-  final String text;
-
-  FileListHeader({@required this.icon, @required this.text})
-      : assert(icon != null),
-        assert(text != null);
-
+class _UserFiles extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      color: Colors.black12,
-      height: 100,
-      child: Row(
-        children: <Widget>[
-          icon,
-          SizedBox(width: 16),
-          Expanded(child: Text(text, style: TextStyle(fontSize: 16))),
-        ],
-      ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Text('Your files'),
+        ),
+        CachedRawBuilder(
+          controller: UserFetcherService.of(context).fetchCurrentUser()
+            ..fetch(),
+          builder: (context, CacheUpdate<User> update) {
+            return update.hasData
+                ? FileBrowser(owner: update.data, isEmbedded: true)
+                : Container();
+          },
+        ),
+      ],
     );
   }
 }
