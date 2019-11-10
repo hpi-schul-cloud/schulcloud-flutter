@@ -179,6 +179,7 @@ Future<void> initializeHive() async {
     ..registerAdapter(UserAdapter(), 51)
     // Assignments module:
     ..registerAdapter(IdAdapter<Assignment>(), 47)
+    ..registerAdapter(IdAdapter<Submission>(), 60)
     ..registerAdapter(AssignmentAdapter(), 54)
     ..registerAdapter(SubmissionAdapter(), 55)
     // Courses module:
