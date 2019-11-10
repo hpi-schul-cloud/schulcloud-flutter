@@ -7,8 +7,8 @@ import 'login.dart';
 Future<void> logOut(BuildContext context) async {
   await Provider.of<StorageService>(context).clear();
   Navigator.of(context, rootNavigator: true)
-    ..popUntil((_) => false)
-    ..push(TopLevelPageRoute(
+    ..popUntil((route) => route.isFirst)
+    ..pushReplacement(TopLevelPageRoute(
       builder: (_) => LoginScreen(),
     ));
 }

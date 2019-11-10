@@ -120,7 +120,7 @@ class _LoggedInScreenState extends State<LoggedInScreen> {
     }[screen];
 
     navigator
-      ..popUntil((_) => true)
+      ..popUntil((route) => route.isFirst)
       ..pushReplacement(TopLevelPageRoute(
         builder: targetScreenBuilder,
       ));
