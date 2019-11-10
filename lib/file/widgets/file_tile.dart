@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:schulcloud/app/app.dart';
 
 import '../data.dart';
+import 'file_thumbnail.dart';
 
 class FileTile extends StatelessWidget {
   FileTile({Key key, @required this.file, @required this.onOpen})
@@ -27,7 +28,7 @@ class FileTile extends StatelessWidget {
                   'created at ${dateTimeToString(file.createdAt)}\n'
                       'last modified at ${dateTimeToString(file.updatedAt)}',
             ),
-            leading: _fileIcon,
+            leading: FileThumbnail(file: file),
           ),
           ListTile(
             title: Text('Open'),
@@ -45,11 +46,6 @@ class FileTile extends StatelessWidget {
     );
   }
 
-  Icon get _fileIcon => Icon(
-        file.isDirectory ? Icons.folder : Icons.insert_drive_file,
-        color: Colors.black,
-      );
-
   @override
   Widget build(BuildContext context) {
     return ListTile(
@@ -58,7 +54,7 @@ class FileTile extends StatelessWidget {
         (file.isDirectory ? '' : '${file.sizeAsString}, ') +
             dateTimeToString(file.updatedAt),
       ),
-      leading: _fileIcon,
+      leading: FileThumbnail(file: file),
       onTap: () => onOpen(file),
       onLongPress: () => _showDetails(context),
     );

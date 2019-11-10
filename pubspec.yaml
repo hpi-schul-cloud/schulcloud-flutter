@@ -50,6 +50,7 @@ flutter:
     - assets/empty_states/broken_pen.svg
     - assets/empty_states/files.flr
     - assets/logo/logo_with_text.svg
+    - assets/file_thumbnails/
 
   fonts:
     - family: PT Sans
