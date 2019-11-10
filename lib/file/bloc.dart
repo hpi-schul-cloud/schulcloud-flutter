@@ -36,8 +36,9 @@ class Bloc {
   CacheController<List<File>> fetchFiles(Id<dynamic> owner, File parent) =>
       CacheController<List<File>>(
         saveToCache: (files) =>
-            storage.cache.putChildrenOfType<File>(parent?.id, files),
-        loadFromCache: () => storage.cache.getChildrenOfType<File>(parent?.id),
+            storage.cache.putChildrenOfType<File>(parent?.id ?? owner, files),
+        loadFromCache: () =>
+            storage.cache.getChildrenOfType<File>(parent?.id ?? owner),
         fetcher: () async {
           final queries = <String, String>{
             'owner': owner.id,
