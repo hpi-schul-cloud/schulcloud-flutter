@@ -25,21 +25,21 @@ class AssignmentsScreen extends StatelessWidget {
               controller: bloc.fetchAssignments(),
               errorBannerBuilder: (_, error, st) => ErrorBanner(error, st),
               errorScreenBuilder: (_, error, st) => ErrorScreen(error, st),
-              builder: (BuildContext context, List<Assignment> homework) {
-                final assignments = groupBy<Assignment, DateTime>(
-                  homework,
-                  (Assignment h) =>
-                      DateTime(h.dueDate.year, h.dueDate.month, h.dueDate.day),
+              builder: (BuildContext context, List<Assignment> assignments) {
+                final assignmentsByDate = groupBy<Assignment, DateTime>(
+                  assignments,
+                  (Assignment a) =>
+                      DateTime(a.dueDate.year, a.dueDate.month, a.dueDate.day),
                 );
 
-                final dates = assignments.keys.toList()
+                final dates = assignmentsByDate.keys.toList()
                   ..sort((a, b) => b.compareTo(a));
                 return ListView(
                   children: [
-                    for (final key in dates) ...[
-                      ListTile(title: Text(dateTimeToString(key))),
-                      for (final homework in assignments[key])
-                        AssignmentCard(assignment: homework),
+                    for (final date in dates) ...[
+                      ListTile(title: Text(dateTimeToString(date))),
+                      for (final assignment in assignmentsByDate[date])
+                        AssignmentCard(assignment: assignment),
                     ],
                   ],
                 );
