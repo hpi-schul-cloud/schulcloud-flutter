@@ -1,6 +1,7 @@
 import 'package:hive/hive.dart';
 import 'package:meta/meta.dart';
 import 'package:schulcloud/app/app.dart';
+import 'package:schulcloud/course/course.dart';
 
 part 'data.g.dart';
 
@@ -16,15 +17,16 @@ class File implements Entity, Comparable {
   })  : assert(id != null),
         assert(name != null),
         assert(owner != null),
+        assert(owner is Id<User> || owner is Id<Course>),
         assert(isDirectory != null);
 
-  File.fromJson(Map<String, dynamic> data)
+  File.fromJsonAndOwner(Map<String, dynamic> data, Id<dynamic> owner)
       : this(
           id: Id(data['_id']),
           name: data['name'],
-          owner: Id<Entity>(data['owner']),
+          owner: owner,
           isDirectory: data['isDirectory'],
-          parent: Id<File>(data['parent']),
+          parent: data['parent'] == null ? null : Id<File>(data['parent']),
           size: data['size'],
         );
 
@@ -42,7 +44,7 @@ class File implements Entity, Comparable {
 
   /// An [Id] for either a [User] or [Course].
   @HiveField(3)
-  final Id<Entity> owner;
+  final Id owner;
 
   @HiveField(4)
   final bool isDirectory;

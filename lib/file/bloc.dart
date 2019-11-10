@@ -33,7 +33,7 @@ class Bloc {
   //   right away.
   // * We want to filter the files because there are a lot with no names that
   //   shouldn't be displayed.
-  CacheController<List<File>> fetchFiles(Id<Entity> owner, File parent) =>
+  CacheController<List<File>> fetchFiles(Id<dynamic> owner, File parent) =>
       CacheController<List<File>>(
         saveToCache: (files) =>
             storage.cache.putChildrenOfType<File>(parent?.id, files),
@@ -48,7 +48,7 @@ class Bloc {
           final body = json.decode(response.body);
           return (body as List<dynamic>)
               .where((data) => data['name'] != null)
-              .map((data) => File.fromJson(data))
+              .map((data) => File.fromJsonAndOwner(data, owner))
               .toList();
         },
       );

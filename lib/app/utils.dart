@@ -77,12 +77,14 @@ class Id<T> {
 
   const Id(this.id);
 
+  Id<S> cast<S>() => Id<S>(id);
+
   String toString() => id;
 }
 
 /// A special kind of item that also carries its id.
 abstract class Entity {
-  Id<Entity> get id;
+  Id get id;
   const Entity();
 }
 

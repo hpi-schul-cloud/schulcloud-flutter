@@ -42,7 +42,7 @@ class Bloc {
             storage.cache.putChildrenOfType<User>(course.id, teachers),
         loadFromCache: () => storage.cache.getChildrenOfType<User>(course.id),
         fetcher: () => Future.wait([
-          for (final teacherId in course.teacherIds)
+          for (final teacherId in course.teachers)
             userFetcher.fetchUser(teacherId, course.id).fetch()
         ]),
       );

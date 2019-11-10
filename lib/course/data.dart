@@ -13,12 +13,12 @@ class Course implements Entity, Comparable {
     @required this.id,
     @required this.name,
     @required this.description,
-    @required this.teacherIds,
+    @required this.teachers,
     @required this.color,
   })  : assert(id != null),
         assert(name != null),
         assert(description != null),
-        assert(teacherIds != null),
+        assert(teachers != null),
         assert(color != null);
 
   Course.fromJson(Map<String, dynamic> data)
@@ -26,7 +26,7 @@ class Course implements Entity, Comparable {
           id: Id<Course>(data['_id']),
           name: data['name'],
           description: data['description'],
-          teacherIds: (data['teacherIds'] as List<dynamic>)
+          teachers: (data['teacherIds'] as List<dynamic>)
               .map((id) => Id<User>(id))
               .toList(),
           color: hexStringToColor(data['color']),
@@ -41,8 +41,11 @@ class Course implements Entity, Comparable {
   @HiveField(2)
   final String description;
 
+  // For now, we don't use a [List<Id<User>>] here, because you can't cast a
+  // [List<Id>] to a [List<Id<User>>] without knowing about the [Id]'s [cast]
+  // method, which causes Hive to not be able to serialize generic types.
   @HiveField(3)
-  final List<Id<User>> teacherIds;
+  final List<Id> teachers;
 
   @HiveField(4)
   final Color color;

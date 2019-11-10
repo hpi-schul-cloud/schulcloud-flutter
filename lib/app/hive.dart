@@ -14,7 +14,7 @@ import 'data.dart';
 import 'utils.dart';
 
 bool _isHiveInitialized = false;
-const _rootCacheKey = Id<dynamic>('_root_');
+const _rootCacheKey = '_root_';
 
 class HiveCache {
   final String name;
@@ -51,12 +51,12 @@ class HiveCache {
   HiveCache._(this.name, this._children, this._data);
 
   Future<void> _collectGarbage() async {
-    final Set<Id<dynamic>> usefulIds = {};
+    final Set<String> usefulKeys = {};
 
-    void markAsUseful(Id<dynamic> id) {
-      if (usefulIds.contains(id)) return;
-      usefulIds.add(id);
-      for (final child in _children.get(id.id)?.getAllChildren() ?? []) {
+    void markAsUseful(String key) {
+      if (usefulKeys.contains(key)) return;
+      usefulKeys.add(key);
+      for (final child in _children.get(key)?.getAllChildren() ?? []) {
         markAsUseful(child);
       }
     }
@@ -64,22 +64,25 @@ class HiveCache {
     markAsUseful(_rootCacheKey);
 
     // Remove all the non-useful entries.
-    final nonUsefulIds = _data.keys.toSet().difference(usefulIds);
-    _children.deleteAll(nonUsefulIds);
-    _data.deleteAll(nonUsefulIds);
+    final nonUsefulKeys = _data.keys.toSet().difference(usefulKeys);
+    await Future.wait([
+      _children.deleteAll(nonUsefulKeys),
+      _data.deleteAll(nonUsefulKeys),
+    ]);
   }
 
   Future<void> putChildrenOfType<T extends Entity>(
       Id<dynamic> parent, List<T> children) async {
-    Children theChildren;
     String key = parent?.id ?? _rootCacheKey;
-    theChildren = _children.get(key);
-    if (children == null) {
-      _children.put(key, Children());
+    Children theChildren = _children.get(key);
+    if (theChildren == null) {
+      await _children.put(key, Children());
       theChildren = _children.get(key);
     }
-    theChildren.setChildrenOfType<T>(children.map((child) => child.id));
+
     await Future.wait(children.map((child) => _data.put(child.id.id, child)));
+    theChildren.setChildrenOfType<T>(
+        children.map((child) => child.id.toString()).toList());
   }
 
   Future<dynamic> get(Id<dynamic> id) async {
@@ -87,10 +90,14 @@ class HiveCache {
   }
 
   Future<List<T>> getChildrenOfType<T>(Id<dynamic> parent) async {
-    final childrenIds =
-        _children.get(parent?.id ?? _rootCacheKey)?.getChildrenOfType<T>() ??
+    final String key = parent?.id ?? _rootCacheKey;
+    final List<String> childrenKeys =
+        _children.get(key)?.getChildrenOfType<T>() ??
             (throw NotInCacheException());
-    return [for (final id in childrenIds) await _data.get(id)];
+    return [for (final key in childrenKeys) await _data.get(key)]
+        .where((data) => data != null)
+        .cast<T>()
+        .toList();
   }
 
   Future<void> clear() => Future.wait([_data.clear(), _children.clear()]);
@@ -98,23 +105,19 @@ class HiveCache {
 
 class Children extends HiveObject {
   /// Map from stringified runtime types to lists of ids.
-  final Map<String, List<String>> _children = const {};
+  final Map<String, List<String>> _children = {};
 
-  void setChildrenOfType<T>(Iterable<Id<T>> children) {
-    _children[T.toString()] = children.map((id) => id.id).toList();
+  void setChildrenOfType<T>(List<String> children) {
+    _children[T.toString()] = children;
     save();
   }
 
-  List<Id<T>> getChildrenOfType<T>() {
-    return _children[T.toString()]?.map((id) => Id<T>(id)) ??
-        (throw NotInCacheException());
+  List<String> getChildrenOfType<T>() {
+    return _children[T.toString()] ?? (throw NotInCacheException());
   }
 
-  Set<Id<dynamic>> getAllChildren() {
-    return _children.values
-        .reduce((a, b) => [...a, ...b])
-        .map((id) => Id<dynamic>(id))
-        .toSet();
+  Set<String> getAllChildren() {
+    return _children.values.reduce((a, b) => [...a, ...b]).toSet();
   }
 
   void retainTypes(Set<Type> types) {
@@ -122,6 +125,8 @@ class Children extends HiveObject {
     _children.removeWhere((key, _) => !typesAsStrings.contains(key));
     if (_children.isEmpty) {
       delete();
+    } else {
+      save();
     }
   }
 }
@@ -168,7 +173,6 @@ Future<void> initializeHive() async {
     ..init(dir.path)
     // General:
     ..registerAdapter(IdAdapter<User>(), 40)
-    ..registerAdapter(IdAdapter<Entity>(), 52)
     ..registerAdapter(ColorAdapter(), 48)
     ..registerAdapter(ChildrenAdapter(), 49)
     // App module:
