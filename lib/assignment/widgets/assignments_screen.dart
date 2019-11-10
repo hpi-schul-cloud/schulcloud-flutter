@@ -58,7 +58,7 @@ class AssignmentCard extends StatelessWidget {
 
   final Assignment assignment;
 
-  void _showHomeworkDetailsScreen(BuildContext context) {
+  void _showAssignmentDetailsScreen(BuildContext context) {
     Navigator.of(context).push(MaterialPageRoute(
       builder: (context) => AssignmentDetailsScreen(assignment: assignment),
     ));
@@ -76,7 +76,7 @@ class AssignmentCard extends StatelessWidget {
       elevation: 2,
       child: InkWell(
         enableFeedback: true,
-        onTap: () => _showHomeworkDetailsScreen(context),
+        onTap: () => _showAssignmentDetailsScreen(context),
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Column(
@@ -96,7 +96,7 @@ class AssignmentCard extends StatelessWidget {
               ),
               Html(data: limitString(assignment.description, 200)),
               CachedRawBuilder<Course>(
-                controllerBuilder: () =>
+                controller:
                     Bloc.of(context).fetchCourseOfAssignment(assignment),
                 builder: (_, CacheUpdate<Course> update) {
                   if (!update.hasData) {
