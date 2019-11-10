@@ -9,11 +9,11 @@ const _emailRegExp =
     r"^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?)*$";
 
 class Bloc {
-  Bloc({@required this.authStorage, @required this.network})
-      : assert(authStorage != null),
+  Bloc({@required this.storage, @required this.network})
+      : assert(storage != null),
         assert(network != null);
 
-  final StorageService authStorage;
+  final StorageService storage;
   final NetworkService network;
 
   bool isEmailValid(String email) => RegExp(_emailRegExp).hasMatch(email);
@@ -24,7 +24,7 @@ class Bloc {
       throw InvalidLoginSyntaxError();
     }
 
-    authStorage.email.setValue(email);
+    storage.email.setValue(email);
 
     // The login throws an exception if it wasn't successful.
     var response = await network.post('authentication', body: {
@@ -33,7 +33,7 @@ class Bloc {
       'password': password,
     });
     String token = json.decode(response.body)['accessToken'];
-    authStorage.token.setValue(token);
+    storage.token.setValue(token);
   }
 
   Future<void> loginAsDemoStudent() =>
