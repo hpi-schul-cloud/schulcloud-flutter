@@ -33,7 +33,7 @@ class _LoginFormState extends State<LoginForm> {
   Bloc get bloc => Provider.of<Bloc>(context);
 
   Future<void> _executeLogin(Future<void> Function() login) async {
-    _isFirstSignInAttempt = true;
+    _isFirstSignInAttempt = false;
     setState(() => _isLoading = true);
 
     try {
