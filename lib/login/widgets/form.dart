@@ -74,6 +74,7 @@ class _LoginFormState extends State<LoginForm> {
   Widget build(BuildContext context) {
     return Container(
       alignment: Alignment.center,
+      padding: const EdgeInsets.symmetric(horizontal: 16),
       width: 400,
       child: Column(
         children: [
