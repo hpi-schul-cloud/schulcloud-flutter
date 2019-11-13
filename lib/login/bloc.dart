@@ -28,6 +28,7 @@ class Bloc {
 
     // The login throws an exception if it wasn't successful.
     var response = await network.post('authentication', body: {
+      'strategy': 'local',
       'username': email,
       'password': password,
     });
