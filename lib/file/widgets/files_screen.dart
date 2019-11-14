@@ -26,10 +26,12 @@ class FilesScreen extends StatelessWidget {
             backgroundColor: Colors.white,
             title: Text('Files', style: TextStyle(color: Colors.black)),
           ),
+          backgroundColor: Colors.white,
           body: ListView(
             padding: const EdgeInsets.symmetric(vertical: 16),
             children: <Widget>[
               _RecentFiles(),
+              SizedBox(height: 16),
               _CoursesList(),
               _UserFiles(),
             ],
@@ -52,12 +54,15 @@ class _RecentFiles extends StatelessWidget {
         ),
         SizedBox(height: 8),
         SizedBox(
-          height: 100,
+          height: 64,
           child: ListView(
             scrollDirection: Axis.horizontal,
             padding: const EdgeInsets.only(left: 16),
             children: List.generate(10, (index) {
-              return _RecentFileCard();
+              return Padding(
+                padding: const EdgeInsets.only(right: 8),
+                child: _RecentFileCard(),
+              );
             }),
           ),
         ),
@@ -73,23 +78,19 @@ class _RecentFileCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      margin: const EdgeInsets.only(right: 8, bottom: 16),
-      child: Container(
-        width: 120,
-        padding: const EdgeInsets.all(8),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Text(file?.name ?? 'some_file.txt'),
-            Text(
-              dateTimeToString(
-                file?.updatedAt ?? DateTime.now().subtract(Duration(days: 1)),
-              ),
-              style: TextStyle(color: Colors.black54),
+    return FlatMaterial(
+      onTap: () {},
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Text(file?.name ?? 'some_file.txt'),
+          Text(
+            dateTimeToString(
+              file?.updatedAt ?? DateTime.now().subtract(Duration(days: 1)),
             ),
-          ],
-        ),
+            style: TextStyle(color: Colors.black54),
+          ),
+        ],
       ),
     );
   }
@@ -141,19 +142,16 @@ class _CourseCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      margin: EdgeInsets.zero,
-      child: InkWell(
-        onTap: () => _showCourseFiles(context),
-        child: Padding(
-          padding: const EdgeInsets.all(8),
-          child: Row(
-            children: <Widget>[
-              Icon(Icons.folder, color: course.color),
-              SizedBox(width: 8),
-              Expanded(child: Text(course.name)),
-            ],
-          ),
+    return FlatMaterial(
+      onTap: () => _showCourseFiles(context),
+      child: SizedBox(
+        height: 48,
+        child: Row(
+          children: <Widget>[
+            Icon(Icons.folder, color: course.color),
+            SizedBox(width: 8),
+            Expanded(child: Text(course.name)),
+          ],
         ),
       ),
     );
@@ -180,6 +178,36 @@ class _UserFiles extends StatelessWidget {
           },
         ),
       ],
+    );
+  }
+}
+
+class FlatMaterial extends StatelessWidget {
+  const FlatMaterial({
+    Key key,
+    @required this.onTap,
+    @required this.child,
+  }) : super(key: key);
+
+  final VoidCallback onTap;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: Colors.white,
+      child: InkWell(
+        onTap: () {},
+        borderRadius: BorderRadius.circular(8),
+        child: Container(
+          padding: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            border: Border.all(color: Colors.black12),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: child,
+        ),
+      ),
     );
   }
 }
