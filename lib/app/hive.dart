@@ -35,11 +35,13 @@ class HiveCache {
 
     await Future.wait([
       () async {
-        children = await Hive.openBox('_children_${name}_');
+        children = await Hive.openBox('_children_${name}_',
+            compactionStrategy: (a, b) => false);
         children.values.forEach((child) => child.retainTypes(types));
       }(),
       () async {
-        data = await Hive.openBox(name, lazy: true);
+        data = await Hive.openBox(name,
+            lazy: true, compactionStrategy: (a, b) => false);
       }(),
     ]);
 
