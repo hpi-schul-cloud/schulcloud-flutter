@@ -28,7 +28,7 @@ class ArticleImageView extends StatelessWidget {
     return Container(
       color: placeholderColor,
       child: FadeInImage.memoryNetwork(
-        fadeInDuration: Duration(milliseconds: 500),
+        fadeInDuration: const Duration(milliseconds: 500),
         fadeInCurve: Curves.easeInOutCubic,
         placeholder: kTransparentImage,
         image: imageUrl,

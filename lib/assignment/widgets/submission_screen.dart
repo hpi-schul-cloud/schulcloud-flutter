@@ -44,10 +44,10 @@ class SubmissionScreen extends StatelessWidget {
                   ),
                 ],
               ),
-              bottom: TabBar(
+              bottom: const TabBar(
                 labelColor: Colors.black,
-                labelStyle: const TextStyle(fontSize: 16),
-                tabs: const <Widget>[
+                labelStyle: TextStyle(fontSize: 16),
+                tabs: <Widget>[
                   Tab(text: 'Submission'),
                   Tab(text: 'Feedback'),
                 ],

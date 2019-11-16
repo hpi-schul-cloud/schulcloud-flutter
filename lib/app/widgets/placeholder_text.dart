@@ -56,7 +56,7 @@ class _TextOrPlaceholderState extends State<TextOrPlaceholder> {
     return Container(
       padding: EdgeInsets.symmetric(vertical: widget.showPadding ? 4 : 0),
       child: Material(
-        shape: StadiumBorder(),
+        shape: const StadiumBorder(),
         color: widget.color,
         child: FractionallySizedBox(
           widthFactor: width,

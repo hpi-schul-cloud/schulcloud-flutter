@@ -78,7 +78,7 @@ class _MyAppBarState extends State<MyAppBar> {
                 icon: Icon(Icons.menu),
                 onPressed: () => _showMenu(context),
               ),
-              Spacer(),
+              const Spacer(),
               ..._actions,
             ],
           ),
