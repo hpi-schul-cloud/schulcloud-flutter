@@ -9,17 +9,18 @@ import 'schulcloud_app.dart';
 final _appBarKey = GlobalKey();
 
 /// A custom version of an app bar intended to be displayed at the bottom of
-/// the screen. You can also also [register] and [unregister] actions on the
-/// [_MyAppBarState]. The [AppBarActions] does that.
+/// the screen. You can also also call [_MyAppBarState.register] and
+/// [_MyAppBarState.unregister] to register and unregister actions on the app
+/// bar. The [AppBarActions] does that.
 class MyAppBar extends StatefulWidget {
-  final void Function(Screen route) onNavigate;
-  final Stream<Screen> activeScreenStream;
-
   MyAppBar({
     @required this.onNavigate,
     @required this.activeScreenStream,
   })  : assert(onNavigate != null),
         super(key: _appBarKey);
+
+  final void Function(Screen route) onNavigate;
+  final Stream<Screen> activeScreenStream;
 
   @override
   _MyAppBarState createState() => _MyAppBarState();
@@ -48,7 +49,7 @@ class _MyAppBarState extends State<MyAppBar> {
   }
 
   Future<void> _showMenu(BuildContext context) async {
-    Screen target = await Navigator.of(context).push(PageRouteBuilder(
+    final Screen target = await Navigator.of(context).push(PageRouteBuilder(
       pageBuilder: (_, __, ___) =>
           Menu(activeScreenStream: widget.activeScreenStream),
       opaque: false,
@@ -89,13 +90,14 @@ class _MyAppBarState extends State<MyAppBar> {
 
 /// A widget that adds actions to the enclosing [MyAppBar].
 class AppBarActions extends StatefulWidget {
-  final List<Widget> actions;
-  final Widget child;
-
-  AppBarActions({@required this.actions, @required this.child})
+  const AppBarActions({@required this.actions, @required this.child})
       : assert(actions != null),
         assert(child != null);
 
+  final List<Widget> actions;
+  final Widget child;
+
+  @override
   _AppBarActionsState createState() => _AppBarActionsState();
 }
 

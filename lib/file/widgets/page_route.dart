@@ -72,16 +72,26 @@ class FileBrowserPageRoute<T> extends PageRoute<T> {
   static bool _isPopGestureEnabled<T>(PageRoute<T> route) {
     // If there's nothing to go back to, then obviously we don't support the
     // back gesture.
-    if (route.isFirst) return false;
+    if (route.isFirst) {
+      return false;
+    }
+
     // If we're in an animation already, we cannot be manually swiped.
-    if (route.animation.status != AnimationStatus.completed) return false;
+    if (route.animation.status != AnimationStatus.completed) {
+      return false;
+    }
+
     // If we're being popped into, we also cannot be swiped until the pop above
     // it completes. This translates to our secondary animation being
     // dismissed.
-    if (route.secondaryAnimation.status != AnimationStatus.dismissed)
+    if (route.secondaryAnimation.status != AnimationStatus.dismissed) {
       return false;
+    }
+
     // If we're in a gesture already, we cannot start another.
-    if (isPopGestureInProgress(route)) return false;
+    if (isPopGestureInProgress(route)) {
+      return false;
+    }
 
     // Looks like a back gesture would be welcome!
     return true;
@@ -271,12 +281,14 @@ class _FileBrowserBackGestureDetectorState<T>
     assert(mounted);
     // This can be called even if start is not called, paired with the "down" event
     // that we don't consider here.
-    _backGestureController?.dragEnd(0.0);
+    _backGestureController?.dragEnd(0);
     _backGestureController = null;
   }
 
   void _handlePointerDown(PointerDownEvent event) {
-    if (widget.enabledCallback()) _recognizer.addPointer(event);
+    if (widget.enabledCallback()) {
+      _recognizer.addPointer(event);
+    }
   }
 
   double _convertToLogical(double value) {
@@ -285,8 +297,9 @@ class _FileBrowserBackGestureDetectorState<T>
         return -value;
       case TextDirection.ltr:
         return value;
+      default:
+        throw StateError('No Directionality ancestor above $this.');
     }
-    return null;
   }
 
   @override
@@ -319,14 +332,14 @@ class _FileBrowserBackGestureController<T> {
   final AnimationController controller;
   final NavigatorState navigator;
 
-  /// The drag gesture has changed by [fractionalDelta]. The total range of the
-  /// drag should be 0.0 to 1.0.
+  /// The drag gesture has changed by [delta]. The total range of the drag
+  /// should be 0.0 to 1.0.
   void dragUpdate(double delta) {
     controller.value = (controller.value - delta).clamp(0.0001, 0.9999);
   }
 
-  /// The drag gesture has ended with a horizontal motion of
-  /// [fractionalVelocity] as a fraction of screen width per second.
+  /// The drag gesture has ended with a horizontal motion of [velocity] as a
+  /// fraction of screen width per second.
   void dragEnd(double velocity) {
     // Fling in the appropriate direction.
     // AnimationController.fling is guaranteed to take at least one frame.
@@ -336,10 +349,11 @@ class _FileBrowserBackGestureController<T> {
     // If the user releases the page before mid screen with sufficient velocity,
     // or after mid screen, we should animate the page out. Otherwise, the page
     // should be animated back in.
-    if (velocity.abs() >= _kMinFlingVelocity)
+    if (velocity.abs() >= _kMinFlingVelocity) {
       animateForward = velocity <= 0;
-    else
+    } else {
       animateForward = controller.value > 0.5;
+    }
 
     if (animateForward) {
       // The closer the panel is to dismissing, the shorter the animation is.
@@ -351,9 +365,11 @@ class _FileBrowserBackGestureController<T> {
             .floor(),
         _kMaxPageBackAnimationTime,
       );
-      controller.animateTo(1.0,
-          duration: Duration(milliseconds: droppedPageForwardAnimationTime),
-          curve: animationCurve);
+      controller.animateTo(
+        1,
+        duration: Duration(milliseconds: droppedPageForwardAnimationTime),
+        curve: animationCurve,
+      );
     } else {
       // This route is destined to pop at this point. Reuse navigator's pop.
       navigator.pop();
@@ -364,9 +380,11 @@ class _FileBrowserBackGestureController<T> {
         final int droppedPageBackAnimationTime = lerpDouble(
                 0, _kMaxDroppedSwipePageForwardAnimationTime, controller.value)
             .floor();
-        controller.animateBack(0.0,
-            duration: Duration(milliseconds: droppedPageBackAnimationTime),
-            curve: animationCurve);
+        controller.animateBack(
+          0,
+          duration: Duration(milliseconds: droppedPageBackAnimationTime),
+          curve: animationCurve,
+        );
       }
     }
 
@@ -375,7 +393,7 @@ class _FileBrowserBackGestureController<T> {
       // curve of the page transition mid-flight since CupertinoPageTransition
       // depends on userGestureInProgress.
       AnimationStatusListener animationStatusCallback;
-      animationStatusCallback = (AnimationStatus status) {
+      animationStatusCallback = (status) {
         navigator.didStopUserGesture();
         controller.removeStatusListener(animationStatusCallback);
       };

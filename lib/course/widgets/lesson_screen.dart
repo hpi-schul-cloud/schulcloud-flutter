@@ -7,12 +7,12 @@ import 'package:webview_flutter/webview_flutter.dart';
 import '../data.dart';
 
 class LessonScreen extends StatefulWidget {
-  final Course course;
-  final Lesson lesson;
-
-  LessonScreen({@required this.course, @required this.lesson})
+  const LessonScreen({@required this.course, @required this.lesson})
       : assert(course != null),
         assert(lesson != null);
+
+  final Course course;
+  final Lesson lesson;
 
   @override
   _LessonScreenState createState() => _LessonScreenState();
@@ -48,11 +48,11 @@ class _LessonScreenState extends State<LessonScreen> {
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.web),
-            onPressed: () => _showLessonContentMenu(),
+            onPressed: _showLessonContentMenu,
           ),
         ],
         child: Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: const EdgeInsets.all(8),
           child: WebView(
             initialUrl: _textOrUrl(widget.lesson.contents[0]),
             onWebViewCreated: (controller) => _controller = controller,
@@ -64,7 +64,7 @@ class _LessonScreenState extends State<LessonScreen> {
   }
 
   String _createBase64Source(String html) {
-    var encoded = base64Encode(const Utf8Encoder().convert(html));
+    final encoded = base64Encode(const Utf8Encoder().convert(html));
     return 'data:text/html;base64,$encoded';
   }
 
@@ -80,7 +80,9 @@ class _LessonScreenState extends State<LessonScreen> {
             iconBuilder: (color) => Icon(Icons.textsms),
             text: content.title,
             onPressed: () {
-              if (_controller == null) return;
+              if (_controller == null) {
+                return;
+              }
               _controller.loadUrl(_textOrUrl(content));
               Navigator.pop(context);
             },

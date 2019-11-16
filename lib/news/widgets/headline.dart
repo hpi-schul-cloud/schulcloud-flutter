@@ -7,23 +7,23 @@ import 'theme.dart';
 ///
 /// The colors and padding come from the enclosing [ArticleTheme].
 class HeadlineBox extends StatelessWidget {
-  final Widget title;
-  final Widget smallText;
-
   const HeadlineBox({
     @required this.title,
     @required this.smallText,
   })  : assert(title != null),
         assert(smallText != null);
 
+  final Widget title;
+  final Widget smallText;
+
   @override
   Widget build(BuildContext context) {
-    var theme = Provider.of<ArticleTheme>(context);
+    final theme = Provider.of<ArticleTheme>(context);
 
     return Padding(
       padding: EdgeInsets.only(right: theme.padding),
       child: ClipRRect(
-        borderRadius: BorderRadius.only(
+        borderRadius: const BorderRadius.only(
           topRight: Radius.circular(4),
           bottomRight: Radius.circular(4),
         ),
@@ -44,7 +44,7 @@ class HeadlineBox extends StatelessWidget {
                 style: TextStyle(color: Colors.white),
                 child: smallText,
               ),
-              SizedBox(height: 8),
+              const SizedBox(height: 8),
               DefaultTextStyle(
                 style: Theme.of(context)
                     .textTheme

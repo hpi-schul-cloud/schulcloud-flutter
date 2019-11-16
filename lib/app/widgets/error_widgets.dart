@@ -11,10 +11,10 @@ void _showStackTrace(
   Navigator.of(context).push(MaterialPageRoute(
     builder: (_) {
       return Scaffold(
-        appBar: AppBar(title: Text('Stack trace')),
+        appBar: AppBar(title: const Text('Stack trace')),
         body: ListView(children: [
           Text(error.toString()),
-          Divider(),
+          const Divider(),
           Text(stackTrace.toString()),
         ]),
       );
@@ -24,9 +24,6 @@ void _showStackTrace(
 
 class _MessageAndActions {
   _MessageAndActions(this.message, this.actions);
-
-  final String message;
-  final actions;
 
   factory _MessageAndActions.of(
       BuildContext context, dynamic error, StackTrace stackTrace) {
@@ -38,26 +35,29 @@ class _MessageAndActions {
           "Are you sure you're connected to the internet?";
     } else if (error is AuthenticationError) {
       message = "Seems like this device's authentication expired.\n"
-          "Maybe logging out and in again helps?";
+          'Maybe logging out and in again helps?';
       actions.add(SecondaryButton(
-        child: Text('Log out'),
         onPressed: () => logOut(context),
+        child: const Text('Log out'),
       ));
     } else {
       message = 'Oh no! An internal error occurred:\n$error';
       actions.add(SecondaryButton(
-        child: Text('Show stack trace'),
         onPressed: () => _showStackTrace(context, error, stackTrace),
+        child: const Text('Show stack trace'),
       ));
     }
 
     return _MessageAndActions(message, actions);
   }
+
+  final String message;
+  final List<Widget> actions;
 }
 
 /// A screen that displays an [error].
 class ErrorScreen extends StatelessWidget {
-  ErrorScreen(this.error, this.stackTrace, {this.onRetry})
+  const ErrorScreen(this.error, this.stackTrace, {this.onRetry})
       : assert(error != null),
         assert(stackTrace != null);
 
@@ -71,6 +71,8 @@ class ErrorScreen extends StatelessWidget {
 
     return EmptyStateScreen(
       text: messageAndActions.message,
+      actions: messageAndActions.actions,
+      onRetry: onRetry,
       child: Padding(
         padding: const EdgeInsets.only(bottom: 16),
         child: SvgPicture.asset(
@@ -78,15 +80,13 @@ class ErrorScreen extends StatelessWidget {
           height: 300,
         ),
       ),
-      actions: messageAndActions.actions,
-      onRetry: onRetry,
     );
   }
 }
 
 /// A screen that displays an [error].
 class ErrorBanner extends StatelessWidget {
-  ErrorBanner(this.error, this.stackTrace, {this.onRetry})
+  const ErrorBanner(this.error, this.stackTrace, {this.onRetry})
       : assert(error != null),
         assert(stackTrace != null);
 

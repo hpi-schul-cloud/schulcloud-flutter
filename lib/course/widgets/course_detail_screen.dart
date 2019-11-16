@@ -9,9 +9,9 @@ import '../data.dart';
 import 'lesson_screen.dart';
 
 class CourseDetailsScreen extends StatelessWidget {
-  final Course course;
+  const CourseDetailsScreen({@required this.course}) : assert(course != null);
 
-  CourseDetailsScreen({@required this.course}) : assert(course != null);
+  final Course course;
 
   void _showCourseFiles(BuildContext context, Course course) {
     Navigator.of(context).push(FileBrowserPageRoute(
@@ -51,7 +51,7 @@ class CourseDetailsScreen extends StatelessWidget {
               controller: bloc.fetchLessonsOfCourse(course),
               errorBannerBuilder: (_, error, st) => ErrorBanner(error, st),
               errorScreenBuilder: (_, error, st) => ErrorScreen(error, st),
-              builder: (BuildContext context, List<Lesson> lessons) {
+              builder: (context, lessons) {
                 if (lessons.isEmpty) {
                   return EmptyStateScreen(
                     text: "Seems like you're not enrolled in any courses.",

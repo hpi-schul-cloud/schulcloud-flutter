@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:pedantic/pedantic.dart';
 import 'package:provider/provider.dart';
 import 'package:schulcloud/app/app.dart';
 
 import '../bloc.dart';
-import 'morphing_loading_button.dart';
 import 'input.dart';
+import 'morphing_loading_button.dart';
 
 class LoginForm extends StatefulWidget {
   @override
@@ -41,9 +42,9 @@ class _LoginFormState extends State<LoginForm> {
       setState(() => _ambientError = null);
 
       // Logged in.
-      Navigator.of(context).pushReplacement(TopLevelPageRoute(
+      unawaited(Navigator.of(context).pushReplacement(TopLevelPageRoute(
         builder: (_) => LoggedInScreen(),
-      ));
+      )));
     } on InvalidLoginSyntaxError {
       // We will display syntax errors on the text fields themselves.
       _ambientError = null;
@@ -79,14 +80,14 @@ class _LoginFormState extends State<LoginForm> {
       child: Column(
         children: [
           SvgPicture.asset('assets/logo/logo_with_text.svg'),
-          SizedBox(height: 16),
+          const SizedBox(height: 16),
           LoginInput(
             controller: _emailController,
             label: 'Email',
             error: _isEmailValid ? null : 'Enter an email address.',
             onChanged: () => setState(() {}),
           ),
-          SizedBox(height: 16),
+          const SizedBox(height: 16),
           LoginInput(
             controller: _passwordController,
             label: 'Password',
@@ -94,9 +95,9 @@ class _LoginFormState extends State<LoginForm> {
             error: _isPasswordValid ? null : 'Enter a password.',
             onChanged: () => setState(() {}),
           ),
-          SizedBox(height: 16),
+          const SizedBox(height: 16),
           MorphingLoadingButton(
-            onPressed: () => _login(),
+            onPressed: _login,
             isLoading: _isLoading,
             child: Padding(
               padding: const EdgeInsets.all(12),
@@ -106,22 +107,22 @@ class _LoginFormState extends State<LoginForm> {
               ),
             ),
           ),
-          SizedBox(height: 8),
+          const SizedBox(height: 8),
           if (_ambientError != null) Text(_ambientError),
-          Divider(),
-          SizedBox(height: 8),
-          Text("Don't have an account yet? Try it out!"),
-          SizedBox(height: 8),
+          const Divider(),
+          const SizedBox(height: 8),
+          const Text("Don't have an account yet? Try it out!"),
+          const SizedBox(height: 8),
           Wrap(
             children: <Widget>[
               SecondaryButton(
-                onPressed: () => _loginAsDemoStudent(),
-                child: Text('Demo as a student'),
+                onPressed: _loginAsDemoStudent,
+                child: const Text('Demo as a student'),
               ),
-              SizedBox(width: 8),
+              const SizedBox(width: 8),
               SecondaryButton(
-                onPressed: () => _loginAsDemoTeacher(),
-                child: Text('Demo as a teacher'),
+                onPressed: _loginAsDemoTeacher,
+                child: const Text('Demo as a teacher'),
               ),
             ],
           ),

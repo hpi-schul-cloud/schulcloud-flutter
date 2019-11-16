@@ -11,7 +11,7 @@ import 'package:schulcloud/news/news.dart';
 import 'app_bar.dart';
 import 'page_route.dart';
 
-const _textTheme = const TextTheme(
+const _textTheme = TextTheme(
   title: TextStyle(fontWeight: FontWeight.bold),
   body1: TextStyle(fontSize: 16),
   body2: TextStyle(fontSize: 16),
@@ -111,7 +111,7 @@ class _LoggedInScreenState extends State<LoggedInScreen> {
 
     _controller.add(screen);
 
-    var targetScreenBuilder = {
+    final targetScreenBuilder = {
       Screen.dashboard: (_) => DashboardScreen(),
       Screen.news: (_) => NewsScreen(),
       Screen.files: (_) => FilesScreen(),

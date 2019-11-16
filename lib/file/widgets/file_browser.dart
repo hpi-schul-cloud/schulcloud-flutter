@@ -12,15 +12,6 @@ import 'app_bar.dart';
 import 'page_route.dart';
 
 class FileBrowser extends StatelessWidget {
-  final Entity owner;
-  Course get ownerAsCourse => owner is Course ? owner : null;
-
-  final File parent;
-
-  /// Whether this widget is embedded into another screen. If [true], doesn't
-  /// show an app bar.
-  final bool showAppBar;
-
   FileBrowser({
     @required this.owner,
     this.parent,
@@ -28,6 +19,15 @@ class FileBrowser extends StatelessWidget {
   })  : assert(owner != null),
         assert(parent == null || parent.isDirectory),
         assert(showAppBar != null);
+
+  final Entity owner;
+  Course get ownerAsCourse => owner is Course ? owner : null;
+
+  final File parent;
+
+  /// Whether this widget is embedded into another screen. If true, doesn't
+  /// show an app bar.
+  final bool showAppBar;
 
   void _openDirectory(BuildContext context, File file) {
     assert(file.isDirectory);
@@ -50,8 +50,8 @@ class FileBrowser extends StatelessWidget {
       ));
     } on PermissionNotGranted catch (_) {
       Scaffold.of(context).showSnackBar(SnackBar(
-        content: Text(
-          "To download files, we need to access your storage.",
+        content: const Text(
+          'To download files, we need to access your storage.',
         ),
         action: SnackBarAction(
           label: 'Allow',
@@ -77,7 +77,7 @@ class FileBrowser extends StatelessWidget {
               controller: Bloc.of(context).fetchFiles(owner.id, parent),
               errorBannerBuilder: (_, error, st) => ErrorBanner(error, st),
               errorScreenBuilder: (_, error, st) => ErrorScreen(error, st),
-              builder: (BuildContext context, List<File> files) {
+              builder: (context, files) {
                 if (files.isEmpty) {
                   return _buildEmptyState();
                 }
@@ -164,13 +164,13 @@ class FileList extends StatelessWidget {
 }
 
 class FileTile extends StatelessWidget {
-  final File file;
-  final void Function(File file) onTap;
-
-  FileTile({Key key, @required this.file, @required this.onTap})
+  const FileTile({Key key, @required this.file, @required this.onTap})
       : assert(file != null),
         assert(onTap != null),
         super(key: key);
+
+  final File file;
+  final void Function(File file) onTap;
 
   @override
   Widget build(BuildContext context) {

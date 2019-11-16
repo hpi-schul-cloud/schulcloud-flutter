@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 /// is called if the button is pressed.
 /// If [isLoading] is true, it displays a loading spinner instead.
 class MorphingLoadingButton extends StatefulWidget {
-  MorphingLoadingButton({
+  const MorphingLoadingButton({
     @required this.child,
     @required this.onPressed,
     this.isLoading = false,
@@ -18,6 +18,7 @@ class MorphingLoadingButton extends StatefulWidget {
   final VoidCallback onPressed;
   final bool isLoading;
 
+  @override
   _MorphingLoadingButtonState createState() => _MorphingLoadingButtonState();
 }
 
@@ -26,7 +27,7 @@ class _MorphingLoadingButtonState<T> extends State<MorphingLoadingButton> {
 
   @override
   Widget build(BuildContext context) {
-    var theme = Theme.of(context);
+    final theme = Theme.of(context);
 
     return RawMaterialButton(
       // Do not handle touch events if the button is already loading.

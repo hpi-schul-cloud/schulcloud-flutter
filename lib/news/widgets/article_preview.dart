@@ -10,11 +10,7 @@ import 'section.dart';
 import 'theme.dart';
 
 class ArticlePreview extends StatelessWidget {
-  final Article article;
-  final bool showPicture;
-  final bool showDetailedDate;
-
-  ArticlePreview({
+  const ArticlePreview({
     @required this.article,
     this.showPicture = true,
     this.showDetailedDate = false,
@@ -25,6 +21,10 @@ class ArticlePreview extends StatelessWidget {
   factory ArticlePreview.placeholder() {
     return ArticlePreview(article: null, showPicture: false);
   }
+
+  final Article article;
+  final bool showPicture;
+  final bool showDetailedDate;
 
   bool get _isPlaceholder => article == null;
 
@@ -56,11 +56,11 @@ class ArticlePreview extends StatelessWidget {
                   ),
                 ),
                 _buildImage(),
-                SizedBox(height: 8),
+                const SizedBox(height: 8),
                 CachedRawBuilder(
                   controller: UserFetcherService.of(context)
                       .fetchUser(article.author, article.id),
-                  builder: (_, CacheUpdate<User> update) {
+                  builder: (_, update) {
                     return TextOrPlaceholder(
                       _isPlaceholder
                           ? null

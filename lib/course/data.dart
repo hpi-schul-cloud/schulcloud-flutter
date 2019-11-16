@@ -8,7 +8,7 @@ part 'data.g.dart';
 
 @immutable
 @HiveType()
-class Course implements Entity, Comparable {
+class Course implements Entity {
   const Course({
     @required this.id,
     @required this.name,
@@ -32,6 +32,7 @@ class Course implements Entity, Comparable {
           color: hexStringToColor(data['color']),
         );
 
+  @override
   @HiveField(0)
   final Id<Course> id;
 
@@ -49,11 +50,6 @@ class Course implements Entity, Comparable {
 
   @HiveField(4)
   final Color color;
-
-  @override
-  int compareTo(other) {
-    return name.compareTo(other.name);
-  }
 }
 
 @HiveType()
@@ -76,6 +72,7 @@ class Lesson implements Entity {
               .toList(),
         );
 
+  @override
   @HiveField(0)
   final Id<Lesson> id;
 
@@ -135,6 +132,7 @@ class Content implements Entity {
     );
   }
 
+  @override
   @HiveField(0)
   final Id<Content> id;
 

@@ -6,9 +6,9 @@ import '../data.dart';
 import 'course_detail_screen.dart';
 
 class CourseCard extends StatelessWidget {
-  final Course course;
+  const CourseCard({@required this.course}) : assert(course != null);
 
-  CourseCard({@required this.course}) : assert(course != null);
+  final Course course;
 
   void _openDetailsScreen(BuildContext context) {
     Navigator.of(context).push(MaterialPageRoute(
@@ -25,7 +25,7 @@ class CourseCard extends StatelessWidget {
           children: <Widget>[
             Container(
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.only(
+                borderRadius: const BorderRadius.only(
                   topLeft: Radius.circular(4),
                   topRight: Radius.circular(4),
                 ),

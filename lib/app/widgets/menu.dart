@@ -9,10 +9,10 @@ import 'schulcloud_app.dart';
 
 /// A menu displaying the current user and [NavigationItem]s.
 class Menu extends StatelessWidget {
-  final Stream<Screen> activeScreenStream;
-
   const Menu({@required this.activeScreenStream})
       : assert(activeScreenStream != null);
+
+  final Stream<Screen> activeScreenStream;
 
   void _navigateTo(BuildContext context, Screen target) =>
       Navigator.pop(context, target);
@@ -28,22 +28,22 @@ class Menu extends StatelessWidget {
     return Material(
       color: Colors.white,
       elevation: 12,
-      borderRadius: BorderRadius.only(
+      borderRadius: const BorderRadius.only(
         topLeft: Radius.circular(16),
         topRight: Radius.circular(16),
       ),
       child: StreamBuilder<Screen>(
         stream: activeScreenStream,
         builder: (context, snapshot) {
-          var activeScreen = snapshot.data;
+          final activeScreen = snapshot.data;
           return Column(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
-              SizedBox(height: 8),
+              const SizedBox(height: 8),
               _buildUserInfo(context),
-              Divider(),
+              const Divider(),
               ..._buildNavigationItems(context, activeScreen),
-              SizedBox(height: 12),
+              const SizedBox(height: 12),
             ],
           );
         },
@@ -54,13 +54,13 @@ class Menu extends StatelessWidget {
   Widget _buildUserInfo(BuildContext context) {
     return Row(
       children: <Widget>[
-        SizedBox(width: 24),
+        const SizedBox(width: 24),
         Expanded(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SizedBox(height: 8),
+              const SizedBox(height: 8),
               CachedRawBuilder<User>(
                 controller: UserFetcherService.of(context).fetchCurrentUser(),
                 builder: (context, update) {
@@ -77,7 +77,7 @@ class Menu extends StatelessWidget {
                   return Text(snapshot.data, style: TextStyle(fontSize: 14));
                 },
               ),
-              SizedBox(height: 8),
+              const SizedBox(height: 8),
             ],
           ),
         ),
@@ -89,7 +89,7 @@ class Menu extends StatelessWidget {
           icon: Icon(Icons.airline_seat_legroom_reduced),
           onPressed: () => logOut(context),
         ),
-        SizedBox(width: 8),
+        const SizedBox(width: 8),
       ],
     );
   }
@@ -116,12 +116,7 @@ class Menu extends StatelessWidget {
 }
 
 class NavigationItem extends StatelessWidget {
-  final Widget Function(Color color) iconBuilder;
-  final String text;
-  final VoidCallback onPressed;
-  final bool isActive;
-
-  NavigationItem({
+  const NavigationItem({
     @required this.iconBuilder,
     @required this.text,
     @required this.onPressed,
@@ -131,9 +126,14 @@ class NavigationItem extends StatelessWidget {
         assert(onPressed != null),
         assert(isActive != null);
 
+  final Widget Function(Color color) iconBuilder;
+  final String text;
+  final VoidCallback onPressed;
+  final bool isActive;
+
   @override
   Widget build(BuildContext context) {
-    var color = isActive ? Theme.of(context).primaryColor : Colors.black;
+    final color = isActive ? Theme.of(context).primaryColor : Colors.black;
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8),
@@ -148,7 +148,7 @@ class NavigationItem extends StatelessWidget {
             child: Row(
               children: <Widget>[
                 iconBuilder(color),
-                SizedBox(width: 16),
+                const SizedBox(width: 16),
                 Expanded(
                   child: Text(
                     text,

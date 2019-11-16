@@ -39,7 +39,7 @@ class AssignmentDetailsScreen extends StatelessWidget {
       child: Consumer<Bloc>(builder: (context, bloc, _) {
         return CachedRawBuilder<Course>(
           controller: bloc.fetchCourseOfAssignment(assignment),
-          builder: (_, CacheUpdate<Course> update) {
+          builder: (_, update) {
             final course = update.data;
             return Scaffold(
               appBar: AppBar(
@@ -62,8 +62,8 @@ class AssignmentDetailsScreen extends StatelessWidget {
                 errorScreenBuilder: (_, error, st) => ErrorScreen(error, st),
                 errorBannerBuilder: (_, error, st) => ErrorBanner(error, st),
                 builder: (context, submissions) {
-                  var textTheme = Theme.of(context).textTheme;
-                  var submission = submissions.firstWhere(
+                  final textTheme = Theme.of(context).textTheme;
+                  final submission = submissions.firstWhere(
                     (submission) => submission.assignmentId == assignment.id,
                     orElse: () => null,
                   );
@@ -82,13 +82,13 @@ class AssignmentDetailsScreen extends StatelessWidget {
                           alignment: Alignment.centerRight,
                           padding: const EdgeInsets.all(16),
                           child: RaisedButton(
+                            onPressed: () => _showSubmissionScreen(
+                                context, assignment, submission),
                             child: Text(
                               'My submission',
                               style: textTheme.button
                                   .copyWith(color: Colors.white),
                             ),
-                            onPressed: () => _showSubmissionScreen(
-                                context, assignment, submission),
                           ),
                         ),
                     ],

@@ -4,7 +4,7 @@ class DashboardScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(child: FlutterLogo()),
+      body: Center(child: const FlutterLogo()),
     );
   }
 }

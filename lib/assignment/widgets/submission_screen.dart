@@ -19,7 +19,7 @@ class SubmissionScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var textTheme = Theme.of(context).textTheme;
+    final textTheme = Theme.of(context).textTheme;
     return DefaultTabController(
       length: 2,
       child: CachedRawBuilder(
@@ -41,7 +41,7 @@ class SubmissionScreen extends StatelessWidget {
               bottom: TabBar(
                 labelColor: Colors.black,
                 labelStyle: TextStyle(fontSize: 16),
-                tabs: <Widget>[
+                tabs: const <Widget>[
                   Tab(text: 'Submission'),
                   Tab(text: 'Feedback'),
                 ],
@@ -52,14 +52,14 @@ class SubmissionScreen extends StatelessWidget {
                 ListView(
                   children: <Widget>[
                     Html(
-                      padding: EdgeInsets.all(8),
+                      padding: const EdgeInsets.all(8),
                       defaultTextStyle: textTheme.body1.copyWith(fontSize: 20),
                       data: submission.comment,
                     ),
                   ],
                 ),
                 ListView(
-                  padding: EdgeInsets.all(8),
+                  padding: const EdgeInsets.all(8),
                   children: <Widget>[
                     if (submission.grade != null)
                       Text('Grade: ${submission.grade}'),

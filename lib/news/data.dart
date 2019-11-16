@@ -6,7 +6,7 @@ part 'data.g.dart';
 
 @immutable
 @HiveType()
-class Article implements Entity, Comparable {
+class Article implements Entity, Comparable<Article> {
   const Article({
     @required this.id,
     @required this.title,
@@ -33,6 +33,7 @@ class Article implements Entity, Comparable {
   // used before:
   // 5 for [String section]
 
+  @override
   @HiveField(0)
   final Id<Article> id;
 
@@ -52,7 +53,7 @@ class Article implements Entity, Comparable {
   final String content;
 
   @override
-  int compareTo(other) {
+  int compareTo(Article other) {
     return published.compareTo(other.published);
   }
 }

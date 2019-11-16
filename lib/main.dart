@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:schulcloud/app/app.dart';
 
-void main() async {
+Future<void> main() async {
   await initializeHive();
   runApp(ServicesProvider());
 }
@@ -47,7 +47,7 @@ class _ServicesProviderState extends State<ServicesProvider> {
       return Container(
         color: Colors.white,
         alignment: Alignment.center,
-        child: CircularProgressIndicator(),
+        child: const CircularProgressIndicator(),
       );
     }
     return MultiProvider(

@@ -38,8 +38,7 @@ class UserFetcherService {
 
   CacheController<User> fetchCurrentUser() => fetchSingle(
         storage: storage,
-        makeNetworkCall: () async =>
-            await network.get('users/${getIdOfCurrentUser()}'),
+        makeNetworkCall: () => network.get('users/${getIdOfCurrentUser()}'),
         parser: (data) => User.fromJson(data),
       );
 }
