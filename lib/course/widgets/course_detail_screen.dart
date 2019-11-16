@@ -36,8 +36,11 @@ class CourseDetailsScreen extends StatelessWidget {
       child: Consumer<Bloc>(builder: (context, bloc, _) {
         return Scaffold(
           appBar: AppBar(
-            iconTheme: IconThemeData(color: Colors.black),
-            title: Text(course.name, style: TextStyle(color: Colors.black)),
+            iconTheme: const IconThemeData(color: Colors.black),
+            title: Text(
+              course.name,
+              style: const TextStyle(color: Colors.black),
+            ),
             backgroundColor: course.color,
           ),
           body: AppBarActions(
@@ -66,13 +69,13 @@ class CourseDetailsScreen extends StatelessWidget {
                       ),
                       child: Text(
                         course.description,
-                        style: TextStyle(fontSize: 20),
+                        style: const TextStyle(fontSize: 20),
                       ),
                     ),
                     for (var lesson in lessons)
                       ListTile(
-                        title:
-                            Text(lesson.name, style: TextStyle(fontSize: 20)),
+                        title: Text(lesson.name,
+                            style: const TextStyle(fontSize: 20)),
                         onTap: () => _showLessonScreen(
                           context: context,
                           lesson: lesson,

@@ -135,7 +135,7 @@ class FileListHeader extends StatelessWidget {
         children: <Widget>[
           icon,
           const SizedBox(width: 16),
-          Expanded(child: Text(text, style: TextStyle(fontSize: 16))),
+          Expanded(child: Text(text, style: const TextStyle(fontSize: 16))),
         ],
       ),
     );

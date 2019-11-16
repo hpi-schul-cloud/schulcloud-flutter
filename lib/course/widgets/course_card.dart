@@ -36,7 +36,10 @@ class CourseCard extends StatelessWidget {
             ListTile(
               title: Text(
                 course.name,
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                style: const TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
               subtitle: CachedRawBuilder(
                 controllerBuilder: () =>

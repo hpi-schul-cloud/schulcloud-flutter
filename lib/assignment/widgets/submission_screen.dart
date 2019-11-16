@@ -30,7 +30,7 @@ class SubmissionScreen extends StatelessWidget {
           return Scaffold(
             appBar: AppBar(
               backgroundColor: course.color,
-              iconTheme: IconThemeData(color: Colors.black),
+              iconTheme: const IconThemeData(color: Colors.black),
               title: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
