@@ -25,10 +25,3 @@ jobs:
         uses: steebchen/flutter@v1.0.0
         with:
           args: build apk --release
-
-      - name: Upload to release
-        uses: JasonEtco/upload-to-release@master
-        with:
-          args: build/app/outputs/apk/release/app-release.apk
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
