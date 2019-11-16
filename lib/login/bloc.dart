@@ -5,18 +5,18 @@ import 'package:schulcloud/app/app.dart';
 
 class InvalidLoginSyntaxError {}
 
+const _emailRegExp =
+    r"^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?)*$";
+
 class Bloc {
-  static const emailRegExp =
-      r"^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?)*$";
-
-  final StorageService authStorage;
-  final NetworkService network;
-
-  Bloc({@required this.authStorage, @required this.network})
-      : assert(authStorage != null),
+  Bloc({@required this.storage, @required this.network})
+      : assert(storage != null),
         assert(network != null);
 
-  bool isEmailValid(String email) => RegExp(emailRegExp).hasMatch(email);
+  final StorageService storage;
+  final NetworkService network;
+
+  bool isEmailValid(String email) => RegExp(_emailRegExp).hasMatch(email);
   bool isPasswordValid(String password) => password.isNotEmpty;
 
   Future<void> login(String email, String password) async {
@@ -24,7 +24,7 @@ class Bloc {
       throw InvalidLoginSyntaxError();
     }
 
-    authStorage.email = email;
+    storage.email.setValue(email);
 
     // The login throws an exception if it wasn't successful.
     var response = await network.post('authentication', body: {
@@ -32,7 +32,8 @@ class Bloc {
       'username': email,
       'password': password,
     });
-    authStorage.token = json.decode(response.body)['accessToken'];
+    String token = json.decode(response.body)['accessToken'];
+    storage.token.setValue(token);
   }
 
   Future<void> loginAsDemoStudent() =>

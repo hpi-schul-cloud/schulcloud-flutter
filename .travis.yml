@@ -15,7 +15,7 @@ before_script:
   # Actually download the Flutter SDK and generate auto-generated dart files.
   - ./.flutter/bin/flutter doctor
   - ./.flutter/bin/flutter packages get
-  - ./.flutter/bin/flutter packages pub run build_runner build
+  - ./.flutter/bin/flutter pub run build_runner build
 script:
   # For now, don't run tests.
   #- ./.flutter/bin/flutter test

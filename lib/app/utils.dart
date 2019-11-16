@@ -1,8 +1,14 @@
+import 'dart:convert';
 import 'dart:ui';
 
+import 'package:flutter_cached/flutter_cached.dart';
+import 'package:flutter/widgets.dart';
+import 'package:http/http.dart';
 import 'package:intl/intl.dart';
-import 'package:repository/repository.dart';
+import 'package:meta/meta.dart';
 import 'package:url_launcher/url_launcher.dart';
+
+import 'services/storage.dart';
 
 /// Converts a hex string (like, '#ffdd00') to a [Color].
 Color hexStringToColor(String hex) =>
@@ -66,39 +72,68 @@ class PermissionNotGranted<T> implements Exception {
   String toString() => "A permission wasn't granted by the user.";
 }
 
+class Id<T> {
+  final String id;
+
+  const Id(this.id);
+
+  Id<S> cast<S>() => Id<S>(id);
+
+  String toString() => id;
+}
+
 /// A special kind of item that also carries its id.
 abstract class Entity {
-  Id<Entity> get id;
+  Id get id;
   const Entity();
 }
 
-abstract class CollectionDownloader<Item extends Entity>
-    extends Repository<Item> {
-  Future<List<Item>> _downloader;
-  Map<Id<Item>, Item> _items;
+class LazyMap<K, V> {
+  final Map<K, V> _map = const {};
+  final V Function(K key) createValueForKey;
 
-  CollectionDownloader() : super(isFinite: true, isMutable: false);
+  LazyMap(this.createValueForKey) : assert(createValueForKey != null);
 
-  Future<void> _ensureItemsAreDownloaded() async {
-    _downloader ??= downloadAll();
-    _items ??= {for (var item in await _downloader) item.id: item};
-  }
+  V operator [](K key) => _map.putIfAbsent(key, () => createValueForKey(key));
+}
 
-  @override
-  Stream<Item> fetch(Id<Item> id) async* {
-    await _ensureItemsAreDownloaded();
-    if (_items.containsKey(id)) {
-      yield _items[id];
-    } else {
-      throw ItemNotFound(id);
-    }
-  }
+CacheController<T> fetchSingle<T extends Entity>({
+  @required StorageService storage,
+  Id<dynamic> parent,
+  @required Future<Response> Function() makeNetworkCall,
+  @required T Function(Map<String, dynamic> data) parser,
+}) {
+  assert(storage != null);
+  return CacheController<T>(
+    saveToCache: (item) => storage.cache.putChildrenOfType<T>(parent, [item]),
+    loadFromCache: () async {
+      return (await storage.cache.getChildrenOfType<T>(parent)).singleWhere(
+        (_) => true,
+        orElse: () => (throw NotInCacheException()),
+      );
+    },
+    fetcher: () async {
+      final response = await makeNetworkCall();
+      final data = json.decode(response.body);
+      return parser(data);
+    },
+  );
+}
 
-  @override
-  Stream<Map<Id<Item>, Item>> fetchAll() async* {
-    await _ensureItemsAreDownloaded();
-    yield _items;
-  }
-
-  Future<List<Item>> downloadAll();
+CacheController<List<T>> fetchList<T extends Entity>({
+  @required StorageService storage,
+  Id<dynamic> parent,
+  @required Future<Response> Function() makeNetworkCall,
+  @required T Function(Map<String, dynamic> data) parser,
+}) {
+  assert(storage != null);
+  return CacheController<List<T>>(
+    saveToCache: (items) => storage.cache.putChildrenOfType<T>(parent, items),
+    loadFromCache: () => storage.cache.getChildrenOfType<T>(parent),
+    fetcher: () async {
+      final response = await makeNetworkCall();
+      final body = json.decode(response.body);
+      return [for (final data in body['data']) parser(data)];
+    },
+  );
 }
