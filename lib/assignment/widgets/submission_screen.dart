@@ -34,13 +34,19 @@ class SubmissionScreen extends StatelessWidget {
               title: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  Text(assignment.name, style: TextStyle(color: Colors.black)),
-                  Text(course.name, style: TextStyle(color: Colors.black)),
+                  Text(
+                    assignment.name,
+                    style: const TextStyle(color: Colors.black),
+                  ),
+                  Text(
+                    course.name,
+                    style: const TextStyle(color: Colors.black),
+                  ),
                 ],
               ),
               bottom: TabBar(
                 labelColor: Colors.black,
-                labelStyle: TextStyle(fontSize: 16),
+                labelStyle: const TextStyle(fontSize: 16),
                 tabs: const <Widget>[
                   Tab(text: 'Submission'),
                   Tab(text: 'Feedback'),

@@ -35,11 +35,17 @@ class _LessonScreenState extends State<LessonScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        iconTheme: IconThemeData(color: Colors.black),
+        iconTheme: const IconThemeData(color: Colors.black),
         title: Column(
           children: <Widget>[
-            Text(widget.lesson.name, style: TextStyle(color: Colors.black)),
-            Text(widget.course.name, style: TextStyle(color: Colors.black)),
+            Text(
+              widget.lesson.name,
+              style: const TextStyle(color: Colors.black),
+            ),
+            Text(
+              widget.course.name,
+              style: const TextStyle(color: Colors.black),
+            ),
           ],
         ),
         backgroundColor: widget.course.color,

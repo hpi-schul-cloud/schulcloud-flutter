@@ -43,16 +43,18 @@ class AssignmentDetailsScreen extends StatelessWidget {
             final course = update.data;
             return Scaffold(
               appBar: AppBar(
-                iconTheme: IconThemeData(color: Colors.black),
+                iconTheme: const IconThemeData(color: Colors.black),
                 backgroundColor: course?.color,
                 title: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    Text(assignment.name,
-                        style: TextStyle(color: Colors.black)),
+                    Text(
+                      assignment.name,
+                      style: const TextStyle(color: Colors.black),
+                    ),
                     Text(
                       course?.name ?? 'Loading...',
-                      style: TextStyle(color: Colors.black),
+                      style: const TextStyle(color: Colors.black),
                     ),
                   ],
                 ),

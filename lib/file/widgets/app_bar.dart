@@ -21,8 +21,8 @@ class _FileBrowserAppBarState extends State<FileBrowserAppBar> {
       child: AppBar(
         key: ValueKey<String>(widget.title),
         backgroundColor: widget.backgroundColor,
-        title: Text(widget.title, style: TextStyle(color: Colors.black)),
-        iconTheme: IconThemeData(color: Colors.black),
+        title: Text(widget.title, style: const TextStyle(color: Colors.black)),
+        iconTheme: const IconThemeData(color: Colors.black),
       ),
     );
   }
@@ -43,7 +43,7 @@ class _FileBrowserAppBarState extends State<FileBrowserAppBar> {
 
     return AppBar(
       backgroundColor: widget.backgroundColor,
-      leading: BackButton(color: Colors.black),
+      leading: const BackButton(color: Colors.black),
       title: AnimatedTitle(
         parentTitle:
             direction == HeroFlightDirection.push ? fromTitle : toTitle,
@@ -94,9 +94,14 @@ class _AnimatedTitleState extends State<AnimatedTitle> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    parentTitle =
-        Text(widget.parentTitle, style: TextStyle(color: Colors.black));
-    childTitle = Text(widget.childTitle, style: TextStyle(color: Colors.black));
+    parentTitle = Text(
+      widget.parentTitle,
+      style: const TextStyle(color: Colors.black),
+    );
+    childTitle = Text(
+      widget.childTitle,
+      style: const TextStyle(color: Colors.black),
+    );
   }
 
   double get animValue => widget.animation.value;

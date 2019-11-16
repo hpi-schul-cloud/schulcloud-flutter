@@ -136,7 +136,7 @@ class _ArticleViewState extends State<ArticleView> {
       padding: EdgeInsets.fromLTRB(padding, 0, padding, 16),
       child: Text(
         widget.article.content,
-        style: TextStyle(fontSize: 20),
+        style: const TextStyle(fontSize: 20),
         textAlign: TextAlign.justify,
       ),
     );

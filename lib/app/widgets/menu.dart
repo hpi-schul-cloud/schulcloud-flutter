@@ -66,7 +66,7 @@ class Menu extends StatelessWidget {
                 builder: (context, update) {
                   return Text(
                     update.data?.name ?? '-',
-                    style: TextStyle(fontSize: 20),
+                    style: const TextStyle(fontSize: 20),
                   );
                 },
               ),
@@ -74,7 +74,8 @@ class Menu extends StatelessWidget {
                 stream: StorageService.of(context).email,
                 initialData: '-',
                 builder: (context, snapshot) {
-                  return Text(snapshot.data, style: TextStyle(fontSize: 14));
+                  return Text(snapshot.data,
+                      style: const TextStyle(fontSize: 14));
                 },
               ),
               const SizedBox(height: 8),
