@@ -1,5 +1,5 @@
 on: [push, pull_request]
-name: build and test app
+name: Analyze, lint and build the app.
 jobs:
   build:
     runs-on: ubuntu-latest
