@@ -7,7 +7,7 @@ class EmptyStateLicense implements LicenseEntry {
       };
 
   @override
-  Iterable<LicenseParagraph> get paragraphs => const [
+  Iterable<LicenseParagraph> get paragraphs => [
         LicenseParagraph(
             'Image "empty_state" (shown on empty screens) by Alexey is '
             'licensed under CC BY 4.0.',

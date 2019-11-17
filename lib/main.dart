@@ -47,7 +47,7 @@ class _ServicesProviderState extends State<ServicesProvider> {
       return Container(
         color: Colors.white,
         alignment: Alignment.center,
-        child: const CircularProgressIndicator(),
+        child: CircularProgressIndicator(),
       );
     }
     return MultiProvider(

@@ -28,7 +28,7 @@ class Menu extends StatelessWidget {
     return Material(
       color: Colors.white,
       elevation: 12,
-      borderRadius: const BorderRadius.only(
+      borderRadius: BorderRadius.only(
         topLeft: Radius.circular(16),
         topRight: Radius.circular(16),
       ),
@@ -39,11 +39,11 @@ class Menu extends StatelessWidget {
           return Column(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
-              const SizedBox(height: 8),
+              SizedBox(height: 8),
               _buildUserInfo(context),
-              const Divider(),
+              Divider(),
               ..._buildNavigationItems(context, activeScreen),
-              const SizedBox(height: 12),
+              SizedBox(height: 12),
             ],
           );
         },
@@ -54,19 +54,19 @@ class Menu extends StatelessWidget {
   Widget _buildUserInfo(BuildContext context) {
     return Row(
       children: <Widget>[
-        const SizedBox(width: 24),
+        SizedBox(width: 24),
         Expanded(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const SizedBox(height: 8),
+              SizedBox(height: 8),
               CachedRawBuilder<User>(
                 controller: UserFetcherService.of(context).fetchCurrentUser(),
                 builder: (context, update) {
                   return Text(
                     update.data?.name ?? '-',
-                    style: const TextStyle(fontSize: 20),
+                    style: TextStyle(fontSize: 20),
                   );
                 },
               ),
@@ -74,11 +74,10 @@ class Menu extends StatelessWidget {
                 stream: StorageService.of(context).email,
                 initialData: '-',
                 builder: (context, snapshot) {
-                  return Text(snapshot.data,
-                      style: const TextStyle(fontSize: 14));
+                  return Text(snapshot.data, style: TextStyle(fontSize: 14));
                 },
               ),
-              const SizedBox(height: 8),
+              SizedBox(height: 8),
             ],
           ),
         ),
@@ -90,7 +89,7 @@ class Menu extends StatelessWidget {
           icon: Icon(Icons.airline_seat_legroom_reduced),
           onPressed: () => logOut(context),
         ),
-        const SizedBox(width: 8),
+        SizedBox(width: 8),
       ],
     );
   }
@@ -137,7 +136,7 @@ class NavigationItem extends StatelessWidget {
     final color = isActive ? Theme.of(context).primaryColor : Colors.black;
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8),
+      padding: EdgeInsets.symmetric(horizontal: 8),
       child: Material(
         borderRadius: BorderRadius.circular(8),
         color: isActive ? color.withOpacity(0.2) : Colors.transparent,
@@ -145,11 +144,11 @@ class NavigationItem extends StatelessWidget {
           borderRadius: BorderRadius.circular(8),
           onTap: onPressed,
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             child: Row(
               children: <Widget>[
                 iconBuilder(color),
-                const SizedBox(width: 16),
+                SizedBox(width: 16),
                 Expanded(
                   child: Text(
                     text,

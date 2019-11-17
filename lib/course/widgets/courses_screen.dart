@@ -25,7 +25,7 @@ class CoursesScreen extends StatelessWidget {
               errorScreenBuilder: (_, error, st) => ErrorScreen(error, st),
               builder: (context, courses) {
                 if (courses.isEmpty) {
-                  return const EmptyStateScreen(
+                  return EmptyStateScreen(
                     text: "Seems like you're currently not enrolled in any "
                         'courses.',
                   );

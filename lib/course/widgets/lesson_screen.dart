@@ -35,16 +35,16 @@ class _LessonScreenState extends State<LessonScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        iconTheme: const IconThemeData(color: Colors.black),
+        iconTheme: IconThemeData(color: Colors.black),
         title: Column(
           children: <Widget>[
             Text(
               widget.lesson.name,
-              style: const TextStyle(color: Colors.black),
+              style: TextStyle(color: Colors.black),
             ),
             Text(
               widget.course.name,
-              style: const TextStyle(color: Colors.black),
+              style: TextStyle(color: Colors.black),
             ),
           ],
         ),
@@ -58,7 +58,7 @@ class _LessonScreenState extends State<LessonScreen> {
           ),
         ],
         child: Padding(
-          padding: const EdgeInsets.all(8),
+          padding: EdgeInsets.all(8),
           child: WebView(
             initialUrl: _textOrUrl(widget.lesson.contents[0]),
             onWebViewCreated: (controller) => _controller = controller,
@@ -70,7 +70,7 @@ class _LessonScreenState extends State<LessonScreen> {
   }
 
   String _createBase64Source(String html) {
-    final encoded = base64Encode(const Utf8Encoder().convert(html));
+    final encoded = base64Encode(Utf8Encoder().convert(html));
     return 'data:text/html;base64,$encoded';
   }
 

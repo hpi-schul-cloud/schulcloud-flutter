@@ -22,7 +22,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Settings')),
+      appBar: AppBar(title: Text('Settings')),
       body: ListView(
         children: <Widget>[
           FutureBuilder<PackageInfo>(
@@ -30,7 +30,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             builder: (context, snapshot) {
               return ListTile(
                 leading: Icon(Icons.update),
-                title: const Text('Version'),
+                title: Text('Version'),
                 subtitle: Text(
                   snapshot.hasData
                       ? '${snapshot.data.version}+${snapshot.data.buildNumber}'
@@ -43,7 +43,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ),
           ListTile(
             leading: Icon(Icons.people_outline),
-            title: const Text('Contributors'),
+            title: Text('Contributors'),
             subtitle: Text([
               'Marcel Garus',
               'Andrea Nathansen',
@@ -53,29 +53,29 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ),
           ListTile(
             leading: Icon(Icons.code),
-            title: const Text('This app is open source'),
+            title: Text('This app is open source'),
             onTap: () => tryLaunchingUrl(
                 'https://github.com/schul-cloud/schulcloud-flutter'),
           ),
           ListTile(
             leading: Icon(Icons.mail_outline),
-            title: const Text('Contact'),
+            title: Text('Contact'),
             onTap: () => tryLaunchingUrl('mailto:info@schul-cloud.org'),
           ),
           ListTile(
             leading: Icon(Icons.person_outline),
-            title: const Text('Imprint'),
+            title: Text('Imprint'),
             onTap: () => tryLaunchingUrl('https://schul-cloud.org/impressum'),
           ),
           ListTile(
             leading: Icon(Icons.lightbulb_outline),
-            title: const Text('Privacy Policy'),
+            title: Text('Privacy Policy'),
             onTap: () => tryLaunchingUrl(
                 'https://schul-cloud.org/impressum#data_security'),
           ),
           ListTile(
             leading: Icon(Icons.info_outline),
-            title: const Text('Licenses'),
+            title: Text('Licenses'),
             onTap: () => showLicensePage(context: context),
           ),
         ],

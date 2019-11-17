@@ -38,9 +38,9 @@ class _MorphingLoadingButtonState<T> extends State<MorphingLoadingButton> {
       elevation: 0,
       highlightElevation: 2,
       shape: _isLoading
-          ? const CircleBorder()
+          ? CircleBorder()
           : RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-      animationDuration: const Duration(milliseconds: 200),
+      animationDuration: Duration(milliseconds: 200),
       child: Container(
         width: _isLoading ? 52 : null,
         height: _isLoading ? 52 : null,

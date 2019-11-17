@@ -78,7 +78,7 @@ class AssignmentCard extends StatelessWidget {
         enableFeedback: true,
         onTap: () => _showAssignmentDetailsScreen(context),
         child: Padding(
-          padding: const EdgeInsets.all(8),
+          padding: EdgeInsets.all(8),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [

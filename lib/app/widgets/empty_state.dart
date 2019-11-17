@@ -26,7 +26,7 @@ class EmptyStateScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(32),
+      padding: EdgeInsets.all(32),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
@@ -34,19 +34,19 @@ class EmptyStateScreen extends StatelessWidget {
               SvgPicture.asset('assets/empty_states/default.svg', height: 300),
           Text(text, textAlign: TextAlign.center),
           if (actions.isNotEmpty || onRetry != null) ...[
-            const SizedBox(height: 16),
+            SizedBox(height: 16),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 for (var i = 0; i < actions.length; i++) ...[
                   actions[i],
                   if (i <= actions.length - 1 || onRetry != null)
-                    const SizedBox(width: 8),
+                    SizedBox(width: 8),
                 ],
                 if (onRetry != null)
                   SecondaryButton(
                     onPressed: onRetry,
-                    child: const Text('Try again'),
+                    child: Text('Try again'),
                   ),
               ],
             ),

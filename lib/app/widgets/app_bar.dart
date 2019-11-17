@@ -68,7 +68,7 @@ class _MyAppBarState extends State<MyAppBar> {
       elevation: 12,
       child: Container(
         height: 56,
-        padding: const EdgeInsets.symmetric(horizontal: 8),
+        padding: EdgeInsets.symmetric(horizontal: 8),
         alignment: Alignment.center,
         child: IconTheme(
           data: IconThemeData(color: Colors.white),
@@ -78,7 +78,7 @@ class _MyAppBarState extends State<MyAppBar> {
                 icon: Icon(Icons.menu),
                 onPressed: () => _showMenu(context),
               ),
-              const Spacer(),
+              Spacer(),
               ..._actions,
             ],
           ),
@@ -137,7 +137,7 @@ Widget _customDialogTransitionBuilder(
       ),
       SlideTransition(
         position: Tween<Offset>(
-          begin: const Offset(0, 1),
+          begin: Offset(0, 1),
           end: Offset.zero,
         ).animate(CurvedAnimation(
           parent: animation,

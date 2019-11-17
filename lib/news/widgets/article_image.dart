@@ -28,7 +28,7 @@ class ArticleImageView extends StatelessWidget {
     return Container(
       color: placeholderColor,
       child: FadeInImage.memoryNetwork(
-        fadeInDuration: const Duration(milliseconds: 500),
+        fadeInDuration: Duration(milliseconds: 500),
         fadeInCurve: Curves.easeInOutCubic,
         placeholder: kTransparentImage,
         image: imageUrl,
@@ -53,7 +53,7 @@ class GradientArticleImageView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ClipRRect(
-      borderRadius: const BorderRadius.only(
+      borderRadius: BorderRadius.only(
         topRight: Radius.circular(8),
         bottomLeft: Radius.circular(8),
         bottomRight: Radius.circular(8),

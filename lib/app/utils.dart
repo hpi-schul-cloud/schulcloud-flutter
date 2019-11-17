@@ -91,7 +91,7 @@ abstract class Entity {
 class LazyMap<K, V> {
   LazyMap(this.createValueForKey) : assert(createValueForKey != null);
 
-  final Map<K, V> _map = const {};
+  final Map<K, V> _map = {};
   final V Function(K key) createValueForKey;
 
   V operator [](K key) => _map.putIfAbsent(key, () => createValueForKey(key));

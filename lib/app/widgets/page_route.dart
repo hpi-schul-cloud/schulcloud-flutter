@@ -33,5 +33,5 @@ class TopLevelPageRoute<T> extends PageRoute<T> {
   bool get maintainState => true;
 
   @override
-  Duration get transitionDuration => const Duration(milliseconds: 300);
+  Duration get transitionDuration => Duration(milliseconds: 300);
 }

@@ -28,7 +28,7 @@ class _AuthorViewState extends State<AuthorView> {
       alignment: Alignment.centerLeft,
       child: Container(
         color: Colors.white,
-        padding: const EdgeInsets.fromLTRB(0, 4, 8, 4),
+        padding: EdgeInsets.fromLTRB(0, 4, 8, 4),
         child: TextOrPlaceholder(
           isPlaceholder ? null : 'von ${author.name}',
           style: Theme.of(context).textTheme.caption.copyWith(fontSize: 16),

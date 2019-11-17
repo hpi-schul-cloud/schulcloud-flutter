@@ -23,7 +23,7 @@ class HeadlineBox extends StatelessWidget {
     return Padding(
       padding: EdgeInsets.only(right: theme.padding),
       child: ClipRRect(
-        borderRadius: const BorderRadius.only(
+        borderRadius: BorderRadius.only(
           topRight: Radius.circular(4),
           bottomRight: Radius.circular(4),
         ),
@@ -44,7 +44,7 @@ class HeadlineBox extends StatelessWidget {
                 style: TextStyle(color: Colors.white),
                 child: smallText,
               ),
-              const SizedBox(height: 8),
+              SizedBox(height: 8),
               DefaultTextStyle(
                 style: Theme.of(context)
                     .textTheme

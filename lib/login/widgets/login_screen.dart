@@ -46,13 +46,13 @@ class LoginScreen extends StatelessWidget {
           height: 50,
           padding: EdgeInsets.only(bottom: mediaQuery.padding.bottom),
           alignment: Alignment.center,
-          child: const Text('scroll down for more information'),
+          child: Text('scroll down for more information'),
         ),
       ),
       SlantedSection(
         color: theme.primaryColor,
         slantTop: 0,
-        child: const Padding(
+        child: Padding(
           padding: EdgeInsets.all(16),
           child: Text(
             'Das Hasso-Plattner-Institut für Digital Engineering entwickelt '
@@ -69,9 +69,9 @@ class LoginScreen extends StatelessWidget {
         ),
       ),
       Container(
-        padding: const EdgeInsets.all(16),
+        padding: EdgeInsets.all(16),
         alignment: Alignment.center,
-        child: const Text('There could go some other information down here.'),
+        child: Text('There could go some other information down here.'),
       ),
     ];
   }

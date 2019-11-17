@@ -50,7 +50,7 @@ class FileBrowser extends StatelessWidget {
       ));
     } on PermissionNotGranted catch (_) {
       Scaffold.of(context).showSnackBar(SnackBar(
-        content: const Text(
+        content: Text(
           'To download files, we need to access your storage.',
         ),
         action: SnackBarAction(
@@ -109,7 +109,7 @@ class FileBrowser extends StatelessWidget {
   }
 
   Widget _buildEmptyState() {
-    return const EmptyStateScreen(
+    return EmptyStateScreen(
       text: 'Seems like there are no files here.',
       child: SizedBox(
         width: 100,
@@ -153,7 +153,7 @@ class FileList extends StatelessWidget {
         } else if (index == files.length) {
           return Container(
             alignment: Alignment.center,
-            padding: const EdgeInsets.all(16),
+            padding: EdgeInsets.all(16),
             child: Text('${files.length} items in total'),
           );
         }

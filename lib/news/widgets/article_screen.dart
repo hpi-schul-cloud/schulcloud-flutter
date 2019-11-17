@@ -35,7 +35,7 @@ class ArticleScreen extends StatelessWidget {
             child: ListView(
               padding: MediaQuery.of(context).padding +
                   EdgeInsets.symmetric(horizontal: margin) +
-                  const EdgeInsets.symmetric(vertical: 16),
+                  EdgeInsets.symmetric(vertical: 16),
               children: <Widget>[
                 ArticleView(article: article),
               ],
@@ -72,7 +72,7 @@ class _ArticleViewState extends State<ArticleView> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        const Section(child: Text('Section')),
+        Section(child: Text('Section')),
         HeadlineBox(
           title: Text(widget.article.title),
           smallText: Text(widget.article.published.toString()),
@@ -82,7 +82,7 @@ class _ArticleViewState extends State<ArticleView> {
           child: _buildAuthorView(context),
         ),
         Transform.translate(
-          offset: const Offset(0, -20),
+          offset: Offset(0, -20),
           child: _buildContent(context),
         ),
       ],
@@ -95,13 +95,13 @@ class _ArticleViewState extends State<ArticleView> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        const Section(child: Text('Section')),
+        Section(child: Text('Section')),
         Hero(
           tag: widget.article,
           child: ArticleImageView(imageUrl: widget.article.imageUrl),
         ),
         Transform.translate(
-          offset: const Offset(0, -48),
+          offset: Offset(0, -48),
           child: HeadlineBox(
             title: Text(widget.article.title),
             smallText: Text(widget.article.published.toString()),
@@ -112,7 +112,7 @@ class _ArticleViewState extends State<ArticleView> {
           child: _buildAuthorView(context),
         ),
         Transform.translate(
-          offset: const Offset(0, -48),
+          offset: Offset(0, -48),
           child: _buildContent(context),
         ),
       ],
@@ -136,7 +136,7 @@ class _ArticleViewState extends State<ArticleView> {
       padding: EdgeInsets.fromLTRB(padding, 0, padding, 16),
       child: Text(
         widget.article.content,
-        style: const TextStyle(fontSize: 20),
+        style: TextStyle(fontSize: 20),
         textAlign: TextAlign.justify,
       ),
     );

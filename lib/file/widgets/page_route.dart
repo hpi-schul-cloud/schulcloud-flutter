@@ -21,14 +21,14 @@ const int _kMaxPageBackAnimationTime = 300; // Milliseconds.
 
 // Offset from offscreen to the right to fully on screen.
 final Animatable<Offset> _kRightMiddleTween = Tween<Offset>(
-  begin: const Offset(1, 0),
+  begin: Offset(1, 0),
   end: Offset.zero,
 );
 
 // Offset from fully on screen to 1/3 offscreen to the left.
 final Animatable<Offset> _kMiddleLeftTween = Tween<Offset>(
   begin: Offset.zero,
-  end: const Offset(-1.0 / 3, 0),
+  end: Offset(-1.0 / 3, 0),
 );
 
 class FileBrowserPageRoute<T> extends PageRoute<T> {
@@ -46,7 +46,7 @@ class FileBrowserPageRoute<T> extends PageRoute<T> {
   bool get maintainState => true;
 
   @override
-  Duration get transitionDuration => const Duration(milliseconds: 400);
+  Duration get transitionDuration => Duration(milliseconds: 400);
 
   @override
   Color get barrierColor => null;

@@ -30,21 +30,21 @@ class SubmissionScreen extends StatelessWidget {
           return Scaffold(
             appBar: AppBar(
               backgroundColor: course.color,
-              iconTheme: const IconThemeData(color: Colors.black),
+              iconTheme: IconThemeData(color: Colors.black),
               title: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Text(
                     assignment.name,
-                    style: const TextStyle(color: Colors.black),
+                    style: TextStyle(color: Colors.black),
                   ),
                   Text(
                     course.name,
-                    style: const TextStyle(color: Colors.black),
+                    style: TextStyle(color: Colors.black),
                   ),
                 ],
               ),
-              bottom: const TabBar(
+              bottom: TabBar(
                 labelColor: Colors.black,
                 labelStyle: TextStyle(fontSize: 16),
                 tabs: <Widget>[
@@ -58,14 +58,14 @@ class SubmissionScreen extends StatelessWidget {
                 ListView(
                   children: <Widget>[
                     Html(
-                      padding: const EdgeInsets.all(8),
+                      padding: EdgeInsets.all(8),
                       defaultTextStyle: textTheme.body1.copyWith(fontSize: 20),
                       data: submission.comment,
                     ),
                   ],
                 ),
                 ListView(
-                  padding: const EdgeInsets.all(8),
+                  padding: EdgeInsets.all(8),
                   children: <Widget>[
                     if (submission.grade != null)
                       Text('Grade: ${submission.grade}'),

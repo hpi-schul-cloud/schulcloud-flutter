@@ -23,7 +23,7 @@ class LoginInput extends StatelessWidget {
       obscureText: obscureText,
       onChanged: (_) => onChanged(),
       decoration: InputDecoration(
-        border: const OutlineInputBorder(),
+        border: OutlineInputBorder(),
         labelText: label,
         errorText: error,
       ),

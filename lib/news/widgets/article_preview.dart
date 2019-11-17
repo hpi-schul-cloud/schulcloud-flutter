@@ -45,7 +45,7 @@ class ArticlePreview extends StatelessWidget {
         child: InkWell(
           onTap: _isPlaceholder ? null : () => _openArticle(context),
           child: Padding(
-            padding: const EdgeInsets.all(16),
+            padding: EdgeInsets.all(16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
@@ -56,7 +56,7 @@ class ArticlePreview extends StatelessWidget {
                   ),
                 ),
                 _buildImage(),
-                const SizedBox(height: 8),
+                SizedBox(height: 8),
                 CachedRawBuilder(
                   controller: UserFetcherService.of(context)
                       .fetchUser(article.author, article.id),

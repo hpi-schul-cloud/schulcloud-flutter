@@ -61,7 +61,7 @@ class NetworkService {
                 seconds: json.decode(response.body)['data']['timeToWait'],
               );
             } catch (_) {
-              return const Duration(seconds: 10);
+              return Duration(seconds: 10);
             }
           }(),
         );

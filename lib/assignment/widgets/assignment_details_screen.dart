@@ -43,18 +43,18 @@ class AssignmentDetailsScreen extends StatelessWidget {
             final course = update.data;
             return Scaffold(
               appBar: AppBar(
-                iconTheme: const IconThemeData(color: Colors.black),
+                iconTheme: IconThemeData(color: Colors.black),
                 backgroundColor: course?.color,
                 title: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Text(
                       assignment.name,
-                      style: const TextStyle(color: Colors.black),
+                      style: TextStyle(color: Colors.black),
                     ),
                     Text(
                       course?.name ?? 'Loading...',
-                      style: const TextStyle(color: Colors.black),
+                      style: TextStyle(color: Colors.black),
                     ),
                   ],
                 ),
@@ -73,7 +73,7 @@ class AssignmentDetailsScreen extends StatelessWidget {
                   return ListView(
                     children: <Widget>[
                       Html(
-                        padding: const EdgeInsets.all(8),
+                        padding: EdgeInsets.all(8),
                         defaultTextStyle:
                             textTheme.body1.copyWith(fontSize: 20),
                         data: assignment.description,
@@ -82,7 +82,7 @@ class AssignmentDetailsScreen extends StatelessWidget {
                       if (submission != null)
                         Container(
                           alignment: Alignment.centerRight,
-                          padding: const EdgeInsets.all(16),
+                          padding: EdgeInsets.all(16),
                           child: RaisedButton(
                             onPressed: () => _showSubmissionScreen(
                                 context, assignment, submission),

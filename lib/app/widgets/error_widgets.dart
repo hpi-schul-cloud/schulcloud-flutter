@@ -11,10 +11,10 @@ void _showStackTrace(
   Navigator.of(context).push(MaterialPageRoute(
     builder: (_) {
       return Scaffold(
-        appBar: AppBar(title: const Text('Stack trace')),
+        appBar: AppBar(title: Text('Stack trace')),
         body: ListView(children: [
           Text(error.toString()),
-          const Divider(),
+          Divider(),
           Text(stackTrace.toString()),
         ]),
       );
@@ -38,13 +38,13 @@ class _MessageAndActions {
           'Maybe logging out and in again helps?';
       actions.add(SecondaryButton(
         onPressed: () => logOut(context),
-        child: const Text('Log out'),
+        child: Text('Log out'),
       ));
     } else {
       message = 'Oh no! An internal error occurred:\n$error';
       actions.add(SecondaryButton(
         onPressed: () => _showStackTrace(context, error, stackTrace),
-        child: const Text('Show stack trace'),
+        child: Text('Show stack trace'),
       ));
     }
 
@@ -74,7 +74,7 @@ class ErrorScreen extends StatelessWidget {
       actions: messageAndActions.actions,
       onRetry: onRetry,
       child: Padding(
-        padding: const EdgeInsets.only(bottom: 16),
+        padding: EdgeInsets.only(bottom: 16),
         child: SvgPicture.asset(
           'assets/empty_states/broken_pen.svg',
           height: 300,
@@ -102,7 +102,7 @@ class ErrorBanner extends StatelessWidget {
       elevation: 4,
       child: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.all(8),
+          padding: EdgeInsets.all(8),
           child: Row(
             children: <Widget>[
               Expanded(child: Text(messageAndActions.message)),

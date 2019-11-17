@@ -36,10 +36,10 @@ class CourseDetailsScreen extends StatelessWidget {
       child: Consumer<Bloc>(builder: (context, bloc, _) {
         return Scaffold(
           appBar: AppBar(
-            iconTheme: const IconThemeData(color: Colors.black),
+            iconTheme: IconThemeData(color: Colors.black),
             title: Text(
               course.name,
-              style: const TextStyle(color: Colors.black),
+              style: TextStyle(color: Colors.black),
             ),
             backgroundColor: course.color,
           ),
@@ -56,26 +56,28 @@ class CourseDetailsScreen extends StatelessWidget {
               errorScreenBuilder: (_, error, st) => ErrorScreen(error, st),
               builder: (context, lessons) {
                 if (lessons.isEmpty) {
-                  return const EmptyStateScreen(
+                  return EmptyStateScreen(
                     text: "Seems like you're not enrolled in any courses.",
                   );
                 }
                 return ListView(
                   children: [
                     Padding(
-                      padding: const EdgeInsets.symmetric(
+                      padding: EdgeInsets.symmetric(
                         vertical: 18,
                         horizontal: 12,
                       ),
                       child: Text(
                         course.description,
-                        style: const TextStyle(fontSize: 20),
+                        style: TextStyle(fontSize: 20),
                       ),
                     ),
                     for (var lesson in lessons)
                       ListTile(
-                        title: Text(lesson.name,
-                            style: const TextStyle(fontSize: 20)),
+                        title: Text(
+                          lesson.name,
+                          style: TextStyle(fontSize: 20),
+                        ),
                         onTap: () => _showLessonScreen(
                           context: context,
                           lesson: lesson,

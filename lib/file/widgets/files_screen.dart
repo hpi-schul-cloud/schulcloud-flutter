@@ -30,7 +30,7 @@ class FilesScreen extends StatelessWidget {
                 indicatorColor: Theme.of(context).primaryColor,
                 indicatorWeight: 4,
                 labelColor: Colors.black,
-                tabs: const <Widget>[
+                tabs: <Widget>[
                   Tab(text: 'My files'),
                   Tab(text: 'Course files'),
                 ],
@@ -128,14 +128,14 @@ class FileListHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.all(16),
       color: Colors.black12,
       height: 100,
       child: Row(
         children: <Widget>[
           icon,
-          const SizedBox(width: 16),
-          Expanded(child: Text(text, style: const TextStyle(fontSize: 16))),
+          SizedBox(width: 16),
+          Expanded(child: Text(text, style: TextStyle(fontSize: 16))),
         ],
       ),
     );

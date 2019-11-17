@@ -75,19 +75,19 @@ class _LoginFormState extends State<LoginForm> {
   Widget build(BuildContext context) {
     return Container(
       alignment: Alignment.center,
-      padding: const EdgeInsets.symmetric(horizontal: 16),
+      padding: EdgeInsets.symmetric(horizontal: 16),
       width: 400,
       child: Column(
         children: [
           SvgPicture.asset('assets/logo/logo_with_text.svg'),
-          const SizedBox(height: 16),
+          SizedBox(height: 16),
           LoginInput(
             controller: _emailController,
             label: 'Email',
             error: _isEmailValid ? null : 'Enter an email address.',
             onChanged: () => setState(() {}),
           ),
-          const SizedBox(height: 16),
+          SizedBox(height: 16),
           LoginInput(
             controller: _passwordController,
             label: 'Password',
@@ -95,34 +95,34 @@ class _LoginFormState extends State<LoginForm> {
             error: _isPasswordValid ? null : 'Enter a password.',
             onChanged: () => setState(() {}),
           ),
-          const SizedBox(height: 16),
+          SizedBox(height: 16),
           MorphingLoadingButton(
             onPressed: _login,
             isLoading: _isLoading,
             child: Padding(
-              padding: const EdgeInsets.all(12),
+              padding: EdgeInsets.all(12),
               child: Text(
                 _isLoading ? 'Loading' : 'Login',
                 style: TextStyle(color: Colors.white, fontSize: 20),
               ),
             ),
           ),
-          const SizedBox(height: 8),
+          SizedBox(height: 8),
           if (_ambientError != null) Text(_ambientError),
-          const Divider(),
-          const SizedBox(height: 8),
-          const Text("Don't have an account yet? Try it out!"),
-          const SizedBox(height: 8),
+          Divider(),
+          SizedBox(height: 8),
+          Text("Don't have an account yet? Try it out!"),
+          SizedBox(height: 8),
           Wrap(
             children: <Widget>[
               SecondaryButton(
                 onPressed: _loginAsDemoStudent,
-                child: const Text('Demo as a student'),
+                child: Text('Demo as a student'),
               ),
-              const SizedBox(width: 8),
+              SizedBox(width: 8),
               SecondaryButton(
                 onPressed: _loginAsDemoTeacher,
-                child: const Text('Demo as a teacher'),
+                child: Text('Demo as a teacher'),
               ),
             ],
           ),

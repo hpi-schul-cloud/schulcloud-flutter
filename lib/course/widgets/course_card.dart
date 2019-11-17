@@ -25,7 +25,7 @@ class CourseCard extends StatelessWidget {
           children: <Widget>[
             Container(
               decoration: BoxDecoration(
-                borderRadius: const BorderRadius.only(
+                borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(4),
                   topRight: Radius.circular(4),
                 ),
@@ -36,7 +36,7 @@ class CourseCard extends StatelessWidget {
             ListTile(
               title: Text(
                 course.name,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
                 ),
