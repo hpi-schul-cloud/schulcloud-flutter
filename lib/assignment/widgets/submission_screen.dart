@@ -19,7 +19,7 @@ class SubmissionScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var textTheme = Theme.of(context).textTheme;
+    final textTheme = Theme.of(context).textTheme;
     return DefaultTabController(
       length: 2,
       child: CachedRawBuilder(
@@ -34,8 +34,14 @@ class SubmissionScreen extends StatelessWidget {
               title: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  Text(assignment.name, style: TextStyle(color: Colors.black)),
-                  Text(course.name, style: TextStyle(color: Colors.black)),
+                  Text(
+                    assignment.name,
+                    style: TextStyle(color: Colors.black),
+                  ),
+                  Text(
+                    course.name,
+                    style: TextStyle(color: Colors.black),
+                  ),
                 ],
               ),
               bottom: TabBar(

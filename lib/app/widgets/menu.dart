@@ -9,10 +9,10 @@ import 'schulcloud_app.dart';
 
 /// A menu displaying the current user and [NavigationItem]s.
 class Menu extends StatelessWidget {
-  final Stream<Screen> activeScreenStream;
-
   const Menu({@required this.activeScreenStream})
       : assert(activeScreenStream != null);
+
+  final Stream<Screen> activeScreenStream;
 
   void _navigateTo(BuildContext context, Screen target) =>
       Navigator.pop(context, target);
@@ -35,7 +35,7 @@ class Menu extends StatelessWidget {
       child: StreamBuilder<Screen>(
         stream: activeScreenStream,
         builder: (context, snapshot) {
-          var activeScreen = snapshot.data;
+          final activeScreen = snapshot.data;
           return Column(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
@@ -116,12 +116,7 @@ class Menu extends StatelessWidget {
 }
 
 class NavigationItem extends StatelessWidget {
-  final Widget Function(Color color) iconBuilder;
-  final String text;
-  final VoidCallback onPressed;
-  final bool isActive;
-
-  NavigationItem({
+  const NavigationItem({
     @required this.iconBuilder,
     @required this.text,
     @required this.onPressed,
@@ -131,12 +126,17 @@ class NavigationItem extends StatelessWidget {
         assert(onPressed != null),
         assert(isActive != null);
 
+  final Widget Function(Color color) iconBuilder;
+  final String text;
+  final VoidCallback onPressed;
+  final bool isActive;
+
   @override
   Widget build(BuildContext context) {
-    var color = isActive ? Theme.of(context).primaryColor : Colors.black;
+    final color = isActive ? Theme.of(context).primaryColor : Colors.black;
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8),
+      padding: EdgeInsets.symmetric(horizontal: 8),
       child: Material(
         borderRadius: BorderRadius.circular(8),
         color: isActive ? color.withOpacity(0.2) : Colors.transparent,
@@ -144,7 +144,7 @@ class NavigationItem extends StatelessWidget {
           borderRadius: BorderRadius.circular(8),
           onTap: onPressed,
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             child: Row(
               children: <Widget>[
                 iconBuilder(color),

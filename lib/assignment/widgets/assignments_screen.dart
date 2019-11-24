@@ -25,10 +25,10 @@ class AssignmentsScreen extends StatelessWidget {
               controller: bloc.fetchAssignments(),
               errorBannerBuilder: (_, error, st) => ErrorBanner(error, st),
               errorScreenBuilder: (_, error, st) => ErrorScreen(error, st),
-              builder: (BuildContext context, List<Assignment> assignments) {
+              builder: (context, assignments) {
                 final assignmentsByDate = groupBy<Assignment, DateTime>(
                   assignments,
-                  (Assignment a) =>
+                  (a) =>
                       DateTime(a.dueDate.year, a.dueDate.month, a.dueDate.day),
                 );
 
@@ -78,7 +78,7 @@ class AssignmentCard extends StatelessWidget {
         enableFeedback: true,
         onTap: () => _showAssignmentDetailsScreen(context),
         child: Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: EdgeInsets.all(8),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -98,7 +98,7 @@ class AssignmentCard extends StatelessWidget {
               CachedRawBuilder<Course>(
                 controller:
                     Bloc.of(context).fetchCourseOfAssignment(assignment),
-                builder: (_, CacheUpdate<Course> update) {
+                builder: (_, update) {
                   if (!update.hasData) {
                     return Container();
                   }

@@ -7,13 +7,13 @@ import 'theme.dart';
 ///
 /// The colors and padding come from the enclosing [ArticleTheme].
 class Section extends StatelessWidget {
-  final Widget child;
-
   const Section({@required this.child}) : assert(child != null);
+
+  final Widget child;
 
   @override
   Widget build(BuildContext context) {
-    var theme = Provider.of<ArticleTheme>(context);
+    final theme = Provider.of<ArticleTheme>(context);
 
     return ClipPath(
       clipper: _SectionClipper(),
@@ -39,10 +39,10 @@ class Section extends StatelessWidget {
 class _SectionClipper extends CustomClipper<Path> {
   @override
   Path getClip(Size size) {
-    var width = size.width;
-    var height = size.height;
-    var cutIn = 0.4 * size.shortestSide;
-    var controlPoint = width - 0.8 * cutIn;
+    final width = size.width;
+    final height = size.height;
+    final cutIn = 0.4 * size.shortestSide;
+    final controlPoint = width - 0.8 * cutIn;
     return Path()
       ..lineTo(width - cutIn, 0)
       ..cubicTo(

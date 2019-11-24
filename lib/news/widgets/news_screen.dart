@@ -29,7 +29,7 @@ class NewsScreen extends StatelessWidget {
                   itemCount: articles.length,
                   itemBuilder: (context, index) {
                     return Padding(
-                      padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+                      padding: EdgeInsets.fromLTRB(16, 16, 16, 0),
                       child: ArticlePreview(article: articles[index]),
                     );
                   },

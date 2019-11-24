@@ -8,11 +8,11 @@ import 'package:provider/provider.dart';
 
 import 'storage.dart';
 
-class NoConnectionToServerError {}
+class NoConnectionToServerError implements Exception {}
 
-class AuthenticationError {}
+class AuthenticationError implements Exception {}
 
-class TooManyRequestsError {
+class TooManyRequestsError implements Exception {
   TooManyRequestsError({@required this.timeToWait})
       : assert(timeToWait != null);
 
@@ -24,9 +24,9 @@ class TooManyRequestsError {
 /// is stored there, the requests' headers are automatically enriched with the
 /// access token.
 class NetworkService {
-  static const String apiUrl = "https://api.schul-cloud.org";
-
   NetworkService({@required this.storage}) : assert(storage != null);
+
+  static const String apiUrl = 'https://api.schul-cloud.org';
 
   final StorageService storage;
 
@@ -42,7 +42,7 @@ class NetworkService {
   ) async {
     try {
       await _ensureConnectionExists();
-      var response = await call('$apiUrl/$path');
+      final response = await call('$apiUrl/$path');
 
       // Succeed if its a 2xx status code.
       if (response.statusCode ~/ 100 == 2) {
@@ -84,30 +84,32 @@ class NetworkService {
   Future<http.Response> get(
     String path, {
     Map<String, String> parameters = const {},
-  }) async {
+  }) {
     assert(path != null);
     assert(parameters != null);
 
+    // Add the parameters to the path.
     if (parameters.isNotEmpty) {
+      // ignore: prefer_interpolation_to_compose_strings, parameter_assignments
       path += '?' +
           [
             for (final parameter in parameters.entries)
               '${Uri.encodeComponent(parameter.key)}=${Uri.encodeComponent(parameter.value)}'
           ].join('&');
     }
-    return await _makeCall(
+    return _makeCall(
       path,
-      (url) async => await http.get(url, headers: _getHeaders()),
+      (url) async => http.get(url, headers: _getHeaders()),
     );
   }
 
   /// Makes an http post request to the api.
-  Future<http.Response> post(String path, {dynamic body}) async {
+  Future<http.Response> post(String path, {dynamic body}) {
     assert(path != null);
 
-    return await _makeCall(
+    return _makeCall(
       path,
-      (url) async => await http.post(url, headers: _getHeaders(), body: body),
+      (url) async => http.post(url, headers: _getHeaders(), body: body),
     );
   }
 }

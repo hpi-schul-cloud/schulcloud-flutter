@@ -23,11 +23,11 @@ class CoursesScreen extends StatelessWidget {
               controller: bloc.fetchCourses(),
               errorBannerBuilder: (_, error, st) => ErrorBanner(error, st),
               errorScreenBuilder: (_, error, st) => ErrorScreen(error, st),
-              builder: (BuildContext context, List<Course> courses) {
+              builder: (context, courses) {
                 if (courses.isEmpty) {
                   return EmptyStateScreen(
                     text: "Seems like you're currently not enrolled in any "
-                        "courses.",
+                        'courses.',
                   );
                 }
                 return GridView.count(

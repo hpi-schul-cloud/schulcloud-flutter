@@ -3,10 +3,6 @@ import 'package:flutter/widgets.dart';
 /// A theme that holds color and left padding information.
 @immutable
 class ArticleTheme {
-  final double padding;
-  final Color darkColor;
-  final Color lightColor;
-
   const ArticleTheme({
     @required this.padding,
     this.darkColor = const Color(0xff440e32),
@@ -14,4 +10,8 @@ class ArticleTheme {
   })  : assert(padding != null),
         assert(darkColor != null),
         assert(lightColor != null);
+
+  final double padding;
+  final Color darkColor;
+  final Color lightColor;
 }
