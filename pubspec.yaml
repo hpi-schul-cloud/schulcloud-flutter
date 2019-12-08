@@ -4,7 +4,6 @@ version: 1.0.0+1
 authors:
   - Marcel Garus <marcel.garus@gmail.com>
   - Andrea Nathansen
-  - Maxim Renz
   - Clemens Tiedt
 homepage: https://github.com/schul-cloud/schulcloud-flutter
 
@@ -16,23 +15,24 @@ dependencies:
     sdk: flutter
 
   analyzer: ^0.38.5
-
   cupertino_icons: ^0.1.2
   flare_flutter: ^1.5.8
+  flutter_cached: ^3.0.1
   # The current version of flutter_downloader, 1.2.1, causes the build to fail. Until this is fixed, we rely on an older version.
   flutter_downloader: 1.1.9
   flutter_html: ^0.10.4
+  flutter_svg: ^0.14.2
   flutter_villains: ^1.2.0
+  hive: ^1.1.1
   http: ^0.12.0
   intl: ^0.16.0
+  list_diff: ^1.1.3
   package_info: ^0.4.0+3
   path_provider: ^1.1.0
-  permission_handler: ^3.2.2
+  permission_handler: ^3.3.0
   provider: ^3.0.0
-  repository: ^1.0.3
-  repository_hive: ^1.0.2
-  repository_shared_preferences: ^1.0.2
-  rxdart: ^0.22.0
+  rxdart: ^0.22.3
+  streaming_shared_preferences: ^1.0.1
   transparent_image: ^1.0.0
   url_launcher: ^5.1.2
   webview_flutter: ^0.3.10+4
@@ -41,22 +41,26 @@ dev_dependencies:
   build_resolvers: ^1.1.1
   build_runner: ^1.0.0
   hive_generator: ^0.5.2
-  json_serializable: ^3.0.0
-  test: any
 
 flutter:
   uses-material-design: true
 
   assets:
-    - assets/empty_state.flr
+    - assets/empty_states/default.svg
+    - assets/empty_states/broken_pen.svg
+    - assets/empty_states/files.flr
+    - assets/logo/logo_with_text.svg
 
   fonts:
     - family: PT Sans
       fonts:
-        - asset: assets/PT_Sans-Web-Regular.ttf
+        - asset: assets/fonts/pt_sans_regular.ttf
+          weight: 300
+        - asset: assets/fonts/pt_sans_bold.ttf
+          weight: 700
     - family: PT Sans Narrow
       fonts:
-        - asset: assets/PT_Sans-Narrow-Web-Regular.ttf
+        - asset: assets/fonts/pt_sans_narrow_regular.ttf
           weight: 300
-        - asset: assets/PT_Sans-Narrow-Web-Bold.ttf
+        - asset: assets/fonts/pt_sans_narrow_bold.ttf
           weight: 700

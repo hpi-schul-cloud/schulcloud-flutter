@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_cached/flutter_cached.dart';
 import 'package:provider/provider.dart';
 import 'package:schulcloud/app/app.dart';
 
@@ -50,17 +51,23 @@ class ArticlePreview extends StatelessWidget {
               children: <Widget>[
                 Section(
                   child: TextOrPlaceholder(
-                    article?.section,
+                    'Section',
                     style: TextStyle(color: Colors.white),
                   ),
                 ),
                 _buildImage(),
                 SizedBox(height: 8),
-                TextOrPlaceholder(
-                  _isPlaceholder
-                      ? null
-                      : 'vor 3 Tagen von ${article.author.name == 'unbekannt'}',
-                  style: TextStyle(color: Colors.black54),
+                CachedRawBuilder(
+                  controller: UserFetcherService.of(context)
+                      .fetchUser(article.author, article.id),
+                  builder: (_, CacheUpdate<User> update) {
+                    return TextOrPlaceholder(
+                      _isPlaceholder
+                          ? null
+                          : 'vor 3 Tagen von ${update.data?.displayName ?? 'unbekannt'}',
+                      style: TextStyle(color: Colors.black54),
+                    );
+                  },
                 ),
                 TextOrPlaceholder(
                   article?.title,

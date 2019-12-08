@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_cached/flutter_cached.dart';
 import 'package:provider/provider.dart';
+import 'package:schulcloud/app/services/user_fetcher.dart';
 
 import '../data.dart';
 import 'author.dart';
@@ -70,14 +72,14 @@ class _ArticleViewState extends State<ArticleView> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        Section(child: Text(widget.article.section)),
+        Section(child: Text('Section')),
         HeadlineBox(
           title: Text(widget.article.title),
           smallText: Text(widget.article.published.toString()),
         ),
         Transform.translate(
           offset: Offset(padding, -12),
-          child: AuthorView(author: widget.article.author),
+          child: _buildAuthorView(context),
         ),
         Transform.translate(
           offset: Offset(0, -20),
@@ -93,7 +95,7 @@ class _ArticleViewState extends State<ArticleView> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        Section(child: Text(widget.article.section)),
+        Section(child: Text('Section')),
         Hero(
           tag: widget.article,
           child: ArticleImageView(imageUrl: widget.article.imageUrl),
@@ -107,13 +109,23 @@ class _ArticleViewState extends State<ArticleView> {
         ),
         Transform.translate(
           offset: Offset(padding, -61),
-          child: AuthorView(author: widget.article.author),
+          child: _buildAuthorView(context),
         ),
         Transform.translate(
           offset: Offset(0, -48),
           child: _buildContent(context),
         ),
       ],
+    );
+  }
+
+  Widget _buildAuthorView(BuildContext context) {
+    return CachedRawBuilder(
+      controller: UserFetcherService.of(context)
+          .fetchUser(widget.article.author, widget.article.id),
+      builder: (_, update) {
+        return AuthorView(author: update.data);
+      },
     );
   }
 

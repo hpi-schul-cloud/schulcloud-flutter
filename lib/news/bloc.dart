@@ -1,52 +1,29 @@
-import 'dart:convert';
-
-import 'package:flutter/foundation.dart';
-import 'package:repository/repository.dart';
-import 'package:repository_hive/repository_hive.dart';
+import 'package:flutter/widgets.dart';
+import 'package:flutter_cached/flutter_cached.dart';
+import 'package:meta/meta.dart';
+import 'package:provider/provider.dart';
 import 'package:schulcloud/app/app.dart';
 
 import 'data.dart';
 
 class Bloc {
+  Bloc({
+    @required this.storage,
+    @required this.network,
+    @required this.userFetcher,
+  })  : assert(storage != null),
+        assert(network != null),
+        assert(userFetcher != null);
+
+  final StorageService storage;
   final NetworkService network;
+  final UserFetcherService userFetcher;
 
-  Repository<Article> _articles;
+  static Bloc of(BuildContext context) => Provider.of<Bloc>(context);
 
-  Bloc({@required this.network})
-      : assert(network != null),
-        _articles = CachedRepository<Article>(
-          source: _ArticleDownloader(network: network),
-          cache: HiveRepository<Article>('articles'),
-        );
-
-  Stream<List<Article>> getArticles() => _articles.fetchAllItems();
-}
-
-class _ArticleDownloader extends CollectionDownloader<Article> {
-  NetworkService network;
-
-  _ArticleDownloader({@required this.network}) : assert(network != null);
-
-  @override
-  Future<List<Article>> downloadAll() async {
-    var response = await network.get('news?');
-    var body = json.decode(response.body);
-
-    return [
-      for (var data in body['data'] as List<dynamic>)
-        Article(
-          id: Id<Article>(data['_id']),
-          title: data['title'],
-          authorId: data['creatorId'],
-          author: Author(
-            id: Id<Author>(data['creator']['_id']),
-            name:
-                '${data['creator']['firstName']} ${data['creator']['lastName']}',
-          ),
-          section: 'Section',
-          published: DateTime.parse(data['displayAt']),
-          content: removeHtmlTags(data['content']),
-        ),
-    ];
-  }
+  CacheController<List<Article>> fetchArticles() => fetchList(
+        storage: storage,
+        makeNetworkCall: () => network.get('news'),
+        parser: (data) => Article.fromJson(data),
+      );
 }
