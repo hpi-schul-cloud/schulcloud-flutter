@@ -3,12 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_cached/flutter_cached.dart';
 import 'package:provider/provider.dart';
 import 'package:schulcloud/app/app.dart';
-import 'package:schulcloud/app/services/network.dart';
 import 'package:schulcloud/course/bloc.dart' as course;
 import 'package:schulcloud/course/data.dart';
-import 'package:schulcloud/dashboard/widgets/dashboard_card.dart';
-import 'package:schulcloud/assignment/bloc.dart';
-import 'package:schulcloud/assignment/assignment.dart';
+import 'package:schulcloud/dashboard/dashboard.dart';
+import '../bloc.dart';
+import '../assignment.dart';
 
 class AssignmentDashboardCard extends StatelessWidget {
   @override
@@ -29,6 +28,7 @@ class AssignmentDashboardCard extends StatelessWidget {
                         ? Text(update.error)
                         : CircularProgressIndicator());
 
+              // Only show open assignments that are due in the next week
               var openAssignments = update.data.where((h) =>
                   h.dueDate.isAfter(DateTime.now()) &&
                   h.dueDate.isBefore(DateTime.now().add(Duration(days: 7))));
@@ -39,6 +39,7 @@ class AssignmentDashboardCard extends StatelessWidget {
                 userFetcher: Provider.of<UserFetcherService>(context),
               );
 
+              // Assignments are shown grouped by subject
               var subjects = groupBy<Assignment, Id<Course>>(
                   openAssignments, (h) => h.courseId);
 
@@ -59,36 +60,39 @@ class AssignmentDashboardCard extends StatelessWidget {
                     ],
                   ),
                   ...ListTile.divideTiles(
-                      context: context,
-                      tiles: subjects.keys.map((c) => CachedRawBuilder<Course>(
-                            controller: courseBloc.fetchCourse(c),
-                            builder: (context, update) {
-                              if (!update.hasData)
-                                return ListTile(
-                                  title: Text(update.hasError
-                                      ? update.error.toString()
-                                      : 'Loading...'),
-                                );
+                    context: context,
+                    tiles: subjects.keys.map(
+                      (c) => CachedRawBuilder<Course>(
+                        controller: courseBloc.fetchCourse(c),
+                        builder: (context, update) {
+                          if (!update.hasData)
+                            return ListTile(
+                              title: Text(update.hasError
+                                  ? update.error.toString()
+                                  : 'Loading...'),
+                            );
 
-                              var course = update.data;
+                          var course = update.data;
 
-                              return ListTile(
-                                leading: Container(
-                                  width: 16,
-                                  height: 16,
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    color: course.color,
-                                  ),
-                                ),
-                                title: Text(course.name),
-                                trailing: Text(
-                                  '${subjects[c].length}',
-                                  style: Theme.of(context).textTheme.headline,
-                                ),
-                              );
-                            },
-                          ))),
+                          return ListTile(
+                            leading: Container(
+                              width: 16,
+                              height: 16,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: course.color,
+                              ),
+                            ),
+                            title: Text(course.name),
+                            trailing: Text(
+                              '${subjects[c].length}',
+                              style: Theme.of(context).textTheme.headline,
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  ),
                   Align(
                     alignment: Alignment.bottomRight,
                     child: OutlineButton(

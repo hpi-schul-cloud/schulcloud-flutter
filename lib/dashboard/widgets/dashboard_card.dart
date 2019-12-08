@@ -4,7 +4,10 @@ class DashboardCard extends StatelessWidget {
   final String title;
   final Widget child;
 
-  const DashboardCard({Key key, this.title, this.child}) : super(key: key);
+  const DashboardCard({Key key, @required this.title, @required this.child})
+      : assert(title != null),
+        assert(child != null),
+        super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +26,7 @@ class DashboardCard extends StatelessWidget {
                 alignment: Alignment.topLeft,
               ),
               SizedBox(height: 16),
-              child
+              child,
             ],
           ),
         ),

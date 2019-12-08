@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:schulcloud/assignment/widgets/dashboard_card.dart';
-import 'package:schulcloud/news/widgets/dashboard_card.dart';
+import 'package:schulcloud/assignment/assignment.dart';
+import 'package:schulcloud/news/news.dart';
 
 class DashboardScreen extends StatelessWidget {
   @override
