@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:schulcloud/homework/widgets/dashboard_card.dart';
+import 'package:schulcloud/assignment/widgets/dashboard_card.dart';
 import 'package:schulcloud/news/widgets/dashboard_card.dart';
 
 class DashboardScreen extends StatelessWidget {
@@ -9,7 +9,7 @@ class DashboardScreen extends StatelessWidget {
       body: ListView(
         children: <Widget>[
           SizedBox(height: 16),
-          HomeworkDashboardCard(),
+          AssignmentDashboardCard(),
           NewsDashboardCard(),
         ],
       ),
