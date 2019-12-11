@@ -48,12 +48,15 @@ class FileTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final size = file.isDirectory ? null : file.sizeAsString;
+    final updatedAt =
+        file.updatedAt == null ? null : dateTimeToString(file.updatedAt);
+    final delimeter = size != null && updatedAt != null ? ', ' : '';
+    final subtitle = '${size ?? ''}$delimeter${updatedAt ?? null}';
+
     return ListTile(
       title: Text(file.name),
-      subtitle: Text(
-        (file.isDirectory ? '' : '${file.sizeAsString}, ') +
-            dateTimeToString(file.updatedAt),
-      ),
+      subtitle: Text(subtitle),
       leading: FileThumbnail(file: file),
       onTap: () => onOpen(file),
       onLongPress: () => _showDetails(context),

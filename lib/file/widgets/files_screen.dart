@@ -30,7 +30,7 @@ class FilesScreen extends StatelessWidget {
           body: ListView(
             padding: const EdgeInsets.symmetric(vertical: 16),
             children: <Widget>[
-              _RecentFiles(),
+              //_RecentFiles(),
               SizedBox(height: 16),
               _CoursesList(),
               _UserFiles(),
@@ -197,7 +197,7 @@ class FlatMaterial extends StatelessWidget {
     return Material(
       color: Colors.white,
       child: InkWell(
-        onTap: () {},
+        onTap: onTap,
         borderRadius: BorderRadius.circular(8),
         child: Container(
           padding: const EdgeInsets.all(8),
