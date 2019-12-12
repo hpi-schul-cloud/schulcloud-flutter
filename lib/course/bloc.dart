@@ -28,6 +28,12 @@ class Bloc {
         parser: (data) => Course.fromJson(data),
       );
 
+  CacheController<Course> fetchCourse(Id<Course> courseId) => fetchSingle(
+        storage: storage,
+        makeNetworkCall: () => network.get('courses/$courseId'),
+        parser: (data) => Course.fromJson(data),
+      );
+
   CacheController<List<Lesson>> fetchLessonsOfCourse(Course course) =>
       fetchList(
         storage: storage,
