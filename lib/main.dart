@@ -2,12 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:schulcloud/app/app.dart';
 
-void main() async {
+void main({AppConfigData appConfig = schulCloudAppConfig}) async {
   await initializeHive();
-  runApp(ServicesProvider());
+  runApp(ServicesProvider(
+    child: AppConfig(
+      data: appConfig,
+      child: SchulCloudApp(),
+    ),
+  ));
 }
 
 class ServicesProvider extends StatefulWidget {
+  ServicesProvider({@required this.child}) : assert(child != null);
+
+  final Widget child;
+
   @override
   _ServicesProviderState createState() => _ServicesProviderState();
 }
@@ -56,7 +65,7 @@ class _ServicesProviderState extends State<ServicesProvider> {
         Provider<NetworkService>(builder: (_) => network),
         Provider<UserFetcherService>(builder: (_) => userFetcher),
       ],
-      child: SchulCloudApp(),
+      child: widget.child,
     );
   }
 }
