@@ -24,11 +24,12 @@ class NewsDashboardCard extends StatelessWidget {
           builder: (context, bloc, _) => CachedRawBuilder<List<Article>>(
             controller: bloc.fetchArticles(),
             builder: (context, update) {
-              if (!update.hasData)
+              if (!update.hasData) {
                 return Center(
                     child: update.hasError
                         ? Text(update.error.toString())
                         : CircularProgressIndicator());
+              }
 
               return Column(
                 children: <Widget>[
@@ -49,11 +50,11 @@ class NewsDashboardCard extends StatelessWidget {
                   Align(
                     alignment: Alignment.bottomRight,
                     child: OutlineButton(
-                      child: Text('All articles'),
                       onPressed: () {
                         Navigator.of(context).push(MaterialPageRoute(
                             builder: (context) => NewsScreen()));
                       },
+                      child: Text('All articles'),
                     ),
                   )
                 ],
