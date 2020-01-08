@@ -26,8 +26,7 @@ class _AuthorViewState extends State<AuthorView> {
   Widget _buildName() {
     return Container(
       alignment: Alignment.centerLeft,
-      child: Container(
-        color: Colors.white,
+      child: Padding(
         padding: EdgeInsets.fromLTRB(0, 4, 8, 4),
         child: TextOrPlaceholder(
           isPlaceholder ? null : 'von ${author.name}',

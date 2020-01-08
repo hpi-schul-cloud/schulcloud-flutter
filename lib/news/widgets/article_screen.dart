@@ -22,7 +22,6 @@ class ArticleScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
       body: LayoutBuilder(
         builder: (ctx, constraints) {
           var width = constraints.maxWidth;
