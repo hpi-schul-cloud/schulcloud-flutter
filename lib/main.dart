@@ -4,12 +4,14 @@ import 'package:schulcloud/app/app.dart';
 
 void main({AppConfigData appConfig = schulCloudAppConfig}) async {
   await initializeHive();
-  runApp(ServicesProvider(
-    child: AppConfig(
+  runApp(
+    AppConfig(
       data: appConfig,
-      child: SchulCloudApp(),
+      child: ServicesProvider(
+        child: SchulCloudApp(),
+      ),
     ),
-  ));
+  );
 }
 
 class ServicesProvider extends StatefulWidget {
@@ -26,33 +28,20 @@ class _ServicesProviderState extends State<ServicesProvider> {
   /// hive cache.
   StorageService storage;
 
-  /// This service offers network calls and automatically enriches the header
-  /// using the authentication provided by the [StorageService].
-  NetworkService network;
-
-  /// This service offers getting the currently logged in user.
-  UserFetcherService userFetcher;
-
   @override
   void initState() {
     super.initState();
     () async {
       storage = await StorageService.create();
-      network = NetworkService(storage: storage);
-      userFetcher = UserFetcherService(storage: storage, network: network);
       setState(() {});
     }();
   }
 
   @override
   Widget build(BuildContext context) {
-    final allServicesInitialized = [
-      storage,
-      network,
-      userFetcher,
-    ].every((service) => service != null);
+    final serviceInitialized = storage != null;
 
-    if (!allServicesInitialized) {
+    if (!serviceInitialized) {
       return Container(
         color: Colors.white,
         alignment: Alignment.center,
@@ -62,8 +51,18 @@ class _ServicesProviderState extends State<ServicesProvider> {
     return MultiProvider(
       providers: [
         Provider<StorageService>(builder: (_) => storage),
-        Provider<NetworkService>(builder: (_) => network),
-        Provider<UserFetcherService>(builder: (_) => userFetcher),
+        Provider<NetworkService>(
+          builder: (_) => NetworkService(
+            apiUrl: AppConfig.of(context).apiUrl,
+            storage: storage,
+          ),
+        ),
+        ProxyProvider<NetworkService, UserFetcherService>(
+          builder: (_, networkService, __) => UserFetcherService(
+            storage: storage,
+            network: networkService,
+          ),
+        ),
       ],
       child: widget.child,
     );

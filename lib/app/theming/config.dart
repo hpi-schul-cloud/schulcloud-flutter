@@ -4,17 +4,20 @@ import 'package:flutter/material.dart';
 class AppConfigData {
   const AppConfigData({
     @required this.name,
+    @required this.apiUrl,
     @required this.title,
     @required this.primaryColor,
     @required this.secondaryColor,
     @required this.accentColor,
   })  : assert(name != null),
+        assert(apiUrl != null),
         assert(title != null),
         assert(primaryColor != null),
         assert(secondaryColor != null),
         assert(accentColor != null);
 
   final String name;
+  final String apiUrl;
   final String title;
   final MaterialColor primaryColor;
   final MaterialColor secondaryColor;
@@ -57,11 +60,20 @@ const _textTheme = const TextTheme(
 );
 
 enum Flavor {
-  schulCloud,
+  /// [HPI Schul-Cloud](https://schul-cloud.org)
+  sc,
+
+  /// [Schul-Cloud Brandenburg](https://brandenburg.schul-cloud.org)
   brb,
+
+  /// [Niedersächsische Bildungscloud](https://niedersachsen.cloud)
   n21,
-  thr,
+
+  /// [Open Schul-Cloud](https://open.schul-cloud.org)
   open,
+
+  /// Thüringer Schulcloud
+  thr,
 }
 
 class AppConfig extends StatelessWidget {

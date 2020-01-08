@@ -41,6 +41,7 @@ const _schulCloudYellow = MaterialColor(0xffe2661d, {
 
 const schulCloudAppConfig = AppConfigData(
   name: 'sc',
+  apiUrl: 'https://api.schul-cloud.org',
   title: 'Schul-Cloud',
   primaryColor: _schulCloudRed,
   secondaryColor: _schulCloudOrange,

@@ -29,6 +29,8 @@ const _thrOrange = MaterialColor(0xfff56b00, {
 
 const thrAppConfig = AppConfigData(
   name: 'thr',
+  // TODO: API URL
+  apiUrl: 'TODO',
   title: 'Thüringer Schulcloud',
   primaryColor: _thrBlue,
   secondaryColor: _thrOrange,

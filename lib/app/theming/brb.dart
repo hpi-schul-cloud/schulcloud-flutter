@@ -41,6 +41,7 @@ const _brbBlue = MaterialColor(0xff0b2bdf, {
 
 const brbAppConfig = AppConfigData(
   name: 'brb',
+  apiUrl: 'https://api.brandenburg.schul-cloud.org',
   title: 'Schul-Cloud Brandenburg',
   primaryColor: _brbCyan,
   secondaryColor: _brbRed,

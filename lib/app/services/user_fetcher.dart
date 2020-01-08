@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 
 import '../app.dart';
 
+@immutable
 class UserFetcherService {
   UserFetcherService({@required this.storage, @required this.network})
       : assert(storage != null),
