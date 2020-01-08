@@ -17,7 +17,7 @@ Color hexStringToColor(String hex) =>
 /// Limits a string to a certain amount of characters.
 String limitString(String string, int maxLength) {
   return string.length > maxLength
-      ? string.substring(0, maxLength) + '...'
+      ? string.substring(0, maxLength) + '…'
       : string;
 }
 
