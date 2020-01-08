@@ -5,6 +5,7 @@ export 'services/network.dart';
 export 'services/user_fetcher.dart';
 export 'theming/config.dart' show AppConfigData, AppConfig;
 export 'theming/sc.dart' show schulCloudAppConfig;
+export 'theming/brb.dart' show brbAppConfig;
 export 'theming/n21.dart' show n21AppConfig;
 export 'utils.dart';
 export 'widgets/app_bar.dart' show AppBarActions;

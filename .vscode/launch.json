@@ -11,6 +11,15 @@
       ]
     },
     {
+      "name": "BRB",
+      "type": "dart",
+      "request": "launch",
+      "program": "lib/main_brb.dart",
+      "args": [
+        "--flavor=brb"
+      ]
+    },
+    {
       "name": "N21",
       "type": "dart",
       "request": "launch",

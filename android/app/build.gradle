@@ -54,6 +54,10 @@ android {
         sc {
             dimension "brand"
         }
+        brb {
+            dimension "brand"
+            applicationId "org.schulcloud.brandenburg.android"
+        }
         n21 {
             dimension "brand"
             applicationId "cloud.niedersachsen.android"
