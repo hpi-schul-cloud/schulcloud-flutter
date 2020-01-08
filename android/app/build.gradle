@@ -48,6 +48,13 @@ android {
             signingConfig signingConfigs.debug
         }
     }
+
+    flavorDimensions "brand"
+    productFlavors {
+        sc {
+            dimension "brand"
+        }
+    }
 }
 
 flutter {
