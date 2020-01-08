@@ -66,6 +66,10 @@ android {
             dimension "brand"
             applicationId "org.schulcloud.open.android"
         }
+        thr {
+            dimension "brand"
+            applicationId "org.schulcloud.thuringia.android"
+        }
     }
 }
 

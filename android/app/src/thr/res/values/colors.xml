@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="appName">Thüringer Schulcloud</string>
+
+    <color name="ic_launcher_background">#185888</color>
+
 </resources>

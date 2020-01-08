@@ -8,6 +8,7 @@ export 'theming/sc.dart' show schulCloudAppConfig;
 export 'theming/brb.dart' show brbAppConfig;
 export 'theming/n21.dart' show n21AppConfig;
 export 'theming/open.dart' show openAppConfig;
+export 'theming/thr.dart' show thrAppConfig;
 export 'utils.dart';
 export 'widgets/app_bar.dart' show AppBarActions;
 export 'widgets/buttons.dart';

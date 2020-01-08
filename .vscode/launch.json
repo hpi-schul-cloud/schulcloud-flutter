@@ -36,6 +36,15 @@
       "args": [
         "--flavor=open"
       ]
+    },
+    {
+      "name": "THR",
+      "type": "dart",
+      "request": "launch",
+      "program": "lib/main_thr.dart",
+      "args": [
+        "--flavor=thr"
+      ]
     }
   ]
 }
