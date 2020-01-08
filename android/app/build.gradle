@@ -54,6 +54,10 @@ android {
         sc {
             dimension "brand"
         }
+        n21 {
+            dimension "brand"
+            applicationId "cloud.niedersachsen.android"
+        }
     }
 }
 

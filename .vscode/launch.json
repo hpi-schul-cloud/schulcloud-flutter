@@ -9,6 +9,15 @@
       "args": [
         "--flavor=sc"
       ]
+    },
+    {
+      "name": "N21",
+      "type": "dart",
+      "request": "launch",
+      "program": "lib/main_n21.dart",
+      "args": [
+        "--flavor=n21"
+      ]
     }
   ]
 }
