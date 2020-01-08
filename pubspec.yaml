@@ -49,9 +49,10 @@ flutter:
     - assets/empty_states/default.svg
     - assets/empty_states/broken_pen.svg
     - assets/empty_states/files.flr
-    - assets/theme/brb/logo/logo_with_text.svg
     - assets/theme/sc/logo/logo_with_text.svg
+    - assets/theme/brb/logo/logo_with_text.svg
     - assets/theme/n21/logo/logo_with_text.svg
+    - assets/theme/open/logo/logo_with_text.svg
 
   fonts:
     - family: PT Sans

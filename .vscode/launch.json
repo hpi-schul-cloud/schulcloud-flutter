@@ -27,6 +27,15 @@
       "args": [
         "--flavor=n21"
       ]
+    },
+    {
+      "name": "Open",
+      "type": "dart",
+      "request": "launch",
+      "program": "lib/main_open.dart",
+      "args": [
+        "--flavor=open"
+      ]
     }
   ]
 }

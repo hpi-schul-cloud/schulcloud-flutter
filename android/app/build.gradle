@@ -62,6 +62,10 @@ android {
             dimension "brand"
             applicationId "cloud.niedersachsen.android"
         }
+        open {
+            dimension "brand"
+            applicationId "org.schulcloud.open.android"
+        }
     }
 }
 
