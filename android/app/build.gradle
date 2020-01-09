@@ -68,7 +68,7 @@ android {
         }
         thr {
             dimension "brand"
-            applicationId "org.schulcloud.thuringia.android"
+            applicationId "de.schulcloudthueringen.android"
         }
     }
 }

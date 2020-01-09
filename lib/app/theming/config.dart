@@ -75,23 +75,6 @@ TextTheme _createTextTheme(Brightness brightness) {
   );
 }
 
-enum Flavor {
-  /// [HPI Schul-Cloud](https://schul-cloud.org)
-  sc,
-
-  /// [Schul-Cloud Brandenburg](https://brandenburg.schul-cloud.org)
-  brb,
-
-  /// [Niedersächsische Bildungscloud](https://niedersachsen.cloud)
-  n21,
-
-  /// [Open Schul-Cloud](https://open.schul-cloud.org)
-  open,
-
-  /// Thüringer Schulcloud
-  thr,
-}
-
 class AppConfig extends StatelessWidget {
   const AppConfig({
     Key key,
