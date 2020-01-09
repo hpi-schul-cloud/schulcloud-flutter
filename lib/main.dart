@@ -15,7 +15,7 @@ Future<void> main({AppConfigData appConfig = schulCloudAppConfig}) async {
 }
 
 class ServicesProvider extends StatefulWidget {
-  ServicesProvider({@required this.child}) : assert(child != null);
+  const ServicesProvider({@required this.child}) : assert(child != null);
 
   final Widget child;
 
