@@ -5,12 +5,14 @@ import 'package:schulcloud/app/theming/utils.dart';
 class AppConfigData {
   const AppConfigData({
     @required this.name,
+    @required this.host,
     @required this.apiUrl,
     @required this.title,
     @required this.primaryColor,
     @required this.secondaryColor,
     @required this.accentColor,
   })  : assert(name != null),
+        assert(host != null),
         assert(apiUrl != null),
         assert(title != null),
         assert(primaryColor != null),
@@ -18,6 +20,7 @@ class AppConfigData {
         assert(accentColor != null);
 
   final String name;
+  final String host;
   final String apiUrl;
   final String title;
   final MaterialColor primaryColor;

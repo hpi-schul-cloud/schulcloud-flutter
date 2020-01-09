@@ -17,6 +17,7 @@ const _n21Blue = MaterialColor(0xff78aae5, {
 
 const n21AppConfig = AppConfigData(
   name: 'n21',
+  host: 'https://niedersachsen.cloud',
   apiUrl: 'https://api.niedersachsen.cloud',
   title: 'Niedersächsische Bildungscloud',
   primaryColor: _n21Blue,

@@ -12,6 +12,9 @@ Color fullOpacityOnBrightness(Brightness brightness) {
 Color highEmphasisOn(Color background) {
   return fullOpacityOn(background).withOpacity(0.87);
 }
+Color highEmphasisOnBrightness(Brightness brightness) {
+  return fullOpacityOnBrightness(brightness).withOpacity(0.87);
+}
 
 Color mediumEmphasisOn(Color background) {
   return fullOpacityOn(background).withOpacity(0.60);
