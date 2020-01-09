@@ -3,16 +3,16 @@ import 'package:transparent_image/transparent_image.dart';
 
 /// Displays an article image, which is faded in as its loaded.
 ///
-/// If the [image] is [null], a placeholder is displayed.
+/// If the [imageUrl] is null, a placeholder is displayed.
 class ArticleImageView extends StatelessWidget {
-  final String imageUrl;
-  final Color placeholderColor;
-
   const ArticleImageView({
     @required this.imageUrl,
     this.placeholderColor = Colors.black12,
   })  : assert(imageUrl != null),
         assert(placeholderColor != null);
+
+  final String imageUrl;
+  final Color placeholderColor;
 
   bool get _showPlaceholder => imageUrl == null;
 
@@ -39,16 +39,16 @@ class ArticleImageView extends StatelessWidget {
 
 /// Displays an article image overlayed with a colored gradient.
 ///
-/// If the [image] is [null], a placeholder is displayed.
+/// If the [imageUrl] is null, a placeholder is displayed.
 class GradientArticleImageView extends StatelessWidget {
-  final String imageUrl;
-  final Color color;
-
-  GradientArticleImageView({
+  const GradientArticleImageView({
     @required this.imageUrl,
     this.color = Colors.purple,
   })  : assert(imageUrl != null),
         assert(color != null);
+
+  final String imageUrl;
+  final Color color;
 
   @override
   Widget build(BuildContext context) {

@@ -81,7 +81,7 @@ class Bloc {
         parameters: {'download': null, 'file': file.id.toString()});
     final signedUrl = json.decode(response.body)['url'];
 
-    FlutterDownloader.enqueue(
+    await FlutterDownloader.enqueue(
       url: signedUrl,
       savedDir: '/sdcard/Download',
       fileName: file.name,
@@ -91,11 +91,13 @@ class Bloc {
   }
 
   Future<void> ensureStoragePermissionGranted() async {
-    PermissionStatus permissions = await PermissionHandler()
+    final permissions = await PermissionHandler()
         .checkPermissionStatus(PermissionGroup.storage);
     bool isGranted() => permissions.value != 0;
 
-    if (isGranted()) return;
+    if (isGranted()) {
+      return;
+    }
     await PermissionHandler().requestPermissions([PermissionGroup.storage]);
     if (!isGranted()) {
       throw PermissionNotGranted();

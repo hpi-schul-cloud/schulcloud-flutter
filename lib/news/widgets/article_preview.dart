@@ -11,11 +11,7 @@ import 'section.dart';
 import 'theme.dart';
 
 class ArticlePreview extends StatelessWidget {
-  final Article article;
-  final bool showPicture;
-  final bool showDetailedDate;
-
-  ArticlePreview({
+  const ArticlePreview({
     @required this.article,
     this.showPicture = true,
     this.showDetailedDate = false,
@@ -26,6 +22,10 @@ class ArticlePreview extends StatelessWidget {
   factory ArticlePreview.placeholder() {
     return ArticlePreview(article: null, showPicture: false);
   }
+
+  final Article article;
+  final bool showPicture;
+  final bool showDetailedDate;
 
   bool get _isPlaceholder => article == null;
 
@@ -48,7 +48,7 @@ class ArticlePreview extends StatelessWidget {
         child: InkWell(
           onTap: _isPlaceholder ? null : () => _openArticle(context),
           child: Padding(
-            padding: const EdgeInsets.all(16),
+            padding: EdgeInsets.all(16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
@@ -63,7 +63,7 @@ class ArticlePreview extends StatelessWidget {
                 CachedRawBuilder(
                   controller: UserFetcherService.of(context)
                       .fetchUser(article.author, article.id),
-                  builder: (_, CacheUpdate<User> update) {
+                  builder: (_, update) {
                     return TextOrPlaceholder(
                       _isPlaceholder
                           ? null

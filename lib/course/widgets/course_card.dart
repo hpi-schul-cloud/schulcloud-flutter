@@ -6,9 +6,9 @@ import '../data.dart';
 import 'course_detail_screen.dart';
 
 class CourseCard extends StatelessWidget {
-  final Course course;
+  const CourseCard({@required this.course}) : assert(course != null);
 
-  CourseCard({@required this.course}) : assert(course != null);
+  final Course course;
 
   void _openDetailsScreen(BuildContext context) {
     Navigator.of(context).push(MaterialPageRoute(
@@ -36,7 +36,10 @@ class CourseCard extends StatelessWidget {
             ListTile(
               title: Text(
                 course.name,
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
               subtitle: CachedRawBuilder(
                 controllerBuilder: () =>

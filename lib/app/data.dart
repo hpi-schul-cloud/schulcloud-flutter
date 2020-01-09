@@ -7,7 +7,7 @@ part 'data.g.dart';
 @immutable
 @HiveType()
 class User implements Entity {
-  User({
+  const User({
     @required this.id,
     @required this.firstName,
     @required this.lastName,
@@ -23,7 +23,7 @@ class User implements Entity {
 
   User.fromJson(Map<String, dynamic> data)
       : this(
-          id: Id(data['_id']),
+          id: Id<User>(data['_id']),
           firstName: data['firstName'],
           lastName: data['lastName'],
           email: data['email'],
@@ -31,6 +31,7 @@ class User implements Entity {
           displayName: data['displayName'],
         );
 
+  @override
   @HiveField(0)
   final Id<User> id;
 

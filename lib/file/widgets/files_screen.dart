@@ -63,9 +63,9 @@ class _UserFilesList extends StatelessWidget {
               'may be shared with others.',
         ),
         Expanded(
-          child: CachedRawBuilder(
+          child: CachedRawBuilder<User>(
             controller: UserFetcherService.of(context).fetchCurrentUser(),
-            builder: (context, CacheUpdate<User> update) {
+            builder: (context, update) {
               if (update.hasData) {
                 return FileBrowser(owner: update.data, showAppBar: false);
               } else {
@@ -100,7 +100,7 @@ class _CourseFilesList extends StatelessWidget {
             controller: Bloc.of(context).fetchCourses(),
             errorBannerBuilder: (_, error, st) => ErrorBanner(error, st),
             errorScreenBuilder: (_, error, st) => ErrorScreen(error, st),
-            builder: (BuildContext context, List<Course> courses) {
+            builder: (context, courses) {
               return ListView(
                 children: <Widget>[
                   for (var course in courses)
@@ -120,17 +120,17 @@ class _CourseFilesList extends StatelessWidget {
 }
 
 class FileListHeader extends StatelessWidget {
-  final Widget icon;
-  final String text;
-
-  FileListHeader({@required this.icon, @required this.text})
+  const FileListHeader({@required this.icon, @required this.text})
       : assert(icon != null),
         assert(text != null);
+
+  final Widget icon;
+  final String text;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.all(16),
       color: Colors.black12,
       height: 100,
       child: Row(

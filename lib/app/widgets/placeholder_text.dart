@@ -3,12 +3,6 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 
 class TextOrPlaceholder extends StatefulWidget {
-  final String text;
-  final TextStyle style;
-  final int numLines;
-  final Color color;
-  final bool showPadding;
-
   const TextOrPlaceholder(
     this.text, {
     this.style,
@@ -18,6 +12,12 @@ class TextOrPlaceholder extends StatefulWidget {
   })  : assert(numLines != null),
         assert(color != null),
         assert(showPadding != null);
+
+  final String text;
+  final TextStyle style;
+  final int numLines;
+  final Color color;
+  final bool showPadding;
 
   @override
   _TextOrPlaceholderState createState() => _TextOrPlaceholderState();

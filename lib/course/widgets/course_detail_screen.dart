@@ -9,9 +9,9 @@ import '../data.dart';
 import 'lesson_screen.dart';
 
 class CourseDetailsScreen extends StatelessWidget {
-  final Course course;
+  const CourseDetailsScreen({@required this.course}) : assert(course != null);
 
-  CourseDetailsScreen({@required this.course}) : assert(course != null);
+  final Course course;
 
   void _showCourseFiles(BuildContext context, Course course) {
     Navigator.of(context).push(FileBrowserPageRoute(
@@ -37,7 +37,10 @@ class CourseDetailsScreen extends StatelessWidget {
         return Scaffold(
           appBar: AppBar(
             iconTheme: IconThemeData(color: Colors.black),
-            title: Text(course.name, style: TextStyle(color: Colors.black)),
+            title: Text(
+              course.name,
+              style: TextStyle(color: Colors.black),
+            ),
             backgroundColor: course.color,
           ),
           body: AppBarActions(
@@ -51,7 +54,7 @@ class CourseDetailsScreen extends StatelessWidget {
               controller: bloc.fetchLessonsOfCourse(course),
               errorBannerBuilder: (_, error, st) => ErrorBanner(error, st),
               errorScreenBuilder: (_, error, st) => ErrorScreen(error, st),
-              builder: (BuildContext context, List<Lesson> lessons) {
+              builder: (context, lessons) {
                 if (lessons.isEmpty) {
                   return EmptyStateScreen(
                     text: "Seems like you're not enrolled in any courses.",
@@ -60,7 +63,7 @@ class CourseDetailsScreen extends StatelessWidget {
                 return ListView(
                   children: [
                     Padding(
-                      padding: const EdgeInsets.symmetric(
+                      padding: EdgeInsets.symmetric(
                         vertical: 18,
                         horizontal: 12,
                       ),
@@ -71,8 +74,10 @@ class CourseDetailsScreen extends StatelessWidget {
                     ),
                     for (var lesson in lessons)
                       ListTile(
-                        title:
-                            Text(lesson.name, style: TextStyle(fontSize: 20)),
+                        title: Text(
+                          lesson.name,
+                          style: TextStyle(fontSize: 20),
+                        ),
                         onTap: () => _showLessonScreen(
                           context: context,
                           lesson: lesson,

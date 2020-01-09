@@ -72,7 +72,7 @@ class _LoggedInScreenState extends State<LoggedInScreen> {
 
     _controller.add(screen);
 
-    var targetScreenBuilder = {
+    final targetScreenBuilder = {
       Screen.dashboard: (_) => DashboardScreen(),
       Screen.news: (_) => NewsScreen(),
       Screen.files: (_) => FilesScreen(),

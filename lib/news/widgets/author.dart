@@ -4,11 +4,11 @@ import 'package:schulcloud/app/app.dart';
 
 /// Displays the author's name as well as an avatar, if available.
 ///
-/// If the [author] is [null], a placeholder is displayed.
+/// If the [author] is null, a placeholder is displayed.
 class AuthorView extends StatefulWidget {
-  final User author;
-
   const AuthorView({@required this.author}) : assert(author != null);
+
+  final User author;
 
   @override
   _AuthorViewState createState() => _AuthorViewState();

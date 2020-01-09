@@ -8,7 +8,7 @@ part 'data.g.dart';
 @immutable
 @HiveType()
 class Assignment implements Entity, Comparable {
-  Assignment({
+  const Assignment({
     @required this.id,
     @required this.name,
     @required this.schoolId,
@@ -41,6 +41,7 @@ class Assignment implements Entity, Comparable {
           isPrivate: data['private'],
         );
 
+  @override
   @HiveField(0)
   final Id<Assignment> id;
 
@@ -72,15 +73,15 @@ class Assignment implements Entity, Comparable {
   final bool isPrivate;
 
   @override
-  int compareTo(other) {
-    return dueDate.compareTo(other.dueDate);
+  int compareTo(Object other) {
+    return dueDate.compareTo((other as Assignment).dueDate);
   }
 }
 
 @immutable
 @HiveType()
 class Submission implements Entity {
-  Submission({
+  const Submission({
     @required this.id,
     @required this.schoolId,
     @required this.assignmentId,
@@ -104,6 +105,7 @@ class Submission implements Entity {
           gradeComment: data['gradeComment'],
         );
 
+  @override
   @HiveField(0)
   final Id<Submission> id;
 

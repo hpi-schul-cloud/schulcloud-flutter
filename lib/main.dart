@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:schulcloud/app/app.dart';
 
-void main({AppConfigData appConfig = schulCloudAppConfig}) async {
+Future<void> main({AppConfigData appConfig = schulCloudAppConfig}) async {
   await initializeHive();
   runApp(
     AppConfig(

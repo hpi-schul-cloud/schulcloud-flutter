@@ -18,6 +18,8 @@ bool _isHiveInitialized = false;
 const _rootCacheKey = '_root_';
 
 class HiveCache {
+  HiveCache._(this.name, this._children, this._data);
+
   final String name;
 
   final Box<Children> _children;
@@ -38,7 +40,9 @@ class HiveCache {
       () async {
         children = await Hive.openBox('_children_${name}_',
             compactionStrategy: (a, b) => false);
-        children.values.forEach((child) => child.retainTypes(types));
+        for (final child in children.values) {
+          child.retainTypes(types);
+        }
       }(),
       () async {
         data = await Hive.openBox(name,
@@ -51,17 +55,15 @@ class HiveCache {
     return cache;
   }
 
-  HiveCache._(this.name, this._children, this._data);
-
   Future<void> _collectGarbage() async {
-    final Set<String> usefulKeys = {};
+    final usefulKeys = <String>{};
 
     void markAsUseful(String key) {
-      if (usefulKeys.contains(key)) return;
-      usefulKeys.add(key);
-      for (final child in _children.get(key)?.getAllChildren() ?? []) {
-        markAsUseful(child);
+      if (usefulKeys.contains(key)) {
+        return;
       }
+      usefulKeys.add(key);
+      _children.get(key)?.getAllChildren()?.forEach(markAsUseful);
     }
 
     markAsUseful(_rootCacheKey);
@@ -76,7 +78,7 @@ class HiveCache {
 
   Future<void> putChildrenOfType<T extends Entity>(
       Id<dynamic> parent, List<T> children) async {
-    String key = parent?.id ?? _rootCacheKey;
+    final String key = parent?.id ?? _rootCacheKey;
     Children theChildren = _children.get(key);
     if (theChildren == null) {
       await _children.put(key, Children());
@@ -88,9 +90,7 @@ class HiveCache {
         children.map((child) => child.id.toString()).toList());
   }
 
-  Future<dynamic> get(Id<dynamic> id) async {
-    return await _data.get(id.id);
-  }
+  Future<dynamic> get(Id<dynamic> id) => _data.get(id.id);
 
   Future<List<T>> getChildrenOfType<T>(Id<dynamic> parent) async {
     final String key = parent?.id ?? _rootCacheKey;
@@ -115,13 +115,11 @@ class Children extends HiveObject {
     save();
   }
 
-  List<String> getChildrenOfType<T>() {
-    return _children[T.toString()] ?? (throw NotInCacheException());
-  }
+  List<String> getChildrenOfType<T>() =>
+      _children[T.toString()] ?? (throw NotInCacheException());
 
-  Set<String> getAllChildren() {
-    return _children.values.reduce((a, b) => [...a, ...b]).toSet();
-  }
+  Set<String> getAllChildren() =>
+      _children.values.reduce((a, b) => [...a, ...b]).toSet();
 
   void retainTypes(Set<Type> types) {
     final typesAsStrings = types.map((type) => type.toString()).toSet();
@@ -167,11 +165,13 @@ class ColorAdapter extends TypeAdapter<Color> {
 }
 
 Future<void> initializeHive() async {
-  if (_isHiveInitialized) return;
+  if (_isHiveInitialized) {
+    return;
+  }
   _isHiveInitialized = true;
 
   WidgetsFlutterBinding.ensureInitialized();
-  var dir = await getApplicationDocumentsDirectory();
+  final dir = await getApplicationDocumentsDirectory();
 
   Hive
     ..init(dir.path)

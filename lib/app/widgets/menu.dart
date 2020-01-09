@@ -35,7 +35,7 @@ class Menu extends StatelessWidget {
       child: StreamBuilder<Screen>(
         stream: activeScreenStream,
         builder: (context, snapshot) {
-          var activeScreen = snapshot.data;
+          final activeScreen = snapshot.data;
           return Column(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
@@ -118,12 +118,7 @@ class Menu extends StatelessWidget {
 }
 
 class NavigationItem extends StatelessWidget {
-  final IconData icon;
-  final String text;
-  final VoidCallback onPressed;
-  final bool isActive;
-
-  NavigationItem({
+  const NavigationItem({
     @required this.icon,
     @required this.text,
     @required this.onPressed,
@@ -132,6 +127,11 @@ class NavigationItem extends StatelessWidget {
         assert(text != null),
         assert(onPressed != null),
         assert(isActive != null);
+
+  final IconData icon;
+  final String text;
+  final VoidCallback onPressed;
+  final bool isActive;
 
   @override
   Widget build(BuildContext context) {
@@ -143,7 +143,7 @@ class NavigationItem extends StatelessWidget {
         : theme.textTheme.caption.color;
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8),
+      padding: EdgeInsets.symmetric(horizontal: 8),
       child: Material(
         borderRadius: BorderRadius.circular(8),
         color: isActive ? color.withOpacity(0.2) : Colors.transparent,
@@ -151,7 +151,7 @@ class NavigationItem extends StatelessWidget {
           borderRadius: BorderRadius.circular(8),
           onTap: onPressed,
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             child: Row(
               children: <Widget>[
                 Icon(icon, color: color),

@@ -5,10 +5,11 @@ import 'package:flutter/material.dart';
 /// when the whole list was created). This widget simply saves its creation
 /// timestamp.
 class FadeInAnchor extends StatefulWidget {
-  final Widget child;
-
   const FadeInAnchor({@required this.child}) : assert(child != null);
 
+  final Widget child;
+
+  @override
   _FadeInAnchorState createState() => _FadeInAnchorState();
 }
 
@@ -27,17 +28,17 @@ class _FadeInAnchorState extends State<FadeInAnchor> {
 
 /// Widget that fades in after some time.
 class FadeIn extends StatefulWidget {
-  final Duration duration;
-  final Duration delay;
-  final Widget child;
-
-  FadeIn({
+  const FadeIn({
     this.delay = Duration.zero,
     this.duration = const Duration(milliseconds: 200),
     @required this.child,
   })  : assert(delay != null),
         assert(duration != null),
         assert(child != null);
+
+  final Duration duration;
+  final Duration delay;
+  final Widget child;
 
   @override
   _FadeInState createState() => _FadeInState();
@@ -50,14 +51,14 @@ class _FadeInState extends State<FadeIn> {
   void initState() {
     super.initState();
 
-    var anchor = context.findAncestorStateOfType<_FadeInAnchorState>();
-    var visibleSince = anchor.created.add(widget.delay);
-    var now = DateTime.now();
+    final anchor = context.findAncestorStateOfType<_FadeInAnchorState>();
+    final visibleSince = anchor.created.add(widget.delay);
+    final now = DateTime.now();
 
     if (now.isAfter(visibleSince)) {
       _isVisible = true;
     } else {
-      var delay = visibleSince.difference(now);
+      final delay = visibleSince.difference(now);
       Future.delayed(delay, () => setState(() => _isVisible = true));
     }
   }
