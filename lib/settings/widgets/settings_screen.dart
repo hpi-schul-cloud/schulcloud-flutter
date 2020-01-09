@@ -49,6 +49,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               'Andrea Nathansen',
               'Maxim Renz',
               'Clemens Tiedt',
+              'Jonas Wanke',
             ].join(', ')),
           ),
           ListTile(
