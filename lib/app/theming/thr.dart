@@ -29,9 +29,7 @@ const _thrOrange = MaterialColor(0xfff56b00, {
 
 const thrAppConfig = AppConfigData(
   name: 'thr',
-  // TODO: host, apiUrl
-  host: 'TODO',
-  apiUrl: 'TODO',
+  domain: 'schulcloud-thueringen.de',
   title: 'Thüringer Schulcloud',
   primaryColor: _thrBlue,
   secondaryColor: _thrOrange,

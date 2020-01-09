@@ -29,8 +29,7 @@ const _openRed = MaterialColor(0xffdf0b40, {
 
 const openAppConfig = AppConfigData(
   name: 'open',
-  host: 'https://open.schul-cloud.org',
-  apiUrl: 'https://api.open.schul-cloud.org',
+  domain: 'open.schul-cloud.org',
   title: 'Open Schul-Cloud',
   primaryColor: _openBlue,
   secondaryColor: _openRed,
