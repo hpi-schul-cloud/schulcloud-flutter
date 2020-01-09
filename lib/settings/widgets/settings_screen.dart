@@ -68,7 +68,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             title: Text('Imprint'),
             onTap: () {
               final domain = AppConfig.of(context).domain;
-              return tryLaunchingUrl('https://$domain/impressum');
+              tryLaunchingUrl('https://$domain/impressum');
             },
           ),
           ListTile(
@@ -76,7 +76,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             title: Text('Privacy Policy'),
             onTap: () {
               final domain = AppConfig.of(context).domain;
-              return tryLaunchingUrl('https://$domain/datenschutz');
+              tryLaunchingUrl('https://$domain/datenschutz');
             },
           ),
           ListTile(

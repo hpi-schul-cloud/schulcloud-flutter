@@ -25,7 +25,7 @@ class TooManyRequestsError implements Exception {
 /// access token.
 @immutable
 class NetworkService {
-  NetworkService({
+  const NetworkService({
     @required this.apiUrl,
     @required this.storage,
   })  : assert(apiUrl != null),
