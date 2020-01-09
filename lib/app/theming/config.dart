@@ -88,8 +88,8 @@ class AppConfig extends StatelessWidget {
   final Widget child;
 
   static AppConfigData of(BuildContext context) {
-    final widget = (context.inheritFromWidgetOfExactType(_InheritedAppConfig)
-        as _InheritedAppConfig);
+    final widget =
+        context.dependOnInheritedWidgetOfExactType<_InheritedAppConfig>();
     return widget.appConfig.data;
   }
 
