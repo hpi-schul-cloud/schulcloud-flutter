@@ -22,7 +22,6 @@ jobs:
         uses: subosito/flutter-action@v1
         with:
           channel: "stable" # or: 'dev' or 'beta'
-      - run: echo $FLUTTER_HOME
 
       - name: Install dependencies
         run: flutter pub get
@@ -39,17 +38,21 @@ jobs:
         with:
           name: source
           path: .
-      - name: Persist flutter installation
-        uses: actions/upload-artifact@v1
-        with:
-          name: flutter
-          path: ${{ env.FLUTTER_HOME }}
 
   lint:
     name: Lint
     needs: install
     runs-on: ubuntu-latest
     steps:
+      - name: Install Java
+        uses: actions/setup-java@v1
+        with:
+          java-version: "12.x"
+      - name: Install Flutter (stable)
+        uses: subosito/flutter-action@v1
+        with:
+          channel: "stable"
+
       - name: Checkout source
         uses: actions/download-artifact@v1
         with:
@@ -83,14 +86,15 @@ jobs:
     name: Build sc (Schul-Cloud)
     needs: install
     runs-on: ubuntu-latest
-    env:
-      FLUTTER_HOME: /flutter
     steps:
-      - name: Checkout flutter
-        uses: actions/download-artifact@v1
+      - name: Install Java
+        uses: actions/setup-java@v1
         with:
-          name: flutter
-          path: ${{ env.FLUTTER_HOME }}
+          java-version: "12.x"
+      - name: Install Flutter (stable)
+        uses: subosito/flutter-action@v1
+        with:
+          channel: "stable"
 
       - name: Checkout source
         uses: actions/download-artifact@v1
