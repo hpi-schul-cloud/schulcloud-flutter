@@ -1,17 +1,54 @@
-on: [push, pull_request]
-name: Analyze, lint and build the app.
+name: build
+
+on:
+  push:
+  pull_request:
+  schedule:
+    - cron: "0 8 * * *"
+
 jobs:
-  build:
+  install:
+    name: Install Flutter and dependencies
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v1
-      - uses: actions/setup-java@v1
+      - name: Checkout repository
+        uses: actions/checkout@v1
+      - name: Install Java
+        uses: actions/setup-java@v1
         with:
           java-version: "12.x"
-      - uses: subosito/flutter-action@v1
+
+      - name: Install Flutter (stable)
+        uses: subosito/flutter-action@v1
         with:
           channel: "stable" # or: 'dev' or 'beta'
-      - run: flutter pub get
-      - run: flutter pub run build_runner build
-      - run: flutter analyze
-      - run: flutter build apk --release
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Run code generator(s)
+        run: flutter pub run build_runner build
+
+      - name: Persist current state
+        uses: actions/upload-artifact@v1
+        with:
+          name: source
+          path: .
+
+  build-sc:
+    name: Build theme SC (Schul-Cloud)
+    needs: install
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout source
+        uses: actions/download-artifact@v1
+        with:
+          name: source
+          path: .
+
+      - run: flutter build apk --release --target=lib/main.dart --flavor=sc
+
+      - name: Upload APK as artifact
+        uses: actions/upload-artifact@v1
+        with:
+          name: apk-sc
+          path: build/app/outputs/apk/sc/release
