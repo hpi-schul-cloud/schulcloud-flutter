@@ -31,7 +31,6 @@ jobs:
 
       - name: Remove obsolete files
         run: |
-          rm -rf ./.git
           rm -rf ./.dart_tool/pub/bin/build_runner
       - name: Persist current state
         uses: actions/upload-artifact@v1
