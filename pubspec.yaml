@@ -57,8 +57,11 @@ flutter:
     - assets/theme/sc/logo/logo_with_text.svg
     - assets/theme/brb/logo/logo_with_text.svg
     - assets/theme/n21/logo/logo_with_text.svg
+    - assets/theme/n21/logo/dark/logo_with_text.svg
     - assets/theme/open/logo/logo_with_text.svg
+    - assets/theme/open/logo/dark/logo_with_text.svg
     - assets/theme/thr/logo/logo_with_text.svg
+    - assets/theme/thr/logo/dark/logo_with_text.svg
 
   fonts:
     - family: PT Sans

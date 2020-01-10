@@ -3,6 +3,12 @@ import 'package:schulcloud/app/theming/utils.dart';
 
 @immutable
 class AppConfigData {
+  static const darkAssets = [
+    'n21/logo/logo_with_text.svg',
+    'open/logo/logo_with_text.svg',
+    'thr/logo/logo_with_text.svg',
+  ];
+
   const AppConfigData({
     @required this.name,
     @required this.domain,
@@ -47,7 +53,22 @@ class AppConfigData {
   }
 
   /// Returns the full asset name of a themed asset.
-  String assetName(String rawName) => 'assets/theme/$name/$rawName';
+  String assetName(BuildContext context, String rawName) {
+    var assetName = '$name/$rawName';
+    // Fetching available assets at runtime is hard to implement at the moment.
+    // Unless we want to implement the logic of AssetImage.obtainKey ourselves
+    // (loading the undocumented AssetManifest.json and matching available
+    // assets with the requested one, factoring in dark mode), this is the
+    // easiest workaround.
+    if (Theme.of(context).brightness == Brightness.dark) {
+      if (darkAssets.contains(assetName)) {
+        final folder = assetName.substring(0, assetName.lastIndexOf('/'));
+        final fileName = assetName.substring(assetName.lastIndexOf('/') + 1);
+        assetName = '$folder/dark/$fileName';
+      }
+    }
+    return 'assets/theme/$assetName';
+  }
 }
 
 TextTheme _createTextTheme(Brightness brightness) {
