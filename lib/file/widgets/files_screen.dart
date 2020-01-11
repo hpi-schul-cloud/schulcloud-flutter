@@ -6,7 +6,6 @@ import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/course/course.dart';
 
 import '../bloc.dart';
-import '../data.dart';
 import 'file_browser.dart';
 import 'page_route.dart';
 
@@ -42,60 +41,6 @@ class FilesScreen extends StatelessWidget {
   }
 }
 
-class _RecentFiles extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: Text('Recent'),
-        ),
-        SizedBox(height: 8),
-        SizedBox(
-          height: 64,
-          child: ListView(
-            scrollDirection: Axis.horizontal,
-            padding: const EdgeInsets.only(left: 16),
-            children: List.generate(10, (index) {
-              return Padding(
-                padding: const EdgeInsets.only(right: 8),
-                child: _RecentFileCard(),
-              );
-            }),
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class _RecentFileCard extends StatelessWidget {
-  const _RecentFileCard({Key key, this.file}) : super(key: key);
-
-  final File file;
-
-  @override
-  Widget build(BuildContext context) {
-    return FlatMaterial(
-      onTap: () {},
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Text(file?.name ?? 'some_file.txt'),
-          Text(
-            dateTimeToString(
-              file?.updatedAt ?? DateTime.now().subtract(Duration(days: 1)),
-            ),
-            style: TextStyle(color: Colors.black54),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
 class _CoursesList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -108,7 +53,7 @@ class _CoursesList extends StatelessWidget {
         ),
         CachedRawBuilder(
           controller: Bloc.of(context).fetchCourses()..fetch(),
-          builder: (BuildContext context, CacheUpdate<List<Course>> update) {
+          builder: (context, update) {
             return GridView.extent(
               primary: false,
               shrinkWrap: true,
@@ -171,7 +116,7 @@ class _UserFiles extends StatelessWidget {
         CachedRawBuilder(
           controller: UserFetcherService.of(context).fetchCurrentUser()
             ..fetch(),
-          builder: (context, CacheUpdate<User> update) {
+          builder: (context, update) {
             return update.hasData
                 ? FileBrowser(owner: update.data, isEmbedded: true)
                 : Container();

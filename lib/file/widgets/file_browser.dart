@@ -25,6 +25,9 @@ class FileBrowser extends StatelessWidget {
   Course get ownerAsCourse => owner is Course ? owner : null;
 
   final File parent;
+
+  /// Whether this widget is embedded into another screen. If true, doesn't
+  /// show an app bar.
   final bool isEmbedded;
 
   void _openDirectory(BuildContext context, File file) {
@@ -49,7 +52,7 @@ class FileBrowser extends StatelessWidget {
     } on PermissionNotGranted catch (_) {
       Scaffold.of(context).showSnackBar(SnackBar(
         content: Text(
-          "To download files, we need to access your storage.",
+          'To download files, we need to access your storage.',
         ),
         action: SnackBarAction(
           label: 'Allow',
@@ -95,7 +98,7 @@ class FileBrowser extends StatelessWidget {
     if (isEmbedded) {
       return CachedRawBuilder(
         controller: bloc.fetchFiles(owner.id, parent),
-        builder: (context, CacheUpdate<List<File>> update) {
+        builder: (context, update) {
           return FileList(
             primary: false,
             files: update.data ?? [],
@@ -110,7 +113,7 @@ class FileBrowser extends StatelessWidget {
       errorBannerBuilder: (_, error, st) => ErrorBanner(error, st),
       errorScreenBuilder: (_, error, st) => ErrorScreen(error, st),
       hasScrollBody: true,
-      builder: (BuildContext context, List<File> files) {
+      builder: (context, files) {
         if (files.isEmpty) {
           return _buildEmptyState();
         }
@@ -124,7 +127,7 @@ class FileBrowser extends StatelessWidget {
   }
 
   Widget _buildEmptyState() {
-    return const EmptyStateScreen(
+    return EmptyStateScreen(
       text: 'Seems like there are no files here.',
       child: SizedBox(
         width: 100,
@@ -173,7 +176,7 @@ class FileList extends StatelessWidget {
         } else if (index == files.length) {
           return Container(
             alignment: Alignment.center,
-            padding: const EdgeInsets.all(16),
+            padding: EdgeInsets.all(16),
             child: Text('${files.length} items in total'),
           );
         }

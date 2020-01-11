@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:pedantic/pedantic.dart';
 import 'package:provider/provider.dart';
 import 'package:schulcloud/app/app.dart';
 
 import '../bloc.dart';
-import 'morphing_loading_button.dart';
 import 'input.dart';
+import 'morphing_loading_button.dart';
 
 class LoginForm extends StatefulWidget {
   @override
@@ -41,9 +42,9 @@ class _LoginFormState extends State<LoginForm> {
       setState(() => _ambientError = null);
 
       // Logged in.
-      Navigator.of(context).pushReplacement(TopLevelPageRoute(
+      unawaited(Navigator.of(context).pushReplacement(TopLevelPageRoute(
         builder: (_) => LoggedInScreen(),
-      ));
+      )));
     } on InvalidLoginSyntaxError {
       // We will display syntax errors on the text fields themselves.
       _ambientError = null;
@@ -74,7 +75,7 @@ class _LoginFormState extends State<LoginForm> {
   Widget build(BuildContext context) {
     return Container(
       alignment: Alignment.center,
-      padding: const EdgeInsets.symmetric(horizontal: 16),
+      padding: EdgeInsets.symmetric(horizontal: 16),
       width: 400,
       child: Column(
         children: [
@@ -96,10 +97,10 @@ class _LoginFormState extends State<LoginForm> {
           ),
           SizedBox(height: 16),
           MorphingLoadingButton(
-            onPressed: () => _login(),
+            onPressed: _login,
             isLoading: _isLoading,
             child: Padding(
-              padding: const EdgeInsets.all(12),
+              padding: EdgeInsets.all(12),
               child: Text(
                 _isLoading ? 'Loading' : 'Login',
                 style: TextStyle(color: Colors.white, fontSize: 20),
@@ -115,12 +116,12 @@ class _LoginFormState extends State<LoginForm> {
           Wrap(
             children: <Widget>[
               SecondaryButton(
-                onPressed: () => _loginAsDemoStudent(),
+                onPressed: _loginAsDemoStudent,
                 child: Text('Demo as a student'),
               ),
               SizedBox(width: 8),
               SecondaryButton(
-                onPressed: () => _loginAsDemoTeacher(),
+                onPressed: _loginAsDemoTeacher,
                 child: Text('Demo as a teacher'),
               ),
             ],

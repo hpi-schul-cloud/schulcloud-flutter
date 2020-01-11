@@ -12,13 +12,13 @@ import 'services/storage.dart';
 
 /// Converts a hex string (like, '#ffdd00') to a [Color].
 Color hexStringToColor(String hex) =>
-    Color(int.parse('ff' + hex.substring(1), radix: 16));
+    Color(int.parse('ff${hex.substring(1)}', radix: 16));
 
 /// Limits the given [string] to a a length of [maxLength] characters.
-/// If the string got, also displays '...' behind the string. The returned
+/// If the string got, also displays '…' behind the string. The returned
 /// [String] is guaranteed to be at most [maxLength] characters long.
 String limitString(String string, int maxLength) => string.length > maxLength
-    ? string.substring(0, maxLength - 3) + '...'
+    ? '${string.substring(0, maxLength - 1)}…'
     : string;
 
 /// Prints a file size given in [bytes] as a [String].
@@ -44,13 +44,13 @@ DateTime parseDateTime(String string) =>
 
 /// Removes html tags from a string.
 String removeHtmlTags(String text) {
-  int _tagStart = '<'.runes.first;
-  int _tagEnd = '>'.runes.first;
+  final _tagStart = '<'.runes.first;
+  final _tagEnd = '>'.runes.first;
 
-  var buffer = StringBuffer();
+  final buffer = StringBuffer();
   var isInTag = false;
 
-  for (var rune in text.codeUnits) {
+  for (final rune in text.codeUnits) {
     if (rune == _tagStart) {
       isInTag = true;
     } else if (rune == _tagEnd) {
@@ -73,39 +73,42 @@ Future<bool> tryLaunchingUrl(String url) async {
 
 /// An error indicating that a permission wasn't granted by the user.
 class PermissionNotGranted<T> implements Exception {
+  @override
   String toString() => "A permission wasn't granted by the user.";
 }
 
 class Id<T> {
-  final String id;
-
   const Id(this.id);
+
+  final String id;
 
   Id<S> cast<S>() => Id<S>(id);
 
+  @override
   String toString() => id;
 }
 
 /// A special kind of item that also carries its id.
 abstract class Entity {
-  Id get id;
   const Entity();
+
+  Id get id;
 }
 
 class LazyMap<K, V> {
-  final Map<K, V> _map = const {};
-  final V Function(K key) createValueForKey;
-
   LazyMap(this.createValueForKey) : assert(createValueForKey != null);
+
+  final Map<K, V> _map = {};
+  final V Function(K key) createValueForKey;
 
   V operator [](K key) => _map.putIfAbsent(key, () => createValueForKey(key));
 }
 
 CacheController<T> fetchSingle<T extends Entity>({
   @required StorageService storage,
-  Id<dynamic> parent,
   @required Future<Response> Function() makeNetworkCall,
   @required T Function(Map<String, dynamic> data) parser,
+  Id<dynamic> parent,
 }) {
   assert(storage != null);
   return CacheController<T>(
@@ -113,7 +116,7 @@ CacheController<T> fetchSingle<T extends Entity>({
     loadFromCache: () async {
       return (await storage.cache.getChildrenOfType<T>(parent)).singleWhere(
         (_) => true,
-        orElse: () => (throw NotInCacheException()),
+        orElse: () => throw NotInCacheException(),
       );
     },
     fetcher: () async {
@@ -126,9 +129,9 @@ CacheController<T> fetchSingle<T extends Entity>({
 
 CacheController<List<T>> fetchList<T extends Entity>({
   @required StorageService storage,
-  Id<dynamic> parent,
   @required Future<Response> Function() makeNetworkCall,
   @required T Function(Map<String, dynamic> data) parser,
+  Id<dynamic> parent,
 }) {
   assert(storage != null);
   return CacheController<List<T>>(

@@ -38,8 +38,8 @@ class _FileBrowserAppBarState extends State<FileBrowserAppBar> {
     BuildContext fromContext,
     BuildContext toContext,
   ) {
-    String fromTitle = titleFromHeroContext(fromContext);
-    String toTitle = titleFromHeroContext(toContext);
+    final fromTitle = titleFromHeroContext(fromContext);
+    final toTitle = titleFromHeroContext(toContext);
 
     return AppBar(
       backgroundColor: widget.backgroundColor,
@@ -55,17 +55,17 @@ class _FileBrowserAppBarState extends State<FileBrowserAppBar> {
 }
 
 class AnimatedTitle extends StatefulWidget {
-  final String parentTitle;
-  final String childTitle;
-  final Animation<double> animation;
-
-  AnimatedTitle({
+  const AnimatedTitle({
     @required this.parentTitle,
     @required this.childTitle,
     @required this.animation,
   })  : assert(parentTitle != null),
         assert(childTitle != null),
         assert(animation != null);
+
+  final String parentTitle;
+  final String childTitle;
+  final Animation<double> animation;
 
   @override
   _AnimatedTitleState createState() => _AnimatedTitleState();
@@ -94,9 +94,14 @@ class _AnimatedTitleState extends State<AnimatedTitle> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    parentTitle =
-        Text(widget.parentTitle, style: TextStyle(color: Colors.black));
-    childTitle = Text(widget.childTitle, style: TextStyle(color: Colors.black));
+    parentTitle = Text(
+      widget.parentTitle,
+      style: TextStyle(color: Colors.black),
+    );
+    childTitle = Text(
+      widget.childTitle,
+      style: TextStyle(color: Colors.black),
+    );
   }
 
   double get animValue => widget.animation.value;

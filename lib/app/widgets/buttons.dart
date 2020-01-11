@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
 class PrimaryButton extends StatelessWidget {
+  const PrimaryButton({Key key, this.onPressed, this.child}) : super(key: key);
+
   final VoidCallback onPressed;
   final Widget child;
-
-  const PrimaryButton({Key key, this.onPressed, this.child}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -30,11 +30,16 @@ class PrimaryButton extends StatelessWidget {
 }
 
 class SecondaryButton extends StatelessWidget {
+  const SecondaryButton({
+    Key key,
+    @required this.child,
+    @required this.onPressed,
+  })  : assert(child != null),
+        assert(onPressed != null),
+        super(key: key);
+
   final VoidCallback onPressed;
   final Widget child;
-
-  const SecondaryButton({Key key, this.child, this.onPressed})
-      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
