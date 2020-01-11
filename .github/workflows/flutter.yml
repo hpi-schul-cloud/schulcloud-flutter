@@ -108,3 +108,115 @@ jobs:
         with:
           name: apk-sc
           path: build/app/outputs/apk/sc/release
+
+  build-brb:
+    name: Build brb (Schul-Cloud Brandenburg)
+    needs: install
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install Java
+        uses: actions/setup-java@v1
+        with:
+          java-version: "12.x"
+      - name: Install Flutter (stable)
+        uses: subosito/flutter-action@v1
+        with:
+          channel: "stable"
+
+      - name: Checkout source
+        uses: actions/download-artifact@v1
+        with:
+          name: source
+          path: .
+
+      - run: flutter build apk --release --target=lib/main_brb.dart --flavor=brb
+
+      - name: Upload APK as artifact
+        uses: actions/upload-artifact@v1
+        with:
+          name: apk-brb
+          path: build/app/outputs/apk/brb/release
+
+  build-n21:
+    name: Build n21 (Niedersächsische Bildungscloud)
+    needs: install
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install Java
+        uses: actions/setup-java@v1
+        with:
+          java-version: "12.x"
+      - name: Install Flutter (stable)
+        uses: subosito/flutter-action@v1
+        with:
+          channel: "stable"
+
+      - name: Checkout source
+        uses: actions/download-artifact@v1
+        with:
+          name: source
+          path: .
+
+      - run: flutter build apk --release --target=lib/main_n21.dart --flavor=n21
+
+      - name: Upload APK as artifact
+        uses: actions/upload-artifact@v1
+        with:
+          name: apk-n21
+          path: build/app/outputs/apk/n21/release
+
+  build-open:
+    name: Build open (Open Schul-Cloud)
+    needs: install
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install Java
+        uses: actions/setup-java@v1
+        with:
+          java-version: "12.x"
+      - name: Install Flutter (stable)
+        uses: subosito/flutter-action@v1
+        with:
+          channel: "stable"
+
+      - name: Checkout source
+        uses: actions/download-artifact@v1
+        with:
+          name: source
+          path: .
+
+      - run: flutter build apk --release --target=lib/main_open.dart --flavor=open
+
+      - name: Upload APK as artifact
+        uses: actions/upload-artifact@v1
+        with:
+          name: apk-open
+          path: build/app/outputs/apk/open/release
+
+  build-thr:
+    name: Build thr (Thüringer Schulcloud)
+    needs: install
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install Java
+        uses: actions/setup-java@v1
+        with:
+          java-version: "12.x"
+      - name: Install Flutter (stable)
+        uses: subosito/flutter-action@v1
+        with:
+          channel: "stable"
+
+      - name: Checkout source
+        uses: actions/download-artifact@v1
+        with:
+          name: source
+          path: .
+
+      - run: flutter build apk --release --target=lib/main_thr.dart --flavor=thr
+
+      - name: Upload APK as artifact
+        uses: actions/upload-artifact@v1
+        with:
+          name: apk-thr
+          path: build/app/outputs/apk/thr/release
