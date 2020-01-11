@@ -5,7 +5,7 @@ import '../data.dart';
 import 'file_thumbnail.dart';
 
 class FileTile extends StatelessWidget {
-  FileTile({Key key, @required this.file, @required this.onOpen})
+  const FileTile({Key key, @required this.file, @required this.onOpen})
       : assert(file != null),
         assert(onOpen != null),
         super(key: key);
@@ -24,9 +24,9 @@ class FileTile extends StatelessWidget {
           ListTile(
             title: Text(file.name),
             subtitle: Text(
-              (file.isDirectory ? '' : '${file.sizeAsString}\n') +
-                  'created at ${dateTimeToString(file.createdAt)}\n'
-                      'last modified at ${dateTimeToString(file.updatedAt)}',
+              '${file.isDirectory ? '' : '${file.sizeAsString}\n'}'
+              'created at ${dateTimeToString(file.createdAt)}\n'
+              'last modified at ${dateTimeToString(file.updatedAt)}',
             ),
             leading: FileThumbnail(file: file),
           ),
@@ -52,7 +52,7 @@ class FileTile extends StatelessWidget {
     final updatedAt =
         file.updatedAt == null ? null : dateTimeToString(file.updatedAt);
     final delimeter = size != null && updatedAt != null ? ', ' : '';
-    final subtitle = '${size ?? ''}$delimeter${updatedAt ?? null}';
+    final subtitle = '${size ?? ''}$delimeter${updatedAt ?? ''}';
 
     return ListTile(
       title: Text(file.name),

@@ -6,8 +6,9 @@ import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/course/bloc.dart' as course;
 import 'package:schulcloud/course/data.dart';
 import 'package:schulcloud/dashboard/dashboard.dart';
-import '../bloc.dart';
+
 import '../assignment.dart';
+import '../bloc.dart';
 
 class AssignmentDashboardCard extends StatelessWidget {
   @override
@@ -22,11 +23,13 @@ class AssignmentDashboardCard extends StatelessWidget {
           builder: (context, bloc, _) => CachedRawBuilder<List<Assignment>>(
             controller: bloc.fetchAssignments(),
             builder: (context, update) {
-              if (!update.hasData)
+              if (!update.hasData) {
                 return Center(
-                    child: update.hasError
-                        ? Text(update.error)
-                        : CircularProgressIndicator());
+                  child: update.hasError
+                      ? Text(update.error)
+                      : CircularProgressIndicator(),
+                );
+              }
 
               // Only show open assignments that are due in the next week
               var openAssignments = update.data.where((h) =>
@@ -65,12 +68,13 @@ class AssignmentDashboardCard extends StatelessWidget {
                       (c) => CachedRawBuilder<Course>(
                         controller: courseBloc.fetchCourse(c),
                         builder: (context, update) {
-                          if (!update.hasData)
+                          if (!update.hasData) {
                             return ListTile(
                               title: Text(update.hasError
                                   ? update.error.toString()
                                   : 'Loading...'),
                             );
+                          }
 
                           var course = update.data;
 
@@ -96,11 +100,11 @@ class AssignmentDashboardCard extends StatelessWidget {
                   Align(
                     alignment: Alignment.bottomRight,
                     child: OutlineButton(
-                      child: Text('All assignments'),
                       onPressed: () {
                         Navigator.of(context).push(MaterialPageRoute(
                             builder: (context) => AssignmentsScreen()));
                       },
+                      child: Text('All assignments'),
                     ),
                   )
                 ],

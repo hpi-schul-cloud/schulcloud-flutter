@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:schulcloud/app/app.dart';
 
 Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   await initializeHive();
   runApp(ServicesProvider());
 }
