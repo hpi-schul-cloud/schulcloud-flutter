@@ -26,12 +26,10 @@ class _AuthorViewState extends State<AuthorView> {
   Widget _buildName() {
     return Container(
       alignment: Alignment.centerLeft,
-      child: Padding(
-        padding: EdgeInsets.fromLTRB(0, 4, 8, 4),
-        child: TextOrPlaceholder(
-          isPlaceholder ? null : 'von ${author.name}',
-          style: Theme.of(context).textTheme.caption.copyWith(fontSize: 16),
-        ),
+      padding: EdgeInsets.fromLTRB(0, 4, 8, 4),
+      child: TextOrPlaceholder(
+        isPlaceholder ? null : 'von ${author.name}',
+        style: Theme.of(context).textTheme.caption.copyWith(fontSize: 16),
       ),
     );
   }
