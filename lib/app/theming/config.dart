@@ -128,7 +128,7 @@ class _InheritedAppConfig extends InheritedWidget {
     Key key,
     @required this.appConfig,
     @required Widget child,
-  })  : assert(AppConfig != null),
+  })  : assert(appConfig != null),
         super(key: key, child: child);
 
   final AppConfig appConfig;
