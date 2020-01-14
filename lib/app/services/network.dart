@@ -23,11 +23,15 @@ class TooManyRequestsError implements Exception {
 /// servers. It depends on the authentication storage, so if the user's token
 /// is stored there, the requests' headers are automatically enriched with the
 /// access token.
+@immutable
 class NetworkService {
-  NetworkService({@required this.storage}) : assert(storage != null);
+  const NetworkService({
+    @required this.apiUrl,
+    @required this.storage,
+  })  : assert(apiUrl != null),
+        assert(storage != null);
 
-  static const String apiUrl = 'https://api.schul-cloud.org';
-
+  final String apiUrl;
   final StorageService storage;
 
   static NetworkService of(BuildContext context) =>

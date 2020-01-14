@@ -12,6 +12,8 @@ import 'page_route.dart';
 class FilesScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Provider<Bloc>.value(
       value: Bloc(
         storage: StorageService.of(context),
@@ -22,8 +24,20 @@ class FilesScreen extends StatelessWidget {
         length: 2,
         child: Scaffold(
           appBar: AppBar(
-            backgroundColor: Colors.white,
-            title: Text('Files', style: TextStyle(color: Colors.black)),
+            backgroundColor: theme.canvasColor,
+            flexibleSpace: Align(
+              alignment: Alignment.bottomCenter,
+              child: TabBar(
+                indicatorSize: TabBarIndicatorSize.label,
+                indicatorColor: theme.accentColor,
+                indicatorWeight: 4,
+                labelColor: theme.accentColor,
+                tabs: <Widget>[
+                  Tab(text: 'My files'),
+                  Tab(text: 'Course files'),
+                ],
+              ),
+            ),
           ),
           backgroundColor: Colors.white,
           body: ListView(

@@ -14,12 +14,9 @@ import 'services/storage.dart';
 Color hexStringToColor(String hex) =>
     Color(int.parse('ff${hex.substring(1)}', radix: 16));
 
-/// Limits the given [string] to a a length of [maxLength] characters.
-/// If the string got, also displays '…' behind the string. The returned
-/// [String] is guaranteed to be at most [maxLength] characters long.
-String limitString(String string, int maxLength) => string.length > maxLength
-    ? '${string.substring(0, maxLength - 1)}…'
-    : string;
+/// Limits a string to a certain amount of characters.
+String limitString(String string, int maxLength) =>
+    string.length > maxLength ? '${string.substring(0, maxLength)}…' : string;
 
 /// Prints a file size given in [bytes] as a [String].
 String formatFileSize(int bytes) {

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:schulcloud/app/app.dart';
+import 'package:schulcloud/app/theming/config.dart';
 import 'package:schulcloud/assignment/assignment.dart';
 import 'package:schulcloud/course/course.dart';
 import 'package:schulcloud/dashboard/dashboard.dart';
@@ -11,53 +12,13 @@ import 'package:schulcloud/news/news.dart';
 import 'app_bar.dart';
 import 'page_route.dart';
 
-const _textTheme = TextTheme(
-  title: TextStyle(fontWeight: FontWeight.bold),
-  body1: TextStyle(fontSize: 16),
-  body2: TextStyle(fontSize: 16),
-  button: TextStyle(
-    color: Color(0xff373a3c),
-    fontFamily: 'PT Sans Narrow',
-    fontWeight: FontWeight.w700,
-    fontSize: 16,
-    height: 1.25,
-  ),
-  display1: TextStyle(
-    fontWeight: FontWeight.bold,
-    fontSize: 28,
-    color: Colors.black,
-  ),
-  display2: TextStyle(
-    fontWeight: FontWeight.bold,
-    fontSize: 32,
-    color: Colors.black,
-  ),
-);
-
-const _colorTheme = MaterialColor(0xffb10438, {
-  50: Color(0xfff9c56b),
-  100: Color(0xfff79c42),
-  200: Color(0xfff76b39),
-  300: Color(0xffde3030),
-  400: Color(0xffc81a34),
-  500: Color(0xffb10438),
-  600: Color(0xff9b0431),
-  800: Color(0xff8a0029),
-  700: Color(0xff7c0427),
-  900: Color(0xff6c0020),
-});
-
 class SchulCloudApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Schul-Cloud',
-      theme: ThemeData(
-        primarySwatch: _colorTheme,
-        fontFamily: 'PT Sans',
-        textTheme: _textTheme,
-      ),
-      darkTheme: ThemeData(),
+      theme: AppConfig.of(context).createThemeData(),
+      darkTheme: AppConfig.of(context).createDarkThemeData(),
       home: StorageService.of(context).hasToken
           ? LoggedInScreen()
           : LoginScreen(),
