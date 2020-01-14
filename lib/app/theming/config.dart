@@ -3,12 +3,6 @@ import 'package:schulcloud/app/theming/utils.dart';
 
 @immutable
 class AppConfigData {
-  static const darkAssets = [
-    'n21/logo/logo_with_text.svg',
-    'open/logo/logo_with_text.svg',
-    'thr/logo/logo_with_text.svg',
-  ];
-
   const AppConfigData({
     @required this.name,
     @required this.domain,
@@ -22,6 +16,12 @@ class AppConfigData {
         assert(primaryColor != null),
         assert(secondaryColor != null),
         assert(accentColor != null);
+
+  static const darkAssets = [
+    'n21/logo/logo_with_text.svg',
+    'open/logo/logo_with_text.svg',
+    'thr/logo/logo_with_text.svg',
+  ];
 
   final String name;
   final String domain;
