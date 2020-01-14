@@ -4,8 +4,8 @@ import 'package:provider/provider.dart';
 import 'package:schulcloud/app/services/user_fetcher.dart';
 
 import '../data.dart';
-import 'author.dart';
 import 'article_image.dart';
+import 'author.dart';
 import 'headline.dart';
 import 'section.dart';
 import 'theme.dart';
@@ -15,19 +15,18 @@ import 'theme.dart';
 /// If a landscape image is provided, it's displayed above the headline.
 /// If a portrait image is provided, it's displayed below it.
 class ArticleScreen extends StatelessWidget {
-  final Article article;
+  const ArticleScreen({@required this.article}) : assert(article != null);
 
-  ArticleScreen({@required this.article}) : assert(article != null);
+  final Article article;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
       body: LayoutBuilder(
         builder: (ctx, constraints) {
-          var width = constraints.maxWidth;
-          double margin = width < 500 ? 0 : width * 0.08;
-          double padding = (width * 0.06).clamp(32.0, 64.0);
+          final width = constraints.maxWidth;
+          final double margin = width < 500 ? 0 : width * 0.08;
+          final double padding = (width * 0.06).clamp(32.0, 64.0);
 
           return Provider<ArticleTheme>(
             builder: (_) =>
@@ -35,7 +34,7 @@ class ArticleScreen extends StatelessWidget {
             child: ListView(
               padding: MediaQuery.of(context).padding +
                   EdgeInsets.symmetric(horizontal: margin) +
-                  const EdgeInsets.symmetric(vertical: 16),
+                  EdgeInsets.symmetric(vertical: 16),
               children: <Widget>[
                 ArticleView(article: article),
               ],
@@ -48,9 +47,9 @@ class ArticleScreen extends StatelessWidget {
 }
 
 class ArticleView extends StatefulWidget {
-  final Article article;
-
   const ArticleView({@required this.article}) : assert(article != null);
+
+  final Article article;
 
   @override
   _ArticleViewState createState() => _ArticleViewState();
@@ -67,7 +66,7 @@ class _ArticleViewState extends State<ArticleView> {
   }
 
   Widget _buildWithoutImage() {
-    var padding = Provider.of<ArticleTheme>(context).padding;
+    final padding = Provider.of<ArticleTheme>(context).padding;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -90,7 +89,7 @@ class _ArticleViewState extends State<ArticleView> {
   }
 
   Widget _buildWithLandscapeImage() {
-    var padding = Provider.of<ArticleTheme>(context).padding;
+    final padding = Provider.of<ArticleTheme>(context).padding;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -130,7 +129,7 @@ class _ArticleViewState extends State<ArticleView> {
   }
 
   Widget _buildContent(BuildContext context) {
-    var padding = Provider.of<ArticleTheme>(context).padding;
+    final padding = Provider.of<ArticleTheme>(context).padding;
 
     return Padding(
       padding: EdgeInsets.fromLTRB(padding, 0, padding, 16),

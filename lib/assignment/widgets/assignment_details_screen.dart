@@ -39,7 +39,7 @@ class AssignmentDetailsScreen extends StatelessWidget {
       child: Consumer<Bloc>(builder: (context, bloc, _) {
         return CachedRawBuilder<Course>(
           controller: bloc.fetchCourseOfAssignment(assignment),
-          builder: (_, CacheUpdate<Course> update) {
+          builder: (_, update) {
             final course = update.data;
             return Scaffold(
               appBar: AppBar(
@@ -48,8 +48,10 @@ class AssignmentDetailsScreen extends StatelessWidget {
                 title: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    Text(assignment.name,
-                        style: TextStyle(color: Colors.black)),
+                    Text(
+                      assignment.name,
+                      style: TextStyle(color: Colors.black),
+                    ),
                     Text(
                       course?.name ?? 'Loading...',
                       style: TextStyle(color: Colors.black),
@@ -62,8 +64,8 @@ class AssignmentDetailsScreen extends StatelessWidget {
                 errorScreenBuilder: (_, error, st) => ErrorScreen(error, st),
                 errorBannerBuilder: (_, error, st) => ErrorBanner(error, st),
                 builder: (context, submissions) {
-                  var textTheme = Theme.of(context).textTheme;
-                  var submission = submissions.firstWhere(
+                  final textTheme = Theme.of(context).textTheme;
+                  final submission = submissions.firstWhere(
                     (submission) => submission.assignmentId == assignment.id,
                     orElse: () => null,
                   );
@@ -71,7 +73,7 @@ class AssignmentDetailsScreen extends StatelessWidget {
                   return ListView(
                     children: <Widget>[
                       Html(
-                        padding: const EdgeInsets.all(8),
+                        padding: EdgeInsets.all(8),
                         defaultTextStyle:
                             textTheme.body1.copyWith(fontSize: 20),
                         data: assignment.description,
@@ -80,15 +82,15 @@ class AssignmentDetailsScreen extends StatelessWidget {
                       if (submission != null)
                         Container(
                           alignment: Alignment.centerRight,
-                          padding: const EdgeInsets.all(16),
+                          padding: EdgeInsets.all(16),
                           child: RaisedButton(
+                            onPressed: () => _showSubmissionScreen(
+                                context, assignment, submission),
                             child: Text(
                               'My submission',
                               style: textTheme.button
                                   .copyWith(color: Colors.white),
                             ),
-                            onPressed: () => _showSubmissionScreen(
-                                context, assignment, submission),
                           ),
                         ),
                     ],

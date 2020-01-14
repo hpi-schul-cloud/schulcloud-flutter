@@ -49,6 +49,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               'Andrea Nathansen',
               'Maxim Renz',
               'Clemens Tiedt',
+              'Jonas Wanke',
             ].join(', ')),
           ),
           ListTile(
@@ -65,13 +66,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ListTile(
             leading: Icon(Icons.person_outline),
             title: Text('Imprint'),
-            onTap: () => tryLaunchingUrl('https://schul-cloud.org/impressum'),
+            onTap: () {
+              final domain = AppConfig.of(context).domain;
+              tryLaunchingUrl('https://$domain/impressum');
+            },
           ),
           ListTile(
             leading: Icon(Icons.lightbulb_outline),
             title: Text('Privacy Policy'),
-            onTap: () => tryLaunchingUrl(
-                'https://schul-cloud.org/impressum#data_security'),
+            onTap: () {
+              final domain = AppConfig.of(context).domain;
+              tryLaunchingUrl('https://$domain/datenschutz');
+            },
           ),
           ListTile(
             leading: Icon(Icons.info_outline),

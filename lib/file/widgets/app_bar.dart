@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:schulcloud/app/theming/utils.dart';
 
 class FileBrowserAppBar extends StatefulWidget {
   const FileBrowserAppBar({this.backgroundColor, this.title});
@@ -14,6 +15,10 @@ class FileBrowserAppBar extends StatefulWidget {
 class _FileBrowserAppBarState extends State<FileBrowserAppBar> {
   @override
   Widget build(BuildContext context) {
+    final textColor = widget.backgroundColor != null
+        ? highEmphasisOn(widget.backgroundColor)
+        : highEmphasisOnBrightness(Theme.of(context).brightness);
+
     return Hero(
       tag: Navigator.of(context),
       transitionOnUserGestures: true,
@@ -21,8 +26,8 @@ class _FileBrowserAppBarState extends State<FileBrowserAppBar> {
       child: AppBar(
         key: ValueKey<String>(widget.title),
         backgroundColor: widget.backgroundColor,
-        title: Text(widget.title, style: TextStyle(color: Colors.black)),
-        iconTheme: IconThemeData(color: Colors.black),
+        title: Text(widget.title, style: TextStyle(color: textColor)),
+        iconTheme: IconThemeData(color: textColor),
       ),
     );
   }
@@ -38,8 +43,8 @@ class _FileBrowserAppBarState extends State<FileBrowserAppBar> {
     BuildContext fromContext,
     BuildContext toContext,
   ) {
-    String fromTitle = titleFromHeroContext(fromContext);
-    String toTitle = titleFromHeroContext(toContext);
+    final fromTitle = titleFromHeroContext(fromContext);
+    final toTitle = titleFromHeroContext(toContext);
 
     return AppBar(
       backgroundColor: widget.backgroundColor,
@@ -55,17 +60,17 @@ class _FileBrowserAppBarState extends State<FileBrowserAppBar> {
 }
 
 class AnimatedTitle extends StatefulWidget {
-  final String parentTitle;
-  final String childTitle;
-  final Animation<double> animation;
-
-  AnimatedTitle({
+  const AnimatedTitle({
     @required this.parentTitle,
     @required this.childTitle,
     @required this.animation,
   })  : assert(parentTitle != null),
         assert(childTitle != null),
         assert(animation != null);
+
+  final String parentTitle;
+  final String childTitle;
+  final Animation<double> animation;
 
   @override
   _AnimatedTitleState createState() => _AnimatedTitleState();
@@ -94,9 +99,14 @@ class _AnimatedTitleState extends State<AnimatedTitle> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    parentTitle =
-        Text(widget.parentTitle, style: TextStyle(color: Colors.black));
-    childTitle = Text(widget.childTitle, style: TextStyle(color: Colors.black));
+    parentTitle = Text(
+      widget.parentTitle,
+      style: TextStyle(color: Colors.black),
+    );
+    childTitle = Text(
+      widget.childTitle,
+      style: TextStyle(color: Colors.black),
+    );
   }
 
   double get animValue => widget.animation.value;

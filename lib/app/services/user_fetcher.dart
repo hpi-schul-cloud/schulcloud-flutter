@@ -7,8 +7,9 @@ import 'package:provider/provider.dart';
 
 import '../app.dart';
 
+@immutable
 class UserFetcherService {
-  UserFetcherService({@required this.storage, @required this.network})
+  const UserFetcherService({@required this.storage, @required this.network})
       : assert(storage != null),
         assert(network != null);
 
@@ -38,8 +39,7 @@ class UserFetcherService {
 
   CacheController<User> fetchCurrentUser() => fetchSingle(
         storage: storage,
-        makeNetworkCall: () async =>
-            await network.get('users/${getIdOfCurrentUser()}'),
+        makeNetworkCall: () => network.get('users/${getIdOfCurrentUser()}'),
         parser: (data) => User.fromJson(data),
       );
 }

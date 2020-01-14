@@ -6,7 +6,7 @@ import 'package:schulcloud/course/course.dart';
 part 'data.g.dart';
 
 @HiveType()
-class File implements Entity, Comparable {
+class File implements Entity, Comparable<File> {
   File({
     @required this.id,
     @required this.name,
@@ -30,6 +30,7 @@ class File implements Entity, Comparable {
           size: data['size'],
         );
 
+  @override
   @HiveField(0)
   final Id<File> id;
 
@@ -55,11 +56,11 @@ class File implements Entity, Comparable {
   final Id<File> parent;
 
   @override
-  int compareTo(other) {
-    if (other.isDirectory && this.isNotDirectory) {
+  int compareTo(File other) {
+    if (isNotDirectory && other.isDirectory) {
       return 1;
     }
-    if (this.isDirectory && other.isNotDirectory) {
+    if (isDirectory && other.isNotDirectory) {
       return -1;
     }
     return name.compareTo(other.name);

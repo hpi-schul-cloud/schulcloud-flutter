@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:schulcloud/app/app.dart';
 
-class InvalidLoginSyntaxError {}
+class InvalidLoginSyntaxError implements Exception {}
 
 const _emailRegExp =
     r"^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?)*$";
@@ -24,16 +24,16 @@ class Bloc {
       throw InvalidLoginSyntaxError();
     }
 
-    storage.email.setValue(email);
+    await storage.email.setValue(email);
 
     // The login throws an exception if it wasn't successful.
-    var response = await network.post('authentication', body: {
+    final response = await network.post('authentication', body: {
       'strategy': 'local',
       'username': email,
       'password': password,
     });
-    String token = json.decode(response.body)['accessToken'];
-    storage.token.setValue(token);
+    final String token = json.decode(response.body)['accessToken'];
+    await storage.token.setValue(token);
   }
 
   Future<void> loginAsDemoStudent() =>

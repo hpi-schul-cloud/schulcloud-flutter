@@ -26,7 +26,7 @@ class EmptyStateScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(32),
+      padding: EdgeInsets.all(32),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
@@ -44,7 +44,10 @@ class EmptyStateScreen extends StatelessWidget {
                     SizedBox(width: 8),
                 ],
                 if (onRetry != null)
-                  SecondaryButton(child: Text('Try again'), onPressed: onRetry),
+                  SecondaryButton(
+                    onPressed: onRetry,
+                    child: Text('Try again'),
+                  ),
               ],
             ),
           ],

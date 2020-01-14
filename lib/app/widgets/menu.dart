@@ -9,10 +9,10 @@ import 'schulcloud_app.dart';
 
 /// A menu displaying the current user and [NavigationItem]s.
 class Menu extends StatelessWidget {
-  final Stream<Screen> activeScreenStream;
-
   const Menu({@required this.activeScreenStream})
       : assert(activeScreenStream != null);
+
+  final Stream<Screen> activeScreenStream;
 
   void _navigateTo(BuildContext context, Screen target) =>
       Navigator.pop(context, target);
@@ -26,7 +26,7 @@ class Menu extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: Colors.white,
+      color: Theme.of(context).canvasColor,
       elevation: 12,
       borderRadius: BorderRadius.only(
         topLeft: Radius.circular(16),
@@ -35,7 +35,7 @@ class Menu extends StatelessWidget {
       child: StreamBuilder<Screen>(
         stream: activeScreenStream,
         builder: (context, snapshot) {
-          var activeScreen = snapshot.data;
+          final activeScreen = snapshot.data;
           return Column(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
@@ -95,10 +95,12 @@ class Menu extends StatelessWidget {
   }
 
   List<Widget> _buildNavigationItems(
-      BuildContext context, Screen activeScreen) {
+    BuildContext context,
+    Screen activeScreen,
+  ) {
     Widget buildItem(Screen screen, String text, IconData iconData) {
       return NavigationItem(
-        iconBuilder: (color) => Icon(iconData, color: color),
+        icon: iconData,
         text: text,
         onPressed: () => _navigateTo(context, screen),
         isActive: activeScreen == screen,
@@ -116,27 +118,32 @@ class Menu extends StatelessWidget {
 }
 
 class NavigationItem extends StatelessWidget {
-  final Widget Function(Color color) iconBuilder;
-  final String text;
-  final VoidCallback onPressed;
-  final bool isActive;
-
-  NavigationItem({
-    @required this.iconBuilder,
+  const NavigationItem({
+    @required this.icon,
     @required this.text,
     @required this.onPressed,
     @required this.isActive,
-  })  : assert(iconBuilder != null),
+  })  : assert(icon != null),
         assert(text != null),
         assert(onPressed != null),
         assert(isActive != null);
 
+  final IconData icon;
+  final String text;
+  final VoidCallback onPressed;
+  final bool isActive;
+
   @override
   Widget build(BuildContext context) {
-    var color = isActive ? Theme.of(context).primaryColor : Colors.black;
+    final theme = Theme.of(context);
+    final color = isActive
+        ? (theme.brightness == Brightness.dark
+            ? theme.accentColor
+            : theme.primaryColor)
+        : theme.textTheme.caption.color;
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8),
+      padding: EdgeInsets.symmetric(horizontal: 8),
       child: Material(
         borderRadius: BorderRadius.circular(8),
         color: isActive ? color.withOpacity(0.2) : Colors.transparent,
@@ -144,10 +151,10 @@ class NavigationItem extends StatelessWidget {
           borderRadius: BorderRadius.circular(8),
           onTap: onPressed,
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             child: Row(
               children: <Widget>[
-                iconBuilder(color),
+                Icon(icon, color: color),
                 SizedBox(width: 16),
                 Expanded(
                   child: Text(

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_cached/flutter_cached.dart';
 import 'package:provider/provider.dart';
 import 'package:schulcloud/app/app.dart';
+import 'package:schulcloud/app/theming/utils.dart';
 
 import '../data.dart';
 import 'article_image.dart';
@@ -10,11 +11,7 @@ import 'section.dart';
 import 'theme.dart';
 
 class ArticlePreview extends StatelessWidget {
-  final Article article;
-  final bool showPicture;
-  final bool showDetailedDate;
-
-  ArticlePreview({
+  const ArticlePreview({
     @required this.article,
     this.showPicture = true,
     this.showDetailedDate = false,
@@ -26,6 +23,10 @@ class ArticlePreview extends StatelessWidget {
     return ArticlePreview(article: null, showPicture: false);
   }
 
+  final Article article;
+  final bool showPicture;
+  final bool showDetailedDate;
+
   bool get _isPlaceholder => article == null;
 
   void _openArticle(BuildContext context) {
@@ -36,16 +37,18 @@ class ArticlePreview extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Provider<ArticleTheme>(
       builder: (_) => ArticleTheme(darkColor: Colors.purple, padding: 16),
       child: Material(
         elevation: 2,
         borderRadius: BorderRadius.circular(8),
-        color: Colors.white,
+        color: theme.cardColor,
         child: InkWell(
           onTap: _isPlaceholder ? null : () => _openArticle(context),
           child: Padding(
-            padding: const EdgeInsets.all(16),
+            padding: EdgeInsets.all(16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
@@ -60,22 +63,24 @@ class ArticlePreview extends StatelessWidget {
                 CachedRawBuilder(
                   controller: UserFetcherService.of(context)
                       .fetchUser(article.author, article.id),
-                  builder: (_, CacheUpdate<User> update) {
+                  builder: (_, update) {
                     return TextOrPlaceholder(
                       _isPlaceholder
                           ? null
                           : 'vor 3 Tagen von ${update.data?.displayName ?? 'unbekannt'}',
-                      style: TextStyle(color: Colors.black54),
+                      style: TextStyle(
+                        color: mediumEmphasisOn(theme.cardColor),
+                      ),
                     );
                   },
                 ),
                 TextOrPlaceholder(
                   article?.title,
-                  style: Theme.of(context).textTheme.display2,
+                  style: theme.textTheme.display2,
                 ),
                 TextOrPlaceholder(
                   _isPlaceholder ? null : limitString(article.content, 200),
-                  style: Theme.of(context).textTheme.body2,
+                  style: theme.textTheme.body2,
                 ),
               ],
             ),

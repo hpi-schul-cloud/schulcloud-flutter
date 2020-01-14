@@ -53,7 +53,7 @@ class LoginScreen extends StatelessWidget {
         color: theme.primaryColor,
         slantTop: 0,
         child: Padding(
-          padding: const EdgeInsets.all(16),
+          padding: EdgeInsets.all(16),
           child: Text(
             'Das Hasso-Plattner-Institut für Digital Engineering entwickelt '
             'unter der Leitung von Prof. Dr. Christoph Meinel zusammen mit '
@@ -69,7 +69,7 @@ class LoginScreen extends StatelessWidget {
         ),
       ),
       Container(
-        padding: const EdgeInsets.all(16),
+        padding: EdgeInsets.all(16),
         alignment: Alignment.center,
         child: Text('There could go some other information down here.'),
       ),
