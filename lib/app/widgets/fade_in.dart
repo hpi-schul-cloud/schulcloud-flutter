@@ -51,9 +51,7 @@ class _FadeInState extends State<FadeIn> {
   void initState() {
     super.initState();
 
-    final anchor =
-        context.ancestorStateOfType(TypeMatcher<_FadeInAnchorState>())
-            as _FadeInAnchorState;
+    final anchor = context.findAncestorStateOfType<_FadeInAnchorState>();
     final visibleSince = anchor.created.add(widget.delay);
     final now = DateTime.now();
 

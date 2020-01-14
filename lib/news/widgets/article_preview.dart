@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_cached/flutter_cached.dart';
 import 'package:provider/provider.dart';
 import 'package:schulcloud/app/app.dart';
+import 'package:schulcloud/app/theming/utils.dart';
 
 import '../data.dart';
 import 'article_image.dart';
@@ -36,12 +37,14 @@ class ArticlePreview extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Provider<ArticleTheme>(
       builder: (_) => ArticleTheme(darkColor: Colors.purple, padding: 16),
       child: Material(
         elevation: 2,
         borderRadius: BorderRadius.circular(8),
-        color: Colors.white,
+        color: theme.cardColor,
         child: InkWell(
           onTap: _isPlaceholder ? null : () => _openArticle(context),
           child: Padding(
@@ -65,17 +68,19 @@ class ArticlePreview extends StatelessWidget {
                       _isPlaceholder
                           ? null
                           : 'vor 3 Tagen von ${update.data?.displayName ?? 'unbekannt'}',
-                      style: TextStyle(color: Colors.black54),
+                      style: TextStyle(
+                        color: mediumEmphasisOn(theme.cardColor),
+                      ),
                     );
                   },
                 ),
                 TextOrPlaceholder(
                   article?.title,
-                  style: Theme.of(context).textTheme.display2,
+                  style: theme.textTheme.display2,
                 ),
                 TextOrPlaceholder(
                   _isPlaceholder ? null : limitString(article.content, 200),
-                  style: Theme.of(context).textTheme.body2,
+                  style: theme.textTheme.body2,
                 ),
               ],
             ),

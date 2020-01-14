@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:flutter/widgets.dart';
 import 'package:flutter_cached/flutter_cached.dart';
 import 'package:hive/hive.dart';
 import 'package:meta/meta.dart';
@@ -169,6 +170,7 @@ Future<void> initializeHive() async {
   }
   _isHiveInitialized = true;
 
+  WidgetsFlutterBinding.ensureInitialized();
   final dir = await getApplicationDocumentsDirectory();
 
   Hive

@@ -79,7 +79,15 @@ class _LoginFormState extends State<LoginForm> {
       width: 400,
       child: Column(
         children: [
-          SvgPicture.asset('assets/logo/logo_with_text.svg'),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 32),
+            child: SvgPicture.asset(
+              AppConfig.of(context)
+                  .assetName(context, 'logo/logo_with_text.svg'),
+              height: 64,
+              alignment: Alignment.bottomCenter,
+            ),
+          ),
           SizedBox(height: 16),
           LoginInput(
             controller: _emailController,

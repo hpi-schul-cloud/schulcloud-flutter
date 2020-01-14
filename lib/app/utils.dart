@@ -16,7 +16,7 @@ Color hexStringToColor(String hex) =>
 
 /// Limits a string to a certain amount of characters.
 String limitString(String string, int maxLength) =>
-    string.length > maxLength ? '${string.substring(0, maxLength)}...' : string;
+    string.length > maxLength ? '${string.substring(0, maxLength)}…' : string;
 
 /// Prints a file size given in byte as a string.
 String formatFileSize(int bytes) {
