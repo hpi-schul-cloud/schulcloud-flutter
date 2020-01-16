@@ -29,6 +29,7 @@ dependencies:
   permission_handler: ^3.3.0
   provider: ^3.0.0
   rxdart: ^0.22.3
+  sprintf: ^4.0.2
   streaming_shared_preferences: ^1.0.1
   transparent_image: ^1.0.0
   url_launcher: ^5.1.2
@@ -40,7 +41,6 @@ dependencies:
       url: git://github.com/jaumard/plugins
       ref: feature/webview_transparency
       path: packages/webview_flutter
-  sprintf: ^4.0.2
 
 dev_dependencies:
   build_resolvers: ^1.1.1
