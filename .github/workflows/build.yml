@@ -1,0 +1,222 @@
+name: Build & Lint
+
+on:
+  push:
+  pull_request:
+  schedule:
+    - cron: "0 8 * * *"
+
+jobs:
+  install:
+    name: Install Flutter and dependencies
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v1
+
+      - name: Install Java
+        uses: actions/setup-java@v1
+        with:
+          java-version: "12.x"
+      - name: Install Flutter (stable)
+        uses: subosito/flutter-action@v1
+        with:
+          channel: "stable" # or: 'dev' or 'beta'
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Run code generator(s)
+        run: flutter pub run build_runner build
+
+      - name: Remove obsolete files
+        run: |
+          rm -rf ./.dart_tool/pub/bin/build_runner
+      - name: Persist current state
+        uses: actions/upload-artifact@v1
+        with:
+          name: source
+          path: .
+
+  lint:
+    name: Lint
+    needs: install
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install Java
+        uses: actions/setup-java@v1
+        with:
+          java-version: "12.x"
+      - name: Install Flutter (stable)
+        uses: subosito/flutter-action@v1
+        with:
+          channel: "stable"
+
+      - name: Checkout source
+        uses: actions/download-artifact@v1
+        with:
+          name: source
+          path: .
+
+      - name: Run linter
+        run: flutter analyze > flutter_analyze_report.txt
+        continue-on-error: true
+
+      - name: Install ruby
+        uses: actions/setup-ruby@v1
+        if: github.event_name == 'pull_request'
+        with:
+          ruby-version: "2.6"
+      - name: Install ruby gems
+        run: |
+          gem install bundler
+          bundle install --without documentation
+        if: github.event_name == 'pull_request'
+      - name: Run danger on generated report
+        uses: MeilCli/danger-action@v1
+        if: github.event_name == 'pull_request'
+        with:
+          danger_file: Dangerfile
+          danger_id: "danger-pr"
+        env:
+          DANGER_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  build-sc:
+    name: Build sc (Schul-Cloud)
+    needs: install
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install Java
+        uses: actions/setup-java@v1
+        with:
+          java-version: "12.x"
+      - name: Install Flutter (stable)
+        uses: subosito/flutter-action@v1
+        with:
+          channel: "stable"
+
+      - name: Checkout source
+        uses: actions/download-artifact@v1
+        with:
+          name: source
+          path: .
+
+      - run: flutter build apk --release --target=lib/main.dart --flavor=sc
+
+      - name: Upload APK as artifact
+        uses: actions/upload-artifact@v1
+        with:
+          name: apk-sc
+          path: build/app/outputs/apk/sc/release
+
+  build-brb:
+    name: Build brb (Schul-Cloud Brandenburg)
+    needs: install
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install Java
+        uses: actions/setup-java@v1
+        with:
+          java-version: "12.x"
+      - name: Install Flutter (stable)
+        uses: subosito/flutter-action@v1
+        with:
+          channel: "stable"
+
+      - name: Checkout source
+        uses: actions/download-artifact@v1
+        with:
+          name: source
+          path: .
+
+      - run: flutter build apk --release --target=lib/main_brb.dart --flavor=brb
+
+      - name: Upload APK as artifact
+        uses: actions/upload-artifact@v1
+        with:
+          name: apk-brb
+          path: build/app/outputs/apk/brb/release
+
+  build-n21:
+    name: Build n21 (Niedersächsische Bildungscloud)
+    needs: install
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install Java
+        uses: actions/setup-java@v1
+        with:
+          java-version: "12.x"
+      - name: Install Flutter (stable)
+        uses: subosito/flutter-action@v1
+        with:
+          channel: "stable"
+
+      - name: Checkout source
+        uses: actions/download-artifact@v1
+        with:
+          name: source
+          path: .
+
+      - run: flutter build apk --release --target=lib/main_n21.dart --flavor=n21
+
+      - name: Upload APK as artifact
+        uses: actions/upload-artifact@v1
+        with:
+          name: apk-n21
+          path: build/app/outputs/apk/n21/release
+
+  build-open:
+    name: Build open (Open Schul-Cloud)
+    needs: install
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install Java
+        uses: actions/setup-java@v1
+        with:
+          java-version: "12.x"
+      - name: Install Flutter (stable)
+        uses: subosito/flutter-action@v1
+        with:
+          channel: "stable"
+
+      - name: Checkout source
+        uses: actions/download-artifact@v1
+        with:
+          name: source
+          path: .
+
+      - run: flutter build apk --release --target=lib/main_open.dart --flavor=open
+
+      - name: Upload APK as artifact
+        uses: actions/upload-artifact@v1
+        with:
+          name: apk-open
+          path: build/app/outputs/apk/open/release
+
+  build-thr:
+    name: Build thr (Thüringer Schulcloud)
+    needs: install
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install Java
+        uses: actions/setup-java@v1
+        with:
+          java-version: "12.x"
+      - name: Install Flutter (stable)
+        uses: subosito/flutter-action@v1
+        with:
+          channel: "stable"
+
+      - name: Checkout source
+        uses: actions/download-artifact@v1
+        with:
+          name: source
+          path: .
+
+      - run: flutter build apk --release --target=lib/main_thr.dart --flavor=thr
+
+      - name: Upload APK as artifact
+        uses: actions/upload-artifact@v1
+        with:
+          name: apk-thr
+          path: build/app/outputs/apk/thr/release
