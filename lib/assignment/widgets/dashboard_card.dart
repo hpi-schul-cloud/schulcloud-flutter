@@ -95,16 +95,19 @@ class AssignmentDashboardCard extends StatelessWidget {
                       ),
                     ),
                   ),
-                  Align(
-                    alignment: Alignment.bottomRight,
-                    child: OutlineButton(
-                      onPressed: () {
-                        Navigator.of(context).push(MaterialPageRoute(
-                            builder: (context) => AssignmentsScreen()));
-                      },
-                      child: Text('All assignments'),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: Align(
+                      alignment: Alignment.bottomRight,
+                      child: OutlineButton(
+                        onPressed: () {
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) => AssignmentsScreen()));
+                        },
+                        child: Text('All assignments'),
+                      ),
                     ),
-                  )
+                  ),
                 ],
               );
             },
