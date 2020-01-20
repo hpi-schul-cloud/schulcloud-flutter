@@ -5,6 +5,7 @@ import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/calendar/bloc.dart';
 import 'package:schulcloud/calendar/data.dart';
 import 'package:schulcloud/dashboard/widgets/dashboard_card.dart';
+import 'package:schulcloud/settings/widgets/licenses.dart';
 import 'package:time_machine/time_machine.dart';
 
 class CalendarDashboardCard extends StatelessWidget {
@@ -36,6 +37,13 @@ class CalendarDashboardCard extends StatelessWidget {
 
               final now = Instant.now();
               final events = update.data.where((e) => e.end > now);
+              if (events.isEmpty) {
+                return Text(
+                  'No more events for the rest of the day!',
+                  textAlign: TextAlign.center,
+                );
+              }
+
               return Column(
                 children: events.map((e) => _EventPreview(event: e)).toList(),
               );
