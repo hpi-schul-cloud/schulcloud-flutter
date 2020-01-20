@@ -25,7 +25,7 @@ class AssignmentDashboardCard extends StatelessWidget {
               if (!update.hasData) {
                 return Center(
                     child: update.hasError
-                        ? Text(update.error)
+                        ? Text(update.error.toString())
                         : CircularProgressIndicator());
               }
 
