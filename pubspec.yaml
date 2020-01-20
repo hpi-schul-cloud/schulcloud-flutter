@@ -9,6 +9,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_localizations:
+    sdk: flutter
 
   analyzer: ^0.38.5
   cupertino_icons: ^0.1.2
@@ -76,3 +78,6 @@ flutter:
           weight: 300
         - asset: assets/fonts/pt_sans_narrow_bold.ttf
           weight: 700
+
+flutter_intl:
+  enabled: true

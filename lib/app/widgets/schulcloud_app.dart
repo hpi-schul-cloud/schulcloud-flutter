@@ -6,6 +6,7 @@ import 'package:schulcloud/assignment/assignment.dart';
 import 'package:schulcloud/course/course.dart';
 import 'package:schulcloud/dashboard/dashboard.dart';
 import 'package:schulcloud/file/file.dart';
+import 'package:schulcloud/generated/l10n.dart';
 import 'package:schulcloud/login/login.dart';
 import 'package:schulcloud/news/news.dart';
 
@@ -22,6 +23,8 @@ class SchulCloudApp extends StatelessWidget {
       home: StorageService.of(context).hasToken
           ? LoggedInScreen()
           : LoginScreen(),
+      localizationsDelegates: [S.delegate],
+      supportedLocales: S.delegate.supportedLocales,
     );
   }
 }
