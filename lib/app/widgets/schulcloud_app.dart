@@ -16,10 +16,11 @@ import 'page_route.dart';
 class SchulCloudApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final appConfig = AppConfig.of(context);
     return MaterialApp(
-      title: 'Schul-Cloud',
-      theme: AppConfig.of(context).createThemeData(),
-      darkTheme: AppConfig.of(context).createDarkThemeData(),
+      title: appConfig.title,
+      theme: appConfig.createThemeData(),
+      darkTheme: appConfig.createDarkThemeData(),
       home: StorageService.of(context).hasToken
           ? LoggedInScreen()
           : LoginScreen(),

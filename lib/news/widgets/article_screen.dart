@@ -123,6 +123,13 @@ class _ArticleViewState extends State<ArticleView> {
       controller: UserFetcherService.of(context)
           .fetchUser(widget.article.author, widget.article.id),
       builder: (_, update) {
+        if (!update.hasData) {
+          return Center(
+              child: update.hasError
+                  ? Text(update.error.toString())
+                  : CircularProgressIndicator());
+        }
+
         return AuthorView(author: update.data);
       },
     );

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:schulcloud/app/app.dart';
+import 'package:schulcloud/generated/generated.dart';
 
 import '../bloc.dart';
 import 'form.dart';
@@ -27,6 +28,7 @@ class LoginScreen extends StatelessWidget {
   List<Widget> _buildContent(BuildContext context) {
     final mediaQuery = MediaQuery.of(context);
     final theme = Theme.of(context);
+    final s = context.s;
 
     return [
       SizedBox(height: mediaQuery.padding.top),
@@ -46,7 +48,7 @@ class LoginScreen extends StatelessWidget {
           height: 50,
           padding: EdgeInsets.only(bottom: mediaQuery.padding.bottom),
           alignment: Alignment.center,
-          child: Text('scroll down for more information'),
+          child: Text(s.login_loginScreen_moreInformation),
         ),
       ),
       SlantedSection(
@@ -55,15 +57,7 @@ class LoginScreen extends StatelessWidget {
         child: Padding(
           padding: EdgeInsets.all(16),
           child: Text(
-            'Das Hasso-Plattner-Institut für Digital Engineering entwickelt '
-            'unter der Leitung von Prof. Dr. Christoph Meinel zusammen mit '
-            'MINT-EC, dem nationalen Excellence-Schulnetzwerk von über 300 '
-            'Schulen bundesweit und unterstützt vom Bundesministerium für '
-            'Bildung und Forschung die HPI Schul-Cloud. Sie soll die '
-            'technische Grundlage schaffen, dass Lehrkräfte und Schüler in '
-            'jedem Unterrichtsfach auch moderne digitale Lehr- und '
-            'Lerninhalte nutzen können, und zwar so, wie Apps über '
-            'Smartphones oder Tablets nutzbar sind.',
+            s.login_loginScreen_about,
             textAlign: TextAlign.justify,
           ),
         ),
@@ -71,7 +65,7 @@ class LoginScreen extends StatelessWidget {
       Container(
         padding: EdgeInsets.all(16),
         alignment: Alignment.center,
-        child: Text('There could go some other information down here.'),
+        child: Text(s.login_loginScreen_placeholder),
       ),
     ];
   }

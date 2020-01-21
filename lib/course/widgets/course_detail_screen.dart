@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/file/file.dart';
+import 'package:schulcloud/generated/generated.dart';
 
 import '../bloc.dart';
 import '../data.dart';
@@ -57,7 +58,7 @@ class CourseDetailsScreen extends StatelessWidget {
               builder: (context, lessons) {
                 if (lessons.isEmpty) {
                   return EmptyStateScreen(
-                    text: "Seems like you're not enrolled in any courses.",
+                    text: context.s.course_detailsScreen_empty,
                   );
                 }
                 return ListView(

@@ -4,6 +4,7 @@ import 'package:flutter_html/flutter_html.dart';
 import 'package:provider/provider.dart';
 import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/course/course.dart';
+import 'package:schulcloud/generated/generated.dart';
 
 import '../bloc.dart';
 import '../data.dart';
@@ -53,7 +54,7 @@ class AssignmentDetailsScreen extends StatelessWidget {
                       style: TextStyle(color: Colors.black),
                     ),
                     Text(
-                      course?.name ?? 'Loading...',
+                      course?.name ?? context.s.general_loading,
                       style: TextStyle(color: Colors.black),
                     ),
                   ],
@@ -87,7 +88,7 @@ class AssignmentDetailsScreen extends StatelessWidget {
                             onPressed: () => _showSubmissionScreen(
                                 context, assignment, submission),
                             child: Text(
-                              'My submission',
+                              context.s.assignment_detailsScreen_mySubmission,
                               style: textTheme.button
                                   .copyWith(color: Colors.white),
                             ),

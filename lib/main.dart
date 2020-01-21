@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/date_symbol_data_local.dart';
 import 'package:provider/provider.dart';
 import 'package:schulcloud/app/app.dart';
 
@@ -33,6 +34,7 @@ class _ServicesProviderState extends State<ServicesProvider> {
     super.initState();
     () async {
       storage = await StorageService.create();
+      await initializeDateFormatting();
       setState(() {});
     }();
   }

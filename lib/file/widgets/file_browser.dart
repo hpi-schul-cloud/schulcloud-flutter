@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
 import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/course/course.dart';
+import 'package:schulcloud/generated/generated.dart';
 
 import '../bloc.dart';
 import '../data.dart';
@@ -46,15 +47,15 @@ class FileBrowser extends StatelessWidget {
         file: file,
       );
       Scaffold.of(context).showSnackBar(SnackBar(
-        content: Text('Downloading ${file.name}'),
+        content: Text(context.s.file_fileBrowser_downloading(file.name)),
       ));
-    } on PermissionNotGranted catch (_) {
+    } on PermissionNotGranted {
       Scaffold.of(context).showSnackBar(SnackBar(
         content: Text(
-          'To download files, we need to access your storage.',
+          context.s.file_fileBrowser_download_storageAccess,
         ),
         action: SnackBarAction(
-          label: 'Allow',
+          label: context.s.file_fileBrowser_download_storageAccess_allow,
           onPressed: Bloc.of(context).ensureStoragePermissionGranted,
         ),
       ));
@@ -72,14 +73,14 @@ class FileBrowser extends StatelessWidget {
       child: Consumer<Bloc>(
         builder: (context, bloc, _) {
           return Scaffold(
-            appBar: _buildAppBar(),
+            appBar: _buildAppBar(context),
             body: CachedBuilder<List<File>>(
               controller: Bloc.of(context).fetchFiles(owner.id, parent),
               errorBannerBuilder: (_, error, st) => ErrorBanner(error, st),
               errorScreenBuilder: (_, error, st) => ErrorScreen(error, st),
               builder: (context, files) {
                 if (files.isEmpty) {
-                  return _buildEmptyState();
+                  return _buildEmptyState(context);
                 }
                 return FileList(
                   files: files,
@@ -95,7 +96,7 @@ class FileBrowser extends StatelessWidget {
     );
   }
 
-  Widget _buildAppBar() {
+  Widget _buildAppBar(BuildContext context) {
     if (!showAppBar) {
       return null;
     }
@@ -103,14 +104,14 @@ class FileBrowser extends StatelessWidget {
       preferredSize: AppBar().preferredSize,
       child: FileBrowserAppBar(
         backgroundColor: ownerAsCourse?.color,
-        title: parent?.name ?? ownerAsCourse?.name ?? 'My files',
+        title: parent?.name ?? ownerAsCourse?.name ?? context.s.file_files_my,
       ),
     );
   }
 
-  Widget _buildEmptyState() {
+  Widget _buildEmptyState(BuildContext context) {
     return EmptyStateScreen(
-      text: 'Seems like there are no files here.',
+      text: context.s.file_fileBrowser_empty,
       child: SizedBox(
         width: 100,
         height: 100,
@@ -154,7 +155,7 @@ class FileList extends StatelessWidget {
           return Container(
             alignment: Alignment.center,
             padding: EdgeInsets.all(16),
-            child: Text('${files.length} items in total'),
+            child: Text(context.s.file_fileBrowser_totalCount(files.length)),
           );
         }
         return null;
