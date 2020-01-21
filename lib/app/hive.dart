@@ -6,7 +6,6 @@ import 'package:grec_minimal/grec_minimal.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:meta/meta.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/assignment/assignment.dart';
 import 'package:schulcloud/calendar/calendar.dart';
@@ -82,8 +81,8 @@ class HiveCache {
 
   Future<void> putChildrenOfType<T extends Entity>(
       Id<dynamic> parent, List<T> children) async {
-    final String key = parent?.id ?? _rootCacheKey;
-    Children theChildren = _children.get(key);
+    final key = parent?.id ?? _rootCacheKey;
+    var theChildren = _children.get(key);
     if (theChildren == null) {
       await _children.put(key, Children());
       theChildren = _children.get(key);
@@ -97,10 +96,9 @@ class HiveCache {
   Future<dynamic> get(Id<dynamic> id) => _data.get(id.id);
 
   Future<List<T>> getChildrenOfType<T>(Id<dynamic> parent) async {
-    final String key = parent?.id ?? _rootCacheKey;
-    final List<String> childrenKeys =
-        _children.get(key)?.getChildrenOfType<T>() ??
-            (throw NotInCacheException());
+    final key = parent?.id ?? _rootCacheKey;
+    final childrenKeys = _children.get(key)?.getChildrenOfType<T>() ??
+        (throw NotInCacheException());
     return [for (final key in childrenKeys) await _data.get(key)]
         .where((data) => data != null)
         .cast<T>()
