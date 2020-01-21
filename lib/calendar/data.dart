@@ -141,6 +141,8 @@ class Event implements Entity {
 }
 
 extension _ApiCorrection on Instant {
+  // analyzer doesn't notice we use this field in serverTimeToActual()
+  // ignore: unused_field
   static final _serverDateTimeZone = DateTimeZoneProviders.defaultProvider
       .getDateTimeZoneSync('Europe/Berlin');
 

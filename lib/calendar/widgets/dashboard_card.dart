@@ -5,7 +5,6 @@ import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/calendar/bloc.dart';
 import 'package:schulcloud/calendar/data.dart';
 import 'package:schulcloud/dashboard/widgets/dashboard_card.dart';
-import 'package:schulcloud/settings/widgets/licenses.dart';
 import 'package:time_machine/time_machine.dart';
 
 class CalendarDashboardCard extends StatelessWidget {
