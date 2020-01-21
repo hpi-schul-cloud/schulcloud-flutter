@@ -25,8 +25,8 @@ class ArticleScreen extends StatelessWidget {
       body: LayoutBuilder(
         builder: (ctx, constraints) {
           final width = constraints.maxWidth;
-          final double margin = width < 500 ? 0 : width * 0.08;
-          final double padding = (width * 0.06).clamp(32.0, 64.0);
+          final margin = width < 500 ? 0 : width * 0.08;
+          final padding = (width * 0.06).clamp(32.0, 64.0);
 
           return Provider<ArticleTheme>(
             builder: (_) =>

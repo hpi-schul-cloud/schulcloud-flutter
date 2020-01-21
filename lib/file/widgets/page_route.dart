@@ -187,7 +187,7 @@ class FileBrowserPageTransition extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     assert(debugCheckHasDirectionality(context));
-    final TextDirection textDirection = Directionality.of(context);
+    final textDirection = Directionality.of(context);
     return SlideTransition(
       position: _secondaryPositionAnimation,
       textDirection: textDirection,
@@ -359,7 +359,7 @@ class _FileBrowserBackGestureController<T> {
       // The closer the panel is to dismissing, the shorter the animation is.
       // We want to cap the animation time, but we want to use a linear curve
       // to determine it.
-      final int droppedPageForwardAnimationTime = min(
+      final droppedPageForwardAnimationTime = min(
         lerpDouble(
                 _kMaxDroppedSwipePageForwardAnimationTime, 0, controller.value)
             .floor(),
@@ -377,7 +377,7 @@ class _FileBrowserBackGestureController<T> {
       // The popping may have finished inline if already at the target destination.
       if (controller.isAnimating) {
         // Otherwise, use a custom popping animation duration and curve.
-        final int droppedPageBackAnimationTime = lerpDouble(
+        final droppedPageBackAnimationTime = lerpDouble(
                 0, _kMaxDroppedSwipePageForwardAnimationTime, controller.value)
             .floor();
         controller.animateBack(
