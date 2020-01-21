@@ -125,6 +125,9 @@ CacheController<List<T>> fetchList<T extends Entity>({
   @required Future<Response> Function() makeNetworkCall,
   @required T Function(Map<String, dynamic> data) parser,
   Id<dynamic> parent,
+  // Surprise: The Calendar API's response is different from all others! Would
+  // be too easy otherwise ;)
+  bool serviceIsPaginated = true,
 }) {
   assert(storage != null);
   return CacheController<List<T>>(
@@ -133,7 +136,8 @@ CacheController<List<T>> fetchList<T extends Entity>({
     fetcher: () async {
       final response = await makeNetworkCall();
       final body = json.decode(response.body);
-      return [for (final data in body['data']) parser(data)];
+      final dataList = serviceIsPaginated ? body['data'] : body;
+      return [for (final data in dataList) parser(data)];
     },
   );
 }

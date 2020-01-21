@@ -15,17 +15,20 @@ class DashboardCard extends StatelessWidget {
       padding: const EdgeInsets.all(4),
       child: Card(
         child: Padding(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.symmetric(vertical: 8),
           child: Column(
             children: <Widget>[
               Align(
                 alignment: Alignment.topLeft,
-                child: Text(
-                  title,
-                  style: Theme.of(context).textTheme.headline,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Text(
+                    title,
+                    style: Theme.of(context).textTheme.headline,
+                  ),
                 ),
               ),
-              SizedBox(height: 16),
+              SizedBox(height: 8),
               child,
             ],
           ),

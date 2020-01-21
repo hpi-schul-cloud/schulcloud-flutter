@@ -50,14 +50,17 @@ class NewsDashboardCard extends StatelessWidget {
                                       ArticleScreen(article: a))),
                         ),
                       )),
-                  Align(
-                    alignment: Alignment.bottomRight,
-                    child: OutlineButton(
-                      onPressed: () {
-                        Navigator.of(context).push(MaterialPageRoute(
-                            builder: (context) => NewsScreen()));
-                      },
-                      child: Text(s.news_dashboardCard_all),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: Align(
+                      alignment: Alignment.bottomRight,
+                      child: OutlineButton(
+                        onPressed: () {
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) => NewsScreen()));
+                        },
+                        child: Text(s.news_dashboardCard_all),
+                      ),
                     ),
                   )
                 ],

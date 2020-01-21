@@ -26,7 +26,7 @@ class AssignmentDashboardCard extends StatelessWidget {
               if (!update.hasData) {
                 return Center(
                     child: update.hasError
-                        ? Text(update.error)
+                        ? Text(update.error.toString())
                         : CircularProgressIndicator());
               }
 
@@ -97,16 +97,19 @@ class AssignmentDashboardCard extends StatelessWidget {
                       ),
                     ),
                   ),
-                  Align(
-                    alignment: Alignment.bottomRight,
-                    child: OutlineButton(
-                      onPressed: () {
-                        Navigator.of(context).push(MaterialPageRoute(
-                            builder: (context) => AssignmentsScreen()));
-                      },
-                      child: Text(context.s.assignment_dashboardCard_all),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: Align(
+                      alignment: Alignment.bottomRight,
+                      child: OutlineButton(
+                        onPressed: () {
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) => AssignmentsScreen()));
+                        },
+                        child: Text(context.s.assignment_dashboardCard_all),
+                      ),
                     ),
-                  )
+                  ),
                 ],
               );
             },

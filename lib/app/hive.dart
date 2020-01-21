@@ -2,14 +2,17 @@ import 'dart:ui';
 
 import 'package:flutter/widgets.dart';
 import 'package:flutter_cached/flutter_cached.dart';
+import 'package:grec_minimal/grec_minimal.dart';
 import 'package:hive/hive.dart';
 import 'package:meta/meta.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/assignment/assignment.dart';
+import 'package:schulcloud/calendar/calendar.dart';
 import 'package:schulcloud/course/course.dart';
 import 'package:schulcloud/file/file.dart';
 import 'package:schulcloud/news/news.dart';
+import 'package:time_machine/time_machine.dart';
 
 import 'data.dart';
 import 'utils.dart';
@@ -163,6 +166,26 @@ class ColorAdapter extends TypeAdapter<Color> {
   void write(BinaryWriter writer, Color color) => writer.writeInt(color.value);
 }
 
+class InstantAdapter extends TypeAdapter<Instant> {
+  @override
+  Instant read(BinaryReader reader) =>
+      Instant.fromEpochMilliseconds(reader.readInt());
+
+  @override
+  void write(BinaryWriter writer, Instant obj) =>
+      writer.writeInt(obj.epochMilliseconds);
+}
+
+class RecurrenceRulesAdapter extends TypeAdapter<List<RecurrenceRule>> {
+  @override
+  List<RecurrenceRule> read(BinaryReader reader) =>
+      GrecMinimal.fromTexts(reader.readStringList());
+
+  @override
+  void write(BinaryWriter writer, List<RecurrenceRule> obj) =>
+      writer.writeStringList(GrecMinimal.toTexts(obj));
+}
+
 Future<void> initializeHive() async {
   if (_isHiveInitialized) {
     return;
@@ -178,6 +201,8 @@ Future<void> initializeHive() async {
     ..registerAdapter(IdAdapter<User>(), 40)
     ..registerAdapter(ColorAdapter(), 48)
     ..registerAdapter(ChildrenAdapter(), 49)
+    ..registerAdapter(InstantAdapter(), 61)
+    ..registerAdapter(RecurrenceRulesAdapter(), 62)
     // App module:
     ..registerAdapter(UserAdapter(), 51)
     // Assignments module:
@@ -185,6 +210,9 @@ Future<void> initializeHive() async {
     ..registerAdapter(IdAdapter<Submission>(), 60)
     ..registerAdapter(AssignmentAdapter(), 54)
     ..registerAdapter(SubmissionAdapter(), 55)
+    // Calendar module:
+    ..registerAdapter(IdAdapter<Event>(), 63)
+    ..registerAdapter(EventAdapter(), 64)
     // Courses module:
     ..registerAdapter(IdAdapter<ContentType>(), 41)
     ..registerAdapter(IdAdapter<Content>(), 42)
