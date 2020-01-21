@@ -3,8 +3,8 @@ import 'package:provider/provider.dart';
 import 'package:schulcloud/app/app.dart';
 
 Future<void> main({AppConfigData appConfig = schulCloudAppConfig}) async {
-  WidgetsFlutterBinding.ensureInitialized();
   await initializeHive();
+
   runApp(
     AppConfig(
       data: appConfig,

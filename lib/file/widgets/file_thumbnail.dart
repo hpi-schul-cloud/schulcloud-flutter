@@ -24,7 +24,9 @@ const supportedThumbnails = <String>{
 };
 
 class FileThumbnail extends StatelessWidget {
-  const FileThumbnail({Key key, this.file}) : super(key: key);
+  const FileThumbnail({Key key, @required this.file})
+      : assert(file != null),
+        super(key: key);
 
   final File file;
 

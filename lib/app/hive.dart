@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_cached/flutter_cached.dart';
 import 'package:hive/hive.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:meta/meta.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:schulcloud/app/app.dart';
@@ -170,11 +171,9 @@ Future<void> initializeHive() async {
   }
   _isHiveInitialized = true;
 
-  WidgetsFlutterBinding.ensureInitialized();
-  final dir = await getApplicationDocumentsDirectory();
+  await Hive.initFlutter();
 
   Hive
-    ..init(dir.path)
     // General:
     ..registerAdapter(IdAdapter<User>(), 40)
     ..registerAdapter(ColorAdapter(), 48)

@@ -88,7 +88,6 @@ class FileBrowser extends StatelessWidget {
     return PreferredSize(
       preferredSize: AppBar().preferredSize,
       child: FileBrowserAppBar(
-        backgroundColor: Colors.white,
         title: parent?.name ?? ownerAsCourse?.name ?? 'My files',
       ),
     );
@@ -96,7 +95,7 @@ class FileBrowser extends StatelessWidget {
 
   Widget _buildBody(Bloc bloc) {
     if (isEmbedded) {
-      return CachedRawBuilder(
+      return CachedRawBuilder<List<File>>(
         controller: bloc.fetchFiles(owner.id, parent),
         builder: (context, update) {
           return FileList(
