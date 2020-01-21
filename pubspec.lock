@@ -303,6 +303,20 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.16.0"
+  intl_translation:
+    dependency: transitive
+    description:
+      name: intl_translation
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.17.8"
+  intl_utils:
+    dependency: "direct dev"
+    description:
+      name: intl_utils
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.2"
   io:
     dependency: transitive
     description:
@@ -442,7 +456,7 @@ packages:
       name: petitparser
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "3.0.0"
+    version: "2.4.0"
   platform:
     dependency: transitive
     description:
@@ -722,7 +736,7 @@ packages:
       name: xml
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "3.7.0"
+    version: "3.6.1"
   yaml:
     dependency: transitive
     description:
