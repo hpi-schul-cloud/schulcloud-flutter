@@ -56,7 +56,8 @@ class AssignmentDashboardCard extends StatelessWidget {
                       ),
                       SizedBox(width: 4),
                       Text(
-                        context.s.assignment_dashboardCard,
+                        context.s.assignment_dashboardCard_header(
+                            openAssignments.length),
                         style: Theme.of(context).textTheme.subhead,
                       )
                     ],
