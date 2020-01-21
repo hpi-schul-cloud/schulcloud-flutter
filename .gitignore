@@ -27,6 +27,7 @@ windows/
 # Visual Studio Code related
 .vscode/*
 !.vscode/launch.json
+!.vscode/extensions.json
 
 # Flutter/Dart/Pub related
 **/doc/api/
