@@ -192,7 +192,7 @@ class InstantAdapter extends TypeAdapter<Instant> {
       writer.writeInt(obj.epochMilliseconds);
 }
 
-class RecurrenceRuleAdapter extends TypeAdapter<List<RecurrenceRule>> {
+class RecurrenceRulesAdapter extends TypeAdapter<List<RecurrenceRule>> {
   @override
   final int typeId = typeRecurrenceRule;
 
@@ -251,7 +251,7 @@ Future<void> initializeHive() async {
     ..registerAdapter(ColorAdapter())
     ..registerAdapter(ChildrenAdapter())
     ..registerAdapter(InstantAdapter())
-    ..registerAdapter(RecurrenceRuleAdapter())
+    ..registerAdapter(RecurrenceRulesAdapter())
     // App module:
     ..registerAdapter(UserAdapter())
     // Assignments module:
