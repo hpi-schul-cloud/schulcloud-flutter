@@ -1,5 +1,5 @@
 // DO NOT EDIT. This is code generated via package:intl/generate_localized.dart
-// This is a library that provides messages for a de_DE locale. All the
+// This is a library that provides messages for a de locale. All the
 // messages from the main program should be duplicated here with the same
 // function name.
 
@@ -17,7 +17,7 @@ final messages = new MessageLookup();
 typedef String MessageIfAbsent(String messageStr, List<dynamic> args);
 
 class MessageLookup extends MessageLookupByLibrary {
-  String get localeName => 'de_DE';
+  String get localeName => 'de';
 
   static m0(error) => "Oh nein! Ein interner Fehler ist aufgetreten:\n${error}";
 
@@ -58,6 +58,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "assignment_submissionScreen_gradeTitle" : m2,
     "assignment_submissionScreen_tabFeedback" : MessageLookupByLibrary.simpleMessage("Feedback"),
     "assignment_submissionScreen_tabSubmission" : MessageLookupByLibrary.simpleMessage("Abgabe"),
+    "calendar_dashboardCard" : MessageLookupByLibrary.simpleMessage("Stundenplan"),
+    "calendar_dashboardCard_empty" : MessageLookupByLibrary.simpleMessage("Keine Termine für den Rest des Tages!"),
     "course_coursesScreen_empty" : MessageLookupByLibrary.simpleMessage("Es wurden keine Kurse gefunden."),
     "course_detailsScreen_empty" : MessageLookupByLibrary.simpleMessage("Dieser Kurs enthält noch keine Themen."),
     "file_fileBrowser_download_storageAccess" : MessageLookupByLibrary.simpleMessage("Um Dateien herunterzuladen benötigen wir Zugriff auf den Speicher"),

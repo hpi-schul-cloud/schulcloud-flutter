@@ -1,5 +1,5 @@
 {
-  "@@locale": "de-DE",
+  "@@locale": "de",
   "app_emptyState_retry": "Nochmal versuchen",
   "@app_emptyState_retry": {
     "type": "text"
@@ -84,6 +84,16 @@
   "assignment_submissionScreen_tabSubmission": "Abgabe",
   "@assignment_submissionScreen_tabSubmission": {
     "type": "text"
+  },
+  "calendar_dashboardCard": "Stundenplan",
+  "@calendar_dashboardCard": {
+    "type": "text",
+    "description": ""
+  },
+  "calendar_dashboardCard_empty": "Keine Termine für den Rest des Tages!",
+  "@calendar_dashboardCard_empty": {
+    "type": "text",
+    "description": ""
   },
   "course_coursesScreen_empty": "Es wurden keine Kurse gefunden.",
   "@course_coursesScreen_empty": {

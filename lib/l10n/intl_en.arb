@@ -85,6 +85,16 @@
   "@assignment_submissionScreen_tabSubmission": {
     "type": "text"
   },
+  "calendar_dashboardCard": "Schedule",
+  "@calendar_dashboardCard": {
+    "type": "text",
+    "description": ""
+  },
+  "calendar_dashboardCard_empty": "No more events for the rest of the day!",
+  "@calendar_dashboardCard_empty": {
+    "type": "text",
+    "description": ""
+  },
   "course_coursesScreen_empty": "Seems like you're currently not enrolled in any courses.",
   "@course_coursesScreen_empty": {
     "type": "text"

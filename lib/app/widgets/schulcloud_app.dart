@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/app/theming/config.dart';
@@ -24,7 +25,11 @@ class SchulCloudApp extends StatelessWidget {
       home: StorageService.of(context).hasToken
           ? LoggedInScreen()
           : LoginScreen(),
-      localizationsDelegates: [S.delegate],
+      localizationsDelegates: [
+        S.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+      ],
       supportedLocales: S.delegate.supportedLocales,
     );
   }

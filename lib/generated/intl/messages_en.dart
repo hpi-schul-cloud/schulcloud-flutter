@@ -58,6 +58,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "assignment_submissionScreen_gradeTitle" : m2,
     "assignment_submissionScreen_tabFeedback" : MessageLookupByLibrary.simpleMessage("Feedback"),
     "assignment_submissionScreen_tabSubmission" : MessageLookupByLibrary.simpleMessage("Submission"),
+    "calendar_dashboardCard" : MessageLookupByLibrary.simpleMessage("Schedule"),
+    "calendar_dashboardCard_empty" : MessageLookupByLibrary.simpleMessage("No more events for the rest of the day!"),
     "course_coursesScreen_empty" : MessageLookupByLibrary.simpleMessage("Seems like you\'re currently not enrolled in any courses."),
     "course_detailsScreen_empty" : MessageLookupByLibrary.simpleMessage("This course doesn\'t contain any topics."),
     "file_fileBrowser_download_storageAccess" : MessageLookupByLibrary.simpleMessage("To download files, we need to access your storage."),

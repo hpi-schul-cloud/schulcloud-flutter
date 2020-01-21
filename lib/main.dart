@@ -37,7 +37,6 @@ class _ServicesProviderState extends State<ServicesProvider> {
     super.initState();
     () async {
       storage = await StorageService.create();
-      await initializeDateFormatting();
       await TimeMachine.initialize({
         'rootBundle': rootBundle,
         'timeZone': await FlutterNativeTimezone.getLocalTimezone(),

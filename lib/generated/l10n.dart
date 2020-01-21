@@ -15,7 +15,7 @@ class S {
     AppLocalizationDelegate();
 
   static Future<S> load(Locale locale) {
-    final String name = locale.countryCode.isEmpty ? locale.languageCode : locale.toString();
+    final String name = locale.toString();
     final String localeName = Intl.canonicalizedLocale(name);
     return initializeMessages(localeName).then((_) {
       Intl.defaultLocale = localeName;
@@ -215,6 +215,24 @@ class S {
     return Intl.message(
       'Submission',
       name: 'assignment_submissionScreen_tabSubmission',
+      desc: '',
+      args: [],
+    );
+  }
+
+  String get calendar_dashboardCard {
+    return Intl.message(
+      'Schedule',
+      name: 'calendar_dashboardCard',
+      desc: '',
+      args: [],
+    );
+  }
+
+  String get calendar_dashboardCard_empty {
+    return Intl.message(
+      'No more events for the rest of the day!',
+      name: 'calendar_dashboardCard_empty',
       desc: '',
       args: [],
     );
@@ -586,7 +604,7 @@ class AppLocalizationDelegate extends LocalizationsDelegate<S> {
 
   List<Locale> get supportedLocales {
     return const <Locale>[
-      Locale('de', 'DE'), Locale('en', ''),
+      Locale('de'), Locale('en'),
     ];
   }
 
