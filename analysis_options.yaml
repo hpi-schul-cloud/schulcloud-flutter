@@ -114,7 +114,10 @@ linter:
     - sort_pub_dependencies
     - sort_unnamed_constructors_first
     - test_types_in_equals
-    - type_annotate_public_apis
+    # This linter rule is useful and part of the Effective Dart guidelines, but
+    # Hive doesn't conform to it yet.
+    # For more info, see https://github.com/hivedb/hive/issues/194.
+    # - type_annotate_public_apis
     - type_init_formals
     - unawaited_futures
     - unnecessary_await_in_return

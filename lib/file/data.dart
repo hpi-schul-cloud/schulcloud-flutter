@@ -5,7 +5,7 @@ import 'package:schulcloud/course/course.dart';
 
 part 'data.g.dart';
 
-@HiveType()
+@HiveType(typeId: typeFile)
 class File implements Entity, Comparable<File> {
   File({
     @required this.id,

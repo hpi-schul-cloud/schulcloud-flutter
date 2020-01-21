@@ -7,7 +7,7 @@ import 'package:schulcloud/app/app.dart';
 part 'data.g.dart';
 
 @immutable
-@HiveType()
+@HiveType(typeId: typeCourse)
 class Course implements Entity {
   const Course({
     @required this.id,
@@ -52,7 +52,7 @@ class Course implements Entity {
   final Color color;
 }
 
-@HiveType()
+@HiveType(typeId: typeLesson)
 class Lesson implements Entity {
   const Lesson({
     @required this.id,
@@ -83,7 +83,7 @@ class Lesson implements Entity {
   final List<Content> contents;
 }
 
-@HiveType()
+@HiveType(typeId: typeContentType)
 enum ContentType {
   @HiveField(0)
   text,
@@ -96,7 +96,7 @@ enum ContentType {
 }
 
 @immutable
-@HiveType()
+@HiveType(typeId: typeContent)
 class Content implements Entity {
   const Content({
     @required this.id,
