@@ -4,7 +4,7 @@ version: 1.0.0+1
 homepage: https://github.com/schul-cloud/schulcloud-flutter
 
 environment:
-  sdk: ">=2.3.0 <3.0.0"
+  sdk: ">=2.7.0 <3.0.0"
 
 dependencies:
   flutter:
@@ -17,8 +17,10 @@ dependencies:
   # The current version of flutter_downloader, 1.2.1, causes the build to fail. Until this is fixed, we rely on an older version.
   flutter_downloader: 1.1.9
   flutter_html: ^0.10.4
+  flutter_native_timezone: ^1.0.4
   flutter_svg: ^0.14.2
   flutter_villains: ^1.2.0
+  grec_minimal: ^0.0.3
   hive: ^1.1.1
   hive_flutter: ^0.3.0+1
   http: ^0.12.0
@@ -32,6 +34,7 @@ dependencies:
   rxdart: ^0.22.3
   sprintf: ^4.0.2
   streaming_shared_preferences: ^1.0.1
+  time_machine: ^0.9.12
   transparent_image: ^1.0.0
   url_launcher: ^5.1.2
   # Using a fork until the main plugin supports transparent backgrounds:
@@ -64,6 +67,8 @@ flutter:
     - assets/theme/open/logo/dark/logo_with_text.svg
     - assets/theme/thr/logo/logo_with_text.svg
     - assets/theme/thr/logo/dark/logo_with_text.svg
+    - packages/time_machine/data/cultures/cultures.bin
+    - packages/time_machine/data/tzdb/tzdb.bin
 
   fonts:
     - family: PT Sans

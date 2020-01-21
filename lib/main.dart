@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_native_timezone/flutter_native_timezone.dart';
 import 'package:provider/provider.dart';
 import 'package:schulcloud/app/app.dart';
+import 'package:time_machine/time_machine.dart';
 
 Future<void> main({AppConfigData appConfig = schulCloudAppConfig}) async {
   await initializeHive();
@@ -34,6 +37,10 @@ class _ServicesProviderState extends State<ServicesProvider> {
     super.initState();
     () async {
       storage = await StorageService.create();
+      await TimeMachine.initialize({
+        'rootBundle': rootBundle,
+        'timeZone': await FlutterNativeTimezone.getLocalTimezone(),
+      });
       setState(() {});
     }();
   }
