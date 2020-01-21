@@ -19,7 +19,6 @@ class FilesScreen extends StatelessWidget {
         userFetcher: UserFetcherService.of(context),
       ),
       child: Scaffold(
-        backgroundColor: Colors.white,
         body: ListView(
           padding: MediaQuery.of(context).padding +
               const EdgeInsets.symmetric(vertical: 16),
@@ -132,7 +131,8 @@ class FlatMaterial extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: Colors.white,
+      color: Theme.of(context).primaryColor,
+      borderRadius: BorderRadius.circular(8),
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(8),
