@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_cached/flutter_cached.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:schulcloud/generated/generated.dart';
 import 'package:schulcloud/login/login.dart';
 import 'package:schulcloud/settings/settings.dart';
@@ -87,7 +88,9 @@ class Menu extends StatelessWidget {
           onPressed: () => _openSettings(context),
         ),
         IconButton(
-          icon: Icon(Icons.airline_seat_legroom_reduced),
+          icon: SvgPicture.asset(
+            'assets/icon_logout.svg',
+          ),
           onPressed: () => logOut(context),
         ),
         SizedBox(width: 8),
