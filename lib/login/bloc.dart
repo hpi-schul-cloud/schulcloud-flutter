@@ -3,7 +3,11 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:schulcloud/app/app.dart';
 
-class InvalidLoginSyntaxError implements Exception {}
+class InvalidLoginSyntaxError implements Exception {
+  InvalidLoginSyntaxError({this.isEmailValid, this.isPasswordValid});
+  final bool isEmailValid;
+  final bool isPasswordValid;
+}
 
 const _emailRegExp =
     r"^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?)*$";
@@ -20,8 +24,13 @@ class Bloc {
   bool isPasswordValid(String password) => password.isNotEmpty;
 
   Future<void> login(String email, String password) async {
-    if (!isEmailValid(email) || !isPasswordValid(password)) {
-      throw InvalidLoginSyntaxError();
+    final emailValid = isEmailValid(email);
+    final passwordValid = isPasswordValid(password);
+    if (!emailValid || !passwordValid) {
+      throw InvalidLoginSyntaxError(
+        isEmailValid: emailValid,
+        isPasswordValid: passwordValid,
+      );
     }
 
     await storage.email.setValue(email);
