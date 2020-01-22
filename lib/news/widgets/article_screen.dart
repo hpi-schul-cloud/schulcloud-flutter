@@ -29,7 +29,7 @@ class ArticleScreen extends StatelessWidget {
           final padding = (width * 0.06).clamp(32.0, 64.0);
 
           return Provider<ArticleTheme>(
-            builder: (_) =>
+            create: (_) =>
                 ArticleTheme(darkColor: Colors.purple, padding: padding),
             child: ListView(
               padding: MediaQuery.of(context).padding +

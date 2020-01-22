@@ -1,5 +1,5 @@
 export 'data.dart';
-export 'hive.dart' show initializeHive;
+export 'hive.dart';
 export 'services/network.dart';
 export 'services/storage.dart';
 export 'services/user_fetcher.dart';

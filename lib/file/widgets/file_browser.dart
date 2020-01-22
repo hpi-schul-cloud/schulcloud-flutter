@@ -10,16 +10,17 @@ import 'package:schulcloud/generated/generated.dart';
 import '../bloc.dart';
 import '../data.dart';
 import 'app_bar.dart';
+import 'file_tile.dart';
 import 'page_route.dart';
 
 class FileBrowser extends StatelessWidget {
   FileBrowser({
     @required this.owner,
     this.parent,
-    this.showAppBar = true,
+    this.isEmbedded = false,
   })  : assert(owner != null),
         assert(parent == null || parent.isDirectory),
-        assert(showAppBar != null);
+        assert(isEmbedded != null);
 
   final Entity owner;
   Course get ownerAsCourse => owner is Course ? owner : null;
@@ -28,7 +29,7 @@ class FileBrowser extends StatelessWidget {
 
   /// Whether this widget is embedded into another screen. If true, doesn't
   /// show an app bar.
-  final bool showAppBar;
+  final bool isEmbedded;
 
   void _openDirectory(BuildContext context, File file) {
     assert(file.isDirectory);
@@ -97,7 +98,7 @@ class FileBrowser extends StatelessWidget {
   }
 
   Widget _buildAppBar(BuildContext context) {
-    if (!showAppBar) {
+    if (isEmbedded) {
       return null;
     }
     return PreferredSize(
@@ -132,24 +133,29 @@ class FileList extends StatelessWidget {
     @required this.files,
     @required this.onOpenDirectory,
     @required this.onDownloadFile,
+    this.primary = true,
   })  : assert(files != null),
         assert(onOpenDirectory != null),
         assert(onDownloadFile != null),
+        assert(primary != null),
         super(key: key);
 
   final List<File> files;
   final void Function(File directory) onOpenDirectory;
   final void Function(File file) onDownloadFile;
+  final bool primary;
 
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
+      primary: primary,
+      shrinkWrap: !primary,
       itemBuilder: (context, index) {
         if (index < files.length) {
           final file = files[index];
           return FileTile(
             file: file,
-            onTap: file.isDirectory ? onOpenDirectory : onDownloadFile,
+            onOpen: file.isDirectory ? onOpenDirectory : onDownloadFile,
           );
         } else if (index == files.length) {
           return Container(
@@ -160,26 +166,6 @@ class FileList extends StatelessWidget {
         }
         return null;
       },
-    );
-  }
-}
-
-class FileTile extends StatelessWidget {
-  const FileTile({Key key, @required this.file, @required this.onTap})
-      : assert(file != null),
-        assert(onTap != null),
-        super(key: key);
-
-  final File file;
-  final void Function(File file) onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return ListTile(
-      title: Text(file.name),
-      subtitle: file.isNotDirectory ? Text(file.sizeAsString) : null,
-      leading: Icon(file.isDirectory ? Icons.folder : Icons.insert_drive_file),
-      onTap: () => onTap(file),
     );
   }
 }

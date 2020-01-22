@@ -12,7 +12,7 @@ class LoginScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: ProxyProvider2<StorageService, NetworkService, Bloc>(
-        builder: (_, authStorage, network, __) =>
+        update: (_, authStorage, network, __) =>
             Bloc(storage: authStorage, network: network),
         child: CustomScrollView(
           slivers: <Widget>[

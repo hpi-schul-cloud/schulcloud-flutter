@@ -18,7 +18,7 @@ Color hexStringToColor(String hex) =>
 String limitString(String string, int maxLength) =>
     string.length > maxLength ? '${string.substring(0, maxLength)}…' : string;
 
-/// Prints a file size given in byte as a string.
+/// Prints a file size given in [bytes] as a [String].
 String formatFileSize(int bytes) {
   const units = ['B', 'kB', 'MB', 'GB', 'TB', 'YB'];
 
@@ -29,11 +29,15 @@ String formatFileSize(int bytes) {
     index++;
   }
 
-  return '${(bytes / power).toStringAsFixed(index == 0 ? 0 : 1)} ${units[index]}';
+  return '${(bytes / power).toStringAsFixed(index == 0 ? 0 : 1)} ${units[index]}';
 }
 
-/// Converts a DateTime to a string.
-String dateTimeToString(DateTime dt) => DateFormat.yMMMd().format(dt);
+/// Converts a [DateTime] to a [String].
+String dateTimeToString(DateTime dt) => DateFormat.MMMd().format(dt);
+
+/// Converts a [String] to a [DateTime].
+DateTime parseDateTime(String string) =>
+    DateTime.parse(string.replaceAll('T', ' ').replaceAll('Z', ''));
 
 /// Removes html tags from a string.
 String removeHtmlTags(String text) {

@@ -23,7 +23,7 @@ class _LoginFormState extends State<LoginForm> {
   bool _isLoading = false;
   String _ambientError;
 
-  Bloc get bloc => Provider.of<Bloc>(context);
+  Bloc get bloc => Provider.of<Bloc>(context, listen: false);
 
   Future<void> _executeLogin(Future<void> Function() login) async {
     setState(() => _isLoading = true);
