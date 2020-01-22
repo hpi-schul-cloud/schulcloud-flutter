@@ -1,11 +1,13 @@
 # Folder for design mockups and other resources that should remain local.
 local/
 
-# Windows related
-windows/
-
 # Generated dart files.
 *.g.dart
+lib/generated/**
+!lib/generated/generated.dart
+
+# Windows related
+windows/
 
 # Miscellaneous
 *.class
@@ -27,6 +29,7 @@ windows/
 # Visual Studio Code related
 .vscode/*
 !.vscode/launch.json
+!.vscode/extensions.json
 
 # Flutter/Dart/Pub related
 **/doc/api/

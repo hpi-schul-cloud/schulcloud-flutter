@@ -22,8 +22,8 @@ String limitString(String string, int maxLength) =>
 String formatFileSize(int bytes) {
   const units = ['B', 'kB', 'MB', 'GB', 'TB', 'YB'];
 
-  int index = 0;
-  int power = 1;
+  var index = 0;
+  var power = 1;
   while (bytes > 1000 * power && index < units.length - 1) {
     power *= 1000;
     index++;

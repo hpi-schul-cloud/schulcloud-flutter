@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_cached/flutter_cached.dart';
+import 'package:schulcloud/generated/generated.dart';
 import 'package:schulcloud/login/login.dart';
 import 'package:schulcloud/settings/settings.dart';
 
@@ -65,14 +66,14 @@ class Menu extends StatelessWidget {
                 controller: UserFetcherService.of(context).fetchCurrentUser(),
                 builder: (context, update) {
                   return Text(
-                    update.data?.name ?? '-',
+                    update.data?.name ?? context.s.app_navigation_userDataEmpty,
                     style: TextStyle(fontSize: 20),
                   );
                 },
               ),
               StreamBuilder<String>(
                 stream: StorageService.of(context).email,
-                initialData: '-',
+                initialData: context.s.app_navigation_userDataEmpty,
                 builder: (context, snapshot) {
                   return Text(snapshot.data, style: TextStyle(fontSize: 14));
                 },
@@ -107,12 +108,14 @@ class Menu extends StatelessWidget {
       );
     }
 
+    final s = context.s;
     return [
-      buildItem(Screen.dashboard, 'Dashboard', Icons.dashboard),
-      buildItem(Screen.news, 'News', Icons.new_releases),
-      buildItem(Screen.courses, 'Courses', Icons.school),
-      buildItem(Screen.homework, 'Assignments', Icons.playlist_add_check),
-      buildItem(Screen.files, 'Files', Icons.folder),
+      buildItem(Screen.dashboard, s.app_navigation_dashboard, Icons.dashboard),
+      buildItem(Screen.news, s.app_navigation_news, Icons.new_releases),
+      buildItem(Screen.courses, s.app_navigation_courses, Icons.school),
+      buildItem(Screen.homework, s.app_navigation_assignments,
+          Icons.playlist_add_check),
+      buildItem(Screen.files, s.app_navigation_files, Icons.folder),
     ];
   }
 }

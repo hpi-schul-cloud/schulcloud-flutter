@@ -25,6 +25,8 @@ class NewsScreen extends StatelessWidget {
               errorBannerBuilder: (_, error, st) => ErrorBanner(error, st),
               errorScreenBuilder: (_, error, st) => ErrorScreen(error, st),
               builder: (_, articles) {
+                articles.sort((a1, a2) => a2.published.compareTo(a1.published));
+
                 return ListView.builder(
                   itemCount: articles.length,
                   itemBuilder: (context, index) {

@@ -4,6 +4,7 @@ import 'package:flutter_html/flutter_html.dart';
 import 'package:provider/provider.dart';
 import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/dashboard/widgets/dashboard_card.dart';
+import 'package:schulcloud/generated/generated.dart';
 import 'package:schulcloud/news/bloc.dart';
 import 'package:schulcloud/news/data.dart';
 import 'package:schulcloud/news/news.dart';
@@ -12,6 +13,8 @@ import 'package:schulcloud/news/widgets/article_screen.dart';
 class NewsDashboardCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final s = context.s;
+
     return Provider.value(
       value: Bloc(
         storage: Provider.of<StorageService>(context),
@@ -19,7 +22,7 @@ class NewsDashboardCard extends StatelessWidget {
         userFetcher: Provider.of<UserFetcherService>(context),
       ),
       child: DashboardCard(
-        title: 'News',
+        title: s.news_dashboardCard,
         child: Consumer<Bloc>(
           builder: (context, bloc, _) => CachedRawBuilder<List<Article>>(
             controller: bloc.fetchArticles(),
@@ -56,7 +59,7 @@ class NewsDashboardCard extends StatelessWidget {
                           Navigator.of(context).push(MaterialPageRoute(
                               builder: (context) => NewsScreen()));
                         },
-                        child: Text('All articles'),
+                        child: Text(s.news_dashboardCard_all),
                       ),
                     ),
                   )

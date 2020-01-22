@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/app/theming/config.dart';
@@ -6,6 +7,7 @@ import 'package:schulcloud/assignment/assignment.dart';
 import 'package:schulcloud/course/course.dart';
 import 'package:schulcloud/dashboard/dashboard.dart';
 import 'package:schulcloud/file/file.dart';
+import 'package:schulcloud/generated/l10n.dart';
 import 'package:schulcloud/login/login.dart';
 import 'package:schulcloud/news/news.dart';
 
@@ -15,13 +17,20 @@ import 'page_route.dart';
 class SchulCloudApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final appConfig = AppConfig.of(context);
     return MaterialApp(
-      title: 'Schul-Cloud',
-      theme: AppConfig.of(context).createThemeData(),
-      darkTheme: AppConfig.of(context).createDarkThemeData(),
+      title: appConfig.title,
+      theme: appConfig.createThemeData(),
+      darkTheme: appConfig.createDarkThemeData(),
       home: StorageService.of(context).hasToken
           ? LoggedInScreen()
           : LoginScreen(),
+      localizationsDelegates: [
+        S.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+      ],
+      supportedLocales: S.delegate.supportedLocales,
     );
   }
 }

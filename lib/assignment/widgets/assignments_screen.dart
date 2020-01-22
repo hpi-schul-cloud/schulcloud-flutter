@@ -5,6 +5,7 @@ import 'package:flutter_html/flutter_html.dart';
 import 'package:provider/provider.dart';
 import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/course/course.dart';
+import 'package:schulcloud/generated/generated.dart';
 
 import '../bloc.dart';
 import '../data.dart';
@@ -87,7 +88,10 @@ class AssignmentCard extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: <Widget>[
                     Icon(Icons.flag, color: Colors.red),
-                    Text('Overdue', style: TextStyle(color: Colors.red)),
+                    Text(
+                      context.s.assignment_assignmentsScreen_overdue,
+                      style: TextStyle(color: Colors.red),
+                    ),
                   ],
                 ),
               Text(

@@ -1,0 +1,258 @@
+{
+  "@@locale": "de",
+  "app_emptyState_retry": "Nochmal versuchen",
+  "@app_emptyState_retry": {
+    "type": "text"
+  },
+  "app_errorScreen_authError": "Sieht aus, als ob die Authentifizierung abgelaufen ist.\nVielleicht hilft es, sich erneut einzuloggen?",
+  "@app_errorScreen_authError": {
+    "type": "text"
+  },
+  "app_errorScreen_authError_logOut": "Abmelden",
+  "@app_errorScreen_authError_logOut": {
+    "type": "text"
+  },
+  "app_errorScreen_noConnection": "Es konnte keine Verbindung zum Server aufgebaut werden.\nBist du mit dem Internet verbunden?",
+  "@app_errorScreen_noConnection": {
+    "type": "text"
+  },
+  "app_errorScreen_stackTrace": "Stack-Trace",
+  "@app_errorScreen_stackTrace": {
+    "type": "text"
+  },
+  "app_errorScreen_unknown": "Oh nein! Ein interner Fehler ist aufgetreten:\n{error}",
+  "@app_errorScreen_unknown": {
+    "type": "text"
+  },
+  "app_errorScreen_unknown_showStackTrace": "Stack-Trace anzeigen",
+  "@app_errorScreen_unknown_showStackTrace": {
+    "type": "text"
+  },
+  "app_navigation_assignments": "Hausaufgaben",
+  "@app_navigation_assignments": {
+    "type": "text"
+  },
+  "app_navigation_courses": "Kurse",
+  "@app_navigation_courses": {
+    "type": "text"
+  },
+  "app_navigation_dashboard": "Übersicht",
+  "@app_navigation_dashboard": {
+    "type": "text"
+  },
+  "app_navigation_files": "Dateien",
+  "@app_navigation_files": {
+    "type": "text"
+  },
+  "app_navigation_news": "Neuigkeiten",
+  "@app_navigation_news": {
+    "type": "text"
+  },
+  "app_navigation_userDataEmpty": "—",
+  "@app_navigation_userDataEmpty": {
+    "type": "text"
+  },
+  "assignment_assignmentsScreen_overdue": "Überfällig",
+  "@assignment_assignmentsScreen_overdue": {
+    "type": "text"
+  },
+  "assignment_dashboardCard": "Hausaufgaben",
+  "@assignment_dashboardCard": {
+    "type": "text"
+  },
+  "assignment_dashboardCard_all": "Alle Hausaufgaben",
+  "@assignment_dashboardCard_all": {
+    "type": "text"
+  },
+  "assignment_dashboardCard_header": "{assignmentCount, plural, one{offene Hausaufgabe\nin der nächsten Woche} other{offene Hausaufgaben\nin der nächsten Woche}}",
+  "@assignment_dashboardCard_header": {
+    "type": "text",
+    "description": ""
+  },
+  "assignment_detailsScreen_mySubmission": "Meine Abgabe",
+  "@assignment_detailsScreen_mySubmission": {
+    "type": "text"
+  },
+  "assignment_submissionScreen_gradeTitle": "Note: {grade}",
+  "@assignment_submissionScreen_gradeTitle": {
+    "type": "text"
+  },
+  "assignment_submissionScreen_tabFeedback": "Feedback",
+  "@assignment_submissionScreen_tabFeedback": {
+    "type": "text"
+  },
+  "assignment_submissionScreen_tabSubmission": "Abgabe",
+  "@assignment_submissionScreen_tabSubmission": {
+    "type": "text"
+  },
+  "calendar_dashboardCard": "Stundenplan",
+  "@calendar_dashboardCard": {
+    "type": "text",
+    "description": ""
+  },
+  "calendar_dashboardCard_empty": "Keine Termine für den Rest des Tages!",
+  "@calendar_dashboardCard_empty": {
+    "type": "text",
+    "description": ""
+  },
+  "course_coursesScreen_empty": "Es wurden keine Kurse gefunden.",
+  "@course_coursesScreen_empty": {
+    "type": "text"
+  },
+  "course_detailsScreen_empty": "Dieser Kurs enthält noch keine Themen.",
+  "@course_detailsScreen_empty": {
+    "type": "text"
+  },
+  "file_fileBrowser_downloading": "{fileName} wird heruntergeladen…",
+  "@file_fileBrowser_downloading": {
+    "type": "text"
+  },
+  "file_fileBrowser_download_storageAccess": "Um Dateien herunterzuladen benötigen wir Zugriff auf den Speicher",
+  "@file_fileBrowser_download_storageAccess": {
+    "type": "text"
+  },
+  "file_fileBrowser_download_storageAccess_allow": "Erlauben",
+  "@file_fileBrowser_download_storageAccess_allow": {
+    "type": "text"
+  },
+  "file_fileBrowser_empty": "Der Ordner ist leer.",
+  "@file_fileBrowser_empty": {
+    "type": "text"
+  },
+  "file_fileBrowser_totalCount": "Insgesamt {count} Dateien/Unterordner",
+  "@file_fileBrowser_totalCount": {
+    "type": "text"
+  },
+  "file_files_course": "Kursdateien",
+  "@file_files_course": {
+    "type": "text"
+  },
+  "file_files_course_description": "Hier findest du alle Dateien, die in den jeweiligen Kursen im Unterricht verwendet werden. Alle Teilnehmer des Kurses, also Lehrkräfte und SchülerInnen, haben auf diese Dateien Zugriff.",
+  "@file_files_course_description": {
+    "type": "text"
+  },
+  "file_files_my": "Meine Dateien",
+  "@file_files_my": {
+    "type": "text"
+  },
+  "file_files_my_description": "Hier findest du alle deine persönlichen Dateien.\nAuf diese Dateien hast nur du Zugriff, du kannst sie aber auch mit anderen Nutzern teilen.",
+  "@file_files_my_description": {
+    "type": "text"
+  },
+  "general_loading": "Lädt…",
+  "@general_loading": {
+    "type": "text"
+  },
+  "general_placeholder": "—",
+  "@general_placeholder": {
+    "type": "text"
+  },
+  "general_user_unknown": "Unbekannt",
+  "@general_user_unknown": {
+    "type": "text"
+  },
+  "login_form_demo": "Du hast noch keinen Account? Jetzt testen!",
+  "@login_form_demo": {
+    "type": "text"
+  },
+  "login_form_demo_student": "Demo als Schüler",
+  "@login_form_demo_student": {
+    "type": "text"
+  },
+  "login_form_demo_teacher": "Demo als Lehrer",
+  "@login_form_demo_teacher": {
+    "type": "text"
+  },
+  "login_form_email": "E-Mail",
+  "@login_form_email": {
+    "type": "text"
+  },
+  "login_form_email_error": "E-Mail-Adresse",
+  "@login_form_email_error": {
+    "type": "text"
+  },
+  "login_form_errorAuth": "E-Mail oder Passwort sind falsch.",
+  "@login_form_errorAuth": {
+    "type": "text"
+  },
+  "login_form_errorNoConnection": "Keine Verbindung zum Server",
+  "@login_form_errorNoConnection": {
+    "type": "text"
+  },
+  "login_form_errorRateLimit": "Zu viele Versuche. Versuche es erneut in {timeToWait}.",
+  "@login_form_errorRateLimit": {
+    "type": "text"
+  },
+  "login_form_login": "Login",
+  "@login_form_login": {
+    "type": "text"
+  },
+  "login_form_password": "Passwort",
+  "@login_form_password": {
+    "type": "text"
+  },
+  "login_form_password_error": "Passwort eingeben",
+  "@login_form_password_error": {
+    "type": "text"
+  },
+  "login_loginScreen_about": "Das Hasso-Plattner-Institut für Digital Engineering entwickelt unter der Leitung von Prof. Dr. Christoph Meinel zusammen mit MINT-EC, dem nationalen Excellence-Schulnetzwerk von über 300 Schulen bundesweit und unterstützt vom Bundesministerium für Bildung und Forschung die HPI Schul-Cloud. Sie soll die technische Grundlage schaffen, dass Lehrkräfte und Schüler in jedem Unterrichtsfach auch moderne digitale Lehr- und Lerninhalte nutzen können, und zwar so, wie Apps über Smartphones oder Tablets nutzbar sind.",
+  "@login_loginScreen_about": {
+    "type": "text"
+  },
+  "login_loginScreen_moreInformation": "Scrolle herunter für mehr Informationen",
+  "@login_loginScreen_moreInformation": {
+    "type": "text"
+  },
+  "login_loginScreen_placeholder": "Hier könnten noch weitere Informationen stehen.",
+  "@login_loginScreen_placeholder": {
+    "type": "text"
+  },
+  "news_articlePreview_subtitle": "Veröffentlicht am {published} von {author}",
+  "@news_articlePreview_subtitle": {
+    "type": "text"
+  },
+  "news_authorView": "von {author}",
+  "@news_authorView": {
+    "type": "text"
+  },
+  "news_dashboardCard": "Neuigkeiten",
+  "@news_dashboardCard": {
+    "type": "text"
+  },
+  "news_dashboardCard_all": "Alle Artikel",
+  "@news_dashboardCard_all": {
+    "type": "text"
+  },
+  "settings": "Einstellungen",
+  "@settings": {
+    "type": "text"
+  },
+  "settings_contact": "Kontakt",
+  "@settings_contact": {
+    "type": "text"
+  },
+  "settings_contributors": "Mitwirkende",
+  "@settings_contributors": {
+    "type": "text"
+  },
+  "settings_imprint": "Impressum",
+  "@settings_imprint": {
+    "type": "text"
+  },
+  "settings_licenses": "Lizenzen",
+  "@settings_licenses": {
+    "type": "text"
+  },
+  "settings_openSource": "Diese App ist Open Source",
+  "@settings_openSource": {
+    "type": "text"
+  },
+  "settings_privacyPolicy": "Datenschutzerklärung",
+  "@settings_privacyPolicy": {
+    "type": "text"
+  },
+  "settings_version": "Version",
+  "@settings_version": {
+    "type": "text"
+  }
+}

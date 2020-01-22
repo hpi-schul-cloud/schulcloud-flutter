@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/course/course.dart';
+import 'package:schulcloud/generated/generated.dart';
 
 import '../bloc.dart';
 import 'file_browser.dart';
@@ -33,8 +34,8 @@ class FilesScreen extends StatelessWidget {
                 indicatorWeight: 4,
                 labelColor: theme.accentColor,
                 tabs: <Widget>[
-                  Tab(text: 'My files'),
-                  Tab(text: 'Course files'),
+                  Tab(text: context.s.file_files_my),
+                  Tab(text: context.s.file_files_course),
                 ],
               ),
             ),
@@ -58,9 +59,7 @@ class _UserFilesList extends StatelessWidget {
       children: <Widget>[
         FileListHeader(
           icon: Icon(Icons.person_outline, size: 48),
-          text: 'These are your personal files.\n'
-              'By default, only you can access them, but they '
-              'may be shared with others.',
+          text: context.s.file_files_my_description,
         ),
         Expanded(
           child: CachedRawBuilder<User>(
@@ -92,8 +91,7 @@ class _CourseFilesList extends StatelessWidget {
       children: <Widget>[
         FileListHeader(
           icon: Icon(Icons.school, size: 48),
-          text: 'These are the files from courses you are enrolled in. '
-              'Anyone in the course (including teachers) has access to them.',
+          text: context.s.file_files_course_description,
         ),
         Expanded(
           child: CachedBuilder(

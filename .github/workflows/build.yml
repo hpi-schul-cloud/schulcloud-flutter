@@ -27,7 +27,9 @@ jobs:
         run: flutter pub get
 
       - name: Run code generator(s)
-        run: flutter pub run build_runner build
+        run: |
+          flutter pub run intl_utils:generate
+          flutter pub run build_runner build
 
       - name: Remove obsolete files
         run: |

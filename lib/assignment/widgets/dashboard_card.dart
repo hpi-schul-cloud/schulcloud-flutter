@@ -1,6 +1,7 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cached/flutter_cached.dart';
+import 'package:schulcloud/generated/generated.dart';
 import 'package:provider/provider.dart';
 import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/course/bloc.dart' as course;
@@ -17,7 +18,7 @@ class AssignmentDashboardCard extends StatelessWidget {
           storage: Provider.of<StorageService>(context),
           network: Provider.of<NetworkService>(context)),
       child: DashboardCard(
-        title: 'Assignments',
+        title: context.s.assignment_dashboardCard,
         child: Consumer<Bloc>(
           builder: (context, bloc, _) => CachedRawBuilder<List<Assignment>>(
             controller: bloc.fetchAssignments(),
@@ -55,7 +56,8 @@ class AssignmentDashboardCard extends StatelessWidget {
                       ),
                       SizedBox(width: 4),
                       Text(
-                        'Open Assignments \nin the next week',
+                        context.s.assignment_dashboardCard_header(
+                            openAssignments.length),
                         style: Theme.of(context).textTheme.subhead,
                       )
                     ],
@@ -70,7 +72,7 @@ class AssignmentDashboardCard extends StatelessWidget {
                             return ListTile(
                               title: Text(update.hasError
                                   ? update.error.toString()
-                                  : 'Loading...'),
+                                  : context.s.general_loading),
                             );
                           }
 
@@ -87,7 +89,7 @@ class AssignmentDashboardCard extends StatelessWidget {
                             ),
                             title: Text(course.name),
                             trailing: Text(
-                              '${subjects[c].length}',
+                              subjects[c].length.toString(),
                               style: Theme.of(context).textTheme.headline,
                             ),
                           );
@@ -104,7 +106,7 @@ class AssignmentDashboardCard extends StatelessWidget {
                           Navigator.of(context).push(MaterialPageRoute(
                               builder: (context) => AssignmentsScreen()));
                         },
-                        child: Text('All assignments'),
+                        child: Text(context.s.assignment_dashboardCard_all),
                       ),
                     ),
                   ),

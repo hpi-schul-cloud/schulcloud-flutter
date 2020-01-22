@@ -18,4 +18,5 @@ samples, guidance on mobile development, and a full API reference.
 
 - Run `flutter packages get`
 - Run `flutter packages pub run build_runner build`
-- Run `flutter run`
+- Run `flutter pub run intl_utils:generate` (or use the [Flutter Intl](https://marketplace.visualstudio.com/items?itemName=localizely.flutter-intl) extension in VS Code)
+- Run `flutter run --flavor=sc`

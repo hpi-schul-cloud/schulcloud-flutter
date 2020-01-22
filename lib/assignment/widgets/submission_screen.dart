@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_cached/flutter_cached.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:schulcloud/generated/generated.dart';
 
 import '../bloc.dart';
 import '../data.dart';
@@ -48,8 +49,10 @@ class SubmissionScreen extends StatelessWidget {
                 labelColor: Colors.black,
                 labelStyle: TextStyle(fontSize: 16),
                 tabs: <Widget>[
-                  Tab(text: 'Submission'),
-                  Tab(text: 'Feedback'),
+                  Tab(
+                    text: context.s.assignment_submissionScreen_tabSubmission,
+                  ),
+                  Tab(text: context.s.assignment_submissionScreen_tabFeedback),
                 ],
               ),
             ),
@@ -68,7 +71,10 @@ class SubmissionScreen extends StatelessWidget {
                   padding: EdgeInsets.all(8),
                   children: <Widget>[
                     if (submission.grade != null)
-                      Text('Grade: ${submission.grade}'),
+                      Text(
+                        context.s.assignment_submissionScreen_gradeTitle(
+                            submission.grade),
+                      ),
                     Html(
                       defaultTextStyle: textTheme.body1.copyWith(fontSize: 20),
                       data: submission.gradeComment,

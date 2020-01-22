@@ -3,6 +3,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:pedantic/pedantic.dart';
 import 'package:provider/provider.dart';
 import 'package:schulcloud/app/app.dart';
+import 'package:schulcloud/generated/generated.dart';
 
 import '../bloc.dart';
 import 'input.dart';
@@ -49,11 +50,11 @@ class _LoginFormState extends State<LoginForm> {
       // We will display syntax errors on the text fields themselves.
       _ambientError = null;
     } on NoConnectionToServerError {
-      _ambientError = 'No connection to the server.';
+      _ambientError = context.s.login_form_errorNoConnection;
     } on AuthenticationError {
-      _ambientError = 'Authentication failed.';
+      _ambientError = context.s.login_form_errorAuth;
     } on TooManyRequestsError catch (error) {
-      _ambientError = 'Too many requests. Try again in ${error.timeToWait}.';
+      _ambientError = context.s.login_form_errorRateLimit(error.timeToWait);
     } finally {
       setState(() => _isLoading = false);
     }
@@ -73,6 +74,8 @@ class _LoginFormState extends State<LoginForm> {
 
   @override
   Widget build(BuildContext context) {
+    final s = context.s;
+
     return Container(
       alignment: Alignment.center,
       padding: EdgeInsets.symmetric(horizontal: 16),
@@ -91,16 +94,16 @@ class _LoginFormState extends State<LoginForm> {
           SizedBox(height: 16),
           LoginInput(
             controller: _emailController,
-            label: 'Email',
-            error: _isEmailValid ? null : 'Enter an email address.',
+            label: s.login_form_email,
+            error: _isEmailValid ? null : s.login_form_email_error,
             onChanged: () => setState(() {}),
           ),
           SizedBox(height: 16),
           LoginInput(
             controller: _passwordController,
-            label: 'Password',
+            label: s.login_form_password,
             obscureText: true,
-            error: _isPasswordValid ? null : 'Enter a password.',
+            error: _isPasswordValid ? null : s.login_form_password_error,
             onChanged: () => setState(() {}),
           ),
           SizedBox(height: 16),
@@ -110,7 +113,7 @@ class _LoginFormState extends State<LoginForm> {
             child: Padding(
               padding: EdgeInsets.all(12),
               child: Text(
-                _isLoading ? 'Loading' : 'Login',
+                _isLoading ? s.general_loading : s.login_form_login,
                 style: TextStyle(color: Colors.white, fontSize: 20),
               ),
             ),
@@ -119,18 +122,18 @@ class _LoginFormState extends State<LoginForm> {
           if (_ambientError != null) Text(_ambientError),
           Divider(),
           SizedBox(height: 8),
-          Text("Don't have an account yet? Try it out!"),
+          Text(s.login_form_demo),
           SizedBox(height: 8),
           Wrap(
             children: <Widget>[
               SecondaryButton(
                 onPressed: _loginAsDemoStudent,
-                child: Text('Demo as a student'),
+                child: Text(s.login_form_demo_student),
               ),
               SizedBox(width: 8),
               SecondaryButton(
                 onPressed: _loginAsDemoTeacher,
-                child: Text('Demo as a teacher'),
+                child: Text(s.login_form_demo_teacher),
               ),
             ],
           ),

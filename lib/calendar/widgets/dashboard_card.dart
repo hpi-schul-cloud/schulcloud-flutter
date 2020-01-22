@@ -5,11 +5,14 @@ import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/calendar/bloc.dart';
 import 'package:schulcloud/calendar/data.dart';
 import 'package:schulcloud/dashboard/widgets/dashboard_card.dart';
+import 'package:schulcloud/generated/generated.dart';
 import 'package:time_machine/time_machine.dart';
 
 class CalendarDashboardCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final s = context.s;
+
     return Provider.value(
       value: Bloc(
         storage: Provider.of<StorageService>(context),
@@ -17,7 +20,7 @@ class CalendarDashboardCard extends StatelessWidget {
         userFetcher: Provider.of<UserFetcherService>(context),
       ),
       child: DashboardCard(
-        title: 'Schedule',
+        title: s.calendar_dashboardCard,
         child: Consumer<Bloc>(
           builder: (context, bloc, _) =>
               StreamBuilder<CacheUpdate<List<Event>>>(
@@ -38,7 +41,7 @@ class CalendarDashboardCard extends StatelessWidget {
               final events = update.data.where((e) => e.end > now);
               if (events.isEmpty) {
                 return Text(
-                  'No more events for the rest of the day!',
+                  s.calendar_dashboardCard_empty,
                   textAlign: TextAlign.center,
                 );
               }

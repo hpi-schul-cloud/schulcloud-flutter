@@ -49,7 +49,7 @@ class _MyAppBarState extends State<MyAppBar> {
   }
 
   Future<void> _showMenu(BuildContext context) async {
-    final Screen target = await Navigator.of(context).push(PageRouteBuilder(
+    final target = await Navigator.of(context).push(PageRouteBuilder(
       pageBuilder: (_, __, ___) =>
           Menu(activeScreenStream: widget.activeScreenStream),
       opaque: false,

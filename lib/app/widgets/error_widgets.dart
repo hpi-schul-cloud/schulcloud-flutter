@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:schulcloud/generated/generated.dart';
 import 'package:schulcloud/login/login.dart';
 
 import '../services/network.dart';
@@ -11,7 +12,7 @@ void _showStackTrace(
   Navigator.of(context).push(MaterialPageRoute(
     builder: (_) {
       return Scaffold(
-        appBar: AppBar(title: Text('Stack trace')),
+        appBar: AppBar(title: Text(context.s.app_errorScreen_stackTrace)),
         body: ListView(children: [
           Text(error.toString()),
           Divider(),
@@ -29,22 +30,21 @@ class _MessageAndActions {
       BuildContext context, dynamic error, StackTrace stackTrace) {
     String message;
     final actions = <Widget>[];
+    final s = context.s;
 
     if (error is NoConnectionToServerError) {
-      message = "We can't connect to the server.\n"
-          "Are you sure you're connected to the internet?";
+      message = s.app_errorScreen_noConnection;
     } else if (error is AuthenticationError) {
-      message = "Seems like this device's authentication expired.\n"
-          'Maybe logging out and in again helps?';
+      message = s.app_errorScreen_authError;
       actions.add(SecondaryButton(
         onPressed: () => logOut(context),
-        child: Text('Log out'),
+        child: Text(s.app_errorScreen_authError_logOut),
       ));
     } else {
-      message = 'Oh no! An internal error occurred:\n$error';
+      message = s.app_errorScreen_unknown(error);
       actions.add(SecondaryButton(
         onPressed: () => _showStackTrace(context, error, stackTrace),
-        child: Text('Show stack trace'),
+        child: Text(s.app_errorScreen_unknown_showStackTrace),
       ));
     }
 
