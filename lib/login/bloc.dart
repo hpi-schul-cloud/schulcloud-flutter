@@ -24,10 +24,12 @@ class Bloc {
   bool isPasswordValid(String password) => password.isNotEmpty;
 
   Future<void> login(String email, String password) async {
-    if (!isEmailValid(email) || !isPasswordValid(password)) {
+    final emailValid = isEmailValid(email);
+    final passwordValid = isPasswordValid(password);
+    if (!emailValid || !passwordValid) {
       throw InvalidLoginSyntaxError(
-        isEmailValid: isEmailValid(email),
-        isPasswordValid: isPasswordValid(password),
+        isEmailValid: emailValid,
+        isPasswordValid: passwordValid,
       );
     }
 
