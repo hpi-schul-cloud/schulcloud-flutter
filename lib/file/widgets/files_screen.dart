@@ -13,73 +13,65 @@ import 'page_route.dart';
 class FilesScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
     return Provider<Bloc>.value(
       value: Bloc(
         storage: StorageService.of(context),
         network: NetworkService.of(context),
         userFetcher: UserFetcherService.of(context),
       ),
-      child: DefaultTabController(
-        length: 2,
-        child: Scaffold(
-          appBar: AppBar(
-            backgroundColor: theme.canvasColor,
-            flexibleSpace: Align(
-              alignment: Alignment.bottomCenter,
-              child: TabBar(
-                indicatorSize: TabBarIndicatorSize.label,
-                indicatorColor: theme.accentColor,
-                indicatorWeight: 4,
-                labelColor: theme.accentColor,
-                tabs: <Widget>[
-                  Tab(text: context.s.file_files_my),
-                  Tab(text: context.s.file_files_course),
-                ],
-              ),
-            ),
-          ),
-          body: TabBarView(
-            children: <Widget>[
-              _UserFilesList(),
-              _CourseFilesList(),
-            ],
-          ),
+      child: Scaffold(
+        body: ListView(
+          padding: MediaQuery.of(context).padding +
+              const EdgeInsets.symmetric(vertical: 16),
+          children: <Widget>[
+            _CoursesList(),
+            _UserFiles(),
+          ],
         ),
       ),
     );
   }
 }
 
-class _UserFilesList extends StatelessWidget {
+class _CoursesList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        FileListHeader(
-          icon: Icon(Icons.person_outline, size: 48),
-          text: context.s.file_files_my_description,
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Text(context.s.file_files_course),
         ),
-        Expanded(
-          child: CachedRawBuilder<User>(
-            controller: UserFetcherService.of(context).fetchCurrentUser(),
-            builder: (context, update) {
-              if (update.hasData) {
-                return FileBrowser(owner: update.data, showAppBar: false);
-              } else {
-                return Container();
-              }
-            },
-          ),
+        CachedRawBuilder(
+          controller: Bloc.of(context).fetchCourses()..fetch(),
+          builder: (context, update) {
+            return GridView.extent(
+              primary: false,
+              shrinkWrap: true,
+              maxCrossAxisExtent: 300,
+              childAspectRatio: 3.2,
+              mainAxisSpacing: 8,
+              crossAxisSpacing: 8,
+              padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+              children: <Widget>[
+                for (var course in update.data ?? [])
+                  _CourseCard(course: course),
+              ],
+            );
+          },
         ),
       ],
     );
   }
 }
 
-class _CourseFilesList extends StatelessWidget {
-  void _showCourseFiles(BuildContext context, Course course) {
+class _CourseCard extends StatelessWidget {
+  const _CourseCard({Key key, this.course}) : super(key: key);
+
+  final Course course;
+
+  void _showCourseFiles(BuildContext context) {
     Navigator.of(context).push(FileBrowserPageRoute(
       builder: (context) => FileBrowser(owner: course),
     ));
@@ -87,56 +79,72 @@ class _CourseFilesList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: <Widget>[
-        FileListHeader(
-          icon: Icon(Icons.school, size: 48),
-          text: context.s.file_files_course_description,
+    return FlatMaterial(
+      onTap: () => _showCourseFiles(context),
+      child: SizedBox(
+        height: 48,
+        child: Row(
+          children: <Widget>[
+            Icon(Icons.folder, color: course.color),
+            SizedBox(width: 8),
+            Expanded(child: Text(course.name)),
+          ],
         ),
-        Expanded(
-          child: CachedBuilder(
-            controller: Bloc.of(context).fetchCourses(),
-            errorBannerBuilder: (_, error, st) => ErrorBanner(error, st),
-            errorScreenBuilder: (_, error, st) => ErrorScreen(error, st),
-            builder: (context, courses) {
-              return ListView(
-                children: <Widget>[
-                  for (var course in courses)
-                    ListTile(
-                      title: Text(course.name),
-                      leading: Icon(Icons.folder, color: course.color),
-                      onTap: () => _showCourseFiles(context, course),
-                    ),
-                ],
-              );
-            },
-          ),
+      ),
+    );
+  }
+}
+
+class _UserFiles extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Text(context.s.file_files_my),
+        ),
+        CachedRawBuilder(
+          controller: UserFetcherService.of(context).fetchCurrentUser()
+            ..fetch(),
+          builder: (context, update) {
+            return update.hasData
+                ? FileBrowser(owner: update.data, isEmbedded: true)
+                : Container();
+          },
         ),
       ],
     );
   }
 }
 
-class FileListHeader extends StatelessWidget {
-  const FileListHeader({@required this.icon, @required this.text})
-      : assert(icon != null),
-        assert(text != null);
+class FlatMaterial extends StatelessWidget {
+  const FlatMaterial({
+    Key key,
+    @required this.onTap,
+    @required this.child,
+  }) : super(key: key);
 
-  final Widget icon;
-  final String text;
+  final VoidCallback onTap;
+  final Widget child;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.all(16),
-      color: Colors.black12,
-      height: 100,
-      child: Row(
-        children: <Widget>[
-          icon,
-          SizedBox(width: 16),
-          Expanded(child: Text(text, style: TextStyle(fontSize: 16))),
-        ],
+    return Material(
+      color: Theme.of(context).primaryColor,
+      borderRadius: BorderRadius.circular(8),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(8),
+        child: Container(
+          padding: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            border: Border.all(color: Colors.black12),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: child,
+        ),
       ),
     );
   }

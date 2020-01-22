@@ -9,7 +9,7 @@ import 'package:time_machine/time_machine_text_patterns.dart';
 part 'data.g.dart';
 
 @immutable
-@HiveType()
+@HiveType(typeId: typeEvent)
 class Event implements Entity {
   const Event({
     @required this.id,

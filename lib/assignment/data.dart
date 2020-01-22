@@ -6,7 +6,7 @@ import 'package:schulcloud/course/course.dart';
 part 'data.g.dart';
 
 @immutable
-@HiveType()
+@HiveType(typeId: typeAssignment)
 class Assignment implements Entity, Comparable {
   const Assignment({
     @required this.id,
@@ -79,7 +79,7 @@ class Assignment implements Entity, Comparable {
 }
 
 @immutable
-@HiveType()
+@HiveType(typeId: typeSubmission)
 class Submission implements Entity {
   const Submission({
     @required this.id,

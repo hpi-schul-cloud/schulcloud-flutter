@@ -4,8 +4,8 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_cached/flutter_cached.dart';
 import 'package:grec_minimal/grec_minimal.dart';
 import 'package:hive/hive.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:meta/meta.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/assignment/assignment.dart';
 import 'package:schulcloud/calendar/calendar.dart';
@@ -48,8 +48,10 @@ class HiveCache {
         }
       }(),
       () async {
-        data = await Hive.openBox(name,
-            lazy: true, compactionStrategy: (a, b) => false);
+        data = await Hive.openLazyBox(
+          name,
+          compactionStrategy: (a, b) => false,
+        );
       }(),
     ]);
 
@@ -136,6 +138,9 @@ class Children extends HiveObject {
 
 class ChildrenAdapter extends TypeAdapter<Children> {
   @override
+  final int typeId = typeChildren;
+
+  @override
   Children read(BinaryReader reader) {
     return Children()
       .._children.addAll({
@@ -151,6 +156,11 @@ class ChildrenAdapter extends TypeAdapter<Children> {
 }
 
 class IdAdapter<T> extends TypeAdapter<Id<T>> {
+  IdAdapter(this.typeId);
+
+  @override
+  final int typeId;
+
   @override
   Id<T> read(BinaryReader reader) => Id<T>(reader.readString());
 
@@ -160,6 +170,9 @@ class IdAdapter<T> extends TypeAdapter<Id<T>> {
 
 class ColorAdapter extends TypeAdapter<Color> {
   @override
+  final int typeId = typeColor;
+
+  @override
   Color read(BinaryReader reader) => Color(reader.readInt());
 
   @override
@@ -167,6 +180,9 @@ class ColorAdapter extends TypeAdapter<Color> {
 }
 
 class InstantAdapter extends TypeAdapter<Instant> {
+  @override
+  final int typeId = typeInstant;
+
   @override
   Instant read(BinaryReader reader) =>
       Instant.fromEpochMilliseconds(reader.readInt());
@@ -178,6 +194,9 @@ class InstantAdapter extends TypeAdapter<Instant> {
 
 class RecurrenceRulesAdapter extends TypeAdapter<List<RecurrenceRule>> {
   @override
+  final int typeId = typeRecurrenceRule;
+
+  @override
   List<RecurrenceRule> read(BinaryReader reader) =>
       GrecMinimal.fromTexts(reader.readStringList());
 
@@ -186,46 +205,76 @@ class RecurrenceRulesAdapter extends TypeAdapter<List<RecurrenceRule>> {
       writer.writeStringList(GrecMinimal.toTexts(obj));
 }
 
+// Type ids.
+const typeUserId = 40;
+const typeColor = 48;
+const typeChildren = 49;
+const typeInstant = 61;
+const typeRecurrenceRule = 62;
+
+const typeUser = 51;
+
+const typeAssignmentId = 47;
+const typeSubmissionId = 60;
+const typeAssignment = 54;
+const typeSubmission = 55;
+
+const typeEventId = 63;
+const typeEvent = 64;
+
+const typeContentTypeId = 41;
+const typeContentId = 42;
+const typeCourseId = 43;
+const typeLessonId = 44;
+const typeContentType = 46;
+const typeContent = 57;
+const typeCourse = 58;
+const typeLesson = 59;
+
+const typeArticleId = 45;
+const typeArticle = 56;
+
+const typeFileId = 50;
+const typeFile = 53;
+
 Future<void> initializeHive() async {
   if (_isHiveInitialized) {
     return;
   }
   _isHiveInitialized = true;
 
-  WidgetsFlutterBinding.ensureInitialized();
-  final dir = await getApplicationDocumentsDirectory();
+  await Hive.initFlutter();
 
   Hive
-    ..init(dir.path)
     // General:
-    ..registerAdapter(IdAdapter<User>(), 40)
-    ..registerAdapter(ColorAdapter(), 48)
-    ..registerAdapter(ChildrenAdapter(), 49)
-    ..registerAdapter(InstantAdapter(), 61)
-    ..registerAdapter(RecurrenceRulesAdapter(), 62)
+    ..registerAdapter(IdAdapter<User>(40))
+    ..registerAdapter(ColorAdapter())
+    ..registerAdapter(ChildrenAdapter())
+    ..registerAdapter(InstantAdapter())
+    ..registerAdapter(RecurrenceRulesAdapter())
     // App module:
-    ..registerAdapter(UserAdapter(), 51)
+    ..registerAdapter(UserAdapter())
     // Assignments module:
-    ..registerAdapter(IdAdapter<Assignment>(), 47)
-    ..registerAdapter(IdAdapter<Submission>(), 60)
-    ..registerAdapter(AssignmentAdapter(), 54)
-    ..registerAdapter(SubmissionAdapter(), 55)
+    ..registerAdapter(IdAdapter<Assignment>(typeAssignmentId))
+    ..registerAdapter(IdAdapter<Submission>(typeSubmissionId))
+    ..registerAdapter(AssignmentAdapter())
+    ..registerAdapter(SubmissionAdapter())
     // Calendar module:
-    ..registerAdapter(IdAdapter<Event>(), 63)
-    ..registerAdapter(EventAdapter(), 64)
+    ..registerAdapter(IdAdapter<Event>(typeEventId))
+    ..registerAdapter(EventAdapter())
     // Courses module:
-    ..registerAdapter(IdAdapter<ContentType>(), 41)
-    ..registerAdapter(IdAdapter<Content>(), 42)
-    ..registerAdapter(IdAdapter<Course>(), 43)
-    ..registerAdapter(IdAdapter<Lesson>(), 44)
-    ..registerAdapter(ContentTypeAdapter(), 46)
-    ..registerAdapter(ContentAdapter(), 57)
-    ..registerAdapter(CourseAdapter(), 58)
-    ..registerAdapter(LessonAdapter(), 59)
+    ..registerAdapter(IdAdapter<ContentType>(typeContentTypeId))
+    ..registerAdapter(IdAdapter<Content>(typeContentId))
+    ..registerAdapter(IdAdapter<Course>(typeCourseId))
+    ..registerAdapter(IdAdapter<Lesson>(typeLessonId))
+    ..registerAdapter(ContentTypeAdapter())
+    ..registerAdapter(ContentAdapter())
+    ..registerAdapter(CourseAdapter())
+    ..registerAdapter(LessonAdapter())
     // News module:
-    ..registerAdapter(IdAdapter<Article>(), 45)
-    ..registerAdapter(ArticleAdapter(), 56)
+    ..registerAdapter(IdAdapter<Article>(typeArticleId))
+    ..registerAdapter(ArticleAdapter())
     // Files module:
-    ..registerAdapter(IdAdapter<File>(), 50)
-    ..registerAdapter(FileAdapter(), 53);
+    ..registerAdapter(IdAdapter<File>(typeFileId))
+    ..registerAdapter(FileAdapter());
 }

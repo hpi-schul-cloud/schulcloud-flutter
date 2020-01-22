@@ -7,6 +7,7 @@ import 'package:time_machine/time_machine.dart';
 
 Future<void> main({AppConfigData appConfig = schulCloudAppConfig}) async {
   await initializeHive();
+
   runApp(
     AppConfig(
       data: appConfig,
@@ -57,15 +58,15 @@ class _ServicesProviderState extends State<ServicesProvider> {
     }
     return MultiProvider(
       providers: [
-        Provider<StorageService>(builder: (_) => storage),
+        Provider<StorageService>(create: (_) => storage),
         Provider<NetworkService>(
-          builder: (_) => NetworkService(
+          create: (_) => NetworkService(
             apiUrl: AppConfig.of(context).apiUrl,
             storage: storage,
           ),
         ),
         ProxyProvider<NetworkService, UserFetcherService>(
-          builder: (_, networkService, __) => UserFetcherService(
+          update: (_, networkService, __) => UserFetcherService(
             storage: storage,
             network: networkService,
           ),

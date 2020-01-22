@@ -5,7 +5,7 @@ import 'package:schulcloud/app/app.dart';
 part 'data.g.dart';
 
 @immutable
-@HiveType()
+@HiveType(typeId: typeArticle)
 class Article implements Entity {
   const Article({
     @required this.id,

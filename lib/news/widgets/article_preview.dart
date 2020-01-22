@@ -42,7 +42,7 @@ class ArticlePreview extends StatelessWidget {
     final theme = Theme.of(context);
 
     return Provider<ArticleTheme>(
-      builder: (_) => ArticleTheme(darkColor: Colors.purple, padding: 16),
+      create: (_) => ArticleTheme(darkColor: Colors.purple, padding: 16),
       child: Material(
         elevation: 2,
         borderRadius: BorderRadius.circular(8),

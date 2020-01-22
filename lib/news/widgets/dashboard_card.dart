@@ -29,9 +29,10 @@ class NewsDashboardCard extends StatelessWidget {
             builder: (context, update) {
               if (!update.hasData) {
                 return Center(
-                    child: update.hasError
-                        ? Text(update.error.toString())
-                        : CircularProgressIndicator());
+                  child: update.hasError
+                      ? Text(update.error.toString())
+                      : CircularProgressIndicator(),
+                );
               }
 
               return Column(

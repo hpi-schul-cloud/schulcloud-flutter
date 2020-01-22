@@ -7,6 +7,7 @@ import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/course/bloc.dart' as course;
 import 'package:schulcloud/course/data.dart';
 import 'package:schulcloud/dashboard/dashboard.dart';
+
 import '../assignment.dart';
 import '../bloc.dart';
 
@@ -25,9 +26,10 @@ class AssignmentDashboardCard extends StatelessWidget {
             builder: (context, update) {
               if (!update.hasData) {
                 return Center(
-                    child: update.hasError
-                        ? Text(update.error.toString())
-                        : CircularProgressIndicator());
+                  child: update.hasError
+                      ? Text(update.error.toString())
+                      : CircularProgressIndicator(),
+                );
               }
 
               // Only show open assignments that are due in the next week
