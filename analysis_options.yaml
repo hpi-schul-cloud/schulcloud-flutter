@@ -5,6 +5,8 @@ analyzer:
     - build/**
     - lib/**.g.dart
     - lib/generated/**
+    - lib/generated/l10n.dart
+    - lib/generated/intl
 
 # These are _a lot_ of strict linter rules. If you think that a rule should be
 # turned off, please open an issue at
