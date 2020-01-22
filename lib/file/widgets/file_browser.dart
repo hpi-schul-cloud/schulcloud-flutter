@@ -73,39 +73,58 @@ class FileBrowser extends StatelessWidget {
       ),
       child: Consumer<Bloc>(
         builder: (context, bloc, _) {
-          return Scaffold(
-            appBar: _buildAppBar(context),
-            body: CachedBuilder<List<File>>(
-              controller: Bloc.of(context).fetchFiles(owner.id, parent),
-              errorBannerBuilder: (_, error, st) => ErrorBanner(error, st),
-              errorScreenBuilder: (_, error, st) => ErrorScreen(error, st),
-              builder: (context, files) {
-                if (files.isEmpty) {
-                  return _buildEmptyState(context);
-                }
-                return FileList(
-                  files: files,
-                  onOpenDirectory: (directory) =>
-                      _openDirectory(context, directory),
-                  onDownloadFile: (file) => _downloadFile(context, file),
-                );
-              },
-            ),
-          );
+          return isEmbedded
+              ? _buildEmbedded(context, bloc)
+              : _buildStandalone(context, bloc);
         },
       ),
     );
   }
 
-  Widget _buildAppBar(BuildContext context) {
-    if (isEmbedded) {
-      return null;
-    }
-    return PreferredSize(
-      preferredSize: AppBar().preferredSize,
-      child: FileBrowserAppBar(
-        backgroundColor: ownerAsCourse?.color,
-        title: parent?.name ?? ownerAsCourse?.name ?? context.s.file_files_my,
+  Widget _buildEmbedded(BuildContext context, Bloc bloc) {
+    return CachedRawBuilder<List<File>>(
+      controller: Bloc.of(context).fetchFiles(owner.id, parent),
+      builder: (context, update) {
+        if (update.hasError) {
+          return ErrorScreen(update.error, update.stackTrace);
+        }
+        final files = update.data;
+        if (files?.isEmpty ?? true) {
+          return _buildEmptyState(context);
+        }
+        return FileList(
+          files: files,
+          primary: false,
+          onOpenDirectory: (directory) => _openDirectory(context, directory),
+          onDownloadFile: (file) => _downloadFile(context, file),
+        );
+      },
+    );
+  }
+
+  Widget _buildStandalone(BuildContext context, Bloc bloc) {
+    return Scaffold(
+      appBar: PreferredSize(
+        preferredSize: AppBar().preferredSize,
+        child: FileBrowserAppBar(
+          backgroundColor: ownerAsCourse?.color,
+          title: parent?.name ?? ownerAsCourse?.name ?? context.s.file_files_my,
+        ),
+      ),
+      body: CachedBuilder<List<File>>(
+        controller: Bloc.of(context).fetchFiles(owner.id, parent),
+        errorBannerBuilder: (_, error, st) => ErrorBanner(error, st),
+        errorScreenBuilder: (_, error, st) => ErrorScreen(error, st),
+        builder: (context, files) {
+          if (files.isEmpty) {
+            return _buildEmptyState(context);
+          }
+          return FileList(
+            files: files,
+            onOpenDirectory: (directory) => _openDirectory(context, directory),
+            onDownloadFile: (file) => _downloadFile(context, file),
+          );
+        },
       ),
     );
   }

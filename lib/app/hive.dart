@@ -192,17 +192,17 @@ class InstantAdapter extends TypeAdapter<Instant> {
       writer.writeInt(obj.epochMilliseconds);
 }
 
-class RecurrenceRulesAdapter extends TypeAdapter<List<RecurrenceRule>> {
+class RecurrenceRuleAdapter extends TypeAdapter<RecurrenceRule> {
   @override
   final int typeId = typeRecurrenceRule;
 
   @override
-  List<RecurrenceRule> read(BinaryReader reader) =>
-      GrecMinimal.fromTexts(reader.readStringList());
+  RecurrenceRule read(BinaryReader reader) =>
+      GrecMinimal.fromTexts([reader.readString()]).single;
 
   @override
-  void write(BinaryWriter writer, List<RecurrenceRule> obj) =>
-      writer.writeStringList(GrecMinimal.toTexts(obj));
+  void write(BinaryWriter writer, RecurrenceRule obj) =>
+      writer.writeString(GrecMinimal.toTexts([obj]).single);
 }
 
 // Type ids.
@@ -251,7 +251,7 @@ Future<void> initializeHive() async {
     ..registerAdapter(ColorAdapter())
     ..registerAdapter(ChildrenAdapter())
     ..registerAdapter(InstantAdapter())
-    ..registerAdapter(RecurrenceRulesAdapter())
+    ..registerAdapter(RecurrenceRuleAdapter())
     // App module:
     ..registerAdapter(UserAdapter())
     // Assignments module:

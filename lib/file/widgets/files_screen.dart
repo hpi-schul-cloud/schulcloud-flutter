@@ -20,13 +20,15 @@ class FilesScreen extends StatelessWidget {
         userFetcher: UserFetcherService.of(context),
       ),
       child: Scaffold(
-        body: ListView(
-          padding: MediaQuery.of(context).padding +
-              const EdgeInsets.symmetric(vertical: 16),
-          children: <Widget>[
-            _CoursesList(),
-            _UserFiles(),
-          ],
+        body: Container(
+          child: ListView(
+            padding: MediaQuery.of(context).padding +
+                const EdgeInsets.symmetric(vertical: 16),
+            children: <Widget>[
+              _CoursesList(),
+              _UserFiles(),
+            ],
+          ),
         ),
       ),
     );
@@ -99,6 +101,7 @@ class _UserFiles extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
+      mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         Padding(
@@ -132,7 +135,7 @@ class FlatMaterial extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: Theme.of(context).primaryColor,
+      color: Theme.of(context).cardColor,
       borderRadius: BorderRadius.circular(8),
       child: InkWell(
         onTap: onTap,
