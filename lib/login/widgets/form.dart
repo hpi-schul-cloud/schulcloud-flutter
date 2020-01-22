@@ -17,17 +17,8 @@ class LoginForm extends StatefulWidget {
 class _LoginFormState extends State<LoginForm> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-  String get _email => _emailController.text;
-  String get _password => _passwordController.text;
-
-  // As the user is typing the email and password for the first time, of course
-  // it's not correct when they're not fully typed out (for example,
-  // "sample.user@" is not valid). That's why we consider all emails and
-  // password valid until the user tried to sign in at least once.
-  bool _isFirstSignInAttempt = true;
-  bool get _isEmailValid => _isFirstSignInAttempt || bloc.isEmailValid(_email);
-  bool get _isPasswordValid =>
-      _isFirstSignInAttempt || bloc.isPasswordValid(_password);
+  bool _isEmailValid = true;
+  bool _isPasswordValid = true;
 
   bool _isLoading = false;
   String _ambientError;
@@ -35,7 +26,6 @@ class _LoginFormState extends State<LoginForm> {
   Bloc get bloc => Provider.of<Bloc>(context);
 
   Future<void> _executeLogin(Future<void> Function() login) async {
-    _isFirstSignInAttempt = false;
     setState(() => _isLoading = true);
 
     try {
@@ -46,9 +36,11 @@ class _LoginFormState extends State<LoginForm> {
       unawaited(Navigator.of(context).pushReplacement(TopLevelPageRoute(
         builder: (_) => LoggedInScreen(),
       )));
-    } on InvalidLoginSyntaxError {
+    } on InvalidLoginSyntaxError catch (e) {
       // We will display syntax errors on the text fields themselves.
       _ambientError = null;
+      _isEmailValid = e.isEmailValid;
+      _isPasswordValid = e.isPasswordValid;
     } on NoConnectionToServerError {
       _ambientError = context.s.login_form_errorNoConnection;
     } on AuthenticationError {
