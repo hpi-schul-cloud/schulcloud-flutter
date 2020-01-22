@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:schulcloud/generated/generated.dart';
 
 import 'buttons.dart';
 
@@ -46,7 +47,7 @@ class EmptyStateScreen extends StatelessWidget {
                 if (onRetry != null)
                   SecondaryButton(
                     onPressed: onRetry,
-                    child: Text('Try again'),
+                    child: Text(context.s.app_emptyState_retry),
                   ),
               ],
             ),

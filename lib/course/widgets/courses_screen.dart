@@ -2,6 +2,7 @@ import 'package:flutter_cached/flutter_cached.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:schulcloud/app/app.dart';
+import 'package:schulcloud/generated/generated.dart';
 
 import '../bloc.dart';
 import '../data.dart';
@@ -26,8 +27,7 @@ class CoursesScreen extends StatelessWidget {
               builder: (context, courses) {
                 if (courses.isEmpty) {
                   return EmptyStateScreen(
-                    text: "Seems like you're currently not enrolled in any "
-                        'courses.',
+                    text: context.s.course_coursesScreen_empty,
                   );
                 }
                 return GridView.count(

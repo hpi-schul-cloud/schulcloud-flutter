@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/course/course.dart';
+import 'package:schulcloud/generated/generated.dart';
 
 import '../bloc.dart';
 import 'file_browser.dart';
@@ -40,7 +41,7 @@ class _CoursesList extends StatelessWidget {
       children: <Widget>[
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: Text('Course files'),
+          child: Text(context.s.file_files_course),
         ),
         CachedRawBuilder(
           controller: Bloc.of(context).fetchCourses()..fetch(),
@@ -102,7 +103,7 @@ class _UserFiles extends StatelessWidget {
       children: <Widget>[
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: Text('Your files'),
+          child: Text(context.s.file_files_my),
         ),
         CachedRawBuilder(
           controller: UserFetcherService.of(context).fetchCurrentUser()

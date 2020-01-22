@@ -1,0 +1,258 @@
+{
+  "@@locale": "en",
+  "app_emptyState_retry": "Try again",
+  "@app_emptyState_retry": {
+    "type": "text"
+  },
+  "app_errorScreen_authError": "Seems like this device's authentication expired.\nMaybe logging out and in again helps?",
+  "@app_errorScreen_authError": {
+    "type": "text"
+  },
+  "app_errorScreen_authError_logOut": "Log out",
+  "@app_errorScreen_authError_logOut": {
+    "type": "text"
+  },
+  "app_errorScreen_noConnection": "We can't connect to the server.\nAre you sure you're connected to the internet?",
+  "@app_errorScreen_noConnection": {
+    "type": "text"
+  },
+  "app_errorScreen_stackTrace": "Stack trace",
+  "@app_errorScreen_stackTrace": {
+    "type": "text"
+  },
+  "app_errorScreen_unknown": "Oh no! An internal error occurred:\n{error}",
+  "@app_errorScreen_unknown": {
+    "type": "text"
+  },
+  "app_errorScreen_unknown_showStackTrace": "Show stack trace",
+  "@app_errorScreen_unknown_showStackTrace": {
+    "type": "text"
+  },
+  "app_navigation_assignments": "Assignments",
+  "@app_navigation_assignments": {
+    "type": "text"
+  },
+  "app_navigation_courses": "Courses",
+  "@app_navigation_courses": {
+    "type": "text"
+  },
+  "app_navigation_dashboard": "Dashboard",
+  "@app_navigation_dashboard": {
+    "type": "text"
+  },
+  "app_navigation_files": "Files",
+  "@app_navigation_files": {
+    "type": "text"
+  },
+  "app_navigation_news": "News",
+  "@app_navigation_news": {
+    "type": "text"
+  },
+  "app_navigation_userDataEmpty": "—",
+  "@app_navigation_userDataEmpty": {
+    "type": "text"
+  },
+  "assignment_assignmentsScreen_overdue": "Overdue",
+  "@assignment_assignmentsScreen_overdue": {
+    "type": "text"
+  },
+  "assignment_dashboardCard": "Assignments",
+  "@assignment_dashboardCard": {
+    "type": "text"
+  },
+  "assignment_dashboardCard_all": "All assignments",
+  "@assignment_dashboardCard_all": {
+    "type": "text"
+  },
+  "assignment_dashboardCard_header": "{assignmentCount, plural, one{Open assignment\nin the next week} other{Open assignments\nin the next week}}",
+  "@assignment_dashboardCard_header": {
+    "type": "text",
+    "description": ""
+  },
+  "assignment_detailsScreen_mySubmission": "My submission",
+  "@assignment_detailsScreen_mySubmission": {
+    "type": "text"
+  },
+  "assignment_submissionScreen_gradeTitle": "Grade: {grade}",
+  "@assignment_submissionScreen_gradeTitle": {
+    "type": "text"
+  },
+  "assignment_submissionScreen_tabFeedback": "Feedback",
+  "@assignment_submissionScreen_tabFeedback": {
+    "type": "text"
+  },
+  "assignment_submissionScreen_tabSubmission": "Submission",
+  "@assignment_submissionScreen_tabSubmission": {
+    "type": "text"
+  },
+  "calendar_dashboardCard": "Schedule",
+  "@calendar_dashboardCard": {
+    "type": "text",
+    "description": ""
+  },
+  "calendar_dashboardCard_empty": "No more events for the rest of the day!",
+  "@calendar_dashboardCard_empty": {
+    "type": "text",
+    "description": ""
+  },
+  "course_coursesScreen_empty": "Seems like you're currently not enrolled in any courses.",
+  "@course_coursesScreen_empty": {
+    "type": "text"
+  },
+  "course_detailsScreen_empty": "This course doesn't contain any topics.",
+  "@course_detailsScreen_empty": {
+    "type": "text"
+  },
+  "file_fileBrowser_downloading": "Downloading {fileName}…",
+  "@file_fileBrowser_downloading": {
+    "type": "text"
+  },
+  "file_fileBrowser_download_storageAccess": "To download files, we need to access your storage.",
+  "@file_fileBrowser_download_storageAccess": {
+    "type": "text"
+  },
+  "file_fileBrowser_download_storageAccess_allow": "Allow",
+  "@file_fileBrowser_download_storageAccess_allow": {
+    "type": "text"
+  },
+  "file_fileBrowser_empty": "Seems like there are no files here.",
+  "@file_fileBrowser_empty": {
+    "type": "text"
+  },
+  "file_fileBrowser_totalCount": "{count} items in total",
+  "@file_fileBrowser_totalCount": {
+    "type": "text"
+  },
+  "file_files_course": "Course files",
+  "@file_files_course": {
+    "type": "text"
+  },
+  "file_files_course_description": "These are the files from courses you are enrolled in. Anyone in the course (including teachers) has access to them.",
+  "@file_files_course_description": {
+    "type": "text"
+  },
+  "file_files_my": "My files",
+  "@file_files_my": {
+    "type": "text"
+  },
+  "file_files_my_description": "These are your personal files.\nBy default, only you can access them, but they may be shared with others.",
+  "@file_files_my_description": {
+    "type": "text"
+  },
+  "general_loading": "Loading…",
+  "@general_loading": {
+    "type": "text"
+  },
+  "general_placeholder": "—",
+  "@general_placeholder": {
+    "type": "text"
+  },
+  "general_user_unknown": "unknown",
+  "@general_user_unknown": {
+    "type": "text"
+  },
+  "login_form_demo": "Don't have an account yet? Try it out!",
+  "@login_form_demo": {
+    "type": "text"
+  },
+  "login_form_demo_student": "Demo as a student",
+  "@login_form_demo_student": {
+    "type": "text"
+  },
+  "login_form_demo_teacher": "Demo as a teacher",
+  "@login_form_demo_teacher": {
+    "type": "text"
+  },
+  "login_form_email": "Email",
+  "@login_form_email": {
+    "type": "text"
+  },
+  "login_form_email_error": "Enter an email address.",
+  "@login_form_email_error": {
+    "type": "text"
+  },
+  "login_form_errorAuth": "Email or password is wrong.",
+  "@login_form_errorAuth": {
+    "type": "text"
+  },
+  "login_form_errorNoConnection": "No connection to the server.",
+  "@login_form_errorNoConnection": {
+    "type": "text"
+  },
+  "login_form_errorRateLimit": "Too many requests. Try again in {timeToWait}.",
+  "@login_form_errorRateLimit": {
+    "type": "text"
+  },
+  "login_form_login": "Login",
+  "@login_form_login": {
+    "type": "text"
+  },
+  "login_form_password": "Password",
+  "@login_form_password": {
+    "type": "text"
+  },
+  "login_form_password_error": "Enter a password",
+  "@login_form_password_error": {
+    "type": "text"
+  },
+  "login_loginScreen_about": "Das Hasso-Plattner-Institut für Digital Engineering entwickelt unter der Leitung von Prof. Dr. Christoph Meinel zusammen mit MINT-EC, dem nationalen Excellence-Schulnetzwerk von über 300 Schulen bundesweit und unterstützt vom Bundesministerium für Bildung und Forschung die HPI Schul-Cloud. Sie soll die technische Grundlage schaffen, dass Lehrkräfte und Schüler in jedem Unterrichtsfach auch moderne digitale Lehr- und Lerninhalte nutzen können, und zwar so, wie Apps über Smartphones oder Tablets nutzbar sind.",
+  "@login_loginScreen_about": {
+    "type": "text"
+  },
+  "login_loginScreen_moreInformation": "scroll down for more information",
+  "@login_loginScreen_moreInformation": {
+    "type": "text"
+  },
+  "login_loginScreen_placeholder": "There could go some other information down here.",
+  "@login_loginScreen_placeholder": {
+    "type": "text"
+  },
+  "news_articlePreview_subtitle": "published on {published} by {author}",
+  "@news_articlePreview_subtitle": {
+    "type": "text"
+  },
+  "news_authorView": "by {author}",
+  "@news_authorView": {
+    "type": "text"
+  },
+  "news_dashboardCard": "News",
+  "@news_dashboardCard": {
+    "type": "text"
+  },
+  "news_dashboardCard_all": "All articles",
+  "@news_dashboardCard_all": {
+    "type": "text"
+  },
+  "settings": "Settings",
+  "@settings": {
+    "type": "text"
+  },
+  "settings_contact": "Contact",
+  "@settings_contact": {
+    "type": "text"
+  },
+  "settings_contributors": "Contributors",
+  "@settings_contributors": {
+    "type": "text"
+  },
+  "settings_imprint": "Imprint",
+  "@settings_imprint": {
+    "type": "text"
+  },
+  "settings_licenses": "Licenses",
+  "@settings_licenses": {
+    "type": "text"
+  },
+  "settings_openSource": "This app is open source",
+  "@settings_openSource": {
+    "type": "text"
+  },
+  "settings_privacyPolicy": "Privacy Policy",
+  "@settings_privacyPolicy": {
+    "type": "text"
+  },
+  "settings_version": "Version",
+  "@settings_version": {
+    "type": "text"
+  }
+}

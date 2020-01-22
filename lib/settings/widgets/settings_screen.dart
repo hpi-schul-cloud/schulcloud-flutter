@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:package_info/package_info.dart';
 import 'package:schulcloud/app/app.dart';
+import 'package:schulcloud/generated/generated.dart';
 
 import 'licenses.dart';
 
@@ -21,8 +22,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final s = context.s;
+
     return Scaffold(
-      appBar: AppBar(title: Text('Settings')),
+      appBar: AppBar(title: Text(s.settings)),
       body: ListView(
         children: <Widget>[
           FutureBuilder<PackageInfo>(
@@ -30,20 +33,20 @@ class _SettingsScreenState extends State<SettingsScreen> {
             builder: (context, snapshot) {
               return ListTile(
                 leading: Icon(Icons.update),
-                title: Text('Version'),
+                title: Text(s.settings_version),
                 subtitle: Text(
                   snapshot.hasData
                       ? '${snapshot.data.version}+${snapshot.data.buildNumber}'
                       : snapshot.hasError
                           ? snapshot.error.toString()
-                          : 'Unknown',
+                          : s.general_loading,
                 ),
               );
             },
           ),
           ListTile(
             leading: Icon(Icons.people_outline),
-            title: Text('Contributors'),
+            title: Text(s.settings_contributors),
             subtitle: Text([
               'Marcel Garus',
               'Andrea Nathansen',
@@ -54,18 +57,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ),
           ListTile(
             leading: Icon(Icons.code),
-            title: Text('This app is open source'),
+            title: Text(s.settings_openSource),
             onTap: () => tryLaunchingUrl(
                 'https://github.com/schul-cloud/schulcloud-flutter'),
           ),
           ListTile(
             leading: Icon(Icons.mail_outline),
-            title: Text('Contact'),
+            title: Text(s.settings_contact),
             onTap: () => tryLaunchingUrl('mailto:info@schul-cloud.org'),
           ),
           ListTile(
             leading: Icon(Icons.person_outline),
-            title: Text('Imprint'),
+            title: Text(s.settings_imprint),
             onTap: () {
               final domain = AppConfig.of(context).domain;
               tryLaunchingUrl('https://$domain/impressum');
@@ -73,7 +76,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ),
           ListTile(
             leading: Icon(Icons.lightbulb_outline),
-            title: Text('Privacy Policy'),
+            title: Text(s.settings_privacyPolicy),
             onTap: () {
               final domain = AppConfig.of(context).domain;
               tryLaunchingUrl('https://$domain/datenschutz');
@@ -81,7 +84,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ),
           ListTile(
             leading: Icon(Icons.info_outline),
-            title: Text('Licenses'),
+            title: Text(s.settings_licenses),
             onTap: () => showLicensePage(context: context),
           ),
         ],

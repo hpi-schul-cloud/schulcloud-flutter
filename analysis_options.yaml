@@ -4,6 +4,7 @@ analyzer:
   exclude:
     - build/**
     - lib/**.g.dart
+    - lib/generated/**
 
 # These are _a lot_ of strict linter rules. If you think that a rule should be
 # turned off, please open an issue at
