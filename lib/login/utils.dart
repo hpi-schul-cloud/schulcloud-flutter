@@ -8,7 +8,7 @@ import 'login.dart';
 Future<void> logOut(BuildContext context) async {
   // This should probably be awaited, but right now awaiting it
   // leads to the issue that logging out becomes impossible
-  unawaited(Provider.of<StorageService>(context).clear());
+  unawaited(Provider.of<StorageService>(context, listen: false).clear());
 
   final navigator = Navigator.of(context, rootNavigator: true)
     ..popUntil((route) => route.isFirst);
