@@ -63,7 +63,8 @@ class ArticlePreview extends StatelessWidget {
                 _buildImage(),
                 SizedBox(height: 8),
                 CachedRawBuilder<User>(
-                  controller: UserFetcherService.of(context)
+                  controller: services
+                      .get<UserFetcherService>()
                       .fetchUser(article.author, article.id),
                   builder: (_, update) {
                     final author = update.data;

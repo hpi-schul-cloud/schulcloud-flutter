@@ -1,7 +1,6 @@
 import 'package:flutter_cached/flutter_cached.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/course/course.dart';
 import 'package:schulcloud/generated/generated.dart';
@@ -13,22 +12,15 @@ import 'page_route.dart';
 class FilesScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Provider<Bloc>.value(
-      value: Bloc(
-        storage: StorageService.of(context),
-        network: NetworkService.of(context),
-        userFetcher: UserFetcherService.of(context),
-      ),
-      child: Scaffold(
-        body: Container(
-          child: ListView(
-            padding: MediaQuery.of(context).padding +
-                const EdgeInsets.symmetric(vertical: 16),
-            children: <Widget>[
-              _CoursesList(),
-              _UserFiles(),
-            ],
-          ),
+    return Scaffold(
+      body: Container(
+        child: ListView(
+          padding: MediaQuery.of(context).padding +
+              const EdgeInsets.symmetric(vertical: 16),
+          children: <Widget>[
+            _CoursesList(),
+            _UserFiles(),
+          ],
         ),
       ),
     );
@@ -46,7 +38,7 @@ class _CoursesList extends StatelessWidget {
           child: Text(context.s.file_files_course),
         ),
         CachedRawBuilder(
-          controller: Bloc.of(context).fetchCourses()..fetch(),
+          controller: services.get<FileBloc>().fetchCourses()..fetch(),
           builder: (context, update) {
             return GridView.extent(
               primary: false,
@@ -109,7 +101,7 @@ class _UserFiles extends StatelessWidget {
           child: Text(context.s.file_files_my),
         ),
         CachedRawBuilder(
-          controller: UserFetcherService.of(context).fetchCurrentUser()
+          controller: services.get<UserFetcherService>().fetchCurrentUser()
             ..fetch(),
           builder: (context, update) {
             return update.hasData
