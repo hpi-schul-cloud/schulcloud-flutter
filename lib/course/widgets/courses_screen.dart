@@ -32,15 +32,17 @@ class CoursesScreen extends StatelessWidget {
                 }
                 return CustomScrollView(
                   slivers: <Widget>[
-                    FancyAppBar(
-                      title: Text('Files'),
-                    ),
-                    SliverGrid.count(
-                      childAspectRatio: 1.5,
-                      crossAxisCount: 2,
-                      children: <Widget>[
-                        for (var course in courses) CourseCard(course: course),
-                      ],
+                    FancyAppBar(title: Text('Files')),
+                    SliverPadding(
+                      padding: EdgeInsets.fromLTRB(16, 8, 16, 16),
+                      sliver: SliverGrid.count(
+                        childAspectRatio: 1.5,
+                        crossAxisCount: 2,
+                        children: <Widget>[
+                          for (var course in courses)
+                            CourseCard(course: course),
+                        ],
+                      ),
                     ),
                   ],
                 );
