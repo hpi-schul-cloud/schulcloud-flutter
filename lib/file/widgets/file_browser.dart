@@ -180,7 +180,10 @@ class FileList extends StatelessWidget {
           return Container(
             alignment: Alignment.center,
             padding: EdgeInsets.all(16),
-            child: Text(context.s.file_fileBrowser_totalCount(files.length)),
+            child: Text(
+              context.s.file_fileBrowser_totalCount(files.length),
+              style: context.textTheme.caption,
+            ),
           );
         }
         return null;
