@@ -2,32 +2,21 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_cached/flutter_cached.dart';
 import 'package:grec_minimal/grec_minimal.dart';
 import 'package:meta/meta.dart';
-import 'package:provider/provider.dart';
 import 'package:schulcloud/app/app.dart';
+import 'package:schulcloud/calendar/calendar.dart';
 import 'package:time_machine/time_machine.dart';
 
 import 'data.dart';
 
-class Bloc {
-  Bloc({
-    @required this.storage,
-    @required this.network,
-    @required this.userFetcher,
-  })  : assert(storage != null),
-        assert(network != null),
-        assert(userFetcher != null);
-
-  final StorageService storage;
-  final NetworkService network;
-  final UserFetcherService userFetcher;
-
-  static Bloc of(BuildContext context) => Provider.of<Bloc>(context);
+@immutable
+class CalendarBloc {
+  const CalendarBloc();
 
   CacheController<List<Event>> fetchEvents() {
+    final storage = services.get<StorageService>();
     storage.cache.clear();
     return fetchList(
-      storage: storage,
-      makeNetworkCall: () => network.get(
+      makeNetworkCall: (network) => network.get(
         'calendar',
         parameters: {
           // We have to set this query parameter because otherwise—you guessed

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_cached/flutter_cached.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/generated/generated.dart';
 
 import '../bloc.dart';
@@ -25,7 +26,7 @@ class SubmissionScreen extends StatelessWidget {
       length: 2,
       child: CachedRawBuilder(
         controllerBuilder: () =>
-            Bloc.of(context).fetchCourseOfAssignment(assignment),
+            services.get<AssignmentBloc>().fetchCourseOfAssignment(assignment),
         builder: (_, courseUpdate) {
           final course = courseUpdate.data;
           return Scaffold(

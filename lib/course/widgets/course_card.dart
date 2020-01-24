@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_cached/flutter_cached.dart';
+import 'package:schulcloud/app/app.dart';
 
 import '../bloc.dart';
 import '../data.dart';
@@ -43,7 +44,7 @@ class CourseCard extends StatelessWidget {
               ),
               subtitle: CachedRawBuilder(
                 controllerBuilder: () =>
-                    Bloc.of(context).fetchTeachersOfCourse(course),
+                    services.get<CourseBloc>().fetchTeachersOfCourse(course),
                 builder: (_, update) {
                   final teachers = update.data;
                   return Text((teachers ?? [])

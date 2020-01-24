@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:pedantic/pedantic.dart';
-import 'package:provider/provider.dart';
 import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/generated/generated.dart';
 
@@ -22,8 +21,6 @@ class _LoginFormState extends State<LoginForm> {
 
   bool _isLoading = false;
   String _ambientError;
-
-  Bloc get bloc => Provider.of<Bloc>(context, listen: false);
 
   Future<void> _executeLogin(Future<void> Function() login) async {
     setState(() => _isLoading = true);
@@ -54,15 +51,17 @@ class _LoginFormState extends State<LoginForm> {
 
   Future<void> _login() async {
     await _executeLogin(
-      () => bloc.login(_emailController.text, _passwordController.text),
+      () => services
+          .get<LoginBloc>()
+          .login(_emailController.text, _passwordController.text),
     );
   }
 
   Future<void> _loginAsDemoStudent() =>
-      _executeLogin(() => bloc.loginAsDemoStudent());
+      _executeLogin(() => services.get<LoginBloc>().loginAsDemoStudent());
 
   Future<void> _loginAsDemoTeacher() =>
-      _executeLogin(() => bloc.loginAsDemoTeacher());
+      _executeLogin(() => services.get<LoginBloc>().loginAsDemoTeacher());
 
   @override
   Widget build(BuildContext context) {

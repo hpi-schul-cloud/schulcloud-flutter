@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_native_timezone/flutter_native_timezone.dart';
-import 'package:provider/provider.dart';
 import 'package:schulcloud/app/app.dart';
+import 'package:schulcloud/assignment/assignment.dart';
+import 'package:schulcloud/calendar/calendar.dart';
+import 'package:schulcloud/course/course.dart';
+import 'package:schulcloud/file/file.dart';
+import 'package:schulcloud/login/login.dart';
+import 'package:schulcloud/news/news.dart';
 import 'package:time_machine/time_machine.dart';
 
 Future<void> main({AppConfigData appConfig = schulCloudAppConfig}) async {
@@ -28,51 +33,44 @@ class ServicesProvider extends StatefulWidget {
 }
 
 class _ServicesProviderState extends State<ServicesProvider> {
-  /// Offers a service that stores app-wide data in shared preferences and a
-  /// hive cache.
-  StorageService storage;
+  var isInitialized = false;
 
   @override
   void initState() {
     super.initState();
     () async {
-      storage = await StorageService.create();
       await TimeMachine.initialize({
         'rootBundle': rootBundle,
         'timeZone': await FlutterNativeTimezone.getLocalTimezone(),
       });
+
+      services
+        ..registerSingleton(await StorageService.create())
+        ..registerSingleton(NetworkService(
+          apiUrl: AppConfig.of(context).apiUrl,
+        ))
+        ..registerSingleton(UserFetcherService())
+        ..registerSingleton(AssignmentBloc())
+        ..registerSingleton(CalendarBloc())
+        ..registerSingleton(CourseBloc())
+        ..registerSingleton(FileBloc())
+        ..registerSingleton(LoginBloc())
+        ..registerSingleton(NewsBloc());
+
+      isInitialized = true;
       setState(() {});
     }();
   }
 
   @override
   Widget build(BuildContext context) {
-    final serviceInitialized = storage != null;
-
-    if (!serviceInitialized) {
+    if (!isInitialized) {
       return Container(
         color: Colors.white,
         alignment: Alignment.center,
         child: CircularProgressIndicator(),
       );
     }
-    return MultiProvider(
-      providers: [
-        Provider<StorageService>(create: (_) => storage),
-        Provider<NetworkService>(
-          create: (_) => NetworkService(
-            apiUrl: AppConfig.of(context).apiUrl,
-            storage: storage,
-          ),
-        ),
-        ProxyProvider<NetworkService, UserFetcherService>(
-          update: (_, networkService, __) => UserFetcherService(
-            storage: storage,
-            network: networkService,
-          ),
-        ),
-      ],
-      child: widget.child,
-    );
+    return widget.child;
   }
 }
