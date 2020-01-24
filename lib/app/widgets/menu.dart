@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_cached/flutter_cached.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:schulcloud/app/theming/utils.dart';
 import 'package:schulcloud/generated/generated.dart';
 import 'package:schulcloud/login/login.dart';
 import 'package:schulcloud/settings/settings.dart';
@@ -90,6 +91,7 @@ class Menu extends StatelessWidget {
         IconButton(
           icon: SvgPicture.asset(
             'assets/icon_logout.svg',
+            color: highEmphasisOnBrightness(Theme.of(context).brightness),
           ),
           onPressed: () => logOut(context),
         ),
