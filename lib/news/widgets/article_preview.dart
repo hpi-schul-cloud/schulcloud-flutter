@@ -77,8 +77,7 @@ class ArticlePreview extends StatelessWidget {
                       _isPlaceholder
                           ? null
                           : context.s.news_articlePreview_subtitle(
-                              DateFormat.yMd().format(article.published),
-                              authorName),
+                              article.publishedAt.shortDateString, authorName),
                       style: TextStyle(
                         color: mediumEmphasisOn(theme.cardColor),
                       ),

@@ -2,6 +2,7 @@ import 'package:hive/hive.dart';
 import 'package:meta/meta.dart';
 import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/course/course.dart';
+import 'package:time_machine/time_machine.dart';
 
 part 'data.g.dart';
 
@@ -29,12 +30,14 @@ class File implements Entity, Comparable<File> {
           name: data['name'],
           mimeType: data['type'],
           owner: owner,
-          createdAt: parseDateTime(data['createdAt']),
-          updatedAt: parseDateTime(data['updatedAt']),
+          createdAt: (data['createdAt'] as String).parseApiInstant(),
+          updatedAt: (data['updatedAt'] as String).parseApiInstant(),
           isDirectory: data['isDirectory'],
           parent: data['parent'] == null ? null : Id<File>(data['parent']),
           size: data['size'],
         );
+
+  // used before: 7, 8
 
   @override
   @HiveField(0)
@@ -55,11 +58,11 @@ class File implements Entity, Comparable<File> {
   @HiveField(3)
   final Id owner;
 
-  @HiveField(8)
-  final DateTime createdAt;
+  @HiveField(10)
+  final Instant createdAt;
 
-  @HiveField(7)
-  final DateTime updatedAt;
+  @HiveField(9)
+  final Instant updatedAt;
 
   @HiveField(4)
   final bool isDirectory;

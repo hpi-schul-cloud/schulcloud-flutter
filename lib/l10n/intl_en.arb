@@ -28,6 +28,21 @@
   "@app_errorScreen_unknown_showStackTrace": {
     "type": "text"
   },
+  "app_logOut_confirm": "Log out",
+  "@app_logOut_confirm": {
+    "type": "text",
+    "description": ""
+  },
+  "app_logOut_content": "You'll need your login credentials to log in again.",
+  "@app_logOut_content": {
+    "type": "text",
+    "description": ""
+  },
+  "app_logOut_title": "Log out?",
+  "@app_logOut_title": {
+    "type": "text",
+    "description": ""
+  },
   "app_navigation_assignments": "Assignments",
   "@app_navigation_assignments": {
     "type": "text"
@@ -138,6 +153,31 @@
   "file_files_my_description": "These are your personal files.\nBy default, only you can access them, but they may be shared with others.",
   "@file_files_my_description": {
     "type": "text"
+  },
+  "file_fileTile_details_createdAt": "Created: {createdAt}",
+  "@file_fileTile_details_createdAt": {
+    "type": "text",
+    "description": ""
+  },
+  "file_fileTile_details_modifiedAt": "Last modified: {modifiedAt}",
+  "@file_fileTile_details_modifiedAt": {
+    "type": "text",
+    "description": ""
+  },
+  "file_fileTile_details_offline": "Make available offline",
+  "@file_fileTile_details_offline": {
+    "type": "text",
+    "description": ""
+  },
+  "file_fileTile_details_open": "Open",
+  "@file_fileTile_details_open": {
+    "type": "text",
+    "description": ""
+  },
+  "general_cancel": "Cancel",
+  "@general_cancel": {
+    "type": "text",
+    "description": ""
   },
   "general_loading": "Loading…",
   "@general_loading": {

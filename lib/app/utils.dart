@@ -7,9 +7,11 @@ import 'package:get_it/get_it.dart';
 import 'package:http/http.dart';
 import 'package:intl/intl.dart';
 import 'package:meta/meta.dart';
-import 'package:schulcloud/app/app.dart';
+import 'package:time_machine/time_machine.dart';
+import 'package:time_machine/time_machine_text_patterns.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import 'services/network.dart';
 import 'services/storage.dart';
 
 final services = GetIt.instance;
@@ -35,13 +37,6 @@ String formatFileSize(int bytes) {
 
   return '${(bytes / power).toStringAsFixed(index == 0 ? 0 : 1)} ${units[index]}';
 }
-
-/// Converts a [DateTime] to a [String].
-String dateTimeToString(DateTime dt) => DateFormat.MMMd().format(dt);
-
-/// Converts a [String] to a [DateTime].
-DateTime parseDateTime(String string) =>
-    DateTime.parse(string.replaceAll('T', ' ').replaceAll('Z', ''));
 
 /// Removes html tags from a string.
 String removeHtmlTags(String text) {
