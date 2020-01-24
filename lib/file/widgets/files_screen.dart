@@ -22,7 +22,7 @@ class FilesScreen extends StatelessWidget {
       child: Scaffold(
         body: CustomScrollView(
           slivers: <Widget>[
-            FancyAppBar.withAvatar(
+            FancyAppBar(
               title: Text('Files'),
             ),
             SliverList(

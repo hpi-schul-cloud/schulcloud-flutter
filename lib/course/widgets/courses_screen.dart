@@ -32,7 +32,7 @@ class CoursesScreen extends StatelessWidget {
                 }
                 return CustomScrollView(
                   slivers: <Widget>[
-                    FancyAppBar.withAvatar(
+                    FancyAppBar(
                       title: Text('Files'),
                     ),
                     SliverGrid.count(

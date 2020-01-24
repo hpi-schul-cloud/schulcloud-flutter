@@ -43,23 +43,6 @@ class AssignmentDetailsScreen extends StatelessWidget {
           builder: (_, update) {
             final course = update.data;
             return Scaffold(
-              appBar: AppBar(
-                iconTheme: IconThemeData(color: Colors.black),
-                backgroundColor: course?.color,
-                title: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Text(
-                      assignment.name,
-                      style: TextStyle(color: Colors.black),
-                    ),
-                    Text(
-                      course?.name ?? context.s.general_loading,
-                      style: TextStyle(color: Colors.black),
-                    ),
-                  ],
-                ),
-              ),
               body: CachedBuilder<List<Submission>>(
                 controller: bloc.fetchSubmissions(),
                 errorScreenBuilder: (_, error, st) => ErrorScreen(error, st),
@@ -71,29 +54,40 @@ class AssignmentDetailsScreen extends StatelessWidget {
                     orElse: () => null,
                   );
 
-                  return ListView(
-                    children: <Widget>[
-                      Html(
-                        padding: EdgeInsets.all(8),
-                        defaultTextStyle:
-                            textTheme.body1.copyWith(fontSize: 20),
-                        data: assignment.description,
-                        onLinkTap: tryLaunchingUrl,
-                      ),
-                      if (submission != null)
-                        Container(
-                          alignment: Alignment.centerRight,
-                          padding: EdgeInsets.all(16),
-                          child: RaisedButton(
-                            onPressed: () => _showSubmissionScreen(
-                                context, assignment, submission),
-                            child: Text(
-                              context.s.assignment_detailsScreen_mySubmission,
-                              style: textTheme.button
-                                  .copyWith(color: Colors.white),
-                            ),
-                          ),
+                  return CustomScrollView(
+                    slivers: <Widget>[
+                      FancyAppBar(
+                        title: Text(assignment.name),
+                        subtitle: Text(
+                          course?.name ?? context.s.general_loading,
                         ),
+                      ),
+                      SliverList(
+                        delegate: SliverChildListDelegate([
+                          Html(
+                            padding: EdgeInsets.all(8),
+                            defaultTextStyle:
+                                textTheme.body1.copyWith(fontSize: 20),
+                            data: assignment.description,
+                            onLinkTap: tryLaunchingUrl,
+                          ),
+                          if (submission != null)
+                            Container(
+                              alignment: Alignment.centerRight,
+                              padding: EdgeInsets.all(16),
+                              child: RaisedButton(
+                                onPressed: () => _showSubmissionScreen(
+                                    context, assignment, submission),
+                                child: Text(
+                                  context
+                                      .s.assignment_detailsScreen_mySubmission,
+                                  style: textTheme.button
+                                      .copyWith(color: Colors.white),
+                                ),
+                              ),
+                            ),
+                        ]),
+                      ),
                     ],
                   );
                 },

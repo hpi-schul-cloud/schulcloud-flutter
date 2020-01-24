@@ -10,7 +10,7 @@ class DashboardScreen extends StatelessWidget {
     return Scaffold(
       body: CustomScrollView(
         slivers: <Widget>[
-          FancyAppBar.withAvatar(
+          FancyAppBar(
             title: Text('Dashboard'),
           ),
           SliverList(

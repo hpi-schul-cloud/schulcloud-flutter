@@ -29,7 +29,7 @@ class NewsScreen extends StatelessWidget {
 
                 return CustomScrollView(
                   slivers: <Widget>[
-                    FancyAppBar.withAvatar(
+                    FancyAppBar(
                       title: Text('News'),
                     ),
                     SliverList(

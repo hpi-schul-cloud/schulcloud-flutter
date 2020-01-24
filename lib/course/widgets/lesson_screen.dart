@@ -81,35 +81,27 @@ class _LessonScreenState extends State<LessonScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // TODO(marcelgarus): add app bar action
-    // IconButton(
-    //         icon: Icon(Icons.web),
-    //         onPressed: _showLessonContentMenu,
-    //       ),
     return Scaffold(
-      appBar: AppBar(
-        iconTheme: IconThemeData(color: Colors.black),
-        title: Column(
-          children: <Widget>[
-            Text(
-              widget.lesson.name,
-              style: TextStyle(color: Colors.black),
+      body: CustomScrollView(
+        slivers: <Widget>[
+          FancyAppBar(
+            title: Text(widget.lesson.name),
+            subtitle: Text(widget.course.name),
+            actions: <Widget>[
+              IconButton(
+                icon: Icon(Icons.web),
+                onPressed: _showLessonContentMenu,
+              ),
+            ],
+          ),
+          SliverFillRemaining(
+            child: WebView(
+              initialUrl: _textOrUrl(widget.lesson.contents[0]),
+              onWebViewCreated: (controller) => _controller = controller,
+              javascriptMode: JavascriptMode.unrestricted,
             ),
-            Text(
-              widget.course.name,
-              style: TextStyle(color: Colors.black),
-            ),
-          ],
-        ),
-        backgroundColor: widget.course.color,
-      ),
-      body: Padding(
-        padding: EdgeInsets.all(8),
-        child: WebView(
-          initialUrl: _textOrUrl(widget.lesson.contents[0]),
-          onWebViewCreated: (controller) => _controller = controller,
-          javascriptMode: JavascriptMode.unrestricted,
-        ),
+          ),
+        ],
       ),
     );
   }

@@ -43,8 +43,8 @@ class ArticlePreview extends StatelessWidget {
     return Provider<ArticleTheme>(
       create: (_) => ArticleTheme(darkColor: Colors.purple, padding: 16),
       child: Material(
-        elevation: 2,
-        borderRadius: BorderRadius.circular(8),
+        elevation: 1,
+        borderRadius: BorderRadius.circular(16),
         color: theme.cardColor,
         child: InkWell(
           onTap: _isPlaceholder ? null : () => _openArticle(context),

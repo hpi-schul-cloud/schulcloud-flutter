@@ -37,7 +37,7 @@ class AssignmentsScreen extends StatelessWidget {
                   ..sort((a, b) => b.compareTo(a));
                 return CustomScrollView(
                   slivers: <Widget>[
-                    FancyAppBar.withAvatar(
+                    FancyAppBar(
                       title: Text('Assignments'),
                     ),
                     SliverList(

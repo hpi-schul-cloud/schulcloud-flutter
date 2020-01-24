@@ -55,7 +55,7 @@ class CourseDetailsScreen extends StatelessWidget {
               }
               return CustomScrollView(
                 slivers: <Widget>[
-                  FancyAppBar.withAvatar(
+                  FancyAppBar(
                     title: Text(course.name),
                   ),
                   SliverList(

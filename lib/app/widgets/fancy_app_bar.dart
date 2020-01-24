@@ -4,28 +4,20 @@ import '../theming_utils.dart';
 import '../utils.dart';
 import 'account_avatar.dart';
 
+const _fancyAppBar = Object();
+
 class FancyAppBar extends StatelessWidget {
   const FancyAppBar({
     Key key,
-    this.title,
+    @required this.title,
+    this.subtitle,
     this.actions = const [],
-  }) : super(key: key);
-
-  FancyAppBar.withAvatar({
-    Key key,
-    Widget title,
-    List<Widget> actions = const [],
-  }) : this(
-          key: key,
-          title: title,
-          actions: [
-            ...actions,
-            AccountAvatar(),
-            SizedBox(width: 8),
-          ],
-        );
+  })  : assert(title != null),
+        assert(actions != null),
+        super(key: key);
 
   final Widget title;
+  final Widget subtitle;
   final List<Widget> actions;
 
   @override
@@ -33,14 +25,36 @@ class FancyAppBar extends StatelessWidget {
     final theme = context.theme;
 
     return SliverAppBar(
+      pinned: true,
+      backgroundColor: theme.scaffoldBackgroundColor,
       title: DefaultTextStyle.merge(
         style: TextStyle(color: theme.contrastColor),
-        child: title,
+        child: _buildTitle(context),
       ),
       iconTheme: IconThemeData(color: theme.contrastColor),
-      actions: actions,
-      backgroundColor: theme.scaffoldBackgroundColor,
-      pinned: true,
+      actions: [
+        ...actions,
+        SizedBox(width: 8),
+        AccountAvatar(),
+        SizedBox(width: 8),
+      ],
     );
+  }
+
+  Widget _buildTitle(BuildContext context) {
+    if (subtitle == null) {
+      return title;
+    } else {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          title,
+          DefaultTextStyle.merge(
+            style: TextStyle(fontSize: 12),
+            child: subtitle,
+          ),
+        ],
+      );
+    }
   }
 }
