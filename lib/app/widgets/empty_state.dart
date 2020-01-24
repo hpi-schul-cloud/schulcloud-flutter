@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:schulcloud/generated/generated.dart';
+import 'package:schulcloud/l10n/l10n.dart';
 
 import 'buttons.dart';
 

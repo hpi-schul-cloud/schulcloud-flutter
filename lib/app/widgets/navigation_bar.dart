@@ -5,19 +5,43 @@ import 'package:schulcloud/l10n/l10n.dart';
 
 import 'schulcloud_app.dart';
 
-final _appBarKey = GlobalKey();
-
-/// A custom version of an app bar intended to be displayed at the bottom of
-/// the screen.
-class MyAppBar extends StatelessWidget {
-  MyAppBar({
+/// A custom version of a navigation bar intended to be displayed at the bottom
+/// of the screen.
+class MyNavigationBar extends StatefulWidget {
+  const MyNavigationBar({
     @required this.onNavigate,
     @required this.activeScreenStream,
-  })  : assert(onNavigate != null),
-        super(key: _appBarKey);
+  }) : assert(onNavigate != null);
 
   final void Function(Screen route) onNavigate;
   final Stream<Screen> activeScreenStream;
+
+  @override
+  _MyNavigationBarState createState() => _MyNavigationBarState();
+}
+
+class _MyNavigationBarState extends State<MyNavigationBar> {
+  Screen _activeScreen = Screen.dashboard;
+
+  static const screens = [
+    Screen.dashboard,
+    Screen.news,
+    Screen.courses,
+    Screen.assignments,
+    Screen.files,
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    widget.activeScreenStream
+        .listen((screen) => setState(() => _activeScreen = screen));
+  }
+
+  void _onNavigate(int index) {
+    _activeScreen = screens[index];
+    widget.onNavigate(_activeScreen);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -26,6 +50,8 @@ class MyAppBar extends StatelessWidget {
     return BottomNavigationBar(
       selectedItemColor: context.theme.primaryColor,
       unselectedItemColor: context.theme.mediumEmphasisColor,
+      currentIndex: screens.indexOf(_activeScreen),
+      onTap: _onNavigate,
       items: [
         BottomNavigationBarItem(
           icon: Icon(Icons.dashboard),
@@ -49,11 +75,5 @@ class MyAppBar extends StatelessWidget {
         ),
       ],
     );
-    /*buildItem(Screen.dashboard, s.app_navigation_dashboard, Icons.dashboard),
-      buildItem(Screen.news, s.app_navigation_news, Icons.new_releases),
-      buildItem(Screen.courses, s.app_navigation_courses, Icons.school),
-      buildItem(Screen.homework, s.app_navigation_assignments,
-          Icons.playlist_add_check),
-      buildItem(Screen.files, s.app_navigation_files, Icons.folder),*/
   }
 }

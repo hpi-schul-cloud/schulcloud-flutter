@@ -1,12 +1,12 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cached/flutter_cached.dart';
-import 'package:schulcloud/generated/generated.dart';
 import 'package:provider/provider.dart';
 import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/course/bloc.dart' as course;
 import 'package:schulcloud/course/data.dart';
 import 'package:schulcloud/dashboard/dashboard.dart';
+import 'package:schulcloud/l10n/l10n.dart';
 
 import '../assignment.dart';
 import '../bloc.dart';

@@ -3,7 +3,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:pedantic/pedantic.dart';
 import 'package:provider/provider.dart';
 import 'package:schulcloud/app/app.dart';
-import 'package:schulcloud/generated/generated.dart';
+import 'package:schulcloud/l10n/l10n.dart';
 
 import '../bloc.dart';
 import 'input.dart';

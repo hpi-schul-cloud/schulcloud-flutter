@@ -10,7 +10,7 @@ import 'package:schulcloud/generated/l10n.dart';
 import 'package:schulcloud/login/login.dart';
 import 'package:schulcloud/news/news.dart';
 
-import 'app_bar.dart';
+import 'navigation_bar.dart';
 import 'page_route.dart';
 
 class SchulCloudApp extends StatelessWidget {
@@ -40,7 +40,7 @@ enum Screen {
   news,
   courses,
   files,
-  homework,
+  assignments,
 }
 
 class LoggedInScreen extends StatefulWidget {
@@ -85,7 +85,7 @@ class _LoggedInScreenState extends State<LoggedInScreen> {
       Screen.news: (_) => NewsScreen(),
       Screen.files: (_) => FilesScreen(),
       Screen.courses: (_) => CoursesScreen(),
-      Screen.homework: (_) => AssignmentsScreen(),
+      Screen.assignments: (_) => AssignmentsScreen(),
     }[screen];
 
     navigator
@@ -126,7 +126,10 @@ class _LoggedInScreenState extends State<LoggedInScreen> {
               ],
             ),
           ),
-          MyAppBar(onNavigate: _navigateTo, activeScreenStream: _screenStream),
+          MyNavigationBar(
+            onNavigate: _navigateTo,
+            activeScreenStream: _screenStream,
+          ),
         ],
       ),
     );

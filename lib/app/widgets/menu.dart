@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_cached/flutter_cached.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:schulcloud/generated/generated.dart';
+import 'package:schulcloud/l10n/l10n.dart';
 import 'package:schulcloud/login/login.dart';
 import 'package:schulcloud/settings/settings.dart';
 
@@ -116,7 +116,7 @@ class Menu extends StatelessWidget {
       buildItem(Screen.dashboard, s.app_navigation_dashboard, Icons.dashboard),
       buildItem(Screen.news, s.app_navigation_news, Icons.new_releases),
       buildItem(Screen.courses, s.app_navigation_courses, Icons.school),
-      buildItem(Screen.homework, s.app_navigation_assignments,
+      buildItem(Screen.assignments, s.app_navigation_assignments,
           Icons.playlist_add_check),
       buildItem(Screen.files, s.app_navigation_files, Icons.folder),
     ];

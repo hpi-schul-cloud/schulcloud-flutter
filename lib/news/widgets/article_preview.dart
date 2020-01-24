@@ -3,7 +3,7 @@ import 'package:flutter_cached/flutter_cached.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:schulcloud/app/app.dart';
-import 'package:schulcloud/generated/generated.dart';
+import 'package:schulcloud/l10n/l10n.dart';
 
 import '../data.dart';
 import 'article_image.dart';

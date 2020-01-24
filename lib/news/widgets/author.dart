@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:schulcloud/app/app.dart';
-import 'package:schulcloud/generated/generated.dart';
+import 'package:schulcloud/l10n/l10n.dart';
 
 /// Displays the author's name as well as an avatar, if available.
 ///
