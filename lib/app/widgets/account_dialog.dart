@@ -20,7 +20,7 @@ class AccountDialog extends StatelessWidget {
     AboutDialog();
     return AlertDialog(
       content: CachedRawBuilder<User>(
-        controller: UserFetcherService.of(context).fetchCurrentUser(),
+        controller: services.get<UserFetcherService>().fetchCurrentUser(),
         builder: (context, update) {
           return Text(update?.data?.displayName ?? context.s.general_loading);
         },
