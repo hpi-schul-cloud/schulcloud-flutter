@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:schulcloud/app/app.dart';
-import 'package:schulcloud/app/theming/utils.dart';
 import 'package:sprintf/sprintf.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
@@ -82,6 +81,11 @@ class _LessonScreenState extends State<LessonScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // TODO(marcelgarus): add app bar action
+    // IconButton(
+    //         icon: Icon(Icons.web),
+    //         onPressed: _showLessonContentMenu,
+    //       ),
     return Scaffold(
       appBar: AppBar(
         iconTheme: IconThemeData(color: Colors.black),
@@ -99,20 +103,12 @@ class _LessonScreenState extends State<LessonScreen> {
         ),
         backgroundColor: widget.course.color,
       ),
-      body: AppBarActions(
-        actions: <Widget>[
-          IconButton(
-            icon: Icon(Icons.web),
-            onPressed: _showLessonContentMenu,
-          ),
-        ],
-        child: Padding(
-          padding: EdgeInsets.all(8),
-          child: WebView(
-            initialUrl: _textOrUrl(widget.lesson.contents[0]),
-            onWebViewCreated: (controller) => _controller = controller,
-            javascriptMode: JavascriptMode.unrestricted,
-          ),
+      body: Padding(
+        padding: EdgeInsets.all(8),
+        child: WebView(
+          initialUrl: _textOrUrl(widget.lesson.contents[0]),
+          onWebViewCreated: (controller) => _controller = controller,
+          javascriptMode: JavascriptMode.unrestricted,
         ),
       ),
     );

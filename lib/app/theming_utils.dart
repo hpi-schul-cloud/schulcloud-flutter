@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../utils.dart';
+import 'utils.dart';
 
 extension FancyTheme on ThemeData {
   bool get isDark => brightness == Brightness.dark;

@@ -8,8 +8,8 @@ import 'package:intl/intl.dart';
 import 'package:meta/meta.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import 'app_config.dart';
 import 'services/storage.dart';
-import 'theming/config.dart';
 
 extension FancyContext on BuildContext {
   ThemeData get theme => Theme.of(this);

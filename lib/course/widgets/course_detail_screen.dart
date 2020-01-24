@@ -35,6 +35,13 @@ class CourseDetailsScreen extends StatelessWidget {
         userFetcher: UserFetcherService.of(context),
       ),
       child: Consumer<Bloc>(builder: (context, bloc, _) {
+        // TODO(marcelgarus): add app bar actions
+        // actions: <Widget>[
+        //   IconButton(
+        //     icon: Icon(Icons.folder),
+        //     onPressed: () => _showCourseFiles(context, course),
+        //   ),
+        // ],
         return Scaffold(
           appBar: AppBar(
             iconTheme: IconThemeData(color: Colors.black),
@@ -44,51 +51,43 @@ class CourseDetailsScreen extends StatelessWidget {
             ),
             backgroundColor: course.color,
           ),
-          body: AppBarActions(
-            actions: <Widget>[
-              IconButton(
-                icon: Icon(Icons.folder),
-                onPressed: () => _showCourseFiles(context, course),
-              ),
-            ],
-            child: CachedBuilder<List<Lesson>>(
-              controller: bloc.fetchLessonsOfCourse(course),
-              errorBannerBuilder: (_, error, st) => ErrorBanner(error, st),
-              errorScreenBuilder: (_, error, st) => ErrorScreen(error, st),
-              builder: (context, lessons) {
-                if (lessons.isEmpty) {
-                  return EmptyStateScreen(
-                    text: context.s.course_detailsScreen_empty,
-                  );
-                }
-                return ListView(
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.symmetric(
-                        vertical: 18,
-                        horizontal: 12,
-                      ),
-                      child: Text(
-                        course.description,
+          body: CachedBuilder<List<Lesson>>(
+            controller: bloc.fetchLessonsOfCourse(course),
+            errorBannerBuilder: (_, error, st) => ErrorBanner(error, st),
+            errorScreenBuilder: (_, error, st) => ErrorScreen(error, st),
+            builder: (context, lessons) {
+              if (lessons.isEmpty) {
+                return EmptyStateScreen(
+                  text: context.s.course_detailsScreen_empty,
+                );
+              }
+              return ListView(
+                children: [
+                  Padding(
+                    padding: EdgeInsets.symmetric(
+                      vertical: 18,
+                      horizontal: 12,
+                    ),
+                    child: Text(
+                      course.description,
+                      style: TextStyle(fontSize: 20),
+                    ),
+                  ),
+                  for (var lesson in lessons)
+                    ListTile(
+                      title: Text(
+                        lesson.name,
                         style: TextStyle(fontSize: 20),
                       ),
-                    ),
-                    for (var lesson in lessons)
-                      ListTile(
-                        title: Text(
-                          lesson.name,
-                          style: TextStyle(fontSize: 20),
-                        ),
-                        onTap: () => _showLessonScreen(
-                          context: context,
-                          lesson: lesson,
-                          course: course,
-                        ),
+                      onTap: () => _showLessonScreen(
+                        context: context,
+                        lesson: lesson,
+                        course: course,
                       ),
-                  ],
-                );
-              },
-            ),
+                    ),
+                ],
+              );
+            },
           ),
         );
       }),

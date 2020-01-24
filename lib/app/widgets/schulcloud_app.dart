@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:schulcloud/app/app.dart';
-import 'package:schulcloud/app/theming/config.dart';
 import 'package:schulcloud/assignment/assignment.dart';
 import 'package:schulcloud/course/course.dart';
 import 'package:schulcloud/dashboard/dashboard.dart';
