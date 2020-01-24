@@ -3,9 +3,11 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_cached/flutter_cached.dart';
+import 'package:get_it/get_it.dart';
 import 'package:http/http.dart';
 import 'package:intl/intl.dart';
 import 'package:meta/meta.dart';
+import 'package:schulcloud/app/app.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'app_config.dart';
@@ -18,6 +20,8 @@ extension FancyContext on BuildContext {
   NavigatorState get rootNavigator => Navigator.of(this, rootNavigator: true);
   AppConfigData get appConfig => AppConfig.of(this);
 }
+
+final services = GetIt.instance;
 
 /// Converts a hex string (like, '#ffdd00') to a [Color].
 Color hexStringToColor(String hex) =>
@@ -111,12 +115,13 @@ class LazyMap<K, V> {
 }
 
 CacheController<T> fetchSingle<T extends Entity>({
-  @required StorageService storage,
-  @required Future<Response> Function() makeNetworkCall,
+  @required Future<Response> Function(NetworkService network) makeNetworkCall,
   @required T Function(Map<String, dynamic> data) parser,
   Id<dynamic> parent,
 }) {
-  assert(storage != null);
+  final storage = services.get<StorageService>();
+  final network = services.get<NetworkService>();
+
   return CacheController<T>(
     saveToCache: (item) => storage.cache.putChildrenOfType<T>(parent, [item]),
     loadFromCache: () async {
@@ -126,7 +131,7 @@ CacheController<T> fetchSingle<T extends Entity>({
       );
     },
     fetcher: () async {
-      final response = await makeNetworkCall();
+      final response = await makeNetworkCall(network);
       final data = json.decode(response.body);
       return parser(data);
     },
@@ -134,20 +139,21 @@ CacheController<T> fetchSingle<T extends Entity>({
 }
 
 CacheController<List<T>> fetchList<T extends Entity>({
-  @required StorageService storage,
-  @required Future<Response> Function() makeNetworkCall,
+  @required Future<Response> Function(NetworkService network) makeNetworkCall,
   @required T Function(Map<String, dynamic> data) parser,
   Id<dynamic> parent,
   // Surprise: The Calendar API's response is different from all others! Would
   // be too easy otherwise ;)
   bool serviceIsPaginated = true,
 }) {
-  assert(storage != null);
+  final storage = services.get<StorageService>();
+  final network = services.get<NetworkService>();
+
   return CacheController<List<T>>(
     saveToCache: (items) => storage.cache.putChildrenOfType<T>(parent, items),
     loadFromCache: () => storage.cache.getChildrenOfType<T>(parent),
     fetcher: () async {
-      final response = await makeNetworkCall();
+      final response = await makeNetworkCall(network);
       final body = json.decode(response.body);
       final dataList = serviceIsPaginated ? body['data'] : body;
       return [for (final data in dataList) parser(data)];

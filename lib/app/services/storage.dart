@@ -1,5 +1,3 @@
-import 'package:flutter/widgets.dart';
-import 'package:provider/provider.dart';
 import 'package:schulcloud/assignment/assignment.dart';
 import 'package:schulcloud/course/course.dart';
 import 'package:schulcloud/file/file.dart';
@@ -48,9 +46,6 @@ class StorageService {
 
     return StorageService._(prefs, email, token, cache);
   }
-
-  static StorageService of(BuildContext context) =>
-      Provider.of<StorageService>(context);
 
   Future<void> clear() => Future.wait([_prefs.clear(), cache.clear()]);
 }

@@ -64,7 +64,8 @@ class Menu extends StatelessWidget {
             children: [
               SizedBox(height: 8),
               CachedRawBuilder<User>(
-                controller: UserFetcherService.of(context).fetchCurrentUser(),
+                controller:
+                    services.get<UserFetcherService>().fetchCurrentUser(),
                 builder: (context, update) {
                   return Text(
                     update.data?.name ?? context.s.app_navigation_userDataEmpty,
@@ -73,7 +74,7 @@ class Menu extends StatelessWidget {
                 },
               ),
               StreamBuilder<String>(
-                stream: StorageService.of(context).email,
+                stream: services.get<StorageService>().email,
                 initialData: context.s.app_navigation_userDataEmpty,
                 builder: (context, snapshot) {
                   return Text(snapshot.data, style: TextStyle(fontSize: 14));
@@ -90,6 +91,7 @@ class Menu extends StatelessWidget {
         IconButton(
           icon: SvgPicture.asset(
             'assets/icon_logout.svg',
+            color: context.theme.highEmphasisColor,
           ),
           onPressed: () => logOut(context),
         ),

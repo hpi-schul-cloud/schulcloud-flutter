@@ -2,7 +2,6 @@ import 'package:flutter_cached/flutter_cached.dart';
 import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:provider/provider.dart';
 import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/course/course.dart';
 import 'package:schulcloud/l10n/l10n.dart';
@@ -43,10 +42,7 @@ class FileBrowser extends StatelessWidget {
     assert(file.isNotDirectory);
 
     try {
-      await Bloc.of(context).downloadFile(
-        network: Provider.of<NetworkService>(context),
-        file: file,
-      );
+      await services.get<FileBloc>().downloadFile(file);
       Scaffold.of(context).showSnackBar(SnackBar(
         content: Text(context.s.file_fileBrowser_downloading(file.name)),
       ));
@@ -57,7 +53,7 @@ class FileBrowser extends StatelessWidget {
         ),
         action: SnackBarAction(
           label: context.s.file_fileBrowser_download_storageAccess_allow,
-          onPressed: Bloc.of(context).ensureStoragePermissionGranted,
+          onPressed: services.get<FileBloc>().ensureStoragePermissionGranted,
         ),
       ));
     }
@@ -65,25 +61,12 @@ class FileBrowser extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Provider<Bloc>.value(
-      value: Bloc(
-        storage: StorageService.of(context),
-        network: NetworkService.of(context),
-        userFetcher: UserFetcherService.of(context),
-      ),
-      child: Consumer<Bloc>(
-        builder: (context, bloc, _) {
-          return isEmbedded
-              ? _buildEmbedded(context, bloc)
-              : _buildStandalone(context, bloc);
-        },
-      ),
-    );
+    return isEmbedded ? _buildEmbedded(context) : _buildStandalone(context);
   }
 
-  Widget _buildEmbedded(BuildContext context, Bloc bloc) {
+  Widget _buildEmbedded(BuildContext context) {
     return CachedRawBuilder<List<File>>(
-      controller: Bloc.of(context).fetchFiles(owner.id, parent),
+      controller: services.get<FileBloc>().fetchFiles(owner.id, parent),
       builder: (context, update) {
         if (update.hasError) {
           return ErrorScreen(update.error, update.stackTrace);
@@ -102,7 +85,7 @@ class FileBrowser extends StatelessWidget {
     );
   }
 
-  Widget _buildStandalone(BuildContext context, Bloc bloc) {
+  Widget _buildStandalone(BuildContext context) {
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: AppBar().preferredSize,
@@ -112,7 +95,7 @@ class FileBrowser extends StatelessWidget {
         ),
       ),
       body: CachedBuilder<List<File>>(
-        controller: Bloc.of(context).fetchFiles(owner.id, parent),
+        controller: services.get<FileBloc>().fetchFiles(owner.id, parent),
         errorBannerBuilder: (_, error, st) => ErrorBanner(error, st),
         errorScreenBuilder: (_, error, st) => ErrorScreen(error, st),
         builder: (context, files) {

@@ -44,7 +44,7 @@ class CourseCard extends StatelessWidget {
               ),
               subtitle: CachedRawBuilder(
                 controllerBuilder: () =>
-                    Bloc.of(context).fetchTeachersOfCourse(course),
+                    services.get<CourseBloc>().fetchTeachersOfCourse(course),
                 builder: (_, update) {
                   final teachers = update.data;
                   return Text((teachers ?? [])

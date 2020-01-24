@@ -12,13 +12,9 @@ class InvalidLoginSyntaxError implements Exception {
 const _emailRegExp =
     r"^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?)*$";
 
-class Bloc {
-  Bloc({@required this.storage, @required this.network})
-      : assert(storage != null),
-        assert(network != null);
-
-  final StorageService storage;
-  final NetworkService network;
+@immutable
+class LoginBloc {
+  const LoginBloc();
 
   bool isEmailValid(String email) => RegExp(_emailRegExp).hasMatch(email);
   bool isPasswordValid(String password) => password.isNotEmpty;
@@ -33,14 +29,18 @@ class Bloc {
       );
     }
 
+    final storage = services.get<StorageService>();
     await storage.email.setValue(email);
 
     // The login throws an exception if it wasn't successful.
-    final response = await network.post('authentication', body: {
-      'strategy': 'local',
-      'username': email,
-      'password': password,
-    });
+    final response = await services.get<NetworkService>().post(
+      'authentication',
+      body: {
+        'strategy': 'local',
+        'username': email,
+        'password': password,
+      },
+    );
     final String token = json.decode(response.body)['accessToken'];
     await storage.token.setValue(token);
   }

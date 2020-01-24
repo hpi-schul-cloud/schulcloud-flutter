@@ -1,7 +1,6 @@
 import 'package:flutter_cached/flutter_cached.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/course/course.dart';
 import 'package:schulcloud/l10n/l10n.dart';
@@ -13,28 +12,21 @@ import 'page_route.dart';
 class FilesScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Provider<Bloc>.value(
-      value: Bloc(
-        storage: StorageService.of(context),
-        network: NetworkService.of(context),
-        userFetcher: UserFetcherService.of(context),
-      ),
-      child: Scaffold(
-        body: CustomScrollView(
-          slivers: <Widget>[
-            FancyAppBar(title: Text('Files')),
-            SliverPadding(
-              padding: EdgeInsets.fromLTRB(16, 8, 16, 16),
-              sliver: SliverList(
-                delegate: SliverChildListDelegate([
-                  _CoursesList(),
-                  SizedBox(height: 16),
-                  _UserFiles(),
-                ]),
-              ),
+    return Scaffold(
+      body: CustomScrollView(
+        slivers: <Widget>[
+          FancyAppBar(title: Text('Files')),
+          SliverPadding(
+            padding: EdgeInsets.fromLTRB(16, 8, 16, 16),
+            sliver: SliverList(
+              delegate: SliverChildListDelegate([
+                _CoursesList(),
+                SizedBox(height: 16),
+                _UserFiles(),
+              ]),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -46,7 +38,7 @@ class _CoursesList extends StatelessWidget {
     return FancyCard(
       title: context.s.file_files_course,
       child: CachedRawBuilder(
-        controller: Bloc.of(context).fetchCourses()..fetch(),
+        controller: services.get<FileBloc>().fetchCourses()..fetch(),
         builder: (context, update) {
           return GridView.extent(
             primary: false,
@@ -101,7 +93,7 @@ class _UserFiles extends StatelessWidget {
       title: context.s.file_files_my,
       omitHorizontalPadding: true,
       child: CachedRawBuilder(
-        controller: UserFetcherService.of(context).fetchCurrentUser(),
+        controller: services.get<UserFetcherService>().fetchCurrentUser(),
         builder: (context, update) {
           return update.hasData
               ? FileBrowser(owner: update.data, isEmbedded: true)

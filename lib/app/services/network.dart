@@ -4,7 +4,7 @@ import 'dart:io';
 import 'package:flutter/widgets.dart';
 import 'package:meta/meta.dart';
 import 'package:http/http.dart' as http;
-import 'package:provider/provider.dart';
+import 'package:schulcloud/app/app.dart';
 
 import 'storage.dart';
 
@@ -25,17 +25,9 @@ class TooManyRequestsError implements Exception {
 /// access token.
 @immutable
 class NetworkService {
-  const NetworkService({
-    @required this.apiUrl,
-    @required this.storage,
-  })  : assert(apiUrl != null),
-        assert(storage != null);
+  const NetworkService({@required this.apiUrl}) : assert(apiUrl != null);
 
   final String apiUrl;
-  final StorageService storage;
-
-  static NetworkService of(BuildContext context) =>
-      Provider.of<NetworkService>(context);
 
   Future<void> _ensureConnectionExists() =>
       InternetAddress.lookup(apiUrl.substring(apiUrl.lastIndexOf('/') + 1));
@@ -79,10 +71,13 @@ class NetworkService {
     }
   }
 
-  Map<String, String> _getHeaders() => {
-        if (storage.hasToken)
-          'Authorization': 'Bearer ${storage.token.getValue()}',
-      };
+  Map<String, String> _getHeaders() {
+    final storage = services.get<StorageService>();
+    return {
+      if (storage.hasToken)
+        'Authorization': 'Bearer ${storage.token.getValue()}',
+    };
+  }
 
   /// Makes an http get request to the api.
   Future<http.Response> get(

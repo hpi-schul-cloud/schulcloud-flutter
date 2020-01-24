@@ -26,7 +26,7 @@ class SubmissionScreen extends StatelessWidget {
       length: 2,
       child: CachedRawBuilder(
         controllerBuilder: () =>
-            Bloc.of(context).fetchCourseOfAssignment(assignment),
+            services.get<AssignmentBloc>().fetchCourseOfAssignment(assignment),
         builder: (_, courseUpdate) {
           final course = courseUpdate.data;
           return Scaffold(
