@@ -35,13 +35,6 @@ class CourseDetailsScreen extends StatelessWidget {
         userFetcher: UserFetcherService.of(context),
       ),
       child: Consumer<Bloc>(builder: (context, bloc, _) {
-        // TODO(marcelgarus): add app bar actions
-        // actions: <Widget>[
-        //   IconButton(
-        //     icon: Icon(Icons.folder),
-        //     onPressed: () => _showCourseFiles(context, course),
-        //   ),
-        // ],
         return Scaffold(
           body: CachedBuilder<List<Lesson>>(
             controller: bloc.fetchLessonsOfCourse(course),
@@ -57,6 +50,12 @@ class CourseDetailsScreen extends StatelessWidget {
                 slivers: <Widget>[
                   FancyAppBar(
                     title: Text(course.name),
+                    actions: <Widget>[
+                      IconButton(
+                        icon: Icon(Icons.folder),
+                        onPressed: () => _showCourseFiles(context, course),
+                      ),
+                    ],
                   ),
                   SliverList(
                     delegate: SliverChildListDelegate([

@@ -93,6 +93,10 @@ TextTheme _createTextTheme(Brightness brightness) {
       fontSize: 32,
       color: brightness.contrastColor,
     ),
+    overline: TextStyle(
+      fontWeight: FontWeight.bold,
+      fontSize: 12,
+    ),
   );
 }
 

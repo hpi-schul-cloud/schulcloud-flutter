@@ -10,17 +10,17 @@ class DashboardScreen extends StatelessWidget {
     return Scaffold(
       body: CustomScrollView(
         slivers: <Widget>[
-          FancyAppBar(
-            title: Text('Dashboard'),
-          ),
-          SliverList(
-            delegate: SliverChildListDelegate(
-              [
-                SizedBox(height: 16),
+          FancyAppBar(title: Text('Dashboard')),
+          SliverPadding(
+            padding: EdgeInsets.fromLTRB(16, 8, 16, 16),
+            sliver: SliverList(
+              delegate: SliverChildListDelegate([
                 CalendarDashboardCard(),
+                SizedBox(height: 16),
                 AssignmentDashboardCard(),
+                SizedBox(height: 16),
                 NewsDashboardCard(),
-              ],
+              ]),
             ),
           ),
         ],

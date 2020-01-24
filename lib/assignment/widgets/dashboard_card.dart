@@ -5,7 +5,6 @@ import 'package:provider/provider.dart';
 import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/course/bloc.dart' as course;
 import 'package:schulcloud/course/data.dart';
-import 'package:schulcloud/dashboard/dashboard.dart';
 import 'package:schulcloud/l10n/l10n.dart';
 
 import '../assignment.dart';
@@ -18,8 +17,9 @@ class AssignmentDashboardCard extends StatelessWidget {
       value: Bloc(
           storage: Provider.of<StorageService>(context),
           network: Provider.of<NetworkService>(context)),
-      child: DashboardCard(
+      child: FancyCard(
         title: context.s.assignment_dashboardCard,
+        omitHorizontalPadding: true,
         child: Consumer<Bloc>(
           builder: (context, bloc, _) => CachedRawBuilder<List<Assignment>>(
             controller: bloc.fetchAssignments(),

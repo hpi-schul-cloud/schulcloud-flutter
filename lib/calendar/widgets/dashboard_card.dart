@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_cached/flutter_cached.dart';
 import 'package:provider/provider.dart';
 import 'package:schulcloud/app/app.dart';
-import 'package:schulcloud/calendar/bloc.dart';
-import 'package:schulcloud/calendar/data.dart';
-import 'package:schulcloud/dashboard/widgets/dashboard_card.dart';
 import 'package:schulcloud/l10n/l10n.dart';
 import 'package:time_machine/time_machine.dart';
+
+import '../bloc.dart';
+import '../data.dart';
 
 class CalendarDashboardCard extends StatelessWidget {
   @override
@@ -19,7 +19,7 @@ class CalendarDashboardCard extends StatelessWidget {
         network: Provider.of<NetworkService>(context),
         userFetcher: Provider.of<UserFetcherService>(context),
       ),
-      child: DashboardCard(
+      child: FancyCard(
         title: s.calendar_dashboardCard,
         child: Consumer<Bloc>(
           builder: (context, bloc, _) =>
