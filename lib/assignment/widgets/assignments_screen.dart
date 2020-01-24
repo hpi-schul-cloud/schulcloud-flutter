@@ -35,13 +35,20 @@ class AssignmentsScreen extends StatelessWidget {
 
                 final dates = assignmentsByDate.keys.toList()
                   ..sort((a, b) => b.compareTo(a));
-                return ListView(
-                  children: [
-                    for (final date in dates) ...[
-                      ListTile(title: Text(dateTimeToString(date))),
-                      for (final assignment in assignmentsByDate[date])
-                        AssignmentCard(assignment: assignment),
-                    ],
+                return CustomScrollView(
+                  slivers: <Widget>[
+                    FancyAppBar.withAvatar(
+                      title: Text('Assignments'),
+                    ),
+                    SliverList(
+                      delegate: SliverChildListDelegate([
+                        for (final date in dates) ...[
+                          ListTile(title: Text(dateTimeToString(date))),
+                          for (final assignment in assignmentsByDate[date])
+                            AssignmentCard(assignment: assignment),
+                        ],
+                      ]),
+                    ),
                   ],
                 );
               },

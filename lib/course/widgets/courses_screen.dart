@@ -30,11 +30,18 @@ class CoursesScreen extends StatelessWidget {
                     text: context.s.course_coursesScreen_empty,
                   );
                 }
-                return GridView.count(
-                  childAspectRatio: 1.5,
-                  crossAxisCount: 2,
-                  children: <Widget>[
-                    for (var course in courses) CourseCard(course: course),
+                return CustomScrollView(
+                  slivers: <Widget>[
+                    FancyAppBar.withAvatar(
+                      title: Text('Files'),
+                    ),
+                    SliverGrid.count(
+                      childAspectRatio: 1.5,
+                      crossAxisCount: 2,
+                      children: <Widget>[
+                        for (var course in courses) CourseCard(course: course),
+                      ],
+                    ),
                   ],
                 );
               },

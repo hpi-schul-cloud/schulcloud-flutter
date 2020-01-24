@@ -16,7 +16,7 @@ extension BrightnessEstimate on Color {
       ThemeData.estimateBrightnessForColor(this);
 }
 
-extension EmphasizedColors on Brightness {
+extension BrightnessContrastColors on Brightness {
   Color get contrastColor =>
       this == Brightness.light ? Colors.black : Colors.white;
   Color get highEmphasisColor => contrastColor.withOpacity(0.87);
@@ -31,7 +31,7 @@ extension ContrastColors on Color {
   Color get disabledColor => estimatedBrightness.disabledColor;
 }
 
-extension ContrastThemeColors on ThemeData {
+extension ThemeContrastColors on ThemeData {
   Color get contrastColor => brightness.contrastColor;
   Color get highEmphasisColor => contrastColor.highEmphasisColor;
   Color get mediumEmphasisColor => brightness.mediumEmphasisColor;

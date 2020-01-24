@@ -20,15 +20,18 @@ class FilesScreen extends StatelessWidget {
         userFetcher: UserFetcherService.of(context),
       ),
       child: Scaffold(
-        body: Container(
-          child: ListView(
-            padding: MediaQuery.of(context).padding +
-                const EdgeInsets.symmetric(vertical: 16),
-            children: <Widget>[
-              _CoursesList(),
-              _UserFiles(),
-            ],
-          ),
+        body: CustomScrollView(
+          slivers: <Widget>[
+            FancyAppBar.withAvatar(
+              title: Text('Files'),
+            ),
+            SliverList(
+              delegate: SliverChildListDelegate([
+                _CoursesList(),
+                _UserFiles(),
+              ]),
+            ),
+          ],
         ),
       ),
     );

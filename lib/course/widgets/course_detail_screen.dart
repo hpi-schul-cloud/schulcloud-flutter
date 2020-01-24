@@ -43,14 +43,6 @@ class CourseDetailsScreen extends StatelessWidget {
         //   ),
         // ],
         return Scaffold(
-          appBar: AppBar(
-            iconTheme: IconThemeData(color: Colors.black),
-            title: Text(
-              course.name,
-              style: TextStyle(color: Colors.black),
-            ),
-            backgroundColor: course.color,
-          ),
           body: CachedBuilder<List<Lesson>>(
             controller: bloc.fetchLessonsOfCourse(course),
             errorBannerBuilder: (_, error, st) => ErrorBanner(error, st),
@@ -61,30 +53,37 @@ class CourseDetailsScreen extends StatelessWidget {
                   text: context.s.course_detailsScreen_empty,
                 );
               }
-              return ListView(
-                children: [
-                  Padding(
-                    padding: EdgeInsets.symmetric(
-                      vertical: 18,
-                      horizontal: 12,
-                    ),
-                    child: Text(
-                      course.description,
-                      style: TextStyle(fontSize: 20),
-                    ),
+              return CustomScrollView(
+                slivers: <Widget>[
+                  FancyAppBar.withAvatar(
+                    title: Text(course.name),
                   ),
-                  for (var lesson in lessons)
-                    ListTile(
-                      title: Text(
-                        lesson.name,
-                        style: TextStyle(fontSize: 20),
+                  SliverList(
+                    delegate: SliverChildListDelegate([
+                      Padding(
+                        padding: EdgeInsets.symmetric(
+                          vertical: 18,
+                          horizontal: 12,
+                        ),
+                        child: Text(
+                          course.description,
+                          style: TextStyle(fontSize: 20),
+                        ),
                       ),
-                      onTap: () => _showLessonScreen(
-                        context: context,
-                        lesson: lesson,
-                        course: course,
-                      ),
-                    ),
+                      for (var lesson in lessons)
+                        ListTile(
+                          title: Text(
+                            lesson.name,
+                            style: TextStyle(fontSize: 20),
+                          ),
+                          onTap: () => _showLessonScreen(
+                            context: context,
+                            lesson: lesson,
+                            course: course,
+                          ),
+                        ),
+                    ]),
+                  ),
                 ],
               );
             },

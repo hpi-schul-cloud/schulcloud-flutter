@@ -27,14 +27,23 @@ class NewsScreen extends StatelessWidget {
               builder: (_, articles) {
                 articles.sort((a1, a2) => a2.published.compareTo(a1.published));
 
-                return ListView.builder(
-                  itemCount: articles.length,
-                  itemBuilder: (context, index) {
-                    return Padding(
-                      padding: EdgeInsets.fromLTRB(16, 16, 16, 0),
-                      child: ArticlePreview(article: articles[index]),
-                    );
-                  },
+                return CustomScrollView(
+                  slivers: <Widget>[
+                    FancyAppBar.withAvatar(
+                      title: Text('News'),
+                    ),
+                    SliverList(
+                      delegate: SliverChildBuilderDelegate(
+                        (context, index) {
+                          return Padding(
+                            padding: EdgeInsets.fromLTRB(16, 16, 16, 0),
+                            child: ArticlePreview(article: articles[index]),
+                          );
+                        },
+                        childCount: articles.length,
+                      ),
+                    ),
+                  ],
                 );
               },
             ),

@@ -10,6 +10,7 @@ export 'widgets/buttons.dart';
 export 'widgets/empty_state.dart';
 export 'widgets/error_widgets.dart';
 export 'widgets/fade_in.dart';
+export 'widgets/fancy_app_bar.dart';
 export 'widgets/menu.dart' show NavigationItem;
 export 'widgets/page_route.dart' show TopLevelPageRoute;
 export 'widgets/placeholder_text.dart';
