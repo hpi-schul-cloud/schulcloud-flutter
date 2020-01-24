@@ -22,7 +22,7 @@ dependencies:
   flutter_native_timezone: ^1.0.4
   flutter_svg: ^0.14.2
   flutter_villains: ^1.2.0
-  get_it: ^3.1.0
+  get_it: ^4.0.0-beta.3
   grec_minimal: ^0.0.3
   hive: ^1.2.0
   hive_flutter: ^0.3.0+1
