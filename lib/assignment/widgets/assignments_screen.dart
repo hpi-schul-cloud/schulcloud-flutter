@@ -60,13 +60,13 @@ class AssignmentCard extends StatelessWidget {
   final Assignment assignment;
 
   void _showAssignmentDetailsScreen(BuildContext context) {
-    Navigator.of(context).push(MaterialPageRoute(
+    context.navigator.push(MaterialPageRoute(
       builder: (context) => AssignmentDetailsScreen(assignment: assignment),
     ));
   }
 
   void _showCourseDetailScreen(BuildContext context, Course course) {
-    Navigator.of(context).push(MaterialPageRoute(
+    context.navigator.push(MaterialPageRoute(
       builder: (context) => CourseDetailsScreen(course: course),
     ));
   }
@@ -96,7 +96,7 @@ class AssignmentCard extends StatelessWidget {
                 ),
               Text(
                 assignment.name,
-                style: Theme.of(context).textTheme.headline,
+                style: context.theme.textTheme.headline,
               ),
               Html(data: limitString(assignment.description, 200)),
               CachedRawBuilder<Course>(

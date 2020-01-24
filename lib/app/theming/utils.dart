@@ -1,25 +1,39 @@
 import 'package:flutter/material.dart';
 
-Color fullOpacityOn(Color background) {
-  return fullOpacityOnBrightness(
-      ThemeData.estimateBrightnessForColor(background));
+import '../utils.dart';
+
+extension FancyTheme on ThemeData {
+  bool get isDark => brightness == Brightness.dark;
+  bool get isLight => brightness == Brightness.light;
 }
 
-Color fullOpacityOnBrightness(Brightness brightness) {
-  return brightness == Brightness.light ? Colors.black : Colors.white;
+extension TextThemeShortcut on BuildContext {
+  TextTheme get textTheme => theme.textTheme;
 }
 
-Color highEmphasisOn(Color background) {
-  return fullOpacityOn(background).withOpacity(0.87);
-}
-Color highEmphasisOnBrightness(Brightness brightness) {
-  return fullOpacityOnBrightness(brightness).withOpacity(0.87);
+extension BrightnessEstimate on Color {
+  Brightness get estimatedBrightness =>
+      ThemeData.estimateBrightnessForColor(this);
 }
 
-Color mediumEmphasisOn(Color background) {
-  return fullOpacityOn(background).withOpacity(0.60);
+extension EmphasizedColors on Brightness {
+  Color get contrastColor =>
+      this == Brightness.light ? Colors.black : Colors.white;
+  Color get highEmphasisColor => contrastColor.withOpacity(0.87);
+  Color get mediumEmphasisColor => contrastColor.withOpacity(0.6);
+  Color get disabledColor => contrastColor.withOpacity(0.38);
 }
 
-Color disabledOn(Color background) {
-  return fullOpacityOn(background).withOpacity(0.38);
+extension ContrastColors on Color {
+  Color get contrastColor => estimatedBrightness.contrastColor;
+  Color get highEmphasisColor => estimatedBrightness.highEmphasisColor;
+  Color get mediumEmphasisColor => estimatedBrightness.mediumEmphasisColor;
+  Color get disabledColor => estimatedBrightness.disabledColor;
+}
+
+extension ContrastThemeColors on ThemeData {
+  Color get contrastColor => brightness.contrastColor;
+  Color get highEmphasisColor => contrastColor.highEmphasisColor;
+  Color get mediumEmphasisColor => brightness.mediumEmphasisColor;
+  Color get disabledColor => brightness.disabledColor;
 }

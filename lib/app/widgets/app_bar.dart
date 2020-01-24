@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:schulcloud/app/app.dart';
 
 import 'menu.dart';
 import 'schulcloud_app.dart';
@@ -49,7 +50,7 @@ class _MyAppBarState extends State<MyAppBar> {
   }
 
   Future<void> _showMenu(BuildContext context) async {
-    final target = await Navigator.of(context).push(PageRouteBuilder(
+    final target = await context.navigator.push(PageRouteBuilder(
       pageBuilder: (_, __, ___) =>
           Menu(activeScreenStream: widget.activeScreenStream),
       opaque: false,
@@ -64,14 +65,14 @@ class _MyAppBarState extends State<MyAppBar> {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: Theme.of(context).primaryColor,
+      color: context.theme.bottomAppBarColor,
       elevation: 12,
       child: Container(
         height: 56,
         padding: EdgeInsets.symmetric(horizontal: 8),
         alignment: Alignment.center,
         child: IconTheme(
-          data: IconThemeData(color: Colors.white),
+          data: IconThemeData(color: context.theme.contrastColor),
           child: Row(
             children: <Widget>[
               IconButton(
@@ -131,7 +132,7 @@ Widget _customDialogTransitionBuilder(
       FadeTransition(
         opacity: animation,
         child: GestureDetector(
-          onTap: () => Navigator.of(context).popUntil((route) => route.isFirst),
+          onTap: () => context.navigator.popUntil((route) => route.isFirst),
           child: Container(color: Colors.black45),
         ),
       ),

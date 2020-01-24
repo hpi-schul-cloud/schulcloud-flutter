@@ -34,7 +34,7 @@ class FileBrowser extends StatelessWidget {
   void _openDirectory(BuildContext context, File file) {
     assert(file.isDirectory);
 
-    Navigator.of(context).push(FileBrowserPageRoute(
+    context.navigator.push(FileBrowserPageRoute(
       builder: (context) => FileBrowser(owner: owner, parent: file),
     ));
   }

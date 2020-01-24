@@ -15,13 +15,13 @@ class CourseDetailsScreen extends StatelessWidget {
   final Course course;
 
   void _showCourseFiles(BuildContext context, Course course) {
-    Navigator.of(context).push(FileBrowserPageRoute(
+    context.navigator.push(FileBrowserPageRoute(
       builder: (context) => FileBrowser(owner: course),
     ));
   }
 
   void _showLessonScreen({BuildContext context, Lesson lesson, Course course}) {
-    Navigator.of(context).push(MaterialPageRoute(
+    context.navigator.push(MaterialPageRoute(
       builder: (context) => LessonScreen(course: course, lesson: lesson),
     ));
   }

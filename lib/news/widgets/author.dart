@@ -29,7 +29,7 @@ class _AuthorViewState extends State<AuthorView> {
       padding: EdgeInsets.fromLTRB(0, 4, 8, 4),
       child: TextOrPlaceholder(
         isPlaceholder ? null : context.s.news_authorView(author.name),
-        style: Theme.of(context).textTheme.caption.copyWith(fontSize: 16),
+        style: context.textTheme.caption.copyWith(fontSize: 16),
       ),
     );
   }

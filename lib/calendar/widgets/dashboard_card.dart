@@ -67,16 +67,16 @@ class _EventPreview extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final now = Instant.now();
-    final theme = Theme.of(context);
+    final textTheme = context.textTheme;
     final hasStarted = event.start <= now;
 
     Widget widget = ListTile(
       title: Text(
         event.title,
-        style: hasStarted ? theme.textTheme.headline : theme.textTheme.subhead,
+        style: hasStarted ? textTheme.headline : textTheme.subhead,
       ),
       trailing: DefaultTextStyle(
-        style: theme.textTheme.caption,
+        style: textTheme.caption,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.end,

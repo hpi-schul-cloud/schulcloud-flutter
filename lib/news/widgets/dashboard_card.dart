@@ -57,7 +57,7 @@ class NewsDashboardCard extends StatelessWidget {
                       alignment: Alignment.bottomRight,
                       child: OutlineButton(
                         onPressed: () {
-                          Navigator.of(context).push(MaterialPageRoute(
+                          context.navigator.push(MaterialPageRoute(
                               builder: (context) => NewsScreen()));
                         },
                         child: Text(s.news_dashboardCard_all),

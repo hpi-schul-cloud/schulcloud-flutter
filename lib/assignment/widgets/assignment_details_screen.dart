@@ -22,7 +22,7 @@ class AssignmentDetailsScreen extends StatelessWidget {
     Assignment homework,
     Submission submission,
   ) {
-    Navigator.of(context).push(MaterialPageRoute(
+    context.navigator.push(MaterialPageRoute(
       builder: (context) => SubmissionScreen(
         assignment: homework,
         submission: submission,
@@ -65,7 +65,7 @@ class AssignmentDetailsScreen extends StatelessWidget {
                 errorScreenBuilder: (_, error, st) => ErrorScreen(error, st),
                 errorBannerBuilder: (_, error, st) => ErrorBanner(error, st),
                 builder: (context, submissions) {
-                  final textTheme = Theme.of(context).textTheme;
+                  final textTheme = context.theme.textTheme;
                   final submission = submissions.firstWhere(
                     (submission) => submission.assignmentId == assignment.id,
                     orElse: () => null,

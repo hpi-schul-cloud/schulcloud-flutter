@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:schulcloud/app/app.dart';
 
 class SlantedSection extends StatelessWidget {
   const SlantedSection({
@@ -29,7 +30,7 @@ class SlantedSection extends StatelessWidget {
       child: Padding(
         padding: EdgeInsets.only(top: slantTop, bottom: slantBottom),
         child: DefaultTextStyle(
-          style: Theme.of(context).textTheme.body1.apply(color: Colors.white),
+          style: context.textTheme.body1.apply(color: Colors.white),
           child: child,
         ),
       ),

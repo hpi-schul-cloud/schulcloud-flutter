@@ -119,7 +119,7 @@ class _LessonScreenState extends State<LessonScreen> {
   }
 
   String _createTextSource(String html) {
-    final theme = Theme.of(context);
+    final theme = context.theme;
 
     String cssColor(Color color) {
       return 'rgba(${color.red}, ${color.green}, ${color.blue}, ${color.opacity})';
@@ -129,8 +129,8 @@ class _LessonScreenState extends State<LessonScreen> {
       contentTextFormat,
       [
         html,
-        AppConfig.of(context).host,
-        cssColor(highEmphasisOnBrightness(theme.brightness)),
+        context.appConfig.host,
+        cssColor(theme.contrastColor),
         cssColor(theme.accentColor),
       ],
     );

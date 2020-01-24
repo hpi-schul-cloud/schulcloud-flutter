@@ -74,7 +74,7 @@ class _CourseCard extends StatelessWidget {
   final Course course;
 
   void _showCourseFiles(BuildContext context) {
-    Navigator.of(context).push(FileBrowserPageRoute(
+    context.navigator.push(FileBrowserPageRoute(
       builder: (context) => FileBrowser(owner: course),
     ));
   }
@@ -135,7 +135,7 @@ class FlatMaterial extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: Theme.of(context).cardColor,
+      color: context.theme.cardColor,
       borderRadius: BorderRadius.circular(8),
       child: InkWell(
         onTap: onTap,

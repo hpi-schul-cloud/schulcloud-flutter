@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:schulcloud/app/app.dart';
 
 class DashboardCard extends StatelessWidget {
   const DashboardCard({Key key, @required this.title, @required this.child})
@@ -24,7 +25,7 @@ class DashboardCard extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: Text(
                     title,
-                    style: Theme.of(context).textTheme.headline,
+                    style: context.textTheme.headline,
                   ),
                 ),
               ),

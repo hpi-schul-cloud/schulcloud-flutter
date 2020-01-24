@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:schulcloud/app/app.dart';
 
 /// A button that can morph into a loading spinner.
 ///
@@ -27,7 +28,7 @@ class _MorphingLoadingButtonState<T> extends State<MorphingLoadingButton> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+    final theme = context.theme;
 
     return RawMaterialButton(
       // Do not handle touch events if the button is already loading.
@@ -45,7 +46,7 @@ class _MorphingLoadingButtonState<T> extends State<MorphingLoadingButton> {
         width: _isLoading ? 52 : null,
         height: _isLoading ? 52 : null,
         child: DefaultTextStyle(
-          style: Theme.of(context).textTheme.button,
+          style: context.textTheme.button,
           child: _isLoading ? _buildLoadingContent(theme) : widget.child,
         ),
       ),

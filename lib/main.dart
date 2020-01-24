@@ -61,7 +61,7 @@ class _ServicesProviderState extends State<ServicesProvider> {
         Provider<StorageService>(create: (_) => storage),
         Provider<NetworkService>(
           create: (_) => NetworkService(
-            apiUrl: AppConfig.of(context).apiUrl,
+            apiUrl: context.appConfig.apiUrl,
             storage: storage,
           ),
         ),

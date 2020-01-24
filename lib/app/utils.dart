@@ -1,14 +1,22 @@
 import 'dart:convert';
 import 'dart:ui';
 
+import 'package:flutter/material.dart';
 import 'package:flutter_cached/flutter_cached.dart';
-import 'package:flutter/widgets.dart';
 import 'package:http/http.dart';
 import 'package:intl/intl.dart';
 import 'package:meta/meta.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'services/storage.dart';
+import 'theming/config.dart';
+
+extension FancyContext on BuildContext {
+  ThemeData get theme => Theme.of(this);
+  NavigatorState get navigator => Navigator.of(this);
+  NavigatorState get rootNavigator => Navigator.of(this, rootNavigator: true);
+  AppConfigData get appConfig => AppConfig.of(this);
+}
 
 /// Converts a hex string (like, '#ffdd00') to a [Color].
 Color hexStringToColor(String hex) =>

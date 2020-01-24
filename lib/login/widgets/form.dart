@@ -33,7 +33,7 @@ class _LoginFormState extends State<LoginForm> {
       setState(() => _ambientError = null);
 
       // Logged in.
-      unawaited(Navigator.of(context).pushReplacement(TopLevelPageRoute(
+      unawaited(context.navigator.pushReplacement(TopLevelPageRoute(
         builder: (_) => LoggedInScreen(),
       )));
     } on InvalidLoginSyntaxError catch (e) {
@@ -77,8 +77,7 @@ class _LoginFormState extends State<LoginForm> {
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 32),
             child: SvgPicture.asset(
-              AppConfig.of(context)
-                  .assetName(context, 'logo/logo_with_text.svg'),
+              context.appConfig.assetName(context, 'logo/logo_with_text.svg'),
               height: 64,
               alignment: Alignment.bottomCenter,
             ),

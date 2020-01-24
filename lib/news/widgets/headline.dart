@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:schulcloud/app/app.dart';
 
 import 'theme.dart';
 
@@ -46,10 +47,7 @@ class HeadlineBox extends StatelessWidget {
               ),
               SizedBox(height: 8),
               DefaultTextStyle(
-                style: Theme.of(context)
-                    .textTheme
-                    .display2
-                    .copyWith(color: Colors.white),
+                style: context.textTheme.display2.copyWith(color: Colors.white),
                 child: title,
               ),
             ],

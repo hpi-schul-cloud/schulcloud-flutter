@@ -69,18 +69,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ListTile(
             leading: Icon(Icons.person_outline),
             title: Text(s.settings_imprint),
-            onTap: () {
-              final domain = AppConfig.of(context).domain;
-              tryLaunchingUrl('https://$domain/impressum');
-            },
+            onTap: () => tryLaunchingUrl(
+                'https://${context.appConfig.domain}/impressum'),
           ),
           ListTile(
             leading: Icon(Icons.lightbulb_outline),
             title: Text(s.settings_privacyPolicy),
-            onTap: () {
-              final domain = AppConfig.of(context).domain;
-              tryLaunchingUrl('https://$domain/datenschutz');
-            },
+            onTap: () => tryLaunchingUrl(
+                'https://${context.appConfig.domain}/datenschutz'),
           ),
           ListTile(
             leading: Icon(Icons.info_outline),

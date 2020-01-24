@@ -54,13 +54,13 @@ class AssignmentDashboardCard extends StatelessWidget {
                     children: <Widget>[
                       Text(
                         openAssignments.length.toString(),
-                        style: Theme.of(context).textTheme.display3,
+                        style: context.theme.textTheme.display3,
                       ),
                       SizedBox(width: 4),
                       Text(
                         context.s.assignment_dashboardCard_header(
                             openAssignments.length),
-                        style: Theme.of(context).textTheme.subhead,
+                        style: context.theme.textTheme.subhead,
                       )
                     ],
                   ),
@@ -92,7 +92,7 @@ class AssignmentDashboardCard extends StatelessWidget {
                             title: Text(course.name),
                             trailing: Text(
                               subjects[c].length.toString(),
-                              style: Theme.of(context).textTheme.headline,
+                              style: context.theme.textTheme.headline,
                             ),
                           );
                         },
@@ -105,7 +105,7 @@ class AssignmentDashboardCard extends StatelessWidget {
                       alignment: Alignment.bottomRight,
                       child: OutlineButton(
                         onPressed: () {
-                          Navigator.of(context).push(MaterialPageRoute(
+                          context.navigator.push(MaterialPageRoute(
                               builder: (context) => AssignmentsScreen()));
                         },
                         child: Text(context.s.assignment_dashboardCard_all),

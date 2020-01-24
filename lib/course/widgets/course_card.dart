@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_cached/flutter_cached.dart';
+import 'package:schulcloud/app/app.dart';
 
 import '../bloc.dart';
 import '../data.dart';
@@ -11,7 +12,7 @@ class CourseCard extends StatelessWidget {
   final Course course;
 
   void _openDetailsScreen(BuildContext context) {
-    Navigator.of(context).push(MaterialPageRoute(
+    context.navigator.push(MaterialPageRoute(
       builder: (context) => CourseDetailsScreen(course: course),
     ));
   }

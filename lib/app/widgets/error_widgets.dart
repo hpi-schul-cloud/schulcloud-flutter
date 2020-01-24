@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/generated/generated.dart';
 import 'package:schulcloud/login/login.dart';
 
@@ -9,7 +10,7 @@ import 'empty_state.dart';
 
 void _showStackTrace(
     BuildContext context, dynamic error, StackTrace stackTrace) {
-  Navigator.of(context).push(MaterialPageRoute(
+  context.navigator.push(MaterialPageRoute(
     builder: (_) {
       return Scaffold(
         appBar: AppBar(title: Text(context.s.app_errorScreen_stackTrace)),

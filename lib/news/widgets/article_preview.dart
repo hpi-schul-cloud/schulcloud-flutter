@@ -32,14 +32,14 @@ class ArticlePreview extends StatelessWidget {
   bool get _isPlaceholder => article == null;
 
   void _openArticle(BuildContext context) {
-    Navigator.of(context).push(MaterialPageRoute(
+    context.navigator.push(MaterialPageRoute(
       builder: (_) => ArticleScreen(article: article),
     ));
   }
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+    final theme = context.theme;
 
     return Provider<ArticleTheme>(
       create: (_) => ArticleTheme(darkColor: Colors.purple, padding: 16),
@@ -79,7 +79,7 @@ class ArticlePreview extends StatelessWidget {
                               DateFormat.yMd().format(article.published),
                               authorName),
                       style: TextStyle(
-                        color: mediumEmphasisOn(theme.cardColor),
+                        color: theme.cardColor.mediumEmphasisColor,
                       ),
                     );
                   },

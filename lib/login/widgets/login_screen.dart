@@ -27,7 +27,7 @@ class LoginScreen extends StatelessWidget {
 
   List<Widget> _buildContent(BuildContext context) {
     final mediaQuery = MediaQuery.of(context);
-    final theme = Theme.of(context);
+    final theme = context.theme;
     final s = context.s;
 
     return [
