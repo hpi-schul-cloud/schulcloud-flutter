@@ -81,6 +81,11 @@ class Id<T> {
   Id<S> cast<S>() => Id<S>(id);
 
   @override
+  bool operator ==(other) => other is Id<T> && other.id == id;
+  @override
+  int get hashCode => id.hashCode;
+
+  @override
   String toString() => id;
 }
 
