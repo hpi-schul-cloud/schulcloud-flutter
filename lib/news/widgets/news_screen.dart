@@ -29,14 +29,13 @@ class NewsScreen extends StatelessWidget {
 
                 return CustomScrollView(
                   slivers: <Widget>[
-                    FancyAppBar(
-                      title: Text('News'),
-                    ),
+                    FancyAppBar(title: Text('News')),
+                    SliverToBoxAdapter(child: SizedBox(height: 8)),
                     SliverList(
                       delegate: SliverChildBuilderDelegate(
                         (context, index) {
                           return Padding(
-                            padding: EdgeInsets.fromLTRB(16, 16, 16, 0),
+                            padding: EdgeInsets.fromLTRB(16, 0, 16, 16),
                             child: ArticlePreview(article: articles[index]),
                           );
                         },
