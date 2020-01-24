@@ -46,32 +46,38 @@ class _MyNavigationBarState extends State<MyNavigationBar> {
   @override
   Widget build(BuildContext context) {
     final s = context.s;
+    final theme = context.theme;
 
     return BottomNavigationBar(
-      selectedItemColor: context.theme.primaryColor,
-      unselectedItemColor: context.theme.mediumEmphasisColor,
+      selectedItemColor: theme.primaryColor,
+      unselectedItemColor: theme.mediumEmphasisColor,
       currentIndex: screens.indexOf(_activeScreen),
       onTap: _onNavigate,
       items: [
         BottomNavigationBarItem(
           icon: Icon(Icons.dashboard),
           title: Text(s.app_navigation_dashboard),
+          backgroundColor: theme.bottomAppBarColor,
         ),
         BottomNavigationBarItem(
           icon: Icon(Icons.new_releases),
           title: Text(s.app_navigation_news),
+          backgroundColor: theme.bottomAppBarColor,
         ),
         BottomNavigationBarItem(
           icon: Icon(Icons.school),
           title: Text(s.app_navigation_courses),
+          backgroundColor: theme.bottomAppBarColor,
         ),
         BottomNavigationBarItem(
           icon: Icon(Icons.playlist_add_check),
           title: Text(s.app_navigation_assignments),
+          backgroundColor: theme.bottomAppBarColor,
         ),
         BottomNavigationBarItem(
           icon: Icon(Icons.folder),
           title: Text(s.app_navigation_files),
+          backgroundColor: theme.bottomAppBarColor,
         ),
       ],
     );
