@@ -35,7 +35,7 @@ class FancyAppBar extends StatelessWidget {
       actions: [
         ...actions,
         SizedBox(width: 8),
-        AccountAvatar(),
+        AccountButton(),
         SizedBox(width: 8),
       ],
     );
