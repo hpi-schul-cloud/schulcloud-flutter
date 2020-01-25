@@ -4,8 +4,6 @@ import '../theming_utils.dart';
 import '../utils.dart';
 import 'account_avatar.dart';
 
-const _fancyAppBar = Object();
-
 class FancyAppBar extends StatelessWidget {
   const FancyAppBar({
     Key key,
