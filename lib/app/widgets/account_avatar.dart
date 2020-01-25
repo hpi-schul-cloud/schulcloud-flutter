@@ -11,6 +11,7 @@ class AccountAvatar extends StatelessWidget {
   Widget build(BuildContext context) {
     return CircleAvatar(
       backgroundColor: context.theme.primaryColor,
+      maxRadius: 16,
       child: CachedRawBuilder<User>(
         controller: services.get<UserFetcherService>().fetchCurrentUser(),
         builder: (context, update) {
