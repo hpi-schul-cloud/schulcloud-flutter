@@ -12,21 +12,14 @@ import 'page_route.dart';
 class FilesScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: CustomScrollView(
-        slivers: <Widget>[
-          FancyAppBar(title: Text('Files')),
-          SliverPadding(
-            padding: EdgeInsets.fromLTRB(16, 8, 16, 16),
-            sliver: SliverList(
-              delegate: SliverChildListDelegate([
-                _CoursesList(),
-                SizedBox(height: 16),
-                _UserFiles(),
-              ]),
-            ),
-          ),
-        ],
+    return FancyScaffold(
+      appBar: FancyAppBar(title: Text('Files')),
+      sliver: SliverList(
+        delegate: SliverChildListDelegate([
+          _CoursesList(),
+          SizedBox(height: 16),
+          _UserFiles(),
+        ]),
       ),
     );
   }
