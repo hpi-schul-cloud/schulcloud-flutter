@@ -12,8 +12,9 @@ class Assignment implements Entity, Comparable {
     @required this.id,
     @required this.name,
     @required this.schoolId,
-    @required this.dueDate,
+    @required this.createdAt,
     @required this.availableDate,
+    @required this.dueDate,
     @required this.teacherId,
     this.description,
     this.courseId,
@@ -22,8 +23,9 @@ class Assignment implements Entity, Comparable {
   })  : assert(id != null),
         assert(name != null),
         assert(schoolId != null),
-        assert(dueDate != null),
+        assert(createdAt != null),
         assert(availableDate != null),
+        assert(dueDate != null),
         assert(teacherId != null);
 
   Assignment.fromJson(Map<String, dynamic> data)
@@ -33,6 +35,7 @@ class Assignment implements Entity, Comparable {
           teacherId: data['teacherId'],
           name: data['name'],
           description: data['description'],
+          createdAt: DateTime.parse(data['createdAt']),
           availableDate:
               DateTime.tryParse(data['availableDate']) ?? DateTime.now(),
           dueDate: DateTime.parse(data['dueDate']),
@@ -51,11 +54,14 @@ class Assignment implements Entity, Comparable {
   @HiveField(2)
   final String schoolId;
 
-  @HiveField(3)
-  final DateTime dueDate;
+  @HiveField(12)
+  final DateTime createdAt;
 
   @HiveField(4)
   final DateTime availableDate;
+
+  @HiveField(3)
+  final DateTime dueDate;
 
   @HiveField(5)
   final String description;
