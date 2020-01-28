@@ -16,7 +16,7 @@ class NewsScreen extends StatelessWidget {
         errorBannerBuilder: (_, error, st) => ErrorBanner(error, st),
         errorScreenBuilder: (_, error, st) => ErrorScreen(error, st),
         builder: (_, articles) {
-          articles.sort((a1, a2) => a2.published.compareTo(a1.published));
+          articles.sort((a1, a2) => a2.publishedAt.compareTo(a1.publishedAt));
 
           return CustomScrollView(
             slivers: <Widget>[

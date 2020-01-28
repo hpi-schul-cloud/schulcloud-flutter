@@ -33,23 +33,19 @@ class NewsDashboardCard extends StatelessWidget {
                 ListTile(
                   title: Text(article.title),
                   subtitle: Html(data: limitString(article.content, 100)),
-                  trailing: Text(dateTimeToString(article.published)),
-                  onTap: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => ArticleScreen(article: article),
-                    ),
-                  ),
+                  trailing: Text(article.publishedAt.shortDateString),
+                  onTap: () => context.navigator.push(MaterialPageRoute(
+                    builder: (context) => ArticleScreen(article: article),
+                  )),
                 ),
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 16),
                 child: Align(
                   alignment: Alignment.bottomRight,
                   child: OutlineButton(
-                    onPressed: () {
-                      context.navigator.push(MaterialPageRoute(
-                          builder: (context) => NewsScreen()));
-                    },
+                    onPressed: () => context.navigator.push(MaterialPageRoute(
+                      builder: (context) => NewsScreen(),
+                    )),
                     child: Text(s.news_dashboardCard_all),
                   ),
                 ),

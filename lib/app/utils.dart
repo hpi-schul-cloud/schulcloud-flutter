@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_cached/flutter_cached.dart';
 import 'package:get_it/get_it.dart';
 import 'package:http/http.dart';
-import 'package:intl/intl.dart';
 import 'package:meta/meta.dart';
 import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/generated/l10n.dart';
@@ -46,13 +45,6 @@ String formatFileSize(int bytes) {
 
   return '${(bytes / power).toStringAsFixed(index == 0 ? 0 : 1)} ${units[index]}';
 }
-
-/// Converts a [DateTime] to a [String].
-String dateTimeToString(DateTime dt) => DateFormat.MMMd().format(dt);
-
-/// Converts a [String] to a [DateTime].
-DateTime parseDateTime(String string) =>
-    DateTime.parse(string.replaceAll('T', ' ').replaceAll('Z', ''));
 
 /// Removes html tags from a string.
 String removeHtmlTags(String text) {
@@ -95,6 +87,11 @@ class Id<T> {
   final String id;
 
   Id<S> cast<S>() => Id<S>(id);
+
+  @override
+  bool operator ==(other) => other is Id<T> && other.id == id;
+  @override
+  int get hashCode => id.hashCode;
 
   @override
   String toString() => id;

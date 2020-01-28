@@ -33,8 +33,8 @@ class Event implements Entity {
           title: data['title'],
           description: data['description'],
           location: data['location'],
-          start: _parseServerTime(data['start']),
-          end: _parseServerTime(data['end']),
+          start: (data['start'] as int).parseApiInstant(),
+          end: (data['end'] as int).parseApiInstant(),
           allDay: data['allDay'],
           recurrence: _parseRecurrence(data),
         );
@@ -68,10 +68,6 @@ class Event implements Entity {
 
   @HiveField(7)
   final List<RecurrenceRule> recurrence;
-
-  static Instant _parseServerTime(int milliseconds) {
-    return Instant.fromEpochMilliseconds(milliseconds).serverTimeToActual();
-  }
 
   static List<RecurrenceRule> _parseRecurrence(dynamic json) {
     // I'm sorry this method has to be written, but the Calendar API is … not
@@ -137,24 +133,5 @@ class Event implements Entity {
       allDay: allDay,
       recurrence: recurrence,
     );
-  }
-}
-
-extension _ApiCorrection on Instant {
-  // analyzer doesn't notice we use this field in serverTimeToActual()
-  // ignore: unused_field
-  static final _serverDateTimeZone = DateTimeZoneProviders.defaultProvider
-      .getDateTimeZoneSync('Europe/Berlin');
-
-  Instant serverTimeToActual() {
-    // The Calendar API uses tricky obfuscation: Times are said to be in UTC,
-    // whereas they actually use the local time zone.
-    // Hence: We interpret the returned time as UTC time, use the calculated
-    // date and time in calendar terms, interpret them in our local time zone,
-    // and finally store the Instant representing that point in time.
-    return inUtc()
-        .localDateTime
-        .inZoneLeniently(_serverDateTimeZone)
-        .toInstant();
   }
 }
