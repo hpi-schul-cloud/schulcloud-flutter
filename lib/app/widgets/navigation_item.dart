@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:schulcloud/app/app.dart';
 
 class NavigationItem extends StatelessWidget {
   const NavigationItem({
@@ -18,11 +19,9 @@ class NavigationItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+    final theme = context.theme;
     final color = isActive
-        ? (theme.brightness == Brightness.dark
-            ? theme.accentColor
-            : theme.primaryColor)
+        ? (theme.isDark ? theme.accentColor : theme.primaryColor)
         : theme.textTheme.caption.color;
 
     return Padding(
