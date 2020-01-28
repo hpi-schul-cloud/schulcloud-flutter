@@ -17,12 +17,15 @@ class FancyCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final borderRadius = BorderRadius.circular(16);
+
     return Card(
       elevation: 1,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      shape: RoundedRectangleBorder(borderRadius: borderRadius),
       margin: EdgeInsets.zero,
       child: InkWell(
         onTap: onTap,
+        borderRadius: borderRadius,
         child: _buildContent(context),
       ),
     );
@@ -36,7 +39,11 @@ class FancyCard extends StatelessWidget {
         if (title != null)
           Padding(
             padding: EdgeInsets.fromLTRB(16, 0, 16, 16),
-            child: Text(title.toUpperCase(), style: context.textTheme.overline),
+            child: Text(
+              title.toUpperCase(),
+              style: context.textTheme.overline
+                  .copyWith(color: context.theme.mediumEmphasisColor),
+            ),
           ),
         Padding(
           padding: omitHorizontalPadding

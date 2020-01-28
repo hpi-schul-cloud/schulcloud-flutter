@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:pedantic/pedantic.dart';
 import 'package:schulcloud/app/app.dart';
-import 'package:schulcloud/l10n/l10n.dart';
 
 import '../bloc.dart';
 import 'input.dart';

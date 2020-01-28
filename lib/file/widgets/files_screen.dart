@@ -3,7 +3,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/course/course.dart';
-import 'package:schulcloud/l10n/l10n.dart';
 
 import '../bloc.dart';
 import 'file_browser.dart';
@@ -13,7 +12,7 @@ class FilesScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FancyScaffold(
-      appBar: FancyAppBar(title: Text('Files')),
+      appBar: FancyAppBar(title: Text(context.s.file)),
       sliver: SliverList(
         delegate: SliverChildListDelegate([
           _CoursesList(),

@@ -20,7 +20,7 @@ class NewsScreen extends StatelessWidget {
 
           return CustomScrollView(
             slivers: <Widget>[
-              FancyAppBar(title: Text('News')),
+              FancyAppBar(title: Text(context.s.news)),
               SliverToBoxAdapter(child: SizedBox(height: 8)),
               SliverList(
                 delegate: SliverChildBuilderDelegate(

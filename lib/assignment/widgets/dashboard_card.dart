@@ -4,7 +4,6 @@ import 'package:flutter_cached/flutter_cached.dart';
 import 'package:schulcloud/course/course.dart';
 import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/course/data.dart';
-import 'package:schulcloud/l10n/l10n.dart';
 
 import '../assignment.dart';
 import '../bloc.dart';
@@ -14,6 +13,7 @@ class AssignmentDashboardCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return FancyCard(
       title: context.s.assignment_dashboardCard,
+      omitHorizontalPadding: true,
       child: CachedRawBuilder<List<Assignment>>(
         controller: services.get<AssignmentBloc>().fetchAssignments(),
         builder: (context, update) {

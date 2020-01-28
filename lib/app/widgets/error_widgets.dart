@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:schulcloud/app/app.dart';
-import 'package:schulcloud/l10n/l10n.dart';
 import 'package:schulcloud/login/login.dart';
 
 import '../services/network.dart';

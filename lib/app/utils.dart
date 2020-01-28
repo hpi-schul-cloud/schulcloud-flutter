@@ -8,6 +8,7 @@ import 'package:http/http.dart';
 import 'package:intl/intl.dart';
 import 'package:meta/meta.dart';
 import 'package:schulcloud/app/app.dart';
+import 'package:schulcloud/generated/l10n.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'app_config.dart';
@@ -19,6 +20,7 @@ extension FancyContext on BuildContext {
   NavigatorState get navigator => Navigator.of(this);
   NavigatorState get rootNavigator => Navigator.of(this, rootNavigator: true);
   AppConfigData get appConfig => AppConfig.of(this);
+  S get s => S.of(this);
 }
 
 final services = GetIt.instance;

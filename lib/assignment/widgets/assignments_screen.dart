@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/course/course.dart';
-import 'package:schulcloud/l10n/l10n.dart';
 
 import '../bloc.dart';
 import '../data.dart';
@@ -28,9 +27,7 @@ class AssignmentsScreen extends StatelessWidget {
             ..sort((a, b) => b.compareTo(a));
           return CustomScrollView(
             slivers: <Widget>[
-              FancyAppBar(
-                title: Text('Assignments'),
-              ),
+              FancyAppBar(title: Text(context.s.assignment)),
               SliverList(
                 delegate: SliverChildListDelegate([
                   for (final date in dates) ...[
