@@ -2,6 +2,7 @@ import 'package:hive/hive.dart';
 import 'package:meta/meta.dart';
 import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/course/course.dart';
+import 'package:time_machine/time_machine.dart';
 
 part 'data.g.dart';
 
@@ -12,8 +13,8 @@ class Assignment implements Entity, Comparable {
     @required this.id,
     @required this.name,
     @required this.schoolId,
+    @required this.availableAt,
     @required this.dueDate,
-    @required this.availableDate,
     @required this.teacherId,
     this.description,
     this.courseId,
@@ -23,7 +24,7 @@ class Assignment implements Entity, Comparable {
         assert(name != null),
         assert(schoolId != null),
         assert(dueDate != null),
-        assert(availableDate != null),
+        assert(availableAt != null),
         assert(teacherId != null);
 
   Assignment.fromJson(Map<String, dynamic> data)
@@ -33,13 +34,14 @@ class Assignment implements Entity, Comparable {
           teacherId: data['teacherId'],
           name: data['name'],
           description: data['description'],
-          availableDate:
-              DateTime.tryParse(data['availableDate']) ?? DateTime.now(),
-          dueDate: DateTime.parse(data['dueDate']),
+          availableAt: (data['availableDate'] as String).parseApiInstant(),
+          dueDate: (data['dueDate'] as String).parseApiInstant(),
           courseId: Id<Course>(data['courseId']['_id']),
           lessonId: Id(data['lessonId'] ?? ''),
           isPrivate: data['private'],
         );
+
+  // used before: 3, 4
 
   @override
   @HiveField(0)
@@ -51,11 +53,11 @@ class Assignment implements Entity, Comparable {
   @HiveField(2)
   final String schoolId;
 
-  @HiveField(3)
-  final DateTime dueDate;
+  @HiveField(13)
+  final Instant availableAt;
 
-  @HiveField(4)
-  final DateTime availableDate;
+  @HiveField(12)
+  final Instant dueDate;
 
   @HiveField(5)
   final String description;

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_cached/flutter_cached.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:schulcloud/app/theming/utils.dart';
 import 'package:schulcloud/generated/generated.dart';
 import 'package:schulcloud/login/login.dart';
 import 'package:schulcloud/settings/settings.dart';
@@ -63,7 +65,8 @@ class Menu extends StatelessWidget {
             children: [
               SizedBox(height: 8),
               CachedRawBuilder<User>(
-                controller: UserFetcherService.of(context).fetchCurrentUser(),
+                controller:
+                    services.get<UserFetcherService>().fetchCurrentUser(),
                 builder: (context, update) {
                   return Text(
                     update.data?.name ?? context.s.app_navigation_userDataEmpty,
@@ -72,7 +75,7 @@ class Menu extends StatelessWidget {
                 },
               ),
               StreamBuilder<String>(
-                stream: StorageService.of(context).email,
+                stream: services.get<StorageService>().email,
                 initialData: context.s.app_navigation_userDataEmpty,
                 builder: (context, snapshot) {
                   return Text(snapshot.data, style: TextStyle(fontSize: 14));
@@ -87,7 +90,10 @@ class Menu extends StatelessWidget {
           onPressed: () => _openSettings(context),
         ),
         IconButton(
-          icon: Icon(Icons.airline_seat_legroom_reduced),
+          icon: SvgPicture.asset(
+            'assets/icon_logout.svg',
+            color: highEmphasisOnBrightness(Theme.of(context).brightness),
+          ),
           onPressed: () => logOut(context),
         ),
         SizedBox(width: 8),

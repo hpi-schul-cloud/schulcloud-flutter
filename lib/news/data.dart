@@ -1,6 +1,7 @@
 import 'package:hive/hive.dart';
 import 'package:meta/meta.dart';
 import 'package:schulcloud/app/app.dart';
+import 'package:time_machine/time_machine.dart';
 
 part 'data.g.dart';
 
@@ -11,13 +12,13 @@ class Article implements Entity {
     @required this.id,
     @required this.title,
     @required this.author,
-    @required this.published,
+    @required this.publishedAt,
     this.imageUrl,
     @required this.content,
   })  : assert(id != null),
         assert(title != null),
         assert(author != null),
-        assert(published != null),
+        assert(publishedAt != null),
         assert(content != null);
 
   Article.fromJson(Map<String, dynamic> data)
@@ -25,13 +26,12 @@ class Article implements Entity {
           id: Id<Article>(data['_id']),
           title: data['title'],
           author: Id<User>(data['creatorId']),
-          published: DateTime.parse(data['displayAt']),
+          publishedAt: (data['displayAt'] as String).parseApiInstant(),
           imageUrl: null,
           content: removeHtmlTags(data['content']),
         );
 
-  // used before:
-  // 5 for [String section]
+  // used before: 4, 5
 
   @override
   @HiveField(0)
@@ -43,8 +43,8 @@ class Article implements Entity {
   @HiveField(2)
   final Id<User> author;
 
-  @HiveField(4)
-  final DateTime published;
+  @HiveField(8)
+  final Instant publishedAt;
 
   @HiveField(6)
   final String imageUrl;

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_cached/flutter_cached.dart';
 import 'package:provider/provider.dart';
+import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/app/services/user_fetcher.dart';
 
 import '../data.dart';
@@ -33,7 +34,7 @@ class ArticleScreen extends StatelessWidget {
                 ArticleTheme(darkColor: Colors.purple, padding: padding),
             child: ListView(
               padding: MediaQuery.of(context).padding +
-                  EdgeInsets.symmetric(horizontal: margin) +
+                  EdgeInsets.symmetric(horizontal: margin.toDouble()) +
                   EdgeInsets.symmetric(vertical: 16),
               children: <Widget>[
                 ArticleView(article: article),
@@ -74,7 +75,7 @@ class _ArticleViewState extends State<ArticleView> {
         Section(child: Text('Section')),
         HeadlineBox(
           title: Text(widget.article.title),
-          smallText: Text(widget.article.published.toString()),
+          smallText: Text(widget.article.publishedAt.longDateTimeString),
         ),
         Transform.translate(
           offset: Offset(padding, -12),
@@ -103,7 +104,7 @@ class _ArticleViewState extends State<ArticleView> {
           offset: Offset(0, -48),
           child: HeadlineBox(
             title: Text(widget.article.title),
-            smallText: Text(widget.article.published.toString()),
+            smallText: Text(widget.article.publishedAt.longDateTimeString),
           ),
         ),
         Transform.translate(
@@ -120,7 +121,8 @@ class _ArticleViewState extends State<ArticleView> {
 
   Widget _buildAuthorView(BuildContext context) {
     return CachedRawBuilder(
-      controller: UserFetcherService.of(context)
+      controller: services
+          .get<UserFetcherService>()
           .fetchUser(widget.article.author, widget.article.id),
       builder: (_, update) {
         if (!update.hasData) {

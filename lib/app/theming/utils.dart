@@ -23,3 +23,6 @@ Color mediumEmphasisOn(Color background) {
 Color disabledOn(Color background) {
   return fullOpacityOn(background).withOpacity(0.38);
 }
+Color disabledOnBrightness(Brightness brightness) {
+  return fullOpacityOnBrightness(brightness).withOpacity(0.38);
+}

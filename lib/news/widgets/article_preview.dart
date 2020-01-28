@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_cached/flutter_cached.dart';
-import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/app/theming/utils.dart';
@@ -63,7 +62,8 @@ class ArticlePreview extends StatelessWidget {
                 _buildImage(),
                 SizedBox(height: 8),
                 CachedRawBuilder<User>(
-                  controller: UserFetcherService.of(context)
+                  controller: services
+                      .get<UserFetcherService>()
                       .fetchUser(article.author, article.id),
                   builder: (_, update) {
                     final author = update.data;
@@ -76,8 +76,7 @@ class ArticlePreview extends StatelessWidget {
                       _isPlaceholder
                           ? null
                           : context.s.news_articlePreview_subtitle(
-                              DateFormat.yMd().format(article.published),
-                              authorName),
+                              article.publishedAt.shortDateString, authorName),
                       style: TextStyle(
                         color: mediumEmphasisOn(theme.cardColor),
                       ),

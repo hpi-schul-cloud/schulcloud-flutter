@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:pedantic/pedantic.dart';
-import 'package:provider/provider.dart';
 import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/generated/generated.dart';
 
@@ -30,7 +29,9 @@ Future<bool> logOut(BuildContext context) async {
   if (confirmed) {
     // Actually log out.
 
-    unawaited(Provider.of<StorageService>(context, listen: false).clear());
+    // This should probably be awaited, but right now awaiting it
+    // leads to the issue that logging out becomes impossible.
+    unawaited(services.get<StorageService>().clear());
 
     final navigator = Navigator.of(context, rootNavigator: true)
       ..popUntil((route) => route.isFirst);

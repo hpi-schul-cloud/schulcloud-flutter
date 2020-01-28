@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_cached/flutter_cached.dart';
-import 'package:provider/provider.dart';
 import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/calendar/bloc.dart';
 import 'package:schulcloud/calendar/data.dart';
@@ -13,45 +12,35 @@ class CalendarDashboardCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final s = context.s;
 
-    return Provider.value(
-      value: Bloc(
-        storage: Provider.of<StorageService>(context),
-        network: Provider.of<NetworkService>(context),
-        userFetcher: Provider.of<UserFetcherService>(context),
-      ),
-      child: DashboardCard(
-        title: s.calendar_dashboardCard,
-        child: Consumer<Bloc>(
-          builder: (context, bloc, _) =>
-              StreamBuilder<CacheUpdate<List<Event>>>(
-            stream: bloc.fetchTodaysEvents(),
-            initialData: CacheUpdate(isFetching: false),
-            builder: (context, snapshot) {
-              assert(snapshot.hasData);
+    return DashboardCard(
+      title: s.calendar_dashboardCard,
+      child: StreamBuilder<CacheUpdate<List<Event>>>(
+        stream: services.get<CalendarBloc>().fetchTodaysEvents(),
+        initialData: CacheUpdate(isFetching: false),
+        builder: (context, snapshot) {
+          assert(snapshot.hasData);
 
-              final update = snapshot.data;
-              if (!update.hasData) {
-                return Center(
-                    child: update.hasError
-                        ? Text(update.error.toString())
-                        : CircularProgressIndicator());
-              }
+          final update = snapshot.data;
+          if (!update.hasData) {
+            return Center(
+                child: update.hasError
+                    ? Text(update.error.toString())
+                    : CircularProgressIndicator());
+          }
 
-              final now = Instant.now();
-              final events = update.data.where((e) => e.end > now);
-              if (events.isEmpty) {
-                return Text(
-                  s.calendar_dashboardCard_empty,
-                  textAlign: TextAlign.center,
-                );
-              }
+          final now = Instant.now();
+          final events = update.data.where((e) => e.end > now);
+          if (events.isEmpty) {
+            return Text(
+              s.calendar_dashboardCard_empty,
+              textAlign: TextAlign.center,
+            );
+          }
 
-              return Column(
-                children: events.map((e) => _EventPreview(event: e)).toList(),
-              );
-            },
-          ),
-        ),
+          return Column(
+            children: events.map((e) => _EventPreview(event: e)).toList(),
+          );
+        },
       ),
     );
   }

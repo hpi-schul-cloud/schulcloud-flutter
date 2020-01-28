@@ -22,9 +22,10 @@ dependencies:
   flutter_native_timezone: ^1.0.4
   flutter_svg: ^0.14.2
   flutter_villains: ^1.2.0
+  get_it: ^4.0.0-beta.3
   grec_minimal: ^0.0.3
   hive: ^1.2.0
-  hive_flutter: ^0.3.0
+  hive_flutter: ^0.3.0+1
   http: ^0.12.0
   intl: ^0.16.0
   list_diff: ^1.1.3
@@ -61,6 +62,7 @@ flutter:
     - assets/empty_states/default.svg
     - assets/empty_states/broken_pen.svg
     - assets/empty_states/files.flr
+    - assets/icon_logout.svg
     - assets/file_thumbnails/
     - assets/theme/sc/logo/logo_with_text.svg
     - assets/theme/brb/logo/logo_with_text.svg

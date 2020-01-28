@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/generated/generated.dart';
 
-import '../bloc.dart';
 import 'form.dart';
 import 'slanted_section.dart';
 
@@ -11,16 +8,12 @@ class LoginScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: ProxyProvider2<StorageService, NetworkService, Bloc>(
-        update: (_, authStorage, network, __) =>
-            Bloc(storage: authStorage, network: network),
-        child: CustomScrollView(
-          slivers: <Widget>[
-            SliverList(
-              delegate: SliverChildListDelegate(_buildContent(context)),
-            ),
-          ],
-        ),
+      body: CustomScrollView(
+        slivers: <Widget>[
+          SliverList(
+            delegate: SliverChildListDelegate(_buildContent(context)),
+          ),
+        ],
       ),
     );
   }
