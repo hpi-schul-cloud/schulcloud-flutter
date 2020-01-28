@@ -1,10 +1,12 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cached/flutter_cached.dart';
+import 'package:schulcloud/app/theming/utils.dart';
 import 'package:schulcloud/course/course.dart';
 import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/course/data.dart';
 import 'package:schulcloud/l10n/l10n.dart';
+import 'package:time_machine/time_machine.dart';
 
 import '../assignment.dart';
 import '../bloc.dart';
@@ -26,12 +28,15 @@ class AssignmentDashboardCard extends StatelessWidget {
           }
 
           // Only show open assignments that are due in the next week
-          var openAssignments = update.data.where((h) =>
-              h.dueDate.isAfter(DateTime.now()) &&
-              h.dueDate.isBefore(DateTime.now().add(Duration(days: 7))));
+          final start = LocalDate.today();
+          final end = start.addDays(7);
+          final openAssignments = update.data.where((h) {
+            final dueAt = h.dueAt.inLocalZone().localDateTime.calendarDate;
+            return start <= dueAt && dueAt <= end;
+          });
 
           // Assignments are shown grouped by subject
-          var subjects = groupBy<Assignment, Id<Course>>(
+          final subjects = groupBy<Assignment, Id<Course>>(
               openAssignments, (h) => h.courseId);
 
           return Column(
@@ -51,39 +56,10 @@ class AssignmentDashboardCard extends StatelessWidget {
                   )
                 ],
               ),
-              ...ListTile.divideTiles(
-                context: context,
-                tiles: subjects.keys.map(
-                  (c) => CachedRawBuilder<Course>(
-                    controller: services.get<CourseBloc>().fetchCourse(c),
-                    builder: (context, update) {
-                      if (!update.hasData) {
-                        return ListTile(
-                          title: Text(update.hasError
-                              ? update.error.toString()
-                              : context.s.general_loading),
-                        );
-                      }
-
-                      var course = update.data;
-
-                      return ListTile(
-                        leading: Container(
-                          width: 16,
-                          height: 16,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: course.color,
-                          ),
-                        ),
-                        title: Text(course.name),
-                        trailing: Text(
-                          subjects[c].length.toString(),
-                          style: context.textTheme.headline,
-                        ),
-                      );
-                    },
-                  ),
+              ...subjects.keys.map(
+                (c) => _CourseAssignmentCountTile(
+                  courseId: c,
+                  assignmentCount: subjects[c].length,
                 ),
               ),
               Padding(
@@ -103,6 +79,54 @@ class AssignmentDashboardCard extends StatelessWidget {
           );
         },
       ),
+    );
+  }
+}
+
+class _CourseAssignmentCountTile extends StatelessWidget {
+  const _CourseAssignmentCountTile({
+    Key key,
+    @required this.courseId,
+    @required this.assignmentCount,
+  })  : assert(courseId != null),
+        assert(assignmentCount != null),
+        super(key: key);
+
+  final Id<Course> courseId;
+  final int assignmentCount;
+
+  @override
+  Widget build(BuildContext context) {
+    return CachedRawBuilder<Course>(
+      controller: services.get<CourseBloc>().fetchCourse(courseId),
+      builder: (context, update) {
+        if (!update.hasData) {
+          return ListTile(
+            title: Text(update.hasError
+                ? update.error.toString()
+                : context.s.general_loading),
+          );
+        }
+
+        var course = update.data;
+        return ListTile(
+          leading: AnimatedContainer(
+            duration: Duration(milliseconds: 200),
+            width: 16,
+            height: 16,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: course?.color ??
+                  disabledOnBrightness(Theme.of(context).brightness),
+            ),
+          ),
+          title: TextOrPlaceholder(course?.name),
+          trailing: Text(
+            assignmentCount.toString(),
+            style: Theme.of(context).textTheme.headline,
+          ),
+        );
+      },
     );
   }
 }

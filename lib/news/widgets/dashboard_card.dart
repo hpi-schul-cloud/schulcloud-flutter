@@ -34,7 +34,7 @@ class NewsDashboardCard extends StatelessWidget {
                 ListTile(
                   title: Text(article.title),
                   subtitle: Html(data: limitString(article.content, 100)),
-                  trailing: Text(dateTimeToString(article.published)),
+                  trailing: Text(article.publishedAt.shortDateString),
                   onTap: () => Navigator.push(
                     context,
                     MaterialPageRoute(

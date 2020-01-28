@@ -2,6 +2,7 @@ import 'package:hive/hive.dart';
 import 'package:meta/meta.dart';
 import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/course/course.dart';
+import 'package:time_machine/time_machine.dart';
 
 part 'data.g.dart';
 
@@ -13,8 +14,8 @@ class Assignment implements Entity, Comparable {
     @required this.name,
     @required this.schoolId,
     @required this.createdAt,
-    @required this.availableDate,
-    @required this.dueDate,
+    @required this.availableAt,
+    @required this.dueAt,
     @required this.teacherId,
     this.description,
     this.courseId,
@@ -24,8 +25,8 @@ class Assignment implements Entity, Comparable {
         assert(name != null),
         assert(schoolId != null),
         assert(createdAt != null),
-        assert(availableDate != null),
-        assert(dueDate != null),
+        assert(availableAt != null),
+        assert(dueAt != null),
         assert(teacherId != null);
 
   Assignment.fromJson(Map<String, dynamic> data)
@@ -35,14 +36,15 @@ class Assignment implements Entity, Comparable {
           teacherId: data['teacherId'],
           name: data['name'],
           description: data['description'],
-          createdAt: DateTime.parse(data['createdAt']),
-          availableDate:
-              DateTime.tryParse(data['availableDate']) ?? DateTime.now(),
-          dueDate: DateTime.parse(data['dueDate']),
+          createdAt: (data['createdAt'] as String).parseApiInstant(),
+          availableAt: (data['availableDate'] as String).parseApiInstant(),
+          dueAt: (data['dueDate'] as String).parseApiInstant(),
           courseId: Id<Course>(data['courseId']['_id']),
           lessonId: Id(data['lessonId'] ?? ''),
           isPrivate: data['private'],
         );
+
+  // used before: 3, 4
 
   @override
   @HiveField(0)
@@ -54,14 +56,14 @@ class Assignment implements Entity, Comparable {
   @HiveField(2)
   final String schoolId;
 
+  @HiveField(14)
+  final Instant createdAt;
+
+  @HiveField(13)
+  final Instant availableAt;
+
   @HiveField(12)
-  final DateTime createdAt;
-
-  @HiveField(4)
-  final DateTime availableDate;
-
-  @HiveField(3)
-  final DateTime dueDate;
+  final Instant dueAt;
 
   @HiveField(5)
   final String description;
@@ -80,7 +82,7 @@ class Assignment implements Entity, Comparable {
 
   @override
   int compareTo(Object other) {
-    return dueDate.compareTo((other as Assignment).dueDate);
+    return dueAt.compareTo((other as Assignment).dueAt);
   }
 }
 

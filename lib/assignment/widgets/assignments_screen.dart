@@ -4,6 +4,7 @@ import 'package:flutter_html/flutter_html.dart';
 import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/course/course.dart';
 import 'package:schulcloud/l10n/l10n.dart';
+import 'package:time_machine/time_machine.dart';
 
 import '../bloc.dart';
 import '../data.dart';
@@ -22,13 +23,13 @@ class _AssignmentsScreenState extends State<AssignmentsScreen> {
         title: 'Creation date',
         comparator: (a, b) => a.createdAt.compareTo(b.createdAt),
       ),
-      _AssignmentFields.availableDate: SortOption<Assignment>(
+      _AssignmentFields.availableAt: SortOption<Assignment>(
         title: 'Available date',
-        comparator: (a, b) => a.availableDate.compareTo(b.availableDate),
+        comparator: (a, b) => a.availableAt.compareTo(b.availableAt),
       ),
-      _AssignmentFields.dueDate: SortOption<Assignment>(
+      _AssignmentFields.dueAt: SortOption<Assignment>(
         title: 'Due date',
-        comparator: (a, b) => a.dueDate.compareTo(b.dueDate),
+        comparator: (a, b) => a.dueAt.compareTo(b.dueAt),
       ),
     },
   );
@@ -40,7 +41,7 @@ class _AssignmentsScreenState extends State<AssignmentsScreen> {
     super.initState();
     _sortFilter = SortFilterSelection(
       config: _sortFilterConfig,
-      sortOptionKey: _AssignmentFields.dueDate,
+      sortOptionKey: _AssignmentFields.dueAt,
     );
   }
 
@@ -129,16 +130,16 @@ typedef SortFilterSetter = void Function(SortFilterSelection selection);
 
 enum _AssignmentFields {
   createdAt,
-  availableDate,
-  dueDate,
+  availableAt,
+  dueAt,
 }
 
 extension AssignmentFieldTitle on _AssignmentFields {
   String get title {
     return {
       _AssignmentFields.createdAt: 'Creation date',
-      _AssignmentFields.availableDate: 'Available date',
-      _AssignmentFields.dueDate: 'Due date',
+      _AssignmentFields.availableAt: 'Available date',
+      _AssignmentFields.dueAt: 'Due date',
     }[this];
   }
 }
@@ -201,7 +202,7 @@ class AssignmentCard extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              if (DateTime.now().isAfter(assignment.dueDate))
+              if (assignment.dueAt.isBefore(Instant.now()))
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: <Widget>[
@@ -225,6 +226,7 @@ class AssignmentCard extends StatelessWidget {
                   if (!update.hasData) {
                     return Container();
                   }
+
                   final course = update.data;
                   return ActionChip(
                     backgroundColor: course.color,

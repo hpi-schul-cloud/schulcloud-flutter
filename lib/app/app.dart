@@ -1,5 +1,6 @@
 export 'app_config.dart' show AppConfig, AppConfigData;
 export 'data.dart';
+export 'datetime_utils.dart';
 export 'hive.dart';
 export 'services/network.dart';
 export 'services/storage.dart';
