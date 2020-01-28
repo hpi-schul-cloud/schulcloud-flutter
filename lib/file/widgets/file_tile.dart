@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:schulcloud/app/app.dart';
+import 'package:schulcloud/generated/generated.dart';
 
 import '../data.dart';
 import 'file_thumbnail.dart';
@@ -14,6 +15,13 @@ class FileTile extends StatelessWidget {
   final void Function(File file) onOpen;
 
   void _showDetails(BuildContext context) {
+    final s = context.s;
+    final subtitle = [
+      if (file.isNotDirectory) file.sizeAsString,
+      s.file_fileTile_details_createdAt(file.createdAt.longDateTimeString),
+      s.file_fileTile_details_modifiedAt(file.updatedAt.longDateTimeString),
+    ].join('\n');
+
     showModalBottomSheet(
       context: context,
       useRootNavigator: true,
@@ -23,19 +31,15 @@ class FileTile extends StatelessWidget {
           SizedBox(height: 16),
           ListTile(
             title: Text(file.name),
-            subtitle: Text(
-              '${file.isDirectory ? '' : '${file.sizeAsString}\n'}'
-              'created at ${dateTimeToString(file.createdAt)}\n'
-              'last modified at ${dateTimeToString(file.updatedAt)}',
-            ),
+            subtitle: Text(subtitle),
             leading: FileThumbnail(file: file),
           ),
           ListTile(
-            title: Text('Open'),
+            title: Text(s.file_fileTile_details_open),
             onTap: () => onOpen(file),
           ),
           ListTile(
-            title: Text('Make available offline'),
+            title: Text(s.file_fileTile_details_offline),
             trailing: Switch.adaptive(
               value: false,
               onChanged: (_) {},
@@ -48,11 +52,10 @@ class FileTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final size = file.isDirectory ? null : file.sizeAsString;
-    final updatedAt =
-        file.updatedAt == null ? null : dateTimeToString(file.updatedAt);
-    final delimeter = size != null && updatedAt != null ? ', ' : '';
-    final subtitle = '${size ?? ''}$delimeter${updatedAt ?? ''}';
+    final subtitle = [
+      if (file.isNotDirectory) file.sizeAsString,
+      if (file.updatedAt != null) file.updatedAt.shortDateTimeString,
+    ].join(', ');
 
     return ListTile(
       title: Text(file.name),

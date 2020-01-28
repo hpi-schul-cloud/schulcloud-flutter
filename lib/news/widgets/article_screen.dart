@@ -75,7 +75,7 @@ class _ArticleViewState extends State<ArticleView> {
         Section(child: Text('Section')),
         HeadlineBox(
           title: Text(widget.article.title),
-          smallText: Text(widget.article.published.toString()),
+          smallText: Text(widget.article.publishedAt.longDateTimeString),
         ),
         Transform.translate(
           offset: Offset(padding, -12),
@@ -104,7 +104,7 @@ class _ArticleViewState extends State<ArticleView> {
           offset: Offset(0, -48),
           child: HeadlineBox(
             title: Text(widget.article.title),
-            smallText: Text(widget.article.published.toString()),
+            smallText: Text(widget.article.publishedAt.longDateTimeString),
           ),
         ),
         Transform.translate(

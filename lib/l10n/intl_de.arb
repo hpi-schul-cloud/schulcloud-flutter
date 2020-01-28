@@ -28,6 +28,21 @@
   "@app_errorScreen_unknown_showStackTrace": {
     "type": "text"
   },
+  "app_logOut_confirm": "Abmelden",
+  "@app_logOut_confirm": {
+    "type": "text",
+    "description": ""
+  },
+  "app_logOut_content": "Du brauchst deine Anmeldedaten, um dich wieder anzumelden.",
+  "@app_logOut_content": {
+    "type": "text",
+    "description": ""
+  },
+  "app_logOut_title": "Abmelden?",
+  "@app_logOut_title": {
+    "type": "text",
+    "description": ""
+  },
   "app_navigation_assignments": "Hausaufgaben",
   "@app_navigation_assignments": {
     "type": "text"
@@ -138,6 +153,31 @@
   "file_files_my_description": "Hier findest du alle deine persönlichen Dateien.\nAuf diese Dateien hast nur du Zugriff, du kannst sie aber auch mit anderen Nutzern teilen.",
   "@file_files_my_description": {
     "type": "text"
+  },
+  "file_fileTile_details_createdAt": "Erstellt: {createdAt}",
+  "@file_fileTile_details_createdAt": {
+    "type": "text",
+    "description": ""
+  },
+  "file_fileTile_details_modifiedAt": "Zuletzt geändert: {modifiedAt}",
+  "@file_fileTile_details_modifiedAt": {
+    "type": "text",
+    "description": ""
+  },
+  "file_fileTile_details_offline": "Offline verfügbar machen",
+  "@file_fileTile_details_offline": {
+    "type": "text",
+    "description": ""
+  },
+  "file_fileTile_details_open": "Öffnen",
+  "@file_fileTile_details_open": {
+    "type": "text",
+    "description": ""
+  },
+  "general_cancel": "Abbrechen",
+  "@general_cancel": {
+    "type": "text",
+    "description": ""
   },
   "general_loading": "Lädt…",
   "@general_loading": {

@@ -5,6 +5,7 @@ import 'package:flutter_html/flutter_html.dart';
 import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/course/course.dart';
 import 'package:schulcloud/generated/generated.dart';
+import 'package:time_machine/time_machine.dart';
 
 import '../bloc.dart';
 import '../data.dart';
@@ -19,18 +20,18 @@ class AssignmentsScreen extends StatelessWidget {
         errorBannerBuilder: (_, error, st) => ErrorBanner(error, st),
         errorScreenBuilder: (_, error, st) => ErrorScreen(error, st),
         builder: (context, assignments) {
-          final assignmentsByDate = groupBy<Assignment, DateTime>(
+          final assignmentsByDueDate = groupBy<Assignment, LocalDate>(
             assignments,
-            (a) => DateTime(a.dueDate.year, a.dueDate.month, a.dueDate.day),
+            (a) => a.dueDate.inLocalZone().localDateTime.calendarDate,
           );
 
-          final dates = assignmentsByDate.keys.toList()
+          final dates = assignmentsByDueDate.keys.toList()
             ..sort((a, b) => b.compareTo(a));
           return ListView(
             children: [
               for (final date in dates) ...[
-                ListTile(title: Text(dateTimeToString(date))),
-                for (final assignment in assignmentsByDate[date])
+                ListTile(title: Text(date.longString)),
+                for (final assignment in assignmentsByDueDate[date])
                   AssignmentCard(assignment: assignment),
               ],
             ],
@@ -71,7 +72,7 @@ class AssignmentCard extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              if (DateTime.now().isAfter(assignment.dueDate))
+              if (assignment.dueDate.isBefore(Instant.now()))
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: <Widget>[
@@ -95,6 +96,7 @@ class AssignmentCard extends StatelessWidget {
                   if (!update.hasData) {
                     return Container();
                   }
+
                   final course = update.data;
                   return ActionChip(
                     backgroundColor: course.color,
