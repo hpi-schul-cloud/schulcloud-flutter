@@ -13,8 +13,8 @@ class Assignment implements Entity, Comparable {
     @required this.id,
     @required this.name,
     @required this.schoolId,
-    @required this.dueDate,
     @required this.availableAt,
+    @required this.dueDate,
     @required this.teacherId,
     this.description,
     this.courseId,
@@ -53,11 +53,11 @@ class Assignment implements Entity, Comparable {
   @HiveField(2)
   final String schoolId;
 
-  @HiveField(12)
-  final Instant dueDate;
-
   @HiveField(13)
   final Instant availableAt;
+
+  @HiveField(12)
+  final Instant dueDate;
 
   @HiveField(5)
   final String description;

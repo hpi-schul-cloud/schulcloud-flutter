@@ -1,14 +1,11 @@
 import 'dart:convert';
 import 'dart:ui';
 
-import 'package:flutter_cached/flutter_cached.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_cached/flutter_cached.dart';
 import 'package:get_it/get_it.dart';
 import 'package:http/http.dart';
-import 'package:intl/intl.dart';
 import 'package:meta/meta.dart';
-import 'package:time_machine/time_machine.dart';
-import 'package:time_machine/time_machine_text_patterns.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'services/network.dart';

@@ -25,7 +25,7 @@ extension ApiCorrection on Instant {
       .getDateTimeZoneSync('Europe/Berlin');
 
   Instant serverTimeToActual() {
-    // The Calendar API uses tricky obfuscation: Times are said to be in UTC,
+    // The Schul-Cloud API uses tricky obfuscation: Times are said to be in UTC,
     // whereas they actually use the local time zone.
     // Hence: We interpret the returned time as UTC time, use the calculated
     // date and time in calendar terms, interpret them in our local time zone,
