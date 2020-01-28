@@ -6,12 +6,14 @@ class FancyCard extends StatelessWidget {
     Key key,
     this.onTap,
     this.omitHorizontalPadding = false,
+    this.color,
     this.title,
     @required this.child,
   }) : super(key: key);
 
   final VoidCallback onTap;
   final bool omitHorizontalPadding;
+  final Color color;
   final String title;
   final Widget child;
 
@@ -20,9 +22,16 @@ class FancyCard extends StatelessWidget {
     final borderRadius = BorderRadius.circular(16);
 
     return Card(
-      elevation: 1,
-      shape: RoundedRectangleBorder(borderRadius: borderRadius),
+      elevation: 0,
+      shape: RoundedRectangleBorder(
+        borderRadius: borderRadius,
+        side: color == null
+            ? BorderSide(color: context.theme.dividerColor, width: 1)
+            : BorderSide.none,
+      ),
       margin: EdgeInsets.zero,
+      borderOnForeground: true,
+      color: color,
       child: InkWell(
         onTap: onTap,
         borderRadius: borderRadius,
@@ -42,7 +51,7 @@ class FancyCard extends StatelessWidget {
             child: Text(
               title.toUpperCase(),
               style: context.textTheme.overline
-                  .copyWith(color: context.theme.mediumEmphasisColor),
+                  .copyWith(color: context.theme.disabledColor),
             ),
           ),
         Padding(

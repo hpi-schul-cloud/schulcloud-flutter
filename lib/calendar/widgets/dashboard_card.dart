@@ -13,6 +13,7 @@ class CalendarDashboardCard extends StatelessWidget {
 
     return FancyCard(
       title: s.calendar_dashboardCard,
+      color: context.theme.primaryColor.withOpacity(0.12),
       child: StreamBuilder<CacheUpdate<List<Event>>>(
         stream: services.get<CalendarBloc>().fetchTodaysEvents(),
         initialData: CacheUpdate(isFetching: false),
@@ -69,7 +70,7 @@ class _EventPreview extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.end,
           children: <Widget>[
-            Text(event.location),
+            Text(event.location ?? ''),
             Text(event.localStart.clockTime.toString('t')),
           ],
         ),
@@ -85,6 +86,8 @@ class _EventPreview extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: LinearProgressIndicator(
               value: now.timeSince(event.start).inMicroseconds / durationMicros,
+              valueColor: AlwaysStoppedAnimation(context.theme.primaryColor),
+              backgroundColor: context.theme.primaryColor.withOpacity(0.12),
             ),
           )
         ],

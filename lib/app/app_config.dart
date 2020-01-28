@@ -37,6 +37,7 @@ class AppConfigData {
     return ThemeData(
       primarySwatch: primaryColor,
       accentColor: accentColor,
+      scaffoldBackgroundColor: Colors.white,
       fontFamily: 'PT Sans',
       textTheme: _createTextTheme(Brightness.light),
     );
