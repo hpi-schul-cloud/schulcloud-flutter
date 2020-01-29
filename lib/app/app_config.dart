@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:schulcloud/app/theming/utils.dart';
+import 'package:schulcloud/app/app.dart';
 
 @immutable
 class AppConfigData {
@@ -37,6 +37,7 @@ class AppConfigData {
     return ThemeData(
       primarySwatch: primaryColor,
       accentColor: accentColor,
+      scaffoldBackgroundColor: Colors.white,
       fontFamily: 'PT Sans',
       textTheme: _createTextTheme(Brightness.light),
     );
@@ -60,7 +61,7 @@ class AppConfigData {
     // (loading the undocumented AssetManifest.json and matching available
     // assets with the requested one, factoring in dark mode), this is the
     // easiest workaround.
-    if (Theme.of(context).brightness == Brightness.dark) {
+    if (context.theme.isDark) {
       if (darkAssets.contains(assetName)) {
         final folder = assetName.substring(0, assetName.lastIndexOf('/'));
         final fileName = assetName.substring(assetName.lastIndexOf('/') + 1);
@@ -86,12 +87,16 @@ TextTheme _createTextTheme(Brightness brightness) {
     display1: TextStyle(
       fontWeight: FontWeight.bold,
       fontSize: 28,
-      color: fullOpacityOnBrightness(brightness),
+      color: brightness.contrastColor,
     ),
     display2: TextStyle(
       fontWeight: FontWeight.bold,
       fontSize: 32,
-      color: fullOpacityOnBrightness(brightness),
+      color: brightness.contrastColor,
+    ),
+    overline: TextStyle(
+      fontWeight: FontWeight.bold,
+      fontSize: 12,
     ),
   );
 }

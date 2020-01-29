@@ -1,12 +1,8 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cached/flutter_cached.dart';
-import 'package:schulcloud/app/theming/utils.dart';
-import 'package:schulcloud/course/course.dart';
-import 'package:schulcloud/generated/generated.dart';
 import 'package:schulcloud/app/app.dart';
-import 'package:schulcloud/course/data.dart';
-import 'package:schulcloud/dashboard/dashboard.dart';
+import 'package:schulcloud/course/course.dart';
 import 'package:time_machine/time_machine.dart';
 
 import '../assignment.dart';
@@ -15,8 +11,9 @@ import '../bloc.dart';
 class AssignmentDashboardCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return DashboardCard(
+    return FancyCard(
       title: context.s.assignment_dashboardCard,
+      omitHorizontalPadding: true,
       child: CachedRawBuilder<List<Assignment>>(
         controller: services.get<AssignmentBloc>().fetchAssignments(),
         builder: (context, update) {
@@ -47,13 +44,13 @@ class AssignmentDashboardCard extends StatelessWidget {
                 children: <Widget>[
                   Text(
                     openAssignments.length.toString(),
-                    style: Theme.of(context).textTheme.display3,
+                    style: context.textTheme.display3,
                   ),
                   SizedBox(width: 4),
                   Text(
                     context.s.assignment_dashboardCard_header(
                         openAssignments.length),
-                    style: Theme.of(context).textTheme.subhead,
+                    style: context.textTheme.subhead,
                   )
                 ],
               ),
@@ -69,7 +66,7 @@ class AssignmentDashboardCard extends StatelessWidget {
                   alignment: Alignment.bottomRight,
                   child: OutlineButton(
                     onPressed: () {
-                      Navigator.of(context).push(MaterialPageRoute(
+                      context.navigator.push(MaterialPageRoute(
                           builder: (context) => AssignmentsScreen()));
                     },
                     child: Text(context.s.assignment_dashboardCard_all),
@@ -117,14 +114,13 @@ class _CourseAssignmentCountTile extends StatelessWidget {
             height: 16,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: course?.color ??
-                  disabledOnBrightness(Theme.of(context).brightness),
+              color: course?.color ?? context.theme.disabledColor,
             ),
           ),
           title: TextOrPlaceholder(course?.name),
           trailing: Text(
             assignmentCount.toString(),
-            style: Theme.of(context).textTheme.headline,
+            style: context.textTheme.headline,
           ),
         );
       },

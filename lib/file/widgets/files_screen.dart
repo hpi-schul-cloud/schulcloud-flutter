@@ -3,7 +3,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/course/course.dart';
-import 'package:schulcloud/generated/generated.dart';
 
 import '../bloc.dart';
 import 'file_browser.dart';
@@ -12,16 +11,14 @@ import 'page_route.dart';
 class FilesScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Container(
-        child: ListView(
-          padding: MediaQuery.of(context).padding +
-              const EdgeInsets.symmetric(vertical: 16),
-          children: <Widget>[
-            _CoursesList(),
-            _UserFiles(),
-          ],
-        ),
+    return FancyScaffold(
+      appBar: FancyAppBar(title: Text(context.s.file)),
+      sliver: SliverList(
+        delegate: SliverChildListDelegate([
+          _CoursesList(),
+          SizedBox(height: 16),
+          _UserFiles(),
+        ]),
       ),
     );
   }
@@ -30,32 +27,24 @@ class FilesScreen extends StatelessWidget {
 class _CoursesList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: Text(context.s.file_files_course),
-        ),
-        CachedRawBuilder(
-          controller: services.get<FileBloc>().fetchCourses()..fetch(),
-          builder: (context, update) {
-            return GridView.extent(
-              primary: false,
-              shrinkWrap: true,
-              maxCrossAxisExtent: 300,
-              childAspectRatio: 3.2,
-              mainAxisSpacing: 8,
-              crossAxisSpacing: 8,
-              padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
-              children: <Widget>[
-                for (var course in update.data ?? [])
-                  _CourseCard(course: course),
-              ],
-            );
-          },
-        ),
-      ],
+    return FancyCard(
+      title: context.s.file_files_course,
+      child: CachedRawBuilder(
+        controller: services.get<FileBloc>().fetchCourses()..fetch(),
+        builder: (context, update) {
+          return GridView.extent(
+            primary: false,
+            shrinkWrap: true,
+            maxCrossAxisExtent: 300,
+            childAspectRatio: 3.2,
+            mainAxisSpacing: 8,
+            crossAxisSpacing: 8,
+            children: <Widget>[
+              for (var course in update.data ?? []) _CourseCard(course: course),
+            ],
+          );
+        },
+      ),
     );
   }
 }
@@ -66,7 +55,7 @@ class _CourseCard extends StatelessWidget {
   final Course course;
 
   void _showCourseFiles(BuildContext context) {
-    Navigator.of(context).push(FileBrowserPageRoute(
+    context.navigator.push(FileBrowserPageRoute(
       builder: (context) => FileBrowser(owner: course),
     ));
   }
@@ -92,24 +81,17 @@ class _CourseCard extends StatelessWidget {
 class _UserFiles extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: Text(context.s.file_files_my),
-        ),
-        CachedRawBuilder(
-          controller: services.get<UserFetcherService>().fetchCurrentUser()
-            ..fetch(),
-          builder: (context, update) {
-            return update.hasData
-                ? FileBrowser(owner: update.data, isEmbedded: true)
-                : Container();
-          },
-        ),
-      ],
+    return FancyCard(
+      title: context.s.file_files_my,
+      omitHorizontalPadding: true,
+      child: CachedRawBuilder(
+        controller: services.get<UserFetcherService>().fetchCurrentUser(),
+        builder: (context, update) {
+          return update.hasData
+              ? FileBrowser(owner: update.data, isEmbedded: true)
+              : Container();
+        },
+      ),
     );
   }
 }
@@ -127,7 +109,7 @@ class FlatMaterial extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: Theme.of(context).cardColor,
+      color: context.theme.cardColor,
       borderRadius: BorderRadius.circular(8),
       child: InkWell(
         onTap: onTap,

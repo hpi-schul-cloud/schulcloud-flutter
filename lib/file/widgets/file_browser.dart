@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/course/course.dart';
-import 'package:schulcloud/generated/generated.dart';
 
 import '../bloc.dart';
 import '../data.dart';
@@ -33,7 +32,7 @@ class FileBrowser extends StatelessWidget {
   void _openDirectory(BuildContext context, File file) {
     assert(file.isDirectory);
 
-    Navigator.of(context).push(FileBrowserPageRoute(
+    context.navigator.push(FileBrowserPageRoute(
       builder: (context) => FileBrowser(owner: owner, parent: file),
     ));
   }
@@ -163,7 +162,10 @@ class FileList extends StatelessWidget {
           return Container(
             alignment: Alignment.center,
             padding: EdgeInsets.all(16),
-            child: Text(context.s.file_fileBrowser_totalCount(files.length)),
+            child: Text(
+              context.s.file_fileBrowser_totalCount(files.length),
+              style: context.textTheme.caption,
+            ),
           );
         }
         return null;

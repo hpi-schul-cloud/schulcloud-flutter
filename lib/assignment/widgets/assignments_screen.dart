@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/course/course.dart';
-import 'package:schulcloud/generated/generated.dart';
 import 'package:time_machine/time_machine.dart';
 
 import '../bloc.dart';
@@ -27,13 +26,18 @@ class AssignmentsScreen extends StatelessWidget {
 
           final dates = assignmentsByDueDate.keys.toList()
             ..sort((a, b) => b.compareTo(a));
-          return ListView(
-            children: [
-              for (final date in dates) ...[
-                ListTile(title: Text(date.longString)),
-                for (final assignment in assignmentsByDueDate[date])
-                  AssignmentCard(assignment: assignment),
-              ],
+          return CustomScrollView(
+            slivers: <Widget>[
+              FancyAppBar(title: Text(context.s.assignment)),
+              SliverList(
+                delegate: SliverChildListDelegate([
+                  for (final date in dates) ...[
+                    ListTile(title: Text(date.longString)),
+                    for (final assignment in assignmentsByDueDate[date])
+                      AssignmentCard(assignment: assignment),
+                  ],
+                ]),
+              ),
             ],
           );
         },
@@ -49,13 +53,13 @@ class AssignmentCard extends StatelessWidget {
   final Assignment assignment;
 
   void _showAssignmentDetailsScreen(BuildContext context) {
-    Navigator.of(context).push(MaterialPageRoute(
+    context.navigator.push(MaterialPageRoute(
       builder: (context) => AssignmentDetailsScreen(assignment: assignment),
     ));
   }
 
   void _showCourseDetailScreen(BuildContext context, Course course) {
-    Navigator.of(context).push(MaterialPageRoute(
+    context.navigator.push(MaterialPageRoute(
       builder: (context) => CourseDetailsScreen(course: course),
     ));
   }
@@ -85,7 +89,7 @@ class AssignmentCard extends StatelessWidget {
                 ),
               Text(
                 assignment.name,
-                style: Theme.of(context).textTheme.headline,
+                style: context.theme.textTheme.headline,
               ),
               Html(data: limitString(assignment.description, 200)),
               CachedRawBuilder<Course>(

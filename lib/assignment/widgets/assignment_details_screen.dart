@@ -3,7 +3,6 @@ import 'package:flutter_cached/flutter_cached.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/course/course.dart';
-import 'package:schulcloud/generated/generated.dart';
 
 import '../bloc.dart';
 import '../data.dart';
@@ -21,7 +20,7 @@ class AssignmentDetailsScreen extends StatelessWidget {
     Assignment homework,
     Submission submission,
   ) {
-    Navigator.of(context).push(MaterialPageRoute(
+    context.navigator.push(MaterialPageRoute(
       builder: (context) => SubmissionScreen(
         assignment: homework,
         submission: submission,
@@ -59,33 +58,45 @@ class AssignmentDetailsScreen extends StatelessWidget {
             errorScreenBuilder: (_, error, st) => ErrorScreen(error, st),
             errorBannerBuilder: (_, error, st) => ErrorBanner(error, st),
             builder: (context, submissions) {
-              final textTheme = Theme.of(context).textTheme;
+              final textTheme = context.textTheme;
               final submission = submissions.firstWhere(
                 (submission) => submission.assignmentId == assignment.id,
                 orElse: () => null,
               );
 
-              return ListView(
-                children: <Widget>[
-                  Html(
-                    padding: EdgeInsets.all(8),
-                    defaultTextStyle: textTheme.body1.copyWith(fontSize: 20),
-                    data: assignment.description,
-                    onLinkTap: tryLaunchingUrl,
-                  ),
-                  if (submission != null)
-                    Container(
-                      alignment: Alignment.centerRight,
-                      padding: EdgeInsets.all(16),
-                      child: RaisedButton(
-                        onPressed: () => _showSubmissionScreen(
-                            context, assignment, submission),
-                        child: Text(
-                          context.s.assignment_detailsScreen_mySubmission,
-                          style: textTheme.button.copyWith(color: Colors.white),
-                        ),
-                      ),
+              return CustomScrollView(
+                slivers: <Widget>[
+                  FancyAppBar(
+                    title: Text(assignment.name),
+                    subtitle: Text(
+                      course?.name ?? context.s.general_loading,
                     ),
+                  ),
+                  SliverList(
+                    delegate: SliverChildListDelegate([
+                      Html(
+                        padding: EdgeInsets.all(8),
+                        defaultTextStyle:
+                            textTheme.body1.copyWith(fontSize: 20),
+                        data: assignment.description,
+                        onLinkTap: tryLaunchingUrl,
+                      ),
+                      if (submission != null)
+                        Container(
+                          alignment: Alignment.centerRight,
+                          padding: EdgeInsets.all(16),
+                          child: RaisedButton(
+                            onPressed: () => _showSubmissionScreen(
+                                context, assignment, submission),
+                            child: Text(
+                              context.s.assignment_detailsScreen_mySubmission,
+                              style: textTheme.button
+                                  .copyWith(color: Colors.white),
+                            ),
+                          ),
+                        ),
+                    ]),
+                  ),
                 ],
               );
             },

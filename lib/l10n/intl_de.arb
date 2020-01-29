@@ -43,29 +43,14 @@
     "type": "text",
     "description": ""
   },
-  "app_navigation_assignments": "Hausaufgaben",
-  "@app_navigation_assignments": {
-    "type": "text"
-  },
-  "app_navigation_courses": "Kurse",
-  "@app_navigation_courses": {
-    "type": "text"
-  },
-  "app_navigation_dashboard": "Übersicht",
-  "@app_navigation_dashboard": {
-    "type": "text"
-  },
-  "app_navigation_files": "Dateien",
-  "@app_navigation_files": {
-    "type": "text"
-  },
-  "app_navigation_news": "Neuigkeiten",
-  "@app_navigation_news": {
-    "type": "text"
-  },
   "app_navigation_userDataEmpty": "—",
   "@app_navigation_userDataEmpty": {
     "type": "text"
+  },
+  "assignment": "Hausaufgaben",
+  "@assignment": {
+    "type": "text",
+    "description": ""
   },
   "assignment_assignmentsScreen_overdue": "Überfällig",
   "@assignment_assignmentsScreen_overdue": {
@@ -110,6 +95,11 @@
     "type": "text",
     "description": ""
   },
+  "course": "Kurse",
+  "@course": {
+    "type": "text",
+    "description": ""
+  },
   "course_coursesScreen_empty": "Es wurden keine Kurse gefunden.",
   "@course_coursesScreen_empty": {
     "type": "text"
@@ -117,6 +107,16 @@
   "course_detailsScreen_empty": "Dieser Kurs enthält noch keine Themen.",
   "@course_detailsScreen_empty": {
     "type": "text"
+  },
+  "dashboard": "Übersicht",
+  "@dashboard": {
+    "type": "text",
+    "description": ""
+  },
+  "file": "Dateien",
+  "@file": {
+    "type": "text",
+    "description": ""
   },
   "file_fileBrowser_downloading": "{fileName} wird heruntergeladen…",
   "@file_fileBrowser_downloading": {
@@ -246,6 +246,11 @@
   "login_loginScreen_placeholder": "Hier könnten noch weitere Informationen stehen.",
   "@login_loginScreen_placeholder": {
     "type": "text"
+  },
+  "news": "Neuigkeiten",
+  "@news": {
+    "type": "text",
+    "description": ""
   },
   "news_articlePreview_subtitle": "Veröffentlicht am {published} von {author}",
   "@news_articlePreview_subtitle": {

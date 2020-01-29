@@ -2,19 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter_cached/flutter_cached.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:schulcloud/app/app.dart';
-import 'package:schulcloud/dashboard/widgets/dashboard_card.dart';
-import 'package:schulcloud/generated/generated.dart';
-import 'package:schulcloud/news/bloc.dart';
-import 'package:schulcloud/news/data.dart';
-import 'package:schulcloud/news/news.dart';
-import 'package:schulcloud/news/widgets/article_screen.dart';
+
+import '../bloc.dart';
+import '../data.dart';
+import '../news.dart';
+import 'article_screen.dart';
 
 class NewsDashboardCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final s = context.s;
 
-    return DashboardCard(
+    return FancyCard(
+      omitHorizontalPadding: true,
       title: s.news_dashboardCard,
       child: CachedRawBuilder<List<Article>>(
         controller: services.get<NewsBloc>().fetchArticles(),
@@ -29,32 +29,27 @@ class NewsDashboardCard extends StatelessWidget {
 
           return Column(
             children: <Widget>[
-              ...ListTile.divideTiles(
-                  context: context,
-                  tiles: update.data.map(
-                    (a) => ListTile(
-                      title: Text(a.title),
-                      subtitle: Html(data: limitString(a.content, 100)),
-                      trailing: Text(a.publishedAt.shortDateString),
-                      onTap: () => Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => ArticleScreen(article: a))),
-                    ),
+              for (final article in update.data)
+                ListTile(
+                  title: Text(article.title),
+                  subtitle: Html(data: limitString(article.content, 100)),
+                  trailing: Text(article.publishedAt.shortDateString),
+                  onTap: () => context.navigator.push(MaterialPageRoute(
+                    builder: (context) => ArticleScreen(article: article),
                   )),
+                ),
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
+                padding: EdgeInsets.symmetric(horizontal: 16),
                 child: Align(
                   alignment: Alignment.bottomRight,
                   child: OutlineButton(
-                    onPressed: () {
-                      Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => NewsScreen()));
-                    },
+                    onPressed: () => context.navigator.push(MaterialPageRoute(
+                      builder: (context) => NewsScreen(),
+                    )),
                     child: Text(s.news_dashboardCard_all),
                   ),
                 ),
-              )
+              ),
             ],
           );
         },

@@ -9,8 +9,7 @@ Future<void> logOut(BuildContext context) async {
   // leads to the issue that logging out becomes impossible
   unawaited(services.get<StorageService>().clear());
 
-  final navigator = Navigator.of(context, rootNavigator: true)
-    ..popUntil((route) => route.isFirst);
+  final navigator = context.rootNavigator..popUntil((route) => route.isFirst);
   unawaited(navigator.pushReplacement(TopLevelPageRoute(
     builder: (_) => LoginScreen(),
   )));

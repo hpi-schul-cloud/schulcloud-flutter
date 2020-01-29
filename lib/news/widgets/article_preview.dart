@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_cached/flutter_cached.dart';
 import 'package:provider/provider.dart';
 import 'package:schulcloud/app/app.dart';
-import 'package:schulcloud/app/theming/utils.dart';
-import 'package:schulcloud/generated/generated.dart';
 
 import '../data.dart';
 import 'article_image.dart';
@@ -31,69 +29,61 @@ class ArticlePreview extends StatelessWidget {
   bool get _isPlaceholder => article == null;
 
   void _openArticle(BuildContext context) {
-    Navigator.of(context).push(MaterialPageRoute(
+    context.navigator.push(MaterialPageRoute(
       builder: (_) => ArticleScreen(article: article),
     ));
   }
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+    final theme = context.theme;
 
-    return Provider<ArticleTheme>(
-      create: (_) => ArticleTheme(darkColor: Colors.purple, padding: 16),
-      child: Material(
-        elevation: 2,
-        borderRadius: BorderRadius.circular(8),
-        color: theme.cardColor,
-        child: InkWell(
-          onTap: _isPlaceholder ? null : () => _openArticle(context),
-          child: Padding(
-            padding: EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Section(
-                  child: TextOrPlaceholder(
-                    'Section',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                ),
-                _buildImage(),
-                SizedBox(height: 8),
-                CachedRawBuilder<User>(
-                  controller: services
-                      .get<UserFetcherService>()
-                      .fetchUser(article.author, article.id),
-                  builder: (_, update) {
-                    final author = update.data;
-                    final authorName = author?.displayName ??
-                        (update.hasError
-                            ? context.s.general_user_unknown
-                            : context.s.general_placeholder);
-
-                    return TextOrPlaceholder(
-                      _isPlaceholder
-                          ? null
-                          : context.s.news_articlePreview_subtitle(
-                              article.publishedAt.shortDateString, authorName),
-                      style: TextStyle(
-                        color: mediumEmphasisOn(theme.cardColor),
-                      ),
-                    );
-                  },
-                ),
-                TextOrPlaceholder(
-                  article?.title,
-                  style: theme.textTheme.display2,
-                ),
-                TextOrPlaceholder(
-                  _isPlaceholder ? null : limitString(article.content, 200),
-                  style: theme.textTheme.body2,
-                ),
-              ],
+    return FancyCard(
+      onTap: _isPlaceholder ? null : () => _openArticle(context),
+      child: Provider<ArticleTheme>(
+        create: (_) => ArticleTheme(darkColor: Colors.purple, padding: 16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Section(
+              child: TextOrPlaceholder(
+                'Section',
+                style: TextStyle(color: Colors.white),
+              ),
             ),
-          ),
+            _buildImage(),
+            SizedBox(height: 8),
+            CachedRawBuilder<User>(
+              controller: services
+                  .get<UserFetcherService>()
+                  .fetchUser(article.author, article.id),
+              builder: (_, update) {
+                final author = update.data;
+                final authorName = author?.displayName ??
+                    (update.hasError
+                        ? context.s.general_user_unknown
+                        : context.s.general_placeholder);
+
+                return TextOrPlaceholder(
+                  _isPlaceholder
+                      ? null
+                      : context.s.news_articlePreview_subtitle(
+                          article.publishedAt.shortDateString, authorName),
+                  style: TextStyle(
+                    color: theme.cardColor.mediumEmphasisColor,
+                  ),
+                );
+              },
+            ),
+            TextOrPlaceholder(
+              article?.title,
+              style: theme.textTheme.display2,
+            ),
+            TextOrPlaceholder(
+              _isPlaceholder ? null : limitString(article.content, 200),
+              style: theme.textTheme.body2,
+            ),
+          ],
         ),
       ),
     );
