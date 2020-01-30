@@ -10,6 +10,15 @@ import '../bloc.dart';
 import '../data.dart';
 import 'assignment_details_screen.dart';
 
+enum _SortKey {
+  createdAt,
+  availableAt,
+  dueAt,
+}
+enum _FilterKey {
+  dueDate,
+}
+
 class AssignmentsScreen extends StatefulWidget {
   @override
   _AssignmentsScreenState createState() => _AssignmentsScreenState();
@@ -17,31 +26,37 @@ class AssignmentsScreen extends StatefulWidget {
 
 class _AssignmentsScreenState extends State<AssignmentsScreen> {
   static final _sortFilterConfig =
-      SortFilterConfig<Assignment, _AssignmentFields>(
+      SortFilterConfig<Assignment, _SortKey, _FilterKey>(
     sortOptions: {
-      _AssignmentFields.createdAt: SortOption<Assignment>(
+      _SortKey.createdAt: SortOption<Assignment>(
         title: 'Creation date',
         comparator: (a, b) => a.createdAt.compareTo(b.createdAt),
       ),
-      _AssignmentFields.availableAt: SortOption<Assignment>(
+      _SortKey.availableAt: SortOption<Assignment>(
         title: 'Available date',
         comparator: (a, b) => a.availableAt.compareTo(b.availableAt),
       ),
-      _AssignmentFields.dueAt: SortOption<Assignment>(
+      _SortKey.dueAt: SortOption<Assignment>(
         title: 'Due date',
         comparator: (a, b) => a.dueAt.compareTo(b.dueAt),
       ),
     },
+    filters: {
+      _FilterKey.dueDate: DateRangeFilter<Assignment>(
+        title: 'Due date',
+        selector: (assignment) => assignment.dueAt.inLocalZone().calendarDate,
+      )
+    },
   );
 
-  SortFilterSelection<Assignment, _AssignmentFields> _sortFilter;
+  SortFilterSelection<Assignment, _SortKey, _FilterKey> _sortFilter;
 
   @override
   void initState() {
     super.initState();
     _sortFilter = SortFilterSelection(
       config: _sortFilterConfig,
-      sortOptionKey: _AssignmentFields.dueAt,
+      sortOptionKey: _SortKey.dueAt,
     );
   }
 
@@ -86,88 +101,19 @@ class _AssignmentsScreenState extends State<AssignmentsScreen> {
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: StatefulBuilder(
             builder: (_, setSheetState) {
-              void sortFilterSetter(SortFilterSelection selection) {
-                setSheetState(() {});
-                setState(() {
-                  _sortFilter = selection;
-                });
-              }
-
-              return Column(
-                children: <Widget>[
-                  _buildSortOptions(sortFilterSetter),
-                ],
+              return SortFilterWidget(
+                selection: _sortFilter,
+                onSelectionChange: (selection) {
+                  setSheetState(() {});
+                  setState(() {
+                    _sortFilter = selection;
+                  });
+                },
               );
             },
           ),
         ),
       ],
-    );
-  }
-
-  Widget _buildSortOptions(SortFilterSetter updater) {
-    return _Section(
-      title: 'Order by',
-      child: Wrap(
-        spacing: 8,
-        children: <Widget>[
-          for (final sortOption in _sortFilterConfig.sortOptions.entries)
-            ActionChip(
-              avatar: sortOption.key != _sortFilter.sortOptionKey
-                  ? null
-                  : Icon(_sortFilter.sortOrder.icon),
-              label: Text(sortOption.value.title),
-              onPressed: () =>
-                  updater(_sortFilter.withSortSelection(sortOption.key)),
-            ),
-        ],
-      ),
-    );
-  }
-}
-
-typedef SortFilterSetter = void Function(SortFilterSelection selection);
-
-enum _AssignmentFields {
-  createdAt,
-  availableAt,
-  dueAt,
-}
-
-extension AssignmentFieldTitle on _AssignmentFields {
-  String get title {
-    return {
-      _AssignmentFields.createdAt: 'Creation date',
-      _AssignmentFields.availableAt: 'Available date',
-      _AssignmentFields.dueAt: 'Due date',
-    }[this];
-  }
-}
-
-class _Section extends StatelessWidget {
-  const _Section({Key key, @required this.title, @required this.child})
-      : assert(title != null),
-        assert(child != null),
-        super(key: key);
-
-  final String title;
-  final Widget child;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[
-          Text(
-            title,
-            style: context.textTheme.overline,
-          ),
-          SizedBox(height: 4),
-          child,
-        ],
-      ),
     );
   }
 }

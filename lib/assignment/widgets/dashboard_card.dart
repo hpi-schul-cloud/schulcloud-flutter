@@ -1,7 +1,6 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cached/flutter_cached.dart';
-import 'package:schulcloud/app/theming/utils.dart';
 import 'package:schulcloud/course/course.dart';
 import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/course/data.dart';
@@ -116,8 +115,7 @@ class _CourseAssignmentCountTile extends StatelessWidget {
             height: 16,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: course?.color ??
-                  disabledOnBrightness(Theme.of(context).brightness),
+              color: course?.color ?? context.theme.disabledColor,
             ),
           ),
           title: TextOrPlaceholder(course?.name),
