@@ -4,47 +4,53 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:time_machine/time_machine.dart';
 
+import '../chip.dart';
+import '../utils.dart';
 import 'sort_filter.dart';
 
 typedef Predicate<T, D> = bool Function(T item, D data);
 typedef Selector<T, R> = R Function(T item);
 
-abstract class Filter<T, D> {
-  const Filter({@required this.title}) : assert(title != null);
+abstract class Filter<T, S> {
+  const Filter(this.title) : assert(title != null);
+
+  S get defaultSelection;
 
   final String title;
 
-  bool filter(T item, D data);
+  bool filter(T item, S selection);
   Widget buildWidget(
     BuildContext context,
-    D data,
-    DataChangeCallback<D> updater,
+    S selection,
+    DataChangeCallback<S> updater,
   );
 
-  Iterable<T> apply(Iterable<T> items, D data) {
-    if (data == null) {
+  Iterable<T> apply(Iterable<T> items, S selection) {
+    if (selection == null) {
       return items;
     }
-    return items.where((item) => filter(item, data));
+    return items.where((item) => filter(item, selection));
   }
 }
 
 @immutable
-class DateRangeFilter<T> extends Filter<T, DateRangeFilterData> {
-  const DateRangeFilter({@required String title, @required this.selector})
-      : assert(title != null),
-        assert(selector != null),
-        super(title: title);
+class DateRangeFilter<T> extends Filter<T, DateRangeFilterSelection> {
+  const DateRangeFilter(String title, {@required this.selector})
+      : assert(selector != null),
+        super(title);
+
+  @override
+  DateRangeFilterSelection get defaultSelection => DateRangeFilterSelection();
 
   final Selector<T, LocalDate> selector;
 
   @override
-  bool filter(T item, DateRangeFilterData data) {
+  bool filter(T item, DateRangeFilterSelection selection) {
     final date = selector(item);
-    if (data.start != null && data.start > date) {
+    if (selection.start != null && selection.start > date) {
       return false;
     }
-    if (data.end != null && data.end < date) {
+    if (selection.end != null && selection.end < date) {
       return false;
     }
     return true;
@@ -53,19 +59,17 @@ class DateRangeFilter<T> extends Filter<T, DateRangeFilterData> {
   @override
   Widget buildWidget(
     BuildContext context,
-    DateRangeFilterData data,
-    DataChangeCallback<DateRangeFilterData> updater,
+    DateRangeFilterSelection selection,
+    DataChangeCallback<DateRangeFilterSelection> updater,
   ) {
-    final setData = data ?? DateRangeFilterData();
-
     return Row(
       children: <Widget>[
         Expanded(
           child: _buildDateField(
-            date: data?.start,
+            date: selection.start,
             hintText: 'from',
-            onChanged: (newStart) => updater(setData.withStart(newStart)),
-            lastDate: data?.end,
+            onChanged: (newStart) => updater(selection.withStart(newStart)),
+            lastDate: selection.end,
           ),
         ),
         SizedBox(width: 4),
@@ -73,10 +77,10 @@ class DateRangeFilter<T> extends Filter<T, DateRangeFilterData> {
         SizedBox(width: 4),
         Expanded(
           child: _buildDateField(
-            date: data?.end,
+            date: selection.end,
             hintText: 'until',
-            onChanged: (newEnd) => updater(setData.withEnd(newEnd)),
-            firstDate: data?.start,
+            onChanged: (newEnd) => updater(selection.withEnd(newEnd)),
+            firstDate: selection.start,
           ),
         ),
       ],
@@ -111,16 +115,86 @@ class DateRangeFilter<T> extends Filter<T, DateRangeFilterData> {
 }
 
 @immutable
-class DateRangeFilterData {
-  const DateRangeFilterData({this.start, this.end})
+class DateRangeFilterSelection {
+  const DateRangeFilterSelection({this.start, this.end})
       : assert(start == null || end == null || start <= end,
             'start must be before end');
 
   final LocalDate start;
   final LocalDate end;
 
-  DateRangeFilterData withStart(LocalDate start) =>
-      DateRangeFilterData(start: start, end: end);
-  DateRangeFilterData withEnd(LocalDate end) =>
-      DateRangeFilterData(start: start, end: end);
+  DateRangeFilterSelection withStart(LocalDate start) =>
+      DateRangeFilterSelection(start: start, end: end);
+  DateRangeFilterSelection withEnd(LocalDate end) =>
+      DateRangeFilterSelection(start: start, end: end);
 }
+
+@immutable
+class FlagsFilter<T, V> extends Filter<T, Map<V, bool>> {
+  const FlagsFilter(String title, {@required this.filters})
+      : assert(filters != null),
+        super(title);
+
+  @override
+  Map<V, bool> get defaultSelection => {};
+
+  final Map<V, FlagFilter<T>> filters;
+
+  @override
+  Widget buildWidget(
+    BuildContext context,
+    Map<V, bool> selection,
+    DataChangeCallback<Map<V, bool>> updater,
+  ) {
+    return ChipGroup(
+      children: filters.entries.map((e) {
+        final key = e.key;
+        final filter = e.value;
+        final filterData = selection[key];
+
+        Widget avatar;
+        if (filterData == true) {
+          avatar = Icon(Icons.check);
+        } else if (filterData == false) {
+          avatar = Icon(Icons.close);
+        }
+
+        return FilterChip(
+          avatar: avatar,
+          label: Text(filter.title),
+          onSelected: (value) {
+            final newValue = {
+              null: true,
+              true: false,
+              false: null,
+            }[filterData];
+
+            updater(selection.copyWith(key, newValue));
+          },
+        );
+      }).toList(),
+    );
+  }
+
+  @override
+  bool filter(T item, Map<V, bool> selection) =>
+      filters.keys.every((k) => filters[k].apply(item, selection[k]));
+}
+
+@immutable
+class FlagFilter<T> {
+  const FlagFilter(this.title, {@required this.selector})
+      : assert(title != null),
+        assert(selector != null);
+
+  final String title;
+  final Selector<T, bool> selector;
+
+  // ignore: avoid_positional_boolean_parameters
+  bool apply(T item, bool selection) {
+}
+
+// Filters:
+// - only some courses (list)
+// - date range
+// - nullable bool

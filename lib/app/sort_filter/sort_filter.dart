@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:schulcloud/app/chip.dart';
 
 import '../theming_utils.dart';
 import 'filtering.dart';
@@ -10,68 +11,72 @@ typedef SortFilterChangeCallback<T, S, F> = void Function(
     SortFilterSelection<T, S, F> newSortFilter);
 
 @immutable
-class SortFilterConfig<T, S, F> {
-  const SortFilterConfig({
+class SortFilter<T, S, F> {
+  const SortFilter({
     this.sortOptions = const {},
     this.filters = const {},
   })  : assert(sortOptions != null),
         assert(filters != null);
 
-  final Map<S, SortOption<T>> sortOptions;
+  final Map<S, Sorter<T>> sortOptions;
   final Map<F, Filter> filters;
 }
 
 @immutable
 class SortFilterSelection<T, S, F> {
-  const SortFilterSelection({
+  SortFilterSelection({
     @required this.config,
-    @required this.sortOptionKey,
+    @required this.sortSelectionKey,
     this.sortOrder = SortOrder.ascending,
-    this.filterOptions = const {},
+    Map<F, dynamic> filterSelections = const {},
   })  : assert(config != null),
-        assert(sortOptionKey != null),
+        assert(sortSelectionKey != null),
         assert(sortOrder != null),
-        assert(filterOptions != null);
+        filterSelections = {
+          for (final entry in config.filters.entries)
+            entry.key: entry.value.defaultSelection,
+          ...filterSelections,
+        };
 
-  final SortFilterConfig<T, S, F> config;
+  final SortFilter<T, S, F> config;
 
-  final S sortOptionKey;
-  SortOption<T> get sortOption => config.sortOptions[sortOptionKey];
+  final S sortSelectionKey;
+  Sorter<T> get sortSelection => config.sortOptions[sortSelectionKey];
   final SortOrder sortOrder;
 
-  final Map<F, dynamic> filterOptions;
+  final Map<F, dynamic> filterSelections;
 
   SortFilterSelection<T, S, F> withSortSelection(S selectedKey) {
     return SortFilterSelection(
       config: config,
-      sortOptionKey: selectedKey,
-      sortOrder: selectedKey == sortOptionKey
+      sortSelectionKey: selectedKey,
+      sortOrder: selectedKey == sortSelectionKey
           ? sortOrder.inverse
           : SortOrder.ascending,
-      filterOptions: filterOptions,
+      filterSelections: filterSelections,
     );
   }
 
-  SortFilterSelection<T, S, F> withFilterSelection(F key, dynamic data) {
-    final filterOptions = Map.of(this.filterOptions);
-    filterOptions[key] = data;
+  SortFilterSelection<T, S, F> withFilterSelection(F key, dynamic selection) {
+    final filterOptions = Map.of(filterSelections);
+    filterOptions[key] = selection;
 
     return SortFilterSelection(
       config: config,
-      sortOptionKey: sortOptionKey,
+      sortSelectionKey: sortSelectionKey,
       sortOrder: sortOrder,
-      filterOptions: filterOptions,
+      filterSelections: filterOptions,
     );
   }
 
   List<T> apply(List<T> allItems) {
     Iterable<T> items = List<T>.from(allItems);
-    for (final filterOption in filterOptions.entries) {
+    for (final filterOption in filterSelections.entries) {
       final filter = config.filters[filterOption.key];
       items = filter.apply(items, filterOption.value);
     }
     return List<T>.from(items)
-      ..sort(sortOption.comparator.withOrder(sortOrder));
+      ..sort(sortSelection.comparator.withOrder(sortOrder));
   }
 }
 
@@ -85,7 +90,7 @@ class SortFilterWidget<T, S, F> extends StatelessWidget {
         super(key: key);
 
   final SortFilterSelection<T, S, F> selection;
-  SortFilterConfig<T, S, F> get config => selection.config;
+  SortFilter<T, S, F> get config => selection.config;
 
   final SortFilterChangeCallback<T, S, F> onSelectionChange;
 
@@ -103,12 +108,11 @@ class SortFilterWidget<T, S, F> extends StatelessWidget {
   Widget _buildSortSection() {
     return _Section(
       title: 'Order by',
-      child: Wrap(
-        spacing: 8,
+      child: ChipGroup(
         children: <Widget>[
           for (final sortOption in config.sortOptions.entries)
             ActionChip(
-              avatar: sortOption.key != selection.sortOptionKey
+              avatar: sortOption.key != selection.sortSelectionKey
                   ? null
                   : Icon(selection.sortOrder.icon),
               label: Text(sortOption.value.title),
@@ -127,7 +131,7 @@ class SortFilterWidget<T, S, F> extends StatelessWidget {
       title: filter.title,
       child: filter.buildWidget(
           context,
-          selection.filterOptions[filterKey],
+          selection.filterSelections[filterKey],
           (data) => onSelectionChange(
               selection.withFilterSelection(filterKey, data))),
     );

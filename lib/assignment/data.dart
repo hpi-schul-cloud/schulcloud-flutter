@@ -8,7 +8,7 @@ part 'data.g.dart';
 
 @immutable
 @HiveType(typeId: typeAssignment)
-class Assignment implements Entity, Comparable {
+class Assignment implements Entity {
   const Assignment({
     @required this.id,
     @required this.name,
@@ -20,14 +20,17 @@ class Assignment implements Entity, Comparable {
     this.description,
     this.courseId,
     this.lessonId,
-    this.isPrivate,
+    @required this.isPrivate,
+    @required this.hasPublicSubmissions,
   })  : assert(id != null),
         assert(name != null),
         assert(schoolId != null),
         assert(createdAt != null),
         assert(availableAt != null),
         assert(dueAt != null),
-        assert(teacherId != null);
+        assert(teacherId != null),
+        assert(isPrivate != null),
+        assert(hasPublicSubmissions != null);
 
   Assignment.fromJson(Map<String, dynamic> data)
       : this(
@@ -42,6 +45,7 @@ class Assignment implements Entity, Comparable {
           courseId: Id<Course>(data['courseId']['_id']),
           lessonId: Id(data['lessonId'] ?? ''),
           isPrivate: data['private'],
+          hasPublicSubmissions: data['publicSubmissions'],
         );
 
   // used before: 3, 4
@@ -80,10 +84,8 @@ class Assignment implements Entity, Comparable {
   @HiveField(11)
   final bool isPrivate;
 
-  @override
-  int compareTo(Object other) {
-    return dueAt.compareTo((other as Assignment).dueAt);
-  }
+  @HiveField(15)
+  final bool hasPublicSubmissions;
 }
 
 @immutable

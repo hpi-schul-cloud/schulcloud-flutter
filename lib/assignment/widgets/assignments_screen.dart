@@ -17,6 +17,11 @@ enum _SortKey {
 }
 enum _FilterKey {
   dueDate,
+  more,
+}
+enum _MoreFilterKey {
+  isPrivate,
+  hasPublicSubmissions,
 }
 
 class AssignmentsScreen extends StatefulWidget {
@@ -25,27 +30,39 @@ class AssignmentsScreen extends StatefulWidget {
 }
 
 class _AssignmentsScreenState extends State<AssignmentsScreen> {
-  static final _sortFilterConfig =
-      SortFilterConfig<Assignment, _SortKey, _FilterKey>(
+  static final _sortFilterConfig = SortFilter<Assignment, _SortKey, _FilterKey>(
     sortOptions: {
-      _SortKey.createdAt: SortOption<Assignment>(
-        title: 'Creation date',
-        comparator: (a, b) => a.createdAt.compareTo(b.createdAt),
+      _SortKey.createdAt: Sorter<Assignment>.simple(
+        'Creation date',
+        selector: (assignment) => assignment.createdAt,
       ),
-      _SortKey.availableAt: SortOption<Assignment>(
-        title: 'Available date',
-        comparator: (a, b) => a.availableAt.compareTo(b.availableAt),
+      _SortKey.availableAt: Sorter<Assignment>.simple(
+        'Available date',
+        selector: (assignment) => assignment.availableAt,
       ),
-      _SortKey.dueAt: SortOption<Assignment>(
-        title: 'Due date',
-        comparator: (a, b) => a.dueAt.compareTo(b.dueAt),
+      _SortKey.dueAt: Sorter<Assignment>.simple(
+        'Due date',
+        selector: (assignment) => assignment.dueAt,
       ),
     },
     filters: {
       _FilterKey.dueDate: DateRangeFilter<Assignment>(
-        title: 'Due date',
+        'Due date',
         selector: (assignment) => assignment.dueAt.inLocalZone().calendarDate,
-      )
+      ),
+      _FilterKey.more: FlagsFilter<Assignment, _MoreFilterKey>(
+        'More',
+        filters: {
+          _MoreFilterKey.isPrivate: FlagFilter<Assignment>(
+            'Private assignment',
+            selector: (assignment) => assignment.isPrivate,
+          ),
+          _MoreFilterKey.hasPublicSubmissions: FlagFilter<Assignment>(
+            'Public submissions',
+            selector: (assignment) => assignment.hasPublicSubmissions,
+          ),
+        },
+      ),
     },
   );
 
@@ -56,7 +73,10 @@ class _AssignmentsScreenState extends State<AssignmentsScreen> {
     super.initState();
     _sortFilter = SortFilterSelection(
       config: _sortFilterConfig,
-      sortOptionKey: _SortKey.dueAt,
+      sortSelectionKey: _SortKey.dueAt,
+      filterSelections: {
+        _FilterKey.dueDate: DateRangeFilterSelection(start: LocalDate.today()),
+      },
     );
   }
 
@@ -96,24 +116,22 @@ class _AssignmentsScreenState extends State<AssignmentsScreen> {
 
   void _showSortFilterSheet(BuildContext context) {
     context.showFancyBottomSheet(
-      sliversBuilder: (_) => [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: StatefulBuilder(
-            builder: (_, setSheetState) {
-              return SortFilterWidget(
-                selection: _sortFilter,
-                onSelectionChange: (selection) {
-                  setSheetState(() {});
-                  setState(() {
-                    _sortFilter = selection;
-                  });
-                },
-              );
-            },
-          ),
+      builder: (_) => Padding(
+        padding: EdgeInsets.symmetric(horizontal: 16),
+        child: StatefulBuilder(
+          builder: (_, setSheetState) {
+            return SortFilterWidget(
+              selection: _sortFilter,
+              onSelectionChange: (selection) {
+                setSheetState(() {});
+                setState(() {
+                  _sortFilter = selection;
+                });
+              },
+            );
+          },
         ),
-      ],
+      ),
     );
   }
 }

@@ -1,47 +1,46 @@
 import 'package:flutter/material.dart';
 import '../utils.dart';
 
-typedef SliversBuilder = List<Widget> Function(BuildContext context);
-
 extension BottomSheetCreation on BuildContext {
   Future<T> showFancyBottomSheet<T>({
-    @required SliversBuilder sliversBuilder,
+    @required WidgetBuilder builder,
   }) {
-    return showModalBottomSheet(
+    return showModalBottomSheet<T>(
       context: this,
-      builder: (_) => FancyBottomSheet(sliversBuilder: sliversBuilder),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(32),
-          topRight: Radius.circular(32),
-        ),
-      ),
+      isScrollControlled: true,
+      builder: (_) => FancyBottomSheet(builder: builder),
+      shape: _bottomSheetShape,
       useRootNavigator: true,
     );
   }
 }
 
+const _bottomSheetShape = RoundedRectangleBorder(
+  borderRadius: BorderRadius.only(
+    topLeft: Radius.circular(32),
+    topRight: Radius.circular(32),
+  ),
+);
+
 class FancyBottomSheet extends StatelessWidget {
-  const FancyBottomSheet({Key key, @required this.sliversBuilder})
-      : assert(sliversBuilder != null),
+  const FancyBottomSheet({Key key, @required this.builder})
+      : assert(builder != null),
         super(key: key);
 
-  final SliversBuilder sliversBuilder;
+  final WidgetBuilder builder;
 
   @override
   Widget build(BuildContext context) {
-    return DraggableScrollableSheet(
-      expand: false,
-      builder: (context, controller) => Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: 8),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: <Widget>[
-          SizedBox(height: 8),
           Center(
             child: _DragIndicator(),
           ),
           SizedBox(height: 8),
-          ...sliversBuilder(context),
-          SizedBox(height: 8),
+          builder(context),
         ],
       ),
     );

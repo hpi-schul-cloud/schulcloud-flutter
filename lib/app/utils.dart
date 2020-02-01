@@ -73,6 +73,16 @@ Future<bool> tryLaunchingUrl(String url) async {
   return false;
 }
 
+extension ImmutableMap<K, V> on Map<K, V> {
+  Map<K, V> clone() => Map.of(this);
+
+  Map<K, V> copyWith(K key, V value) {
+    final newMap = clone();
+    newMap[key] = value;
+    return newMap;
+  }
+}
+
 /// An error indicating that a permission wasn't granted by the user.
 class PermissionNotGranted<T> implements Exception {
   @override
