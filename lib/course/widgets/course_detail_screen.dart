@@ -4,7 +4,6 @@ import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/file/file.dart';
 import 'package:schulcloud/generated/generated.dart';
 
-import '../bloc.dart';
 import '../data.dart';
 import 'lesson_screen.dart';
 
@@ -44,7 +43,7 @@ class CourseDetailsScreen extends StatelessWidget {
           ),
         ],
         child: CachedBuilder<List<Lesson>>(
-          controller: services.get<CourseBloc>().fetchLessonsOfCourse(course),
+          controller: course.lessons.controller,
           errorBannerBuilder: (_, error, st) => ErrorBanner(error, st),
           errorScreenBuilder: (_, error, st) => ErrorScreen(error, st),
           builder: (context, lessons) {

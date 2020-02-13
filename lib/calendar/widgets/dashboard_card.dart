@@ -16,7 +16,7 @@ class CalendarDashboardCard extends StatelessWidget {
       title: s.calendar_dashboardCard,
       child: StreamBuilder<CacheUpdate<List<Event>>>(
         stream: services.get<CalendarBloc>().fetchTodaysEvents(),
-        initialData: CacheUpdate(isFetching: false),
+        initialData: CacheUpdate.inital(),
         builder: (context, snapshot) {
           assert(snapshot.hasData);
 

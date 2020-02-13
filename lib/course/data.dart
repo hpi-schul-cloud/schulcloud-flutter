@@ -7,9 +7,9 @@ import 'package:schulcloud/app/app.dart';
 part 'data.g.dart';
 
 @immutable
-@HiveType(typeId: typeCourse)
-class Course implements Entity {
-  const Course({
+@HiveType(typeId: TypeId.typeCourse)
+class Course implements Entity<Course> {
+  Course({
     @required this.id,
     @required this.name,
     @required this.description,
@@ -19,7 +19,12 @@ class Course implements Entity {
         assert(name != null),
         assert(description != null),
         assert(teachers != null),
-        assert(color != null);
+        assert(color != null),
+        lessons = Ids<Lesson>(
+          id: Id<Collection<Lesson>>('lessons of course $id'),
+          fetcher: () async => (await fetchJsonListFrom('lessons?courseId=$id'))
+              .map((data) => Lesson.fromJson(data)),
+        );
 
   Course.fromJson(Map<String, dynamic> data)
       : this(
@@ -32,6 +37,9 @@ class Course implements Entity {
           color: hexStringToColor(data['color']),
         );
 
+  static Future<Course> fetch(Id<Course> id) async =>
+      Course.fromJson(await fetchJsonFrom('courses/$id'));
+
   @override
   @HiveField(0)
   final Id<Course> id;
@@ -42,18 +50,17 @@ class Course implements Entity {
   @HiveField(2)
   final String description;
 
-  // For now, we don't use a [List<Id<User>>] here, because you can't cast a
-  // [List<Id>] to a [List<Id<User>>] without knowing about the [Id]'s [cast]
-  // method, which causes Hive to not be able to serialize generic types.
   @HiveField(3)
-  final List<Id> teachers;
+  final List<Id<User>> teachers;
 
   @HiveField(4)
   final Color color;
+
+  final Ids<Lesson> lessons;
 }
 
-@HiveType(typeId: typeLesson)
-class Lesson implements Entity {
+@HiveType(typeId: TypeId.typeLesson)
+class Lesson implements Entity<Lesson> {
   const Lesson({
     @required this.id,
     @required this.name,
@@ -83,7 +90,7 @@ class Lesson implements Entity {
   final List<Content> contents;
 }
 
-@HiveType(typeId: typeContentType)
+@HiveType(typeId: TypeId.typeContentType)
 enum ContentType {
   @HiveField(0)
   text,
@@ -96,8 +103,8 @@ enum ContentType {
 }
 
 @immutable
-@HiveType(typeId: typeContent)
-class Content implements Entity {
+@HiveType(typeId: TypeId.typeContent)
+class Content implements Entity<Content> {
   const Content({
     @required this.id,
     @required this.title,

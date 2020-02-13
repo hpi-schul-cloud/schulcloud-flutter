@@ -5,7 +5,6 @@ import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/course/course.dart';
 import 'package:schulcloud/generated/generated.dart';
 
-import '../bloc.dart';
 import '../data.dart';
 import 'submission_screen.dart';
 
@@ -32,8 +31,7 @@ class AssignmentDetailsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CachedRawBuilder<Course>(
-      controller:
-          services.get<AssignmentBloc>().fetchCourseOfAssignment(assignment),
+      controller: assignment.courseId.controller,
       builder: (_, update) {
         final course = update.data;
         return Scaffold(
@@ -55,7 +53,8 @@ class AssignmentDetailsScreen extends StatelessWidget {
             ),
           ),
           body: CachedBuilder<List<Submission>>(
-            controller: services.get<AssignmentBloc>().fetchSubmissions(),
+            controller:
+                services.get<StorageService>().root.submissions.controller,
             errorScreenBuilder: (_, error, st) => ErrorScreen(error, st),
             errorBannerBuilder: (_, error, st) => ErrorBanner(error, st),
             builder: (context, submissions) {

@@ -7,8 +7,8 @@ import 'package:time_machine/time_machine.dart';
 part 'data.g.dart';
 
 @immutable
-@HiveType(typeId: typeAssignment)
-class Assignment implements Entity, Comparable {
+@HiveType(typeId: TypeId.typeAssignment)
+class Assignment implements Entity<Assignment>, Comparable {
   const Assignment({
     @required this.id,
     @required this.name,
@@ -81,8 +81,8 @@ class Assignment implements Entity, Comparable {
 }
 
 @immutable
-@HiveType(typeId: typeSubmission)
-class Submission implements Entity {
+@HiveType(typeId: TypeId.typeSubmission)
+class Submission implements Entity<Submission> {
   const Submission({
     @required this.id,
     @required this.schoolId,

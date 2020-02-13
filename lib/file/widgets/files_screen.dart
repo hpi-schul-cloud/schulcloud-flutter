@@ -5,7 +5,6 @@ import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/course/course.dart';
 import 'package:schulcloud/generated/generated.dart';
 
-import '../bloc.dart';
 import 'file_browser.dart';
 import 'page_route.dart';
 
@@ -38,7 +37,8 @@ class _CoursesList extends StatelessWidget {
           child: Text(context.s.file_files_course),
         ),
         CachedRawBuilder(
-          controller: services.get<FileBloc>().fetchCourses()..fetch(),
+          controller: services.get<StorageService>().root.courses.controller
+            ..fetch(),
           builder: (context, update) {
             return GridView.extent(
               primary: false,
@@ -101,7 +101,7 @@ class _UserFiles extends StatelessWidget {
           child: Text(context.s.file_files_my),
         ),
         CachedRawBuilder(
-          controller: services.get<UserFetcherService>().fetchCurrentUser()
+          controller: services.get<StorageService>().currentUserId.controller
             ..fetch(),
           builder: (context, update) {
             return update.hasData

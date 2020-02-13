@@ -10,7 +10,6 @@ import 'package:schulcloud/dashboard/dashboard.dart';
 import 'package:time_machine/time_machine.dart';
 
 import '../assignment.dart';
-import '../bloc.dart';
 
 class AssignmentDashboardCard extends StatelessWidget {
   @override
@@ -18,7 +17,7 @@ class AssignmentDashboardCard extends StatelessWidget {
     return DashboardCard(
       title: context.s.assignment_dashboardCard,
       child: CachedRawBuilder<List<Assignment>>(
-        controller: services.get<AssignmentBloc>().fetchAssignments(),
+        controller: services.get<StorageService>().root.assignments.controller,
         builder: (context, update) {
           if (!update.hasData) {
             return Center(
@@ -99,7 +98,7 @@ class _CourseAssignmentCountTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CachedRawBuilder<Course>(
-      controller: services.get<CourseBloc>().fetchCourse(courseId),
+      controller: courseId.controller,
       builder: (context, update) {
         if (!update.hasData) {
           return ListTile(

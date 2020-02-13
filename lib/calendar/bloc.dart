@@ -1,5 +1,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_cached/flutter_cached.dart';
+import 'package:flutter_cached/src/update.dart';
 import 'package:grec_minimal/grec_minimal.dart';
 import 'package:meta/meta.dart';
 import 'package:schulcloud/app/app.dart';
@@ -12,36 +13,20 @@ import 'data.dart';
 class CalendarBloc {
   const CalendarBloc();
 
-  CacheController<List<Event>> fetchEvents() {
-    final storage = services.get<StorageService>();
-    storage.cache.clear();
-    return fetchList(
-      makeNetworkCall: (network) => network.get(
-        'calendar',
-        parameters: {
-          // We have to set this query parameter because otherwise—you guessed
-          // it—no events are being returned at all 😂
-          'all': 'true',
-        },
-      ),
-      parser: (data) => Event.fromJson(data),
-      serviceIsPaginated: false,
-    );
-  }
-
   Stream<CacheUpdate<List<Event>>> fetchTodaysEvents() {
     // The great, thoughtfully designed Calendar API presents us with daily
     // challenges, such as: How do I get today's events?
     // And the simple but ingenious answer to that is:
     // 1. Download all events (every time). (≈50 kb using the demo account)
     // 2. Implement your own logic to filter them. Have fun 😊
-    final allEvents = fetchEvents()..fetch();
+    final allEvents = services.get<StorageService>().root.events.controller
+      ..fetch();
     return allEvents.updates.map((u) {
       if (!u.hasData) {
         return u;
       }
 
-      return CacheUpdate(
+      return CacheUpdate.raw(
         isFetching: u.isFetching,
         data: u.data
             .map(_getTodaysInstanceOrNull)

@@ -8,10 +8,32 @@ import 'package:http/http.dart';
 import 'package:meta/meta.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import 'hive.dart';
 import 'services/network.dart';
 import 'services/storage.dart';
 
 final services = GetIt.instance;
+
+/// Gets some json from the server.
+Future<Map<String, dynamic>> fetchJsonFrom(String path) async {
+  final response = await services.get<NetworkService>().get(path);
+  return json.decode(response.body);
+}
+
+/// Gets a json list from the server.
+Future<List<Map<String, dynamic>>> fetchJsonListFrom(
+  String path, {
+  // Surprise: The Calendar API's response is different from all others! Would
+  // be too easy otherwise ;)
+  bool wrappedInData = false,
+  Map<String, String> parameters = const {},
+}) async {
+  final response =
+      await services.get<NetworkService>().get(path, parameters: parameters);
+  final jsonData = json.decode(response.body);
+  final jsonBody = wrappedInData ? jsonData['data'] : jsonData;
+  return (jsonBody as List).cast<Map<String, dynamic>>();
+}
 
 /// Converts a hex string (like, '#ffdd00') to a [Color].
 Color hexStringToColor(String hex) =>
@@ -70,29 +92,6 @@ class PermissionNotGranted<T> implements Exception {
   String toString() => "A permission wasn't granted by the user.";
 }
 
-class Id<T> {
-  const Id(this.id);
-
-  final String id;
-
-  Id<S> cast<S>() => Id<S>(id);
-
-  @override
-  bool operator ==(other) => other is Id<T> && other.id == id;
-  @override
-  int get hashCode => id.hashCode;
-
-  @override
-  String toString() => id;
-}
-
-/// A special kind of item that also carries its id.
-abstract class Entity {
-  const Entity();
-
-  Id get id;
-}
-
 class LazyMap<K, V> {
   LazyMap(this.createValueForKey) : assert(createValueForKey != null);
 
@@ -102,31 +101,7 @@ class LazyMap<K, V> {
   V operator [](K key) => _map.putIfAbsent(key, () => createValueForKey(key));
 }
 
-CacheController<T> fetchSingle<T extends Entity>({
-  @required Future<Response> Function(NetworkService network) makeNetworkCall,
-  @required T Function(Map<String, dynamic> data) parser,
-  Id<dynamic> parent,
-}) {
-  final storage = services.get<StorageService>();
-  final network = services.get<NetworkService>();
-
-  return CacheController<T>(
-    saveToCache: (item) => storage.cache.putChildrenOfType<T>(parent, [item]),
-    loadFromCache: () async {
-      return (await storage.cache.getChildrenOfType<T>(parent)).singleWhere(
-        (_) => true,
-        orElse: () => throw NotInCacheException(),
-      );
-    },
-    fetcher: () async {
-      final response = await makeNetworkCall(network);
-      final data = json.decode(response.body);
-      return parser(data);
-    },
-  );
-}
-
-CacheController<List<T>> fetchList<T extends Entity>({
+/*CacheController<List<T>> fetchList<T extends Entity>({
   @required Future<Response> Function(NetworkService network) makeNetworkCall,
   @required T Function(Map<String, dynamic> data) parser,
   Id<dynamic> parent,
@@ -147,4 +122,4 @@ CacheController<List<T>> fetchList<T extends Entity>({
       return [for (final data in dataList) parser(data)];
     },
   );
-}
+}*/

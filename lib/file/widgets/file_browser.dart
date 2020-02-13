@@ -39,7 +39,7 @@ class FileBrowser extends StatelessWidget {
   }
 
   Future<void> _downloadFile(BuildContext context, File file) async {
-    assert(file.isNotDirectory);
+    assert(file.isActualFile);
 
     try {
       await services.get<FileBloc>().downloadFile(file);

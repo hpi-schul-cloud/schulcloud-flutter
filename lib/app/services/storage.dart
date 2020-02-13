@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:schulcloud/assignment/assignment.dart';
 import 'package:schulcloud/course/course.dart';
 import 'package:schulcloud/file/file.dart';
@@ -9,7 +11,7 @@ import '../hive.dart';
 
 /// A service that offers storage of app-wide data.
 class StorageService {
-  StorageService._(this._prefs, this.email, this.token, this.cache);
+  StorageService._(this._prefs, this.email, this.token, this.root);
 
   final StreamingSharedPreferences _prefs;
 
@@ -19,13 +21,22 @@ class StorageService {
   final Preference<String> token;
   bool get hasToken => token.getValue().isNotEmpty;
 
-  final HiveCache cache;
+  final Root root;
+
+  // The token is a JWT token. JWT tokens consist of a header, body and claim
+  // (signature), all separated by dots and encoded in base64. For now, we
+  // don't verify the claim, but just decode the body.
+  Id<User> get currentUserId {
+    final token = this.token.getValue();
+    final encodedBody = token.split('.')[1];
+    final body = String.fromCharCodes(base64.decode(encodedBody));
+    return Id<User>(json.decode(body)['userId']);
+  }
 
   static Future<StorageService> create() async {
     StreamingSharedPreferences prefs;
     Preference<String> email;
     Preference<String> token;
-    HiveCache cache;
 
     await Future.wait([
       () async {
@@ -33,19 +44,13 @@ class StorageService {
         email = prefs.getString('email', defaultValue: '');
         token = prefs.getString('token', defaultValue: '');
       }(),
-      () async {
-        cache = await HiveCache.create(types: {
-          Assignment,
-          Course,
-          File,
-          Article,
-          User,
-        });
-      }(),
     ]);
 
-    return StorageService._(prefs, email, token, cache);
+    final root = Root();
+
+    return StorageService._(prefs, email, token, root);
   }
 
-  Future<void> clear() => Future.wait([_prefs.clear(), cache.clear()]);
+  // TODO: clear the HiveCache
+  Future<void> clear() => Future.wait([_prefs.clear()]);
 }

@@ -65,8 +65,7 @@ class Menu extends StatelessWidget {
             children: [
               SizedBox(height: 8),
               CachedRawBuilder<User>(
-                controller:
-                    services.get<UserFetcherService>().fetchCurrentUser(),
+                controller: services.get<StorageService>().currentUserId.controller,
                 builder: (context, update) {
                   return Text(
                     update.data?.name ?? context.s.app_navigation_userDataEmpty,
