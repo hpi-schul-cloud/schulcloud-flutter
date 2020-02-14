@@ -192,9 +192,9 @@ class FlagFilter<T> {
 
   // ignore: avoid_positional_boolean_parameters
   bool apply(T item, bool selection) {
+    if (selection == null) {
+      return true;
+    }
+    return selector(item) == selection;
+  }
 }
-
-// Filters:
-// - only some courses (list)
-// - date range
-// - nullable bool
