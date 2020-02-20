@@ -84,7 +84,12 @@ class _AssignmentsScreenState extends State<AssignmentsScreen> {
                 actions: <Widget>[
                   IconButton(
                     icon: Icon(Icons.sort),
-                    onPressed: () => _showSortFilterSheet(context),
+                    onPressed: () => _sortFilter.showSheet(
+                      context: context,
+                      callback: (selection) {
+                        setState(() => _sortFilter = selection);
+                      },
+                    ),
                   ),
                 ],
               ),
@@ -97,27 +102,6 @@ class _AssignmentsScreenState extends State<AssignmentsScreen> {
             ],
           );
         },
-      ),
-    );
-  }
-
-  void _showSortFilterSheet(BuildContext context) {
-    context.showFancyBottomSheet(
-      builder: (_) => Padding(
-        padding: EdgeInsets.symmetric(horizontal: 16),
-        child: StatefulBuilder(
-          builder: (_, setSheetState) {
-            return SortFilterWidget(
-              selection: _sortFilter,
-              onSelectionChange: (selection) {
-                setSheetState(() {});
-                setState(() {
-                  _sortFilter = selection;
-                });
-              },
-            );
-          },
-        ),
       ),
     );
   }

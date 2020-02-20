@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:schulcloud/app/chip.dart';
 
 import '../theming_utils.dart';
+import '../widgets/bottom_sheet.dart';
 import 'filtering.dart';
 import 'sorting.dart';
 
@@ -77,6 +78,32 @@ class SortFilterSelection<T> {
     }
     return List<T>.from(items)
       ..sort(sortSelection.comparator.withOrder(sortOrder));
+  }
+
+  void showSheet({
+    @required BuildContext context,
+    @required SortFilterChangeCallback<T> callback,
+  }) {
+    assert(context != null);
+    assert(callback != null);
+
+    var currentSelection = this;
+    context.showFancyBottomSheet(
+      builder: (_) => Padding(
+        padding: EdgeInsets.symmetric(horizontal: 16),
+        child: StatefulBuilder(
+          builder: (_, setState) {
+            return SortFilterWidget(
+              selection: currentSelection,
+              onSelectionChange: (selection) {
+                setState(() => currentSelection = selection);
+                callback(selection);
+              },
+            );
+          },
+        ),
+      ),
+    );
   }
 }
 
