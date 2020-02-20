@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_cached/flutter_cached.dart';
 import 'package:schulcloud/app/app.dart';
+import 'package:schulcloud/dashboard/widgets/dashboard_card.dart';
 import 'package:schulcloud/l10n/l10n.dart';
 import 'package:time_machine/time_machine.dart';
 
@@ -12,8 +13,9 @@ class CalendarDashboardCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final s = context.s;
 
-    return FancyCard(
+    return DashboardCard(
       title: s.calendar_dashboardCard,
+      omitHorizontalPadding: false,
       child: StreamBuilder<CacheUpdate<List<Event>>>(
         stream: services.get<CalendarBloc>().fetchTodaysEvents(),
         initialData: CacheUpdate(isFetching: false),

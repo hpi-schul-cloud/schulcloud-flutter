@@ -14,8 +14,13 @@ import '../bloc.dart';
 class AssignmentDashboardCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return FancyCard(
-      title: context.s.assignment_dashboardCard,
+    final s = context.s;
+
+    return DashboardCard(
+      title: s.assignment_dashboardCard,
+      footerButtonText: s.assignment_dashboardCard_all,
+      onFooterButtonPressed: () => context.navigator
+          .push(MaterialPageRoute(builder: (context) => AssignmentsScreen())),
       child: CachedRawBuilder<List<Assignment>>(
         controller: services.get<AssignmentBloc>().fetchAssignments(),
         builder: (context, update) {
@@ -41,38 +46,27 @@ class AssignmentDashboardCard extends StatelessWidget {
 
           return Column(
             children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Text(
-                    openAssignments.length.toString(),
-                    style: Theme.of(context).textTheme.display3,
-                  ),
-                  SizedBox(width: 4),
-                  Text(
-                    context.s.assignment_dashboardCard_header(
-                        openAssignments.length),
-                    style: Theme.of(context).textTheme.subhead,
-                  )
-                ],
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Text(
+                      openAssignments.length.toString(),
+                      style: context.textTheme.display3,
+                    ),
+                    SizedBox(width: 4),
+                    Text(
+                      s.assignment_dashboardCard_header(openAssignments.length),
+                      style: context.textTheme.subhead,
+                    )
+                  ],
+                ),
               ),
               ...subjects.keys.map(
                 (c) => _CourseAssignmentCountTile(
                   courseId: c,
                   assignmentCount: subjects[c].length,
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Align(
-                  alignment: Alignment.bottomRight,
-                  child: OutlineButton(
-                    onPressed: () {
-                      context.navigator.push(MaterialPageRoute(
-                          builder: (context) => AssignmentsScreen()));
-                    },
-                    child: Text(context.s.assignment_dashboardCard_all),
-                  ),
                 ),
               ),
             ],
