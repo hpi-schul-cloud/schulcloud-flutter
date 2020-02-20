@@ -1,8 +1,9 @@
-import 'package:flutter_cached/flutter_cached.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_cached/flutter_cached.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/course/course.dart';
+import 'package:schulcloud/course/widgets/course_color_dot.dart';
 import 'package:schulcloud/l10n/l10n.dart';
 import 'package:time_machine/time_machine.dart';
 
@@ -10,54 +11,40 @@ import '../bloc.dart';
 import '../data.dart';
 import 'assignment_details_screen.dart';
 
-enum _SortKey {
-  createdAt,
-  availableAt,
-  dueAt,
-}
-enum _FilterKey {
-  dueDate,
-  more,
-}
-enum _MoreFilterKey {
-  isPrivate,
-  hasPublicSubmissions,
-}
-
 class AssignmentsScreen extends StatefulWidget {
   @override
   _AssignmentsScreenState createState() => _AssignmentsScreenState();
 }
 
 class _AssignmentsScreenState extends State<AssignmentsScreen> {
-  static final _sortFilterConfig = SortFilter<Assignment, _SortKey, _FilterKey>(
+  static final _sortFilterConfig = SortFilter<Assignment>(
     sortOptions: {
-      _SortKey.createdAt: Sorter<Assignment>.simple(
+      'createdAt': Sorter<Assignment>.simple(
         'Creation date',
         selector: (assignment) => assignment.createdAt,
       ),
-      _SortKey.availableAt: Sorter<Assignment>.simple(
+      'availableAt': Sorter<Assignment>.simple(
         'Available date',
         selector: (assignment) => assignment.availableAt,
       ),
-      _SortKey.dueAt: Sorter<Assignment>.simple(
+      'dueAt': Sorter<Assignment>.simple(
         'Due date',
         selector: (assignment) => assignment.dueAt,
       ),
     },
     filters: {
-      _FilterKey.dueDate: DateRangeFilter<Assignment>(
+      'dueDate': DateRangeFilter<Assignment>(
         'Due date',
         selector: (assignment) => assignment.dueAt.inLocalZone().calendarDate,
       ),
-      _FilterKey.more: FlagsFilter<Assignment, _MoreFilterKey>(
+      'more': FlagsFilter<Assignment>(
         'More',
         filters: {
-          _MoreFilterKey.isPrivate: FlagFilter<Assignment>(
+          'isPrivate': FlagFilter<Assignment>(
             'Private assignment',
             selector: (assignment) => assignment.isPrivate,
           ),
-          _MoreFilterKey.hasPublicSubmissions: FlagFilter<Assignment>(
+          'hasPublicSubmissions': FlagFilter<Assignment>(
             'Public submissions',
             selector: (assignment) => assignment.hasPublicSubmissions,
           ),
@@ -66,16 +53,16 @@ class _AssignmentsScreenState extends State<AssignmentsScreen> {
     },
   );
 
-  SortFilterSelection<Assignment, _SortKey, _FilterKey> _sortFilter;
+  SortFilterSelection<Assignment> _sortFilter;
 
   @override
   void initState() {
     super.initState();
     _sortFilter = SortFilterSelection(
       config: _sortFilterConfig,
-      sortSelectionKey: _SortKey.dueAt,
+      sortSelectionKey: 'dueAt',
       filterSelections: {
-        _FilterKey.dueDate: DateRangeFilterSelection(start: LocalDate.today()),
+        'dueDate': DateRangeFilterSelection(start: LocalDate.today()),
       },
     );
   }

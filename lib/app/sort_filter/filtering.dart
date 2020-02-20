@@ -130,21 +130,21 @@ class DateRangeFilterSelection {
 }
 
 @immutable
-class FlagsFilter<T, V> extends Filter<T, Map<V, bool>> {
+class FlagsFilter<T> extends Filter<T, Map<String, bool>> {
   const FlagsFilter(String title, {@required this.filters})
       : assert(filters != null),
         super(title);
 
   @override
-  Map<V, bool> get defaultSelection => {};
+  Map<String, bool> get defaultSelection => {};
 
-  final Map<V, FlagFilter<T>> filters;
+  final Map<String, FlagFilter<T>> filters;
 
   @override
   Widget buildWidget(
     BuildContext context,
-    Map<V, bool> selection,
-    DataChangeCallback<Map<V, bool>> updater,
+    Map<String, bool> selection,
+    DataChangeCallback<Map<String, bool>> updater,
   ) {
     return ChipGroup(
       children: filters.entries.map((e) {
@@ -177,7 +177,7 @@ class FlagsFilter<T, V> extends Filter<T, Map<V, bool>> {
   }
 
   @override
-  bool filter(T item, Map<V, bool> selection) =>
+  bool filter(T item, Map<String, bool> selection) =>
       filters.keys.every((k) => filters[k].apply(item, selection[k]));
 }
 

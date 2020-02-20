@@ -7,28 +7,28 @@ import 'filtering.dart';
 import 'sorting.dart';
 
 typedef DataChangeCallback<D> = void Function(D newData);
-typedef SortFilterChangeCallback<T, S, F> = void Function(
-    SortFilterSelection<T, S, F> newSortFilter);
+typedef SortFilterChangeCallback<T> = void Function(
+    SortFilterSelection<T> newSortFilter);
 
 @immutable
-class SortFilter<T, S, F> {
+class SortFilter<T> {
   const SortFilter({
     this.sortOptions = const {},
     this.filters = const {},
   })  : assert(sortOptions != null),
         assert(filters != null);
 
-  final Map<S, Sorter<T>> sortOptions;
-  final Map<F, Filter> filters;
+  final Map<String, Sorter<T>> sortOptions;
+  final Map<String, Filter> filters;
 }
 
 @immutable
-class SortFilterSelection<T, S, F> {
+class SortFilterSelection<T> {
   SortFilterSelection({
     @required this.config,
     @required this.sortSelectionKey,
     this.sortOrder = SortOrder.ascending,
-    Map<F, dynamic> filterSelections = const {},
+    Map<String, dynamic> filterSelections = const {},
   })  : assert(config != null),
         assert(sortSelectionKey != null),
         assert(sortOrder != null),
@@ -38,15 +38,15 @@ class SortFilterSelection<T, S, F> {
           ...filterSelections,
         };
 
-  final SortFilter<T, S, F> config;
+  final SortFilter<T> config;
 
-  final S sortSelectionKey;
+  final String sortSelectionKey;
   Sorter<T> get sortSelection => config.sortOptions[sortSelectionKey];
   final SortOrder sortOrder;
 
-  final Map<F, dynamic> filterSelections;
+  final Map<String, dynamic> filterSelections;
 
-  SortFilterSelection<T, S, F> withSortSelection(S selectedKey) {
+  SortFilterSelection<T> withSortSelection(String selectedKey) {
     return SortFilterSelection(
       config: config,
       sortSelectionKey: selectedKey,
@@ -57,7 +57,7 @@ class SortFilterSelection<T, S, F> {
     );
   }
 
-  SortFilterSelection<T, S, F> withFilterSelection(F key, dynamic selection) {
+  SortFilterSelection<T> withFilterSelection(String key, dynamic selection) {
     final filterOptions = Map.of(filterSelections);
     filterOptions[key] = selection;
 
@@ -80,7 +80,7 @@ class SortFilterSelection<T, S, F> {
   }
 }
 
-class SortFilterWidget<T, S, F> extends StatelessWidget {
+class SortFilterWidget<T> extends StatelessWidget {
   const SortFilterWidget({
     Key key,
     @required this.selection,
@@ -89,10 +89,10 @@ class SortFilterWidget<T, S, F> extends StatelessWidget {
         assert(onSelectionChange != null),
         super(key: key);
 
-  final SortFilterSelection<T, S, F> selection;
-  SortFilter<T, S, F> get config => selection.config;
+  final SortFilterSelection<T> selection;
+  SortFilter<T> get config => selection.config;
 
-  final SortFilterChangeCallback<T, S, F> onSelectionChange;
+  final SortFilterChangeCallback<T> onSelectionChange;
 
   @override
   Widget build(BuildContext context) {
@@ -124,7 +124,7 @@ class SortFilterWidget<T, S, F> extends StatelessWidget {
     );
   }
 
-  Widget _buildFilterSection(BuildContext context, F filterKey) {
+  Widget _buildFilterSection(BuildContext context, String filterKey) {
     final filter = config.filters[filterKey];
 
     return _Section(
