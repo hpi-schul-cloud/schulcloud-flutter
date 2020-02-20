@@ -4,6 +4,7 @@ import 'package:flutter_cached/flutter_cached.dart';
 import 'package:schulcloud/course/course.dart';
 import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/course/data.dart';
+import 'package:schulcloud/course/widgets/course_color_dot.dart';
 import 'package:schulcloud/l10n/l10n.dart';
 import 'package:time_machine/time_machine.dart';
 
@@ -99,24 +100,16 @@ class _CourseAssignmentCountTile extends StatelessWidget {
     return CachedRawBuilder<Course>(
       controller: services.get<CourseBloc>().fetchCourse(courseId),
       builder: (context, update) {
-        if (!update.hasData) {
+        if (update.hasError) {
           return ListTile(
-            title: Text(update.hasError
-                ? update.error.toString()
-                : context.s.general_loading),
+            title: Text(update.error.toString()),
           );
         }
 
         var course = update.data;
         return ListTile(
-          leading: AnimatedContainer(
-            duration: Duration(milliseconds: 200),
-            width: 16,
-            height: 16,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: course?.color ?? context.theme.disabledColor,
-            ),
+          leading: CourseColorDot(
+            course: course,
           ),
           title: TextOrPlaceholder(course?.name),
           trailing: Text(
