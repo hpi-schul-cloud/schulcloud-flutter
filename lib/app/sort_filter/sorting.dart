@@ -35,7 +35,17 @@ class Sorter<T> {
     @required Selector<T, Comparable> selector,
   }) : this(
           title,
-          comparator: (a, b) => selector(a).compareTo(selector(b)),
+          comparator: (a, b) {
+            final selectorA = selector(a);
+            if (selectorA == null) {
+              return 1;
+            }
+            final selectorB = selector(b);
+            if (selectorB == null) {
+              return -1;
+            }
+            return selectorA.compareTo(selectorB);
+          },
         );
 
   final String title;
