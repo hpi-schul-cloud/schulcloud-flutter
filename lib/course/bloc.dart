@@ -15,10 +15,14 @@ class CourseBloc {
         parser: (data) => Course.fromJson(data),
       );
 
-  CacheController<Course> fetchCourse(Id<Course> courseId) => fetchSingle(
-        makeNetworkCall: (network) => network.get('courses/$courseId'),
-        parser: (data) => Course.fromJson(data),
-      );
+  CacheController<Course> fetchCourse(Id<Course> courseId) {
+    assert(courseId != null);
+
+    return fetchSingle(
+      makeNetworkCall: (network) => network.get('courses/$courseId'),
+      parser: (data) => Course.fromJson(data),
+    );
+  }
 
   CacheController<List<Lesson>> fetchLessonsOfCourse(Course course) =>
       fetchList(

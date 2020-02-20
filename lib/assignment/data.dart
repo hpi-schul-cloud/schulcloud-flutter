@@ -15,7 +15,7 @@ class Assignment implements Entity {
     @required this.schoolId,
     @required this.createdAt,
     @required this.availableAt,
-    @required this.dueAt,
+    this.dueAt,
     @required this.teacherId,
     this.description,
     this.courseId,
@@ -27,7 +27,6 @@ class Assignment implements Entity {
         assert(schoolId != null),
         assert(createdAt != null),
         assert(availableAt != null),
-        assert(dueAt != null),
         assert(teacherId != null),
         assert(isPrivate != null),
         assert(hasPublicSubmissions != null);
@@ -41,11 +40,13 @@ class Assignment implements Entity {
           description: data['description'],
           createdAt: (data['createdAt'] as String).parseApiInstant(),
           availableAt: (data['availableDate'] as String).parseApiInstant(),
-          dueAt: (data['dueDate'] as String).parseApiInstant(),
-          courseId: Id<Course>(data['courseId']['_id']),
+          dueAt: (data['dueDate'] as String)?.parseApiInstant(),
+          courseId: data['courseId'] != null
+              ? Id<Course>(data['courseId']['_id'])
+              : null,
           lessonId: Id(data['lessonId'] ?? ''),
-          isPrivate: data['private'],
-          hasPublicSubmissions: data['publicSubmissions'],
+          isPrivate: data['private'] ?? false,
+          hasPublicSubmissions: data['publicSubmissions'] ?? false,
         );
 
   // used before: 3, 4
@@ -86,6 +87,11 @@ class Assignment implements Entity {
 
   @HiveField(15)
   final bool hasPublicSubmissions;
+
+  @HiveField(16)
+  final List<Id<User>> archived;
+  bool get isArchived =>
+      archived.contains(services.get<StorageService>().userId);
 }
 
 @immutable

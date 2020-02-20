@@ -35,7 +35,7 @@ class _AssignmentsScreenState extends State<AssignmentsScreen> {
     filters: {
       'dueDate': DateRangeFilter<Assignment>(
         'Due date',
-        selector: (assignment) => assignment.dueAt.inLocalZone().calendarDate,
+        selector: (assignment) => assignment.dueAt?.inLocalZone()?.calendarDate,
       ),
       'more': FlagsFilter<Assignment>(
         'More',

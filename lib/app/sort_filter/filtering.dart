@@ -47,6 +47,9 @@ class DateRangeFilter<T> extends Filter<T, DateRangeFilterSelection> {
   @override
   bool filter(T item, DateRangeFilterSelection selection) {
     final date = selector(item);
+    if (date == null) {
+      return true;
+    }
     if (selection.start != null && selection.start > date) {
       return false;
     }

@@ -1,10 +1,9 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cached/flutter_cached.dart';
-import 'package:schulcloud/course/course.dart';
 import 'package:schulcloud/app/app.dart';
-import 'package:schulcloud/course/data.dart';
-import 'package:schulcloud/course/widgets/course_color_dot.dart';
+import 'package:schulcloud/course/course.dart';
+import 'package:schulcloud/dashboard/dashboard.dart';
 import 'package:schulcloud/l10n/l10n.dart';
 import 'package:time_machine/time_machine.dart';
 
@@ -36,8 +35,8 @@ class AssignmentDashboardCard extends StatelessWidget {
           final start = LocalDate.today();
           final end = start.addDays(7);
           final openAssignments = update.data.where((h) {
-            final dueAt = h.dueAt.inLocalZone().localDateTime.calendarDate;
-            return start <= dueAt && dueAt <= end;
+            final dueAt = h.dueAt?.inLocalZone()?.localDateTime?.calendarDate;
+            return dueAt == null || (start <= dueAt && dueAt <= end);
           });
 
           // Assignments are shown grouped by subject
@@ -80,10 +79,9 @@ class AssignmentDashboardCard extends StatelessWidget {
 class _CourseAssignmentCountTile extends StatelessWidget {
   const _CourseAssignmentCountTile({
     Key key,
-    @required this.courseId,
+    this.courseId,
     @required this.assignmentCount,
-  })  : assert(courseId != null),
-        assert(assignmentCount != null),
+  })  : assert(assignmentCount != null),
         super(key: key);
 
   final Id<Course> courseId;
@@ -91,6 +89,10 @@ class _CourseAssignmentCountTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (courseId == null) {
+      return _buildListTile(context, null, shouldHaveCourse: false);
+    }
+
     return CachedRawBuilder<Course>(
       controller: services.get<CourseBloc>().fetchCourse(courseId),
       builder: (context, update) {
@@ -100,18 +102,25 @@ class _CourseAssignmentCountTile extends StatelessWidget {
           );
         }
 
-        var course = update.data;
-        return ListTile(
-          leading: CourseColorDot(
-            course: course,
-          ),
-          title: TextOrPlaceholder(course?.name),
-          trailing: Text(
-            assignmentCount.toString(),
-            style: Theme.of(context).textTheme.headline,
-          ),
-        );
+        return _buildListTile(context, update.data);
       },
+    );
+  }
+
+  Widget _buildListTile(
+    BuildContext context,
+    Course course, {
+    bool shouldHaveCourse = true,
+  }) {
+    return ListTile(
+      leading: CourseColorDot(course: course),
+      title: shouldHaveCourse
+          ? TextOrPlaceholder(course?.name)
+          : Text('(no course)'),
+      trailing: Text(
+        assignmentCount.toString(),
+        style: context.textTheme.headline,
+      ),
     );
   }
 }
