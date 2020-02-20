@@ -22,6 +22,7 @@ class Assignment implements Entity {
     this.lessonId,
     @required this.isPrivate,
     @required this.hasPublicSubmissions,
+    this.archived = const [],
   })  : assert(id != null),
         assert(name != null),
         assert(schoolId != null),
@@ -29,7 +30,8 @@ class Assignment implements Entity {
         assert(availableAt != null),
         assert(teacherId != null),
         assert(isPrivate != null),
-        assert(hasPublicSubmissions != null);
+        assert(hasPublicSubmissions != null),
+        assert(archived != null);
 
   Assignment.fromJson(Map<String, dynamic> data)
       : this(
@@ -47,6 +49,9 @@ class Assignment implements Entity {
           lessonId: Id(data['lessonId'] ?? ''),
           isPrivate: data['private'] ?? false,
           hasPublicSubmissions: data['publicSubmissions'] ?? false,
+          archived: (data['archived'] as List<dynamic> ?? [])
+              .map((id) => Id<User>(id))
+              .toList(),
         );
 
   // used before: 3, 4

@@ -22,6 +22,7 @@ class AppConfigData {
     'open/logo/logo_with_text.svg',
     'thr/logo/logo_with_text.svg',
   ];
+  static const errorColor = Color(0xFFDC2831);
 
   final String name;
   final String domain;
@@ -37,6 +38,7 @@ class AppConfigData {
     return ThemeData(
       primarySwatch: primaryColor,
       accentColor: accentColor,
+      errorColor: errorColor,
       fontFamily: 'PT Sans',
       textTheme: _createTextTheme(Brightness.light),
     );
@@ -46,6 +48,7 @@ class AppConfigData {
     return ThemeData(
       brightness: Brightness.dark,
       primarySwatch: primaryColor,
+      errorColor: errorColor,
       accentColor: accentColor,
       fontFamily: 'PT Sans',
       textTheme: _createTextTheme(Brightness.dark),

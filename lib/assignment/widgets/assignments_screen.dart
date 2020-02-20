@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_cached/flutter_cached.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:schulcloud/app/app.dart';
+import 'package:schulcloud/app/chip.dart';
 import 'package:schulcloud/course/course.dart';
 import 'package:schulcloud/course/widgets/course_color_dot.dart';
 import 'package:schulcloud/l10n/l10n.dart';
@@ -95,7 +96,10 @@ class _AssignmentsScreenState extends State<AssignmentsScreen> {
               ),
               SliverList(
                 delegate: SliverChildBuilderDelegate(
-                  (_, index) => AssignmentCard(assignment: assignments[index]),
+                  (_, index) => Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    child: AssignmentCard(assignment: assignments[index]),
+                  ),
                   childCount: assignments.length,
                 ),
               ),
@@ -119,62 +123,86 @@ class AssignmentCard extends StatelessWidget {
     ));
   }
 
-  void _showCourseDetailScreen(BuildContext context, Course course) {
-    context.navigator.push(MaterialPageRoute(
-      builder: (context) => CourseDetailsScreen(course: course),
-    ));
-  }
-
   @override
   Widget build(BuildContext context) {
-    return Material(
-      elevation: 2,
-      child: InkWell(
-        enableFeedback: true,
-        onTap: () => _showAssignmentDetailsScreen(context),
-        child: Padding(
-          padding: EdgeInsets.all(8),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              if (assignment.dueAt.isBefore(Instant.now()))
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: <Widget>[
-                    Icon(Icons.flag, color: Colors.red),
-                    Text(
-                      context.s.assignment_assignmentsScreen_overdue,
-                      style: TextStyle(color: Colors.red),
-                    ),
-                  ],
+    return FancyCard(
+      onTap: () => _showAssignmentDetailsScreen(context),
+      omitBottomPadding: true,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              Expanded(
+                child: Text(
+                  assignment.name,
+                  style: context.theme.textTheme.subhead,
+                  maxLines: 2,
                 ),
-              Text(
-                assignment.name,
-                style: context.theme.textTheme.headline,
               ),
-              Html(data: limitString(assignment.description, 200)),
-              CachedRawBuilder<Course>(
-                controller: services
-                    .get<AssignmentBloc>()
-                    .fetchCourseOfAssignment(assignment),
-                builder: (_, update) {
-                  if (!update.hasData) {
-                    return Container();
-                  }
-
-                  final course = update.data;
-                  return ActionChip(
-                    backgroundColor: course.color,
-                    avatar: Icon(Icons.school),
-                    label: Text(course.name),
-                    onPressed: () => _showCourseDetailScreen(context, course),
-                  );
-                },
-              ),
+              if (assignment.dueAt != null) ...[
+                SizedBox(width: 8),
+                Text(
+                  assignment.dueAt.shortDateTimeString,
+                  style: context.textTheme.caption,
+                ),
+              ],
             ],
           ),
-        ),
+          SizedBox(height: 8),
+          _buildChips(context),
+        ],
       ),
+    );
+  }
+
+  Widget _buildChips(BuildContext context) {
+    return ChipGroup(
+      children: <Widget>[
+        if (assignment.courseId != null)
+          CachedRawBuilder<Course>(
+            controller: services
+                .get<AssignmentBloc>()
+                .fetchCourseOfAssignment(assignment),
+            builder: (_, update) {
+              if (!update.hasData) {
+                return SizedBox.shrink();
+              }
+
+              final course = update.data;
+              return ActionChip(
+                avatar: CourseColorDot(course: course),
+                label: Text(course.name),
+                onPressed: () {},
+              );
+            },
+          ),
+        if (assignment.dueAt != null && assignment.dueAt < Instant.now())
+          ActionChip(
+            avatar: Icon(
+              Icons.flag,
+              color: context.theme.errorColor,
+            ),
+            label: Text(context.s.assignment_assignmentsScreen_overdue),
+            onPressed: () {},
+          ),
+        if (assignment.isArchived)
+          ActionChip(
+            label: Text('Archived'),
+            onPressed: () {},
+          )
+        else if (assignment.isPrivate)
+          ActionChip(
+            label: Text('Draft'),
+            onPressed: () {},
+          )
+        else
+          ActionChip(
+            label: Text('Gestellt'),
+            onPressed: () {},
+          ),
+      ],
     );
   }
 }

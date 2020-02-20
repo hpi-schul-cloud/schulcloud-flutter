@@ -6,12 +6,16 @@ class FancyCard extends StatelessWidget {
     Key key,
     this.onTap,
     this.omitHorizontalPadding = false,
+    this.omitBottomPadding = false,
     this.title,
     @required this.child,
-  }) : super(key: key);
+  })  : assert(omitHorizontalPadding != null),
+        assert(omitBottomPadding != null),
+        super(key: key);
 
   final VoidCallback onTap;
   final bool omitHorizontalPadding;
+  final bool omitBottomPadding;
   final String title;
   final Widget child;
 
@@ -19,6 +23,7 @@ class FancyCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       elevation: 1,
+      clipBehavior: Clip.antiAlias,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       margin: EdgeInsets.zero,
       child: InkWell(
@@ -44,7 +49,7 @@ class FancyCard extends StatelessWidget {
               : EdgeInsets.symmetric(horizontal: 16),
           child: child,
         ),
-        SizedBox(height: 16),
+        if (!omitBottomPadding) SizedBox(height: 16),
       ],
     );
   }
