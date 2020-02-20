@@ -29,11 +29,8 @@ class LoginBloc {
       );
     }
 
-    final storage = services.get<StorageService>();
-    await storage.email.setValue(email);
-
     // The login throws an exception if it wasn't successful.
-    final response = await services.get<NetworkService>().post(
+    final rawResponse = await services.get<NetworkService>().post(
       'authentication',
       body: {
         'strategy': 'local',
@@ -41,8 +38,12 @@ class LoginBloc {
         'password': password,
       },
     );
-    final String token = json.decode(response.body)['accessToken'];
-    await storage.token.setValue(token);
+    final response = json.decode(rawResponse.body);
+    await services.get<StorageService>().setUserInfo(
+          email: email,
+          userId: response['account']['userId'],
+          token: response['accessToken'],
+        );
   }
 
   Future<void> loginAsDemoStudent() =>
