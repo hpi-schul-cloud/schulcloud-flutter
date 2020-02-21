@@ -59,14 +59,36 @@ class SortFilterSelection<T> {
   }
 
   SortFilterSelection<T> withFilterSelection(String key, dynamic selection) {
-    final filterOptions = Map.of(filterSelections);
-    filterOptions[key] = selection;
+    return SortFilterSelection(
+      config: config,
+      sortSelectionKey: sortSelectionKey,
+      sortOrder: sortOrder,
+      filterSelections: {
+        ...filterSelections,
+        key: selection,
+      },
+    );
+  }
+
+  SortFilterSelection<T> withFlagsFilterSelection(
+    String flagsKey,
+    String flag,
+    // ignore: avoid_positional_boolean_parameters
+    bool selection,
+  ) {
+    assert(config.filters[flagsKey] is FlagsFilter);
 
     return SortFilterSelection(
       config: config,
       sortSelectionKey: sortSelectionKey,
       sortOrder: sortOrder,
-      filterSelections: filterOptions,
+      filterSelections: {
+        ...filterSelections,
+        flagsKey: <String, bool>{
+          ...filterSelections[flagsKey],
+          flag: selection,
+        }
+      },
     );
   }
 

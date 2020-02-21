@@ -184,6 +184,8 @@ class FlagsFilter<T> extends Filter<T, Map<String, bool>> {
       filters.keys.every((k) => filters[k].apply(item, selection[k]));
 }
 
+typedef FlagFilterSetCallback<T> = void Function(String key, bool value);
+
 @immutable
 class FlagFilter<T> {
   const FlagFilter(this.title, {@required this.selector})
@@ -199,5 +201,33 @@ class FlagFilter<T> {
       return true;
     }
     return selector(item) == selection;
+  }
+}
+
+class FlagFilterPreviewChip<T> extends StatelessWidget {
+  const FlagFilterPreviewChip({
+    Key key,
+    @required this.flag,
+    @required this.callback,
+    @required this.icon,
+    @required this.label,
+  })  : assert(flag != null),
+        assert(callback != null),
+        assert(icon != null),
+        assert(label != null),
+        super(key: key);
+
+  final String flag;
+  final FlagFilterSetCallback<T> callback;
+  final IconData icon;
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    return ActionChip(
+      avatar: Icon(icon),
+      label: Text(label),
+      onPressed: () => callback(flag, true),
+    );
   }
 }

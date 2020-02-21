@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_cached/flutter_cached.dart';
-import 'package:flutter_html/flutter_html.dart';
 import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/app/chip.dart';
 import 'package:schulcloud/course/course.dart';
-import 'package:schulcloud/course/widgets/course_color_dot.dart';
+import 'package:schulcloud/course/widgets/course_chip.dart';
 import 'package:schulcloud/l10n/l10n.dart';
 import 'package:time_machine/time_machine.dart';
 
@@ -41,6 +40,10 @@ class _AssignmentsScreenState extends State<AssignmentsScreen> {
       'more': FlagsFilter<Assignment>(
         'More',
         filters: {
+          'isArchived': FlagFilter<Assignment>(
+            'Archived',
+            selector: (assignment) => assignment.isArchived,
+          ),
           'isPrivate': FlagFilter<Assignment>(
             'Private assignment',
             selector: (assignment) => assignment.isPrivate,
@@ -98,7 +101,13 @@ class _AssignmentsScreenState extends State<AssignmentsScreen> {
                 delegate: SliverChildBuilderDelegate(
                   (_, index) => Padding(
                     padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                    child: AssignmentCard(assignment: assignments[index]),
+                    child: AssignmentCard(
+                      assignment: assignments[index],
+                      flagFilterSetCallback: (key, value) {
+                        setState(() => _sortFilter = _sortFilter
+                            .withFlagsFilterSelection('more', key, value));
+                      },
+                    ),
                   ),
                   childCount: assignments.length,
                 ),
@@ -112,10 +121,13 @@ class _AssignmentsScreenState extends State<AssignmentsScreen> {
 }
 
 class AssignmentCard extends StatelessWidget {
-  const AssignmentCard({@required this.assignment})
-      : assert(assignment != null);
+  const AssignmentCard(
+      {@required this.assignment, @required this.flagFilterSetCallback})
+      : assert(assignment != null),
+        assert(flagFilterSetCallback != null);
 
   final Assignment assignment;
+  final FlagFilterSetCallback flagFilterSetCallback;
 
   void _showAssignmentDetailsScreen(BuildContext context) {
     context.navigator.push(MaterialPageRoute(
@@ -131,78 +143,74 @@ class AssignmentCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              Expanded(
-                child: Text(
-                  assignment.name,
-                  style: context.theme.textTheme.subhead,
-                  maxLines: 2,
-                ),
-              ),
-              if (assignment.dueAt != null) ...[
-                SizedBox(width: 8),
-                Text(
-                  assignment.dueAt.shortDateTimeString,
-                  style: context.textTheme.caption,
-                ),
-              ],
-            ],
-          ),
+          _buildHeader(context),
           SizedBox(height: 8),
-          _buildChips(context),
+          ChipGroup(
+            children: _buildChips(context),
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildChips(BuildContext context) {
-    return ChipGroup(
+  Widget _buildHeader(BuildContext context) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.baseline,
+      textBaseline: TextBaseline.alphabetic,
       children: <Widget>[
-        if (assignment.courseId != null)
-          CachedRawBuilder<Course>(
-            controller: services
-                .get<AssignmentBloc>()
-                .fetchCourseOfAssignment(assignment),
-            builder: (_, update) {
-              if (!update.hasData) {
-                return SizedBox.shrink();
-              }
-
-              final course = update.data;
-              return ActionChip(
-                avatar: CourseColorDot(course: course),
-                label: Text(course.name),
-                onPressed: () {},
-              );
-            },
+        Expanded(
+          child: Text(
+            assignment.name,
+            style: context.theme.textTheme.subhead,
+            overflow: TextOverflow.ellipsis,
+            maxLines: 2,
           ),
-        if (assignment.dueAt != null && assignment.dueAt < Instant.now())
-          ActionChip(
-            avatar: Icon(
-              Icons.flag,
-              color: context.theme.errorColor,
-            ),
-            label: Text(context.s.assignment_assignmentsScreen_overdue),
-            onPressed: () {},
+        ),
+        if (assignment.dueAt != null) ...[
+          SizedBox(width: 8),
+          Text(
+            assignment.dueAt.shortDateTimeString,
+            style: context.textTheme.caption,
           ),
-        if (assignment.isArchived)
-          ActionChip(
-            label: Text('Archived'),
-            onPressed: () {},
-          )
-        else if (assignment.isPrivate)
-          ActionChip(
-            label: Text('Draft'),
-            onPressed: () {},
-          )
-        else
-          ActionChip(
-            label: Text('Gestellt'),
-            onPressed: () {},
-          ),
+        ],
       ],
     );
+  }
+
+  List<Widget> _buildChips(BuildContext context) {
+    return <Widget>[
+      if (assignment.courseId != null)
+        CachedRawBuilder<Course>(
+          controller: services
+              .get<AssignmentBloc>()
+              .fetchCourseOfAssignment(assignment),
+          builder: (_, update) => !update.hasData
+              ? SizedBox.shrink()
+              : CourseChip(course: update.data),
+        ),
+      if (assignment.dueAt != null && assignment.dueAt < Instant.now())
+        ActionChip(
+          avatar: Icon(
+            Icons.flag,
+            color: context.theme.errorColor,
+          ),
+          label: Text(context.s.assignment_assignmentsScreen_overdue),
+          onPressed: () {},
+        ),
+      if (assignment.isArchived)
+        FlagFilterPreviewChip(
+          icon: Icons.archive,
+          label: 'Archived',
+          flag: 'isArchived',
+          callback: flagFilterSetCallback,
+        ),
+      if (assignment.isPrivate)
+        FlagFilterPreviewChip(
+          icon: Icons.lock,
+          label: 'Private',
+          flag: 'isPrivate',
+          callback: flagFilterSetCallback,
+        ),
+    ];
   }
 }
