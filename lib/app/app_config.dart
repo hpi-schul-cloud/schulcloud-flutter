@@ -46,13 +46,20 @@ class AppConfigData {
   }
 
   ThemeData createDarkThemeData() {
-    return ThemeData(
+    final theme = ThemeData(
       brightness: Brightness.dark,
       primarySwatch: primaryColor,
       accentColor: accentColor,
       errorColor: errorColor,
       fontFamily: 'PT Sans',
       textTheme: _createTextTheme(Brightness.dark),
+    );
+    return theme.copyWith(
+      chipTheme: theme.chipTheme.copyWith(
+        shape: StadiumBorder(
+          side: BorderSide(color: theme.dividerColor),
+        ),
+      ),
     );
   }
 

@@ -5,8 +5,9 @@ class DashboardCard extends StatelessWidget {
   const DashboardCard({
     Key key,
     @required this.title,
-    this.omitHorizontalPadding = true,
     @required this.child,
+    this.color,
+    this.omitHorizontalPadding = true,
     this.footerButtonText,
     this.onFooterButtonPressed,
   })  : assert(title != null),
@@ -15,8 +16,9 @@ class DashboardCard extends StatelessWidget {
         super(key: key);
 
   final String title;
-  final bool omitHorizontalPadding;
   final Widget child;
+  final Color color;
+  final bool omitHorizontalPadding;
   final String footerButtonText;
   final VoidCallback onFooterButtonPressed;
 
@@ -24,6 +26,7 @@ class DashboardCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return FancyCard(
       title: title,
+      color: color,
       omitHorizontalPadding: true,
       child: Column(
         children: <Widget>[
