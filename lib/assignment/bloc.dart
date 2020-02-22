@@ -15,10 +15,20 @@ class AssignmentBloc {
         parser: (data) => Assignment.fromJson(data),
       );
 
-  CacheController<List<Submission>> fetchSubmissions() => fetchList(
-        makeNetworkCall: (network) => network.get('submissions'),
-        parser: (data) => Submission.fromJson(data),
-      );
+  CacheController<Submission> fetchMySubmission(Assignment assignment) {
+    assert(assignment != null);
+
+    return fetchSingleOfList(
+      makeNetworkCall: (network) => network.get(
+        'submissions',
+        parameters: {
+          'homeworkId': assignment.id.id,
+          'studentId': services.get<StorageService>().userIdString.getValue(),
+        },
+      ),
+      parser: (data) => Submission.fromJson(data),
+    );
+  }
 
   CacheController<List<Course>> fetchCourses() => fetchList(
         makeNetworkCall: (network) => network.get('courses'),
@@ -26,10 +36,5 @@ class AssignmentBloc {
       );
 
   CacheController<Course> fetchCourseOfAssignment(Assignment assignment) =>
-      fetchSingle(
-        parent: assignment.id,
-        makeNetworkCall: (network) =>
-            network.get('courses/${assignment.courseId}'),
-        parser: (data) => Course.fromJson(data),
-      );
+      services.get<CourseBloc>().fetchCourse(assignment.courseId);
 }

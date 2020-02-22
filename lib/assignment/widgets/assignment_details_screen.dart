@@ -39,20 +39,7 @@ class _AssignmentDetailsScreenState extends State<AssignmentDetailsScreen>
       ),
       tabs: [
         _DetailsTab(assignment: widget.assignment),
-        // SliverFixedExtentList(
-        //   itemExtent: 48,
-        //   delegate: SliverChildBuilderDelegate(
-        //     (context, index) {
-        //       return ListTile(
-        //         title: Text('Item $index'),
-        //       );
-        //     },
-        //     childCount: 30,
-        //   ),
-        // ),
-        SliverFillRemaining(
-          child: EmptyStateScreen(text: ''),
-        ),
+        _SubmissionTab(assignment: widget.assignment),
         SliverFillRemaining(
           child: EmptyStateScreen(text: ''),
         ),
@@ -85,7 +72,6 @@ class _DetailsTab extends StatelessWidget {
           textAlign: TextAlign.end,
         ),
         Html(
-          defaultTextStyle: textTheme.body1.copyWith(fontSize: 20),
           data: assignment.description,
           onLinkTap: tryLaunchingUrl,
         ),
@@ -136,5 +122,38 @@ class _DetailsTab extends StatelessWidget {
           label: Text('Public submissions'),
         ),
     ];
+  }
+}
+
+class _SubmissionTab extends StatelessWidget {
+  const _SubmissionTab({Key key, @required this.assignment})
+      : assert(assignment != null),
+        super(key: key);
+
+  final Assignment assignment;
+
+  @override
+  Widget build(BuildContext context) {
+    return CachedRawBuilder<Submission>(
+      controller: services.get<AssignmentBloc>().fetchMySubmission(assignment),
+      builder: (_, update) {
+        if (update.hasError) {
+          return SliverFillRemaining(
+            child: ErrorScreen(update.error, update.stackTrace),
+          );
+        }
+
+        final submission = update.data;
+        final child = submission == null
+            ? Text('You have not submitted anything yet.')
+            : Html(
+                data: submission.comment,
+                onLinkTap: tryLaunchingUrl,
+              );
+        return SliverToBoxAdapter(
+          child: child,
+        );
+      },
+    );
   }
 }

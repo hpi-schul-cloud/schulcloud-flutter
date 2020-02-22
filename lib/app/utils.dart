@@ -124,9 +124,12 @@ class LazyMap<K, V> {
   V operator [](K key) => _map.putIfAbsent(key, () => createValueForKey(key));
 }
 
+typedef NetworkCall = Future<Response> Function(NetworkService network);
+typedef JsonParser<T> = T Function(Map<String, dynamic> data);
+
 CacheController<T> fetchSingle<T extends Entity>({
-  @required Future<Response> Function(NetworkService network) makeNetworkCall,
-  @required T Function(Map<String, dynamic> data) parser,
+  @required NetworkCall makeNetworkCall,
+  @required JsonParser<T> parser,
   Id<dynamic> parent,
 }) {
   final storage = services.get<StorageService>();
@@ -148,9 +151,40 @@ CacheController<T> fetchSingle<T extends Entity>({
   );
 }
 
+CacheController<T> fetchSingleOfList<T extends Entity>({
+  @required NetworkCall makeNetworkCall,
+  @required JsonParser<T> parser,
+  Id<dynamic> parent,
+}) {
+  final storage = services.get<StorageService>();
+  final network = services.get<NetworkService>();
+
+  return CacheController<T>(
+    saveToCache: (item) => storage.cache.putChildrenOfType<T>(parent, [item]),
+    loadFromCache: () async {
+      return (await storage.cache.getChildrenOfType<T>(parent)).singleWhere(
+        (_) => true,
+        orElse: () => throw NotInCacheException(),
+      );
+    },
+    fetcher: () async {
+      final response = await makeNetworkCall(network);
+      final data = json.decode(response.body);
+      // Multiple items can be returned when only one is expected, e.g. multiple
+      // submissions to one assignment by one person (demo student):
+      // https://api.schul-cloud.org/submissions?homeworkId=59a662f6a2049554a93fed43&studentId=599ec14d8e4e364ec18ff46d
+      final items = data['data'];
+      if (items.isEmpty) {
+        return null;
+      }
+      return parser(items.first);
+    },
+  );
+}
+
 CacheController<List<T>> fetchList<T extends Entity>({
-  @required Future<Response> Function(NetworkService network) makeNetworkCall,
-  @required T Function(Map<String, dynamic> data) parser,
+  @required NetworkCall makeNetworkCall,
+  @required JsonParser<T> parser,
   Id<dynamic> parent,
   // Surprise: The Calendar API's response is different from all others! Would
   // be too easy otherwise ;)
