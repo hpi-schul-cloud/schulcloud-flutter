@@ -102,6 +102,16 @@
     "type": "text",
     "description": ""
   },
+  "assignment_assignmentsScreen_empty": "Es wurden keine Aufgaben gefunden, die deinen Filtern entsprechen.",
+  "@assignment_assignmentsScreen_empty": {
+    "type": "text",
+    "description": ""
+  },
+  "assignment_assignmentsScreen_empty_editFilters": "Filter ändern",
+  "@assignment_assignmentsScreen_empty_editFilters": {
+    "type": "text",
+    "description": ""
+  },
   "assignment_dashboardCard": "Hausaufgaben",
   "@assignment_dashboardCard": {
     "type": "text"

@@ -77,6 +77,8 @@ class _AssignmentsScreenState extends State<AssignmentsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final s = context.s;
+
     return Scaffold(
       body: CachedBuilder<List<Assignment>>(
         controller: services.get<AssignmentBloc>().fetchAssignments(),
@@ -92,34 +94,54 @@ class _AssignmentsScreenState extends State<AssignmentsScreen> {
                 actions: <Widget>[
                   IconButton(
                     icon: Icon(Icons.sort),
-                    onPressed: () => _sortFilter.showSheet(
-                      context: context,
-                      callback: (selection) {
-                        setState(() => _sortFilter = selection);
-                      },
-                    ),
+                    onPressed: () => _showSortFilterSheet(context),
                   ),
                 ],
               ),
-              SliverList(
-                delegate: SliverChildBuilderDelegate(
-                  (_, index) => Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                    child: AssignmentCard(
-                      assignment: assignments[index],
-                      setFlagFilterCallback: (key, value) {
-                        setState(() => _sortFilter = _sortFilter
-                            .withFlagsFilterSelection('more', key, value));
-                      },
-                    ),
+              if (assignments.isEmpty)
+                SliverFillRemaining(
+                  child: EmptyStateScreen(
+                    text: s.assignment_assignmentsScreen_empty,
+                    actions: <Widget>[
+                      SecondaryButton(
+                        onPressed: () => _showSortFilterSheet(context),
+                        child: Text(
+                          s.assignment_assignmentsScreen_empty_editFilters,
+                        ),
+                      ),
+                    ],
                   ),
-                  childCount: assignments.length,
+                )
+              else
+                SliverList(
+                  delegate: SliverChildBuilderDelegate(
+                    (_, index) => Padding(
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      child: AssignmentCard(
+                        assignment: assignments[index],
+                        setFlagFilterCallback: (key, value) {
+                          setState(() => _sortFilter = _sortFilter
+                              .withFlagsFilterSelection('more', key, value));
+                        },
+                      ),
+                    ),
+                    childCount: assignments.length,
+                  ),
                 ),
-              ),
             ],
           );
         },
       ),
+    );
+  }
+
+  void _showSortFilterSheet(BuildContext context) {
+    _sortFilter.showSheet(
+      context: context,
+      callback: (selection) {
+        setState(() => _sortFilter = selection);
+      },
     );
   }
 }

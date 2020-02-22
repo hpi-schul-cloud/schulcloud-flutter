@@ -102,6 +102,16 @@
     "type": "text",
     "description": ""
   },
+  "assignment_assignmentsScreen_empty": "No assignments found matching your filter criteria.",
+  "@assignment_assignmentsScreen_empty": {
+    "type": "text",
+    "description": ""
+  },
+  "assignment_assignmentsScreen_empty_editFilters": "Edit filters",
+  "@assignment_assignmentsScreen_empty_editFilters": {
+    "type": "text",
+    "description": ""
+  },
   "assignment_dashboardCard": "Assignments",
   "@assignment_dashboardCard": {
     "type": "text"
