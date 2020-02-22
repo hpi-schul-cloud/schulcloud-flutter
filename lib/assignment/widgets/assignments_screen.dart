@@ -70,6 +70,9 @@ class _AssignmentsScreenState extends State<AssignmentsScreen> {
       sortSelectionKey: 'dueAt',
       filterSelections: {
         'dueAt': DateRangeFilterSelection(start: LocalDate.today()),
+        'more': {
+          'isArchived': false,
+        },
       },
     );
   }
