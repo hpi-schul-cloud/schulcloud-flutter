@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:schulcloud/app/app.dart';
-import 'package:schulcloud/l10n/l10n.dart';
 
 import '../data.dart';
 import 'file_thumbnail.dart';

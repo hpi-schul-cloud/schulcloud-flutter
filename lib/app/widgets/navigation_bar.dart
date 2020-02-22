@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:schulcloud/app/app.dart';
-import 'package:schulcloud/l10n/l10n.dart';
 
 import 'schulcloud_app.dart';
 
@@ -49,34 +48,34 @@ class _MyNavigationBarState extends State<MyNavigationBar> {
     final theme = context.theme;
 
     return BottomNavigationBar(
-      selectedItemColor: theme.primaryColor,
+      selectedItemColor: theme.accentColor,
       unselectedItemColor: theme.mediumEmphasisColor,
       currentIndex: screens.indexOf(_activeScreen),
       onTap: _onNavigate,
       items: [
         BottomNavigationBarItem(
           icon: Icon(Icons.dashboard),
-          title: Text(s.app_navigation_dashboard),
+          title: Text(s.dashboard),
           backgroundColor: theme.bottomAppBarColor,
         ),
         BottomNavigationBarItem(
           icon: Icon(Icons.new_releases),
-          title: Text(s.app_navigation_news),
+          title: Text(s.news),
           backgroundColor: theme.bottomAppBarColor,
         ),
         BottomNavigationBarItem(
           icon: Icon(Icons.school),
-          title: Text(s.app_navigation_courses),
+          title: Text(s.course),
           backgroundColor: theme.bottomAppBarColor,
         ),
         BottomNavigationBarItem(
           icon: Icon(Icons.playlist_add_check),
-          title: Text(s.app_navigation_assignments),
+          title: Text(s.assignment),
           backgroundColor: theme.bottomAppBarColor,
         ),
         BottomNavigationBarItem(
           icon: Icon(Icons.folder),
-          title: Text(s.app_navigation_files),
+          title: Text(s.file),
           backgroundColor: theme.bottomAppBarColor,
         ),
       ],

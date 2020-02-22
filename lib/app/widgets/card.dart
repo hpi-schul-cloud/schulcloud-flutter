@@ -4,30 +4,42 @@ import 'package:schulcloud/app/app.dart';
 class FancyCard extends StatelessWidget {
   const FancyCard({
     Key key,
-    this.onTap,
-    this.omitHorizontalPadding = false,
-    this.omitBottomPadding = false,
     this.title,
     @required this.child,
+    this.onTap,
+    this.color,
+    this.omitHorizontalPadding = false,
+    this.omitBottomPadding = false,
   })  : assert(omitHorizontalPadding != null),
         assert(omitBottomPadding != null),
         super(key: key);
 
-  final VoidCallback onTap;
-  final bool omitHorizontalPadding;
-  final bool omitBottomPadding;
   final String title;
   final Widget child;
+  final VoidCallback onTap;
+  final Color color;
+  final bool omitHorizontalPadding;
+  final bool omitBottomPadding;
 
   @override
   Widget build(BuildContext context) {
+    final borderRadius = BorderRadius.circular(16);
+
     return Card(
-      elevation: 1,
+      elevation: 0,
+      shape: RoundedRectangleBorder(
+        borderRadius: borderRadius,
+        side: color == null
+            ? BorderSide(color: context.theme.dividerColor, width: 1)
+            : BorderSide.none,
+      ),
       clipBehavior: Clip.antiAlias,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       margin: EdgeInsets.zero,
+      borderOnForeground: true,
+      color: color,
       child: InkWell(
         onTap: onTap,
+        borderRadius: borderRadius,
         child: _buildContent(context),
       ),
     );
@@ -41,7 +53,11 @@ class FancyCard extends StatelessWidget {
         if (title != null)
           Padding(
             padding: EdgeInsets.fromLTRB(16, 0, 16, 16),
-            child: Text(title.toUpperCase(), style: context.textTheme.overline),
+            child: Text(
+              title.toUpperCase(),
+              style: context.textTheme.overline
+                  .copyWith(color: context.theme.disabledColor),
+            ),
           ),
         Padding(
           padding: omitHorizontalPadding

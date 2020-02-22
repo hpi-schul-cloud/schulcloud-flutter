@@ -3,8 +3,6 @@ import 'package:flutter_cached/flutter_cached.dart';
 import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/app/chip.dart';
 import 'package:schulcloud/course/course.dart';
-import 'package:schulcloud/course/widgets/course_chip.dart';
-import 'package:schulcloud/l10n/l10n.dart';
 import 'package:time_machine/time_machine.dart';
 
 import '../bloc.dart';
@@ -151,7 +149,7 @@ class AssignmentCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _buildHeader(context),
-          SizedBox(height: 8),
+          SizedBox(height: 4),
           ChipGroup(
             children: _buildChips(context),
           ),

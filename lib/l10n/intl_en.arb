@@ -43,26 +43,6 @@
     "type": "text",
     "description": ""
   },
-  "app_navigation_assignments": "Assignments",
-  "@app_navigation_assignments": {
-    "type": "text"
-  },
-  "app_navigation_courses": "Courses",
-  "@app_navigation_courses": {
-    "type": "text"
-  },
-  "app_navigation_dashboard": "Dashboard",
-  "@app_navigation_dashboard": {
-    "type": "text"
-  },
-  "app_navigation_files": "Files",
-  "@app_navigation_files": {
-    "type": "text"
-  },
-  "app_navigation_news": "News",
-  "@app_navigation_news": {
-    "type": "text"
-  },
   "app_navigation_userDataEmpty": "—",
   "@app_navigation_userDataEmpty": {
     "type": "text"
@@ -166,6 +146,11 @@
     "type": "text",
     "description": ""
   },
+  "course": "Courses",
+  "@course": {
+    "type": "text",
+    "description": ""
+  },
   "course_coursesScreen_empty": "Seems like you're currently not enrolled in any courses.",
   "@course_coursesScreen_empty": {
     "type": "text"
@@ -173,6 +158,16 @@
   "course_detailsScreen_empty": "This course doesn't contain any topics.",
   "@course_detailsScreen_empty": {
     "type": "text"
+  },
+  "dashboard": "Dashboard",
+  "@dashboard": {
+    "type": "text",
+    "description": ""
+  },
+  "file": "Files",
+  "@file": {
+    "type": "text",
+    "description": ""
   },
   "file_fileBrowser_downloading": "Downloading {fileName}…",
   "@file_fileBrowser_downloading": {
@@ -302,6 +297,11 @@
   "login_loginScreen_placeholder": "There could go some other information down here.",
   "@login_loginScreen_placeholder": {
     "type": "text"
+  },
+  "news": "News",
+  "@news": {
+    "type": "text",
+    "description": ""
   },
   "news_articlePreview_subtitle": "published on {published} by {author}",
   "@news_articlePreview_subtitle": {

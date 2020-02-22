@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_cached/flutter_cached.dart';
 import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/dashboard/widgets/dashboard_card.dart';
-import 'package:schulcloud/l10n/l10n.dart';
 import 'package:time_machine/time_machine.dart';
 
 import '../bloc.dart';
@@ -16,6 +15,7 @@ class CalendarDashboardCard extends StatelessWidget {
     return DashboardCard(
       title: s.calendar_dashboardCard,
       omitHorizontalPadding: false,
+      color: context.theme.primaryColor.withOpacity(0.12),
       child: StreamBuilder<CacheUpdate<List<Event>>>(
         stream: services.get<CalendarBloc>().fetchTodaysEvents(),
         initialData: CacheUpdate(isFetching: false),
@@ -72,7 +72,7 @@ class _EventPreview extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.end,
           children: <Widget>[
-            Text(event.location),
+            Text(event.location ?? ''),
             Text(event.localStart.clockTime.toString('t')),
           ],
         ),
@@ -88,6 +88,8 @@ class _EventPreview extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: LinearProgressIndicator(
               value: now.timeSince(event.start).inMicroseconds / durationMicros,
+              valueColor: AlwaysStoppedAnimation(context.theme.primaryColor),
+              backgroundColor: context.theme.primaryColor.withOpacity(0.12),
             ),
           )
         ],

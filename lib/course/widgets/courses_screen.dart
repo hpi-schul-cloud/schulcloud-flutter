@@ -1,7 +1,6 @@
 import 'package:flutter_cached/flutter_cached.dart';
 import 'package:flutter/material.dart';
 import 'package:schulcloud/app/app.dart';
-import 'package:schulcloud/l10n/l10n.dart';
 
 import '../bloc.dart';
 import '../data.dart';
@@ -23,7 +22,7 @@ class CoursesScreen extends StatelessWidget {
           }
           return CustomScrollView(
             slivers: <Widget>[
-              FancyAppBar(title: Text('Courses')),
+              FancyAppBar(title: Text(context.s.course)),
               SliverPadding(
                 padding: EdgeInsets.fromLTRB(16, 8, 16, 16),
                 sliver: SliverGrid.count(

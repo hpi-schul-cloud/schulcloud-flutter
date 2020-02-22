@@ -3,7 +3,6 @@ import 'package:flutter_cached/flutter_cached.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/course/course.dart';
-import 'package:schulcloud/l10n/l10n.dart';
 
 import '../bloc.dart';
 import '../data.dart';

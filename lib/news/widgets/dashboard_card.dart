@@ -3,7 +3,6 @@ import 'package:flutter_cached/flutter_cached.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/dashboard/dashboard.dart';
-import 'package:schulcloud/l10n/l10n.dart';
 
 import '../bloc.dart';
 import '../data.dart';
@@ -38,12 +37,9 @@ class NewsDashboardCard extends StatelessWidget {
                   title: Text(article.title),
                   subtitle: Html(data: limitString(article.content, 100)),
                   trailing: Text(article.publishedAt.shortDateString),
-                  onTap: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => ArticleScreen(article: article),
-                    ),
-                  ),
+                  onTap: () => context.navigator.push(MaterialPageRoute(
+                    builder: (context) => ArticleScreen(article: article),
+                  )),
                 ),
             ],
           );

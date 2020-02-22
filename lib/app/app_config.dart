@@ -39,6 +39,7 @@ class AppConfigData {
       primarySwatch: primaryColor,
       accentColor: accentColor,
       errorColor: errorColor,
+      scaffoldBackgroundColor: Colors.white,
       fontFamily: 'PT Sans',
       textTheme: _createTextTheme(Brightness.light),
     );
@@ -48,8 +49,8 @@ class AppConfigData {
     return ThemeData(
       brightness: Brightness.dark,
       primarySwatch: primaryColor,
-      errorColor: errorColor,
       accentColor: accentColor,
+      errorColor: errorColor,
       fontFamily: 'PT Sans',
       textTheme: _createTextTheme(Brightness.dark),
     );
