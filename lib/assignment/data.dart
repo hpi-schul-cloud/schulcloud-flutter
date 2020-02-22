@@ -40,9 +40,9 @@ class Assignment implements Entity {
           teacherId: data['teacherId'],
           name: data['name'],
           description: data['description'],
-          createdAt: (data['createdAt'] as String).parseApiInstant(),
-          availableAt: (data['availableDate'] as String).parseApiInstant(),
-          dueAt: (data['dueDate'] as String)?.parseApiInstant(),
+          createdAt: (data['createdAt'] as String).parseInstant(),
+          availableAt: (data['availableDate'] as String).parseInstant(),
+          dueAt: (data['dueDate'] as String)?.parseInstant(),
           courseId: data['courseId'] != null
               ? Id<Course>(data['courseId']['_id'])
               : null,
