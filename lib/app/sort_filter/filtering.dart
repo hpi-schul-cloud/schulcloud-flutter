@@ -184,7 +184,7 @@ class FlagsFilter<T> extends Filter<T, Map<String, bool>> {
       filters.keys.every((k) => filters[k].apply(item, selection[k]));
 }
 
-typedef FlagFilterSetCallback<T> = void Function(String key, bool value);
+typedef SetFlagFilterCallback<T> = void Function(String key, bool value);
 
 @immutable
 class FlagFilter<T> {
@@ -218,7 +218,7 @@ class FlagFilterPreviewChip<T> extends StatelessWidget {
         super(key: key);
 
   final String flag;
-  final FlagFilterSetCallback<T> callback;
+  final SetFlagFilterCallback<T> callback;
   final IconData icon;
   final String label;
 

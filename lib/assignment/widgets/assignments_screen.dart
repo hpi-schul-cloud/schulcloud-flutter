@@ -17,56 +17,59 @@ class AssignmentsScreen extends StatefulWidget {
 }
 
 class _AssignmentsScreenState extends State<AssignmentsScreen> {
-  static final _sortFilterConfig = SortFilter<Assignment>(
-    sortOptions: {
-      'createdAt': Sorter<Assignment>.simple(
-        'Creation date',
-        selector: (assignment) => assignment.createdAt,
-      ),
-      'availableAt': Sorter<Assignment>.simple(
-        'Available date',
-        selector: (assignment) => assignment.availableAt,
-      ),
-      'dueAt': Sorter<Assignment>.simple(
-        'Due date',
-        selector: (assignment) => assignment.dueAt,
-      ),
-    },
-    filters: {
-      'dueDate': DateRangeFilter<Assignment>(
-        'Due date',
-        selector: (assignment) => assignment.dueAt?.inLocalZone()?.calendarDate,
-      ),
-      'more': FlagsFilter<Assignment>(
-        'More',
-        filters: {
-          'isArchived': FlagFilter<Assignment>(
-            'Archived',
-            selector: (assignment) => assignment.isArchived,
-          ),
-          'isPrivate': FlagFilter<Assignment>(
-            'Private assignment',
-            selector: (assignment) => assignment.isPrivate,
-          ),
-          'hasPublicSubmissions': FlagFilter<Assignment>(
-            'Public submissions',
-            selector: (assignment) => assignment.hasPublicSubmissions,
-          ),
-        },
-      ),
-    },
-  );
-
+  SortFilter<Assignment> _sortFilterConfig;
   SortFilterSelection<Assignment> _sortFilter;
 
   @override
   void initState() {
     super.initState();
+    final s = context.s;
+
+    _sortFilterConfig = SortFilter<Assignment>(
+      sortOptions: {
+        'createdAt': Sorter<Assignment>.simple(
+          s.assignment_assignment_property_createdAt,
+          selector: (assignment) => assignment.createdAt,
+        ),
+        'availableAt': Sorter<Assignment>.simple(
+          s.assignment_assignment_property_availableAt,
+          selector: (assignment) => assignment.availableAt,
+        ),
+        'dueAt': Sorter<Assignment>.simple(
+          s.assignment_assignment_property_dueAt,
+          selector: (assignment) => assignment.dueAt,
+        ),
+      },
+      filters: {
+        'dueAt': DateRangeFilter<Assignment>(
+          s.assignment_assignment_property_dueAt,
+          selector: (assignment) =>
+              assignment.dueAt?.inLocalZone()?.calendarDate,
+        ),
+        'more': FlagsFilter<Assignment>(
+          s.assignment_assignment_property_more,
+          filters: {
+            'isArchived': FlagFilter<Assignment>(
+              s.assignment_assignment_property_isArchived,
+              selector: (assignment) => assignment.isArchived,
+            ),
+            'isPrivate': FlagFilter<Assignment>(
+              s.assignment_assignment_property_isPrivate,
+              selector: (assignment) => assignment.isPrivate,
+            ),
+            'hasPublicSubmissions': FlagFilter<Assignment>(
+              s.assignment_assignment_property_hasPublicSubmissions,
+              selector: (assignment) => assignment.hasPublicSubmissions,
+            ),
+          },
+        ),
+      },
+    );
     _sortFilter = SortFilterSelection(
       config: _sortFilterConfig,
       sortSelectionKey: 'dueAt',
       filterSelections: {
-        'dueDate': DateRangeFilterSelection(start: LocalDate.today()),
+        'dueAt': DateRangeFilterSelection(start: LocalDate.today()),
       },
     );
   }
@@ -84,7 +87,7 @@ class _AssignmentsScreenState extends State<AssignmentsScreen> {
           return CustomScrollView(
             slivers: <Widget>[
               FancyAppBar(
-                title: Text('Assignments'),
+                title: Text(context.s.assignment),
                 actions: <Widget>[
                   IconButton(
                     icon: Icon(Icons.sort),
@@ -103,7 +106,7 @@ class _AssignmentsScreenState extends State<AssignmentsScreen> {
                     padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                     child: AssignmentCard(
                       assignment: assignments[index],
-                      flagFilterSetCallback: (key, value) {
+                      setFlagFilterCallback: (key, value) {
                         setState(() => _sortFilter = _sortFilter
                             .withFlagsFilterSelection('more', key, value));
                       },
@@ -121,13 +124,14 @@ class _AssignmentsScreenState extends State<AssignmentsScreen> {
 }
 
 class AssignmentCard extends StatelessWidget {
-  const AssignmentCard(
-      {@required this.assignment, @required this.flagFilterSetCallback})
-      : assert(assignment != null),
-        assert(flagFilterSetCallback != null);
+  const AssignmentCard({
+    @required this.assignment,
+    @required this.setFlagFilterCallback,
+  })  : assert(assignment != null),
+        assert(setFlagFilterCallback != null);
 
   final Assignment assignment;
-  final FlagFilterSetCallback flagFilterSetCallback;
+  final SetFlagFilterCallback<Assignment> setFlagFilterCallback;
 
   void _showAssignmentDetailsScreen(BuildContext context) {
     context.navigator.push(MaterialPageRoute(
@@ -178,6 +182,8 @@ class AssignmentCard extends StatelessWidget {
   }
 
   List<Widget> _buildChips(BuildContext context) {
+    final s = context.s;
+
     return <Widget>[
       if (assignment.courseId != null)
         CachedRawBuilder<Course>(
@@ -194,22 +200,22 @@ class AssignmentCard extends StatelessWidget {
             Icons.flag,
             color: context.theme.errorColor,
           ),
-          label: Text(context.s.assignment_assignmentsScreen_overdue),
+          label: Text(s.assignment_assignment_overdue),
           onPressed: () {},
         ),
       if (assignment.isArchived)
         FlagFilterPreviewChip(
           icon: Icons.archive,
-          label: 'Archived',
+          label: s.assignment_assignment_isArchived,
           flag: 'isArchived',
-          callback: flagFilterSetCallback,
+          callback: setFlagFilterCallback,
         ),
       if (assignment.isPrivate)
         FlagFilterPreviewChip(
           icon: Icons.lock,
-          label: 'Private',
+          label: s.assignment_assignment_isPrivate,
           flag: 'isPrivate',
-          callback: flagFilterSetCallback,
+          callback: setFlagFilterCallback,
         ),
     ];
   }

@@ -67,9 +67,60 @@
   "@app_navigation_userDataEmpty": {
     "type": "text"
   },
-  "assignment_assignmentsScreen_overdue": "Überfällig",
-  "@assignment_assignmentsScreen_overdue": {
-    "type": "text"
+  "assignment": "Hausaufgaben",
+  "@assignment": {
+    "type": "text",
+    "description": ""
+  },
+  "assignment_assignment_isArchived": "Archiviert",
+  "@assignment_assignment_isArchived": {
+    "type": "text",
+    "description": ""
+  },
+  "assignment_assignment_isPrivate": "Privat",
+  "@assignment_assignment_isPrivate": {
+    "type": "text",
+    "description": ""
+  },
+  "assignment_assignment_overdue": "Überfällig",
+  "@assignment_assignment_overdue": {
+    "type": "text",
+    "description": ""
+  },
+  "assignment_assignment_property_availableAt": "Verfügbarkeitsdatum",
+  "@assignment_assignment_property_availableAt": {
+    "type": "text",
+    "description": ""
+  },
+  "assignment_assignment_property_createdAt": "Erstelldatum",
+  "@assignment_assignment_property_createdAt": {
+    "type": "text",
+    "description": ""
+  },
+  "assignment_assignment_property_dueAt": "Abgabedatum",
+  "@assignment_assignment_property_dueAt": {
+    "type": "text",
+    "description": ""
+  },
+  "assignment_assignment_property_hasPublicSubmissions": "Öffentliche Abgaben",
+  "@assignment_assignment_property_hasPublicSubmissions": {
+    "type": "text",
+    "description": ""
+  },
+  "assignment_assignment_property_isArchived": "Archiviert",
+  "@assignment_assignment_property_isArchived": {
+    "type": "text",
+    "description": ""
+  },
+  "assignment_assignment_property_isPrivate": "Private Aufgabe",
+  "@assignment_assignment_property_isPrivate": {
+    "type": "text",
+    "description": ""
+  },
+  "assignment_assignment_property_more": "Mehr",
+  "@assignment_assignment_property_more": {
+    "type": "text",
+    "description": ""
   },
   "assignment_dashboardCard": "Hausaufgaben",
   "@assignment_dashboardCard": {
@@ -81,6 +132,11 @@
   },
   "assignment_dashboardCard_header": "{assignmentCount, plural, one{offene Hausaufgabe\nin der nächsten Woche} other{offene Hausaufgaben\nin der nächsten Woche}}",
   "@assignment_dashboardCard_header": {
+    "type": "text",
+    "description": ""
+  },
+  "assignment_dashboardCard_noCourse": "(ohne Kurs)",
+  "@assignment_dashboardCard_noCourse": {
     "type": "text",
     "description": ""
   },
