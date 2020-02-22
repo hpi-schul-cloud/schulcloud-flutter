@@ -69,7 +69,10 @@ class FancyTabbedScaffold extends StatelessWidget {
         length: tabs.length,
         child: NestedScrollView(
           headerSliverBuilder: (context, innerBoxIsScrolled) => <Widget>[
-            appBarBuilder(innerBoxIsScrolled),
+            SliverOverlapAbsorber(
+              handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context),
+              child: appBarBuilder(innerBoxIsScrolled),
+            ),
           ],
           body: TabBarView(
             children: [
@@ -82,6 +85,11 @@ class FancyTabbedScaffold extends StatelessWidget {
                       return CustomScrollView(
                         key: PageStorageKey<int>(i),
                         slivers: <Widget>[
+                          SliverOverlapInjector(
+                            handle:
+                                NestedScrollView.sliverOverlapAbsorberHandleFor(
+                                    context),
+                          ),
                           SliverPadding(
                             padding: EdgeInsets.fromLTRB(
                               max(16, padding.left),
