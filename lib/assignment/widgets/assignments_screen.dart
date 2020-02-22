@@ -21,10 +21,10 @@ class _AssignmentsScreenState extends State<AssignmentsScreen> {
   SortFilterSelection<Assignment> _sortFilter;
 
   @override
-  void initState() {
-    super.initState();
-    final s = context.s;
+  void didChangeDependencies() {
+    super.didChangeDependencies();
 
+    final s = context.s;
     _sortFilterConfig = SortFilter<Assignment>(
       sortOptions: {
         'createdAt': Sorter<Assignment>.simple(
@@ -65,7 +65,7 @@ class _AssignmentsScreenState extends State<AssignmentsScreen> {
         ),
       },
     );
-    _sortFilter = SortFilterSelection(
+    _sortFilter ??= SortFilterSelection(
       config: _sortFilterConfig,
       sortSelectionKey: 'dueAt',
       filterSelections: {
