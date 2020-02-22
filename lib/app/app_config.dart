@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:schulcloud/app/app.dart';
 
+import 'theming_utils.dart';
+
 @immutable
 class AppConfigData {
   const AppConfigData({
@@ -35,7 +37,7 @@ class AppConfigData {
   final MaterialColor accentColor;
 
   ThemeData createThemeData() {
-    return ThemeData(
+    final theme = ThemeData(
       primarySwatch: primaryColor,
       accentColor: accentColor,
       errorColor: errorColor,
@@ -43,10 +45,11 @@ class AppConfigData {
       fontFamily: 'PT Sans',
       textTheme: _createTextTheme(Brightness.light),
     );
+    return _fixedThemeData(theme);
   }
 
   ThemeData createDarkThemeData() {
-    final theme = ThemeData(
+    var theme = ThemeData(
       brightness: Brightness.dark,
       primarySwatch: primaryColor,
       accentColor: accentColor,
@@ -54,11 +57,22 @@ class AppConfigData {
       fontFamily: 'PT Sans',
       textTheme: _createTextTheme(Brightness.dark),
     );
-    return theme.copyWith(
+    theme = theme.copyWith(
       chipTheme: theme.chipTheme.copyWith(
         shape: StadiumBorder(
           side: BorderSide(color: theme.dividerColor),
         ),
+      ),
+    );
+    return _fixedThemeData(theme);
+  }
+
+  ThemeData _fixedThemeData(ThemeData raw) {
+    return raw.copyWith(
+      // TabBar assumes a primary colored background
+      tabBarTheme: raw.tabBarTheme.copyWith(
+        labelColor: raw.accentColor,
+        unselectedLabelColor: raw.mediumEmphasisColor,
       ),
     );
   }

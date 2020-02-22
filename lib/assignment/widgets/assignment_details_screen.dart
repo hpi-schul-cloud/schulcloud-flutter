@@ -2,107 +2,139 @@ import 'package:flutter/material.dart';
 import 'package:flutter_cached/flutter_cached.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:schulcloud/app/app.dart';
+import 'package:schulcloud/app/chip.dart';
 import 'package:schulcloud/course/course.dart';
+import 'package:time_machine/time_machine.dart';
 
 import '../bloc.dart';
 import '../data.dart';
-import 'submission_screen.dart';
 
-class AssignmentDetailsScreen extends StatelessWidget {
+class AssignmentDetailsScreen extends StatefulWidget {
   const AssignmentDetailsScreen({Key key, @required this.assignment})
       : assert(assignment != null),
         super(key: key);
 
   final Assignment assignment;
 
-  void _showSubmissionScreen(
-    BuildContext context,
-    Assignment homework,
-    Submission submission,
-  ) {
-    context.navigator.push(MaterialPageRoute(
-      builder: (context) => SubmissionScreen(
-        assignment: homework,
-        submission: submission,
+  @override
+  _AssignmentDetailsScreenState createState() =>
+      _AssignmentDetailsScreenState();
+}
+
+class _AssignmentDetailsScreenState extends State<AssignmentDetailsScreen>
+    with SingleTickerProviderStateMixin {
+  @override
+  Widget build(BuildContext context) {
+    return FancyTabbedScaffold(
+      appBarBuilder: (innerBoxIsScrolled) => FancyAppBar(
+        title: Text(widget.assignment.name),
+        forceElevated: innerBoxIsScrolled,
+        bottom: TabBar(
+          tabs: [
+            Tab(text: 'Details'),
+            Tab(text: 'Submission'),
+            Tab(text: 'Feedback'),
+          ],
+        ),
       ),
-    ));
+      tabs: [
+        _DetailsTab(assignment: widget.assignment),
+        // SliverFixedExtentList(
+        //   itemExtent: 48,
+        //   delegate: SliverChildBuilderDelegate(
+        //     (context, index) {
+        //       return ListTile(
+        //         title: Text('Item $index'),
+        //       );
+        //     },
+        //     childCount: 30,
+        //   ),
+        // ),
+        SliverFillRemaining(
+          child: EmptyStateScreen(text: ''),
+        ),
+        SliverFillRemaining(
+          child: EmptyStateScreen(text: ''),
+        ),
+      ],
+    );
   }
+}
+
+class _DetailsTab extends StatelessWidget {
+  const _DetailsTab({Key key, @required this.assignment})
+      : assert(assignment != null),
+        super(key: key);
+
+  final Assignment assignment;
 
   @override
   Widget build(BuildContext context) {
-    return CachedRawBuilder<Course>(
-      controller:
-          services.get<AssignmentBloc>().fetchCourseOfAssignment(assignment),
-      builder: (_, update) {
-        final course = update.data;
-        return Scaffold(
-          appBar: AppBar(
-            iconTheme: IconThemeData(color: Colors.black),
-            backgroundColor: course?.color,
-            title: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Text(
-                  assignment.name,
-                  style: TextStyle(color: Colors.black),
-                ),
-                Text(
-                  course?.name ?? context.s.general_loading,
-                  style: TextStyle(color: Colors.black),
-                ),
-              ],
-            ),
-          ),
-          body: CachedBuilder<List<Submission>>(
-            controller: services.get<AssignmentBloc>().fetchSubmissions(),
-            errorScreenBuilder: (_, error, st) => ErrorScreen(error, st),
-            errorBannerBuilder: (_, error, st) => ErrorBanner(error, st),
-            builder: (context, submissions) {
-              final textTheme = context.textTheme;
-              final submission = submissions.firstWhere(
-                (submission) => submission.assignmentId == assignment.id,
-                orElse: () => null,
-              );
+    final textTheme = context.textTheme;
 
-              return CustomScrollView(
-                slivers: <Widget>[
-                  FancyAppBar(
-                    title: Text(assignment.name),
-                    subtitle: Text(
-                      course?.name ?? context.s.general_loading,
-                    ),
-                  ),
-                  SliverList(
-                    delegate: SliverChildListDelegate([
-                      Html(
-                        padding: EdgeInsets.all(8),
-                        defaultTextStyle:
-                            textTheme.body1.copyWith(fontSize: 20),
-                        data: assignment.description,
-                        onLinkTap: tryLaunchingUrl,
-                      ),
-                      if (submission != null)
-                        Container(
-                          alignment: Alignment.centerRight,
-                          padding: EdgeInsets.all(16),
-                          child: RaisedButton(
-                            onPressed: () => _showSubmissionScreen(
-                                context, assignment, submission),
-                            child: Text(
-                              context.s.assignment_detailsScreen_mySubmission,
-                              style: textTheme.button
-                                  .copyWith(color: Colors.white),
-                            ),
-                          ),
-                        ),
-                    ]),
-                  ),
-                ],
-              );
-            },
-          ),
-        );
-      },
+    var datesText = 'Available: ${assignment.availableAt.longDateTimeString}';
+    if (assignment.dueAt != null) {
+      datesText += '\nDue: ${assignment.dueAt.longDateTimeString}';
+    }
+
+    return SliverList(
+      delegate: SliverChildListDelegate([
+        Text(
+          datesText,
+          style: textTheme.body1,
+          textAlign: TextAlign.end,
+        ),
+        Html(
+          defaultTextStyle: textTheme.body1.copyWith(fontSize: 20),
+          data: assignment.description,
+          onLinkTap: tryLaunchingUrl,
+        ),
+        ChipGroup(
+          children: _buildChips(context),
+        ),
+      ]),
     );
+  }
+
+  List<Widget> _buildChips(BuildContext context) {
+    final s = context.s;
+
+    return <Widget>[
+      if (assignment.courseId != null)
+        CachedRawBuilder<Course>(
+          controller: services
+              .get<AssignmentBloc>()
+              .fetchCourseOfAssignment(assignment),
+          builder: (_, update) {
+            final course = update.data;
+
+            return CourseChip(course);
+          },
+        ),
+      if (assignment.dueAt != null && assignment.dueAt < Instant.now())
+        ActionChip(
+          avatar: Icon(
+            Icons.flag,
+            color: context.theme.errorColor,
+          ),
+          label: Text(s.assignment_assignment_overdue),
+          onPressed: () {},
+        ),
+      if (assignment.isArchived)
+        Chip(
+          avatar: Icon(Icons.archive),
+          label: Text(s.assignment_assignment_isArchived),
+        ),
+      if (assignment.isPrivate)
+        Chip(
+          avatar: Icon(Icons.lock),
+          label: Text(s.assignment_assignment_isPrivate),
+        ),
+      if (assignment.hasPublicSubmissions)
+        Chip(
+          avatar: Icon(Icons.public),
+          label: Text('Public submissions'),
+        ),
+    ];
   }
 }

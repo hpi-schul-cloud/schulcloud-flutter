@@ -213,9 +213,14 @@ class AssignmentCard extends StatelessWidget {
           controller: services
               .get<AssignmentBloc>()
               .fetchCourseOfAssignment(assignment),
-          builder: (_, update) => !update.hasData
-              ? SizedBox.shrink()
-              : CourseChip(course: update.data),
+          builder: (_, update) {
+            return CourseChip(
+              update.data,
+              onPressed: () {
+                // TODO(JonasWanke): filter list by course, https://github.com/schul-cloud/schulcloud-flutter/issues/145
+              },
+            );
+          },
         ),
       if (assignment.dueAt != null && assignment.dueAt < Instant.now())
         ActionChip(
