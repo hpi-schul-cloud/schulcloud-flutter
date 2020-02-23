@@ -33,7 +33,7 @@ extension ContrastColors on Color {
 
 extension ThemeContrastColors on ThemeData {
   Color get contrastColor => brightness.contrastColor;
-  Color get highEmphasisColor => contrastColor.highEmphasisColor;
+  Color get highEmphasisColor => brightness.highEmphasisColor;
   Color get mediumEmphasisColor => brightness.mediumEmphasisColor;
   Color get disabledColor => brightness.disabledColor;
 }

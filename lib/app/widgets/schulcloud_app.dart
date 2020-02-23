@@ -115,23 +115,19 @@ class _LoggedInScreenState extends State<LoggedInScreen> {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: _onWillPop,
-      child: Column(
-        children: <Widget>[
-          Expanded(
-            child: Navigator(
-              key: _navigatorKey,
-              onGenerateRoute: (_) =>
-                  MaterialPageRoute(builder: (_) => DashboardScreen()),
-              observers: [
-                HeroController(),
-              ],
-            ),
-          ),
-          MyNavigationBar(
-            onNavigate: _navigateTo,
-            activeScreenStream: _screenStream,
-          ),
-        ],
+      child: Scaffold(
+        body: Navigator(
+          key: _navigatorKey,
+          onGenerateRoute: (_) =>
+              MaterialPageRoute(builder: (_) => DashboardScreen()),
+          observers: [
+            HeroController(),
+          ],
+        ),
+        bottomNavigationBar: MyNavigationBar(
+          onNavigate: _navigateTo,
+          activeScreenStream: _screenStream,
+        ),
       ),
     );
   }

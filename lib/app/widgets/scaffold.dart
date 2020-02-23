@@ -8,6 +8,7 @@ class FancyScaffold extends StatelessWidget {
     Key key,
     @required this.appBar,
     @required this.sliver,
+    this.floatingActionButton,
     this.omitHorizontalPadding = false,
   })  : assert(appBar != null),
         assert(sliver != null),
@@ -15,11 +16,13 @@ class FancyScaffold extends StatelessWidget {
 
   final Widget appBar;
   final Widget sliver;
+  final Widget floatingActionButton;
   final bool omitHorizontalPadding;
 
   @override
   Widget build(BuildContext context) {
     final padding = context.mediaQuery.padding;
+    final horizontalPadding = omitHorizontalPadding ? 0.0 : 16.0;
 
     return Scaffold(
       body: CustomScrollView(
@@ -27,18 +30,21 @@ class FancyScaffold extends StatelessWidget {
           appBar,
           SliverPadding(
             padding: EdgeInsets.fromLTRB(
-              max(16, padding.left),
+              max(horizontalPadding, padding.left),
               8,
-              max(16, padding.right),
+              max(horizontalPadding, padding.right),
               16,
             ),
             sliver: MediaQuery.removePadding(
+              removeLeft: true,
+              removeRight: true,
               context: context,
               child: sliver,
             ),
           ),
         ],
       ),
+      floatingActionButton: floatingActionButton,
     );
   }
 }

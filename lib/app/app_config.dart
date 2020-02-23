@@ -45,6 +45,7 @@ class AppConfig {
       scaffoldBackgroundColor: Colors.white,
       fontFamily: 'PT Sans',
       textTheme: _createTextTheme(Brightness.light),
+      inputDecorationTheme: _createInputDecorationTheme(),
     );
     return _fixedThemeData(theme);
   }
@@ -57,6 +58,7 @@ class AppConfig {
       errorColor: errorColor,
       fontFamily: 'PT Sans',
       textTheme: _createTextTheme(Brightness.dark),
+      inputDecorationTheme: _createInputDecorationTheme(),
     );
     theme = theme.copyWith(
       chipTheme: theme.chipTheme.copyWith(
@@ -94,6 +96,12 @@ class AppConfig {
         fontWeight: FontWeight.bold,
         fontSize: 12,
       ),
+    );
+  }
+
+  InputDecorationTheme _createInputDecorationTheme() {
+    return InputDecorationTheme(
+      border: OutlineInputBorder(),
     );
   }
 

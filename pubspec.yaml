@@ -27,6 +27,7 @@ dependencies:
   grec_minimal: ^0.0.3
   hive: ^1.2.0
   hive_flutter: ^0.3.0+1
+  html: ^0.14.0+3
   http: ^0.12.0
   intl: ^0.16.0
   list_diff: ^1.1.3

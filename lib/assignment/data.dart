@@ -98,6 +98,9 @@ class Assignment implements Entity {
   final List<Id<User>> archived;
   bool get isArchived =>
       archived.contains(services.get<StorageService>().userId);
+
+  String get webUrl => scWebUrl('homework/${id.id}');
+  String get submissionWebUrl => '$webUrl#activetabid=submission';
 }
 
 @immutable
