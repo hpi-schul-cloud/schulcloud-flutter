@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:html/parser.dart';
 import 'package:schulcloud/app/app.dart';
 
 import '../bloc.dart';
@@ -24,6 +23,7 @@ class _EditSubmissionScreenState extends State<EditSubmissionScreen> {
   final _formKey = GlobalKey<FormState>();
   bool _isValid;
   bool _ignoreFormattingOverwrite = false;
+  bool _isSaving = false;
   TextEditingController _commentController;
 
   Assignment get assignment => widget.assignment;
@@ -64,24 +64,26 @@ class _EditSubmissionScreenState extends State<EditSubmissionScreen> {
   }
 
   Widget _buildFab(BuildContext context) {
-    return FloatingActionButton.extended(
-      onPressed: _isValid
-          ? () async {
-              try {
-                await services.get<AssignmentBloc>().createSubmission(
-                      assignment: assignment,
-                      comment: _commentController.text,
-                    );
-              } on ConflictError catch (e) {
-                context.scaffold.showSnackBar(SnackBar(
-                  content: Text(e.body.message),
-                ));
-              }
-            }
-          : null,
-      backgroundColor: _isValid ? null : context.theme.disabledColor,
+    return FancyFab.extended(
+      isEnabled: _isValid,
+      onPressed: () async {
+        setState(() => _isSaving = true);
+        try {
+          await services.get<AssignmentBloc>().createSubmission(
+                assignment: assignment,
+                comment: _commentController.text,
+              );
+        } on ConflictError catch (e) {
+          context.scaffold.showSnackBar(SnackBar(
+            content: Text(e.body.message),
+          ));
+        }
+        setState(() => _isSaving = false);
+      },
       icon: Icon(Icons.save),
       label: Text('Save'),
+      isLoading: _isSaving,
+      loadingLabel: Text('Saving…'),
     );
   }
 
