@@ -48,13 +48,16 @@ class FancyTabbedScaffold extends StatelessWidget {
     Key key,
     @required this.appBarBuilder,
     @required this.tabs,
+    this.tabOverlays,
     this.omitHorizontalPadding = false,
   })  : assert(appBarBuilder != null),
         assert(tabs != null),
+        assert(tabOverlays == null || tabOverlays.length == tabs.length),
         super(key: key);
 
   final Widget Function(bool) appBarBuilder;
   final List<Widget> tabs;
+  final List<Widget> tabOverlays;
   final bool omitHorizontalPadding;
 
   @override
@@ -115,6 +118,16 @@ class FancyTabbedScaffold extends StatelessWidget {
         ),
       ],
     );
+
+    final overlay = tabOverlays?.elementAt(index);
+    if (overlay != null) {
+      content = Stack(
+        children: <Widget>[
+          content,
+          overlay,
+        ],
+      );
+    }
 
     return content;
   }

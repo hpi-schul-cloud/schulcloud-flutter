@@ -222,7 +222,7 @@ class AssignmentCard extends StatelessWidget {
             );
           },
         ),
-      if (assignment.dueAt != null && assignment.dueAt < Instant.now())
+      if (assignment.isOverDue)
         ActionChip(
           avatar: Icon(
             Icons.flag,

@@ -4,10 +4,10 @@ import 'package:flutter_html/flutter_html.dart';
 import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/app/chip.dart';
 import 'package:schulcloud/course/course.dart';
-import 'package:time_machine/time_machine.dart';
 
 import '../bloc.dart';
 import '../data.dart';
+import 'edit_submittion_screen.dart';
 
 class AssignmentDetailsScreen extends StatefulWidget {
   const AssignmentDetailsScreen({Key key, @required this.assignment})
@@ -43,6 +43,11 @@ class _AssignmentDetailsScreenState extends State<AssignmentDetailsScreen>
         SliverFillRemaining(
           child: EmptyStateScreen(text: ''),
         ),
+      ],
+      tabOverlays: <Widget>[
+        null,
+        _SubmissionTabOverlay(assignment: widget.assignment),
+        null,
       ],
     );
   }
@@ -97,7 +102,7 @@ class _DetailsTab extends StatelessWidget {
             return CourseChip(course);
           },
         ),
-      if (assignment.dueAt != null && assignment.dueAt < Instant.now())
+      if (assignment.isOverDue)
         ActionChip(
           avatar: Icon(
             Icons.flag,
@@ -144,14 +149,58 @@ class _SubmissionTab extends StatelessWidget {
         }
 
         final submission = update.data;
-        final child = submission == null
+        Widget child = submission == null
             ? Text('You have not submitted anything yet.')
             : Html(
                 data: submission.comment,
                 onLinkTap: tryLaunchingUrl,
               );
-        return SliverToBoxAdapter(
-          child: child,
+        return SliverList(
+          delegate: SliverChildListDelegate([
+            child,
+            if (!assignment.isOverDue) FabSpacer(),
+          ]),
+        );
+      },
+    );
+  }
+}
+
+class _SubmissionTabOverlay extends StatelessWidget {
+  const _SubmissionTabOverlay({Key key, @required this.assignment})
+      : assert(assignment != null),
+        super(key: key);
+
+  final Assignment assignment;
+  @override
+  Widget build(BuildContext context) {
+    return CachedRawBuilder<Submission>(
+      controller: services.get<AssignmentBloc>().fetchMySubmission(assignment),
+      builder: (_, update) {
+        if (update.hasError) {
+          return ErrorScreen(update.error, update.stackTrace);
+        }
+
+        if (assignment.isOverDue) {
+          return SizedBox.shrink();
+        }
+
+        final submission = update.data;
+        return Align(
+          alignment: AlignmentDirectional.bottomEnd,
+          child: Padding(
+            padding: EdgeInsets.all(16),
+            child: FloatingActionButton.extended(
+              onPressed: () => context.navigator.push(MaterialPageRoute(
+                builder: (_) => EditSubmissionScreen(
+                  assignment: assignment,
+                  submission: submission,
+                ),
+              )),
+              label: Text('Edit submission'),
+              icon: Icon(Icons.edit),
+            ),
+          ),
         );
       },
     );
