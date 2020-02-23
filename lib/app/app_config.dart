@@ -4,8 +4,8 @@ import 'package:schulcloud/app/app.dart';
 import 'theming_utils.dart';
 
 @immutable
-class AppConfigData {
-  const AppConfigData({
+class AppConfig {
+  const AppConfig({
     @required this.name,
     @required this.domain,
     @required this.title,
@@ -29,6 +29,7 @@ class AppConfigData {
   final String name;
   final String domain;
   String get host => 'https://$domain';
+  String webUrl(String path) => '$host/$path';
   String get apiUrl => 'https://api.$domain';
 
   final String title;
@@ -67,6 +68,35 @@ class AppConfigData {
     return _fixedThemeData(theme);
   }
 
+  TextTheme _createTextTheme(Brightness brightness) {
+    return TextTheme(
+      title: TextStyle(fontWeight: FontWeight.bold),
+      body1: TextStyle(fontSize: 16),
+      body2: TextStyle(fontSize: 16),
+      button: TextStyle(
+        color: Color(0xff373a3c),
+        fontFamily: 'PT Sans Narrow',
+        fontWeight: FontWeight.w700,
+        fontSize: 16,
+        height: 1.25,
+      ),
+      display1: TextStyle(
+        fontWeight: FontWeight.bold,
+        fontSize: 28,
+        color: brightness.contrastColor,
+      ),
+      display2: TextStyle(
+        fontWeight: FontWeight.bold,
+        fontSize: 32,
+        color: brightness.contrastColor,
+      ),
+      overline: TextStyle(
+        fontWeight: FontWeight.bold,
+        fontSize: 12,
+      ),
+    );
+  }
+
   ThemeData _fixedThemeData(ThemeData raw) {
     return raw.copyWith(
       // TabBar assumes a primary colored background
@@ -96,73 +126,4 @@ class AppConfigData {
   }
 }
 
-TextTheme _createTextTheme(Brightness brightness) {
-  return TextTheme(
-    title: TextStyle(fontWeight: FontWeight.bold),
-    body1: TextStyle(fontSize: 16),
-    body2: TextStyle(fontSize: 16),
-    button: TextStyle(
-      color: Color(0xff373a3c),
-      fontFamily: 'PT Sans Narrow',
-      fontWeight: FontWeight.w700,
-      fontSize: 16,
-      height: 1.25,
-    ),
-    display1: TextStyle(
-      fontWeight: FontWeight.bold,
-      fontSize: 28,
-      color: brightness.contrastColor,
-    ),
-    display2: TextStyle(
-      fontWeight: FontWeight.bold,
-      fontSize: 32,
-      color: brightness.contrastColor,
-    ),
-    overline: TextStyle(
-      fontWeight: FontWeight.bold,
-      fontSize: 12,
-    ),
-  );
-}
-
-class AppConfig extends StatelessWidget {
-  const AppConfig({
-    Key key,
-    @required this.data,
-    @required this.child,
-  })  : assert(child != null),
-        assert(data != null),
-        super(key: key);
-
-  final AppConfigData data;
-  final Widget child;
-
-  static AppConfigData of(BuildContext context) {
-    final widget =
-        context.dependOnInheritedWidgetOfExactType<_InheritedAppConfig>();
-    return widget.appConfig.data;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return _InheritedAppConfig(
-      appConfig: this,
-      child: child,
-    );
-  }
-}
-
-class _InheritedAppConfig extends InheritedWidget {
-  const _InheritedAppConfig({
-    Key key,
-    @required this.appConfig,
-    @required Widget child,
-  })  : assert(appConfig != null),
-        super(key: key, child: child);
-
-  final AppConfig appConfig;
-
-  @override
-  bool updateShouldNotify(_InheritedAppConfig old) =>
-      appConfig.data != old.appConfig.data;
-}
+String scWebUrl(String path) => services.get<AppConfig>().webUrl(path);

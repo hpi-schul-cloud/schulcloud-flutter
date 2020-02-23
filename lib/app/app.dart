@@ -1,4 +1,4 @@
-export 'app_config.dart' show AppConfig, AppConfigData;
+export 'app_config.dart';
 export 'data.dart';
 export 'datetime_utils.dart';
 export 'hive.dart';

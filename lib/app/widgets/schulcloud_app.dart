@@ -16,7 +16,8 @@ import 'page_route.dart';
 class SchulCloudApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final appConfig = context.appConfig;
+    final appConfig = services.get<AppConfig>();
+
     return MaterialApp(
       title: appConfig.title,
       theme: appConfig.createThemeData(),
