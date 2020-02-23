@@ -113,9 +113,7 @@ class _EditSubmissionScreenState extends State<EditSubmissionScreen> {
       ),
       minLines: 5,
       maxLines: null,
-      initialValue: submission != null
-          ? parse(submission.comment).documentElement.text
-          : null,
+      initialValue: submission?.comment?.withoutHtmlTags,
       validator: (content) {
         if (content.trim().isEmpty) {
           return 'Your submission may not be empty.';

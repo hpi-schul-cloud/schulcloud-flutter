@@ -4,6 +4,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_cached/flutter_cached.dart';
 import 'package:get_it/get_it.dart';
+import 'package:html/parser.dart';
 import 'package:http/http.dart';
 import 'package:meta/meta.dart';
 import 'package:schulcloud/app/app.dart';
@@ -45,24 +46,9 @@ String formatFileSize(int bytes) {
   return '${(bytes / power).toStringAsFixed(index == 0 ? 0 : 1)} ${units[index]}';
 }
 
-/// Removes html tags from a string.
-String removeHtmlTags(String text) {
-  final _tagStart = '<'.runes.first;
-  final _tagEnd = '>'.runes.first;
-
-  final buffer = StringBuffer();
-  var isInTag = false;
-
-  for (final rune in text.codeUnits) {
-    if (rune == _tagStart) {
-      isInTag = true;
-    } else if (rune == _tagEnd) {
-      isInTag = false;
-    } else if (!isInTag) {
-      buffer.writeCharCode(rune);
-    }
-  }
-  return buffer.toString();
+extension HtmlString on String {
+  /// Removes html tags from a string.
+  String get withoutHtmlTags => parse(this).documentElement.text;
 }
 
 /// Tries launching a url.
