@@ -69,8 +69,10 @@ class TooManyRequestsError extends ServerError {
   final Duration timeToWait;
 }
 
-/// A service that offers networking POST and GET requests to the backend
-/// servers. It depends on the authentication storage, so if the user's token
+/// A service that offers networking GET, POST and PATCH requests to the backend
+/// servers.
+///
+/// It depends on the authentication storage, so if the user's token
 /// is stored there, the requests' headers are automatically enriched with the
 /// access token.
 @immutable
@@ -79,6 +81,44 @@ class NetworkService {
 
   final String apiUrl;
 
+  /// Makes an HTTP GET request to the API.
+  Future<http.Response> get(
+    String path, {
+    Map<String, String> parameters = const {},
+  }) {
+    assert(parameters != null);
+
+    // Add the parameters to the path.
+    if (parameters.isNotEmpty) {
+      final params = parameters.entries
+          .map((e) =>
+              '${e.key.uriComponentEncoded}=${e.value.uriComponentEncoded}')
+          .join('&');
+      // ignore: parameter_assignments
+      path += '?$params';
+    }
+    return _makeCall(
+      path,
+      (url) async => http.get(url, headers: _getHeaders()),
+    );
+  }
+
+  /// Makes an HTTP POST request to the API.
+  Future<http.Response> post(String path, {dynamic body}) {
+    return _makeCall(
+      path,
+      (url) async => http.post(url, headers: _getHeaders(), body: body),
+    );
+  }
+
+  /// Makes an HTTP PATCH request to the API.
+  Future<http.Response> patch(String path, {dynamic body}) {
+    return _makeCall(
+      path,
+      (url) async => http.patch(url, headers: _getHeaders(), body: body),
+    );
+  }
+
   Future<void> _ensureConnectionExists() =>
       InternetAddress.lookup(apiUrl.substring(apiUrl.lastIndexOf('/') + 1));
 
@@ -86,9 +126,12 @@ class NetworkService {
     String path,
     Future<http.Response> Function(String url) call,
   ) async {
+    assert(path != null);
+
     try {
       await _ensureConnectionExists();
-      final response = await call('$apiUrl/$path');
+      final url = '$apiUrl/$path';
+      final response = await call(url);
 
       // Succeed if its a 2xx status code.
       if (response.statusCode ~/ 100 == 2) {
@@ -119,7 +162,8 @@ class NetworkService {
 
       throw UnimplementedError(
           'We should handle status code ${response.statusCode}. '
-          'The body was: ${response.body}');
+          'URL: $url, '
+          'Response body: ${response.body}');
     } on SocketException catch (_) {
       throw NoConnectionToServerError();
     }
@@ -131,38 +175,5 @@ class NetworkService {
       if (storage.hasToken)
         'Authorization': 'Bearer ${storage.token.getValue()}',
     };
-  }
-
-  /// Makes an http get request to the api.
-  Future<http.Response> get(
-    String path, {
-    Map<String, String> parameters = const {},
-  }) {
-    assert(path != null);
-    assert(parameters != null);
-
-    // Add the parameters to the path.
-    if (parameters.isNotEmpty) {
-      // ignore: prefer_interpolation_to_compose_strings, parameter_assignments
-      path += '?' +
-          [
-            for (final parameter in parameters.entries)
-              '${Uri.encodeComponent(parameter.key)}=${Uri.encodeComponent(parameter.value)}'
-          ].join('&');
-    }
-    return _makeCall(
-      path,
-      (url) async => http.get(url, headers: _getHeaders()),
-    );
-  }
-
-  /// Makes an http post request to the api.
-  Future<http.Response> post(String path, {dynamic body}) {
-    assert(path != null);
-
-    return _makeCall(
-      path,
-      (url) async => http.post(url, headers: _getHeaders(), body: body),
-    );
   }
 }

@@ -47,9 +47,11 @@ String formatFileSize(int bytes) {
   return '${(bytes / power).toStringAsFixed(index == 0 ? 0 : 1)} ${units[index]}';
 }
 
-extension HtmlString on String {
+extension PowerfulString on String {
   /// Removes html tags from a string.
   String get withoutHtmlTags => parse(this).documentElement.text;
+
+  String get uriComponentEncoded => Uri.encodeComponent(this);
 }
 
 /// Tries launching a url.
@@ -59,6 +61,13 @@ Future<bool> tryLaunchingUrl(String url) async {
     return true;
   }
   return false;
+}
+
+String exceptionMessage(dynamic error) {
+  if (error is ServerError && error.body.message != null) {
+    return error.body.message;
+  }
+  return error.toString();
 }
 
 extension ImmutableMap<K, V> on Map<K, V> {

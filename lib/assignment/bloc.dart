@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_cached/flutter_cached.dart';
+import 'package:http/http.dart';
 import 'package:meta/meta.dart';
 import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/course/course.dart';
@@ -33,8 +34,8 @@ class AssignmentBloc {
     );
   }
 
-  Future<Submission> createSubmission({
-    Assignment assignment,
+  Future<Submission> createSubmission(
+    Assignment assignment, {
     String comment = '',
   }) async {
     final request = {
@@ -48,12 +49,35 @@ class AssignmentBloc {
           'submissions',
           body: request,
         );
+    return _onSubmissionUpdated(response);
+  }
+
+  Future<Submission> updateSubmission(
+    Submission oldSubmission, {
+    String comment,
+  }) async {
+    final request = {
+      if (comment != null && comment != oldSubmission.comment)
+        'comment': comment,
+    };
+    if (request.isEmpty) {
+      return oldSubmission;
+    }
+
+    final response = await services.get<NetworkService>().patch(
+          'submissions/${oldSubmission.id}',
+          body: request,
+        );
+    return _onSubmissionUpdated(response);
+  }
+
+  Future<Submission> _onSubmissionUpdated(Response response) async {
     final submission = Submission.fromJson(json.decode(response.body));
 
     await services
         .get<StorageService>()
         .cache
-        .putChildrenOfType(assignment.id, [submission]);
+        .putChildrenOfType(submission.assignmentId, [submission]);
     return submission;
   }
 
