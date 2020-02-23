@@ -8,15 +8,65 @@ import 'package:schulcloud/app/app.dart';
 
 import 'storage.dart';
 
+@immutable
+class ErrorBody {
+  const ErrorBody({
+    @required this.name,
+    @required this.message,
+    @required this.code,
+    @required this.className,
+    this.data = const {},
+    this.errors = const {},
+  })  : assert(name != null),
+        assert(message != null),
+        assert(code != null),
+        assert(code >= 100),
+        assert(className != null),
+        assert(data != null),
+        assert(errors != null);
+
+  ErrorBody.fromJson(Map<String, dynamic> data)
+      : this(
+          name: data['name'],
+          message: data['message'],
+          code: data['code'],
+          className: data['className'],
+          data: data['data'],
+          errors: data['errors'],
+        );
+
+  final String name;
+  final String message;
+  final int code;
+  final String className;
+  final Map<String, dynamic> data;
+  final Map<String, dynamic> errors;
+}
+
+@immutable
 class NoConnectionToServerError implements Exception {}
 
-class AuthenticationError implements Exception {}
+@immutable
+class ServerError implements Exception {
+  const ServerError(this.body) : assert(body != null);
 
-class TooManyRequestsError implements Exception {
-  TooManyRequestsError({@required this.timeToWait})
-      : assert(timeToWait != null);
+  final ErrorBody body;
+}
 
-  Duration timeToWait;
+class ConflictError extends ServerError {
+  const ConflictError(ErrorBody body) : super(body);
+}
+
+class AuthenticationError extends ServerError {
+  const AuthenticationError(ErrorBody body) : super(body);
+}
+
+class TooManyRequestsError extends ServerError {
+  const TooManyRequestsError(ErrorBody body, {@required this.timeToWait})
+      : assert(timeToWait != null),
+        super(body);
+
+  final Duration timeToWait;
 }
 
 /// A service that offers networking POST and GET requests to the backend
@@ -45,22 +95,26 @@ class NetworkService {
         return response;
       }
 
+      final body = ErrorBody.fromJson(json.decode(response.body));
       if (response.statusCode == 401) {
-        throw AuthenticationError();
+        throw AuthenticationError(body);
+      }
+
+      if (response.statusCode == 409 && body.className == 'conflict') {
+        throw ConflictError(body);
       }
 
       if (response.statusCode == 429) {
-        throw TooManyRequestsError(
-          timeToWait: () {
-            try {
-              return Duration(
-                seconds: json.decode(response.body)['data']['timeToWait'],
-              );
-            } catch (_) {
-              return Duration(seconds: 10);
-            }
-          }(),
-        );
+        final timeToWait = () {
+          try {
+            return Duration(
+              seconds: body.data['timeToWait'],
+            );
+          } catch (_) {
+            return Duration(seconds: 10);
+          }
+        }();
+        throw TooManyRequestsError(body, timeToWait: timeToWait);
       }
 
       throw UnimplementedError(

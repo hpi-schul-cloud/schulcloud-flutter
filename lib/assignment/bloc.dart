@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_cached/flutter_cached.dart';
 import 'package:meta/meta.dart';
@@ -26,14 +28,34 @@ class AssignmentBloc {
           'studentId': services.get<StorageService>().userIdString.getValue(),
         },
       ),
+      parent: assignment.id,
       parser: (data) => Submission.fromJson(data),
     );
   }
 
-  CacheController<List<Course>> fetchCourses() => fetchList(
-        makeNetworkCall: (network) => network.get('courses'),
-        parser: (data) => Course.fromJson(data),
-      );
+  Future<Submission> createSubmission({
+    Assignment assignment,
+    String comment = '',
+  }) async {
+    final request = {
+      'schoolId': assignment.schoolId,
+      'studentId': services.get<StorageService>().userIdString.getValue(),
+      'homeworkId': assignment.id.id,
+      'comment': comment,
+    };
+
+    final response = await services.get<NetworkService>().post(
+          'submissions',
+          body: request,
+        );
+    final submission = Submission.fromJson(json.decode(response.body));
+
+    await services
+        .get<StorageService>()
+        .cache
+        .putChildrenOfType(assignment.id, [submission]);
+    return submission;
+  }
 
   CacheController<Course> fetchCourseOfAssignment(Assignment assignment) =>
       services.get<CourseBloc>().fetchCourse(assignment.courseId);

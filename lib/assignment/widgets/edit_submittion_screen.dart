@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:html/parser.dart';
 import 'package:schulcloud/app/app.dart';
 
+import '../bloc.dart';
 import '../data.dart';
 
 class EditSubmissionScreen extends StatefulWidget {
@@ -21,8 +22,9 @@ class EditSubmissionScreen extends StatefulWidget {
 
 class _EditSubmissionScreenState extends State<EditSubmissionScreen> {
   final _formKey = GlobalKey<FormState>();
-  bool isValid;
-  bool ignoreFormattingOverwrite = false;
+  bool _isValid;
+  bool _ignoreFormattingOverwrite = false;
+  TextEditingController _commentController;
 
   Assignment get assignment => widget.assignment;
   Submission get submission => widget.submission;
@@ -30,27 +32,27 @@ class _EditSubmissionScreenState extends State<EditSubmissionScreen> {
   @override
   void initState() {
     super.initState();
-    isValid = submission != null;
+    _isValid = submission != null;
+    _commentController =
+        TextEditingController(text: submission?.comment?.withoutHtmlTags);
   }
 
   @override
   Widget build(BuildContext context) {
     return FancyScaffold(
       appBar: FancyAppBar(
-        title: Text('Edit submission'),
+        title:
+            Text(submission == null ? 'Create submission' : 'Edit submission'),
         subtitle: Text(assignment.name),
       ),
       omitHorizontalPadding: true,
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: isValid ? () {} : null,
-        backgroundColor: isValid ? null : context.theme.disabledColor,
-        icon: Icon(Icons.save),
-        label: Text('Save'),
+      floatingActionButton: Builder(
+        builder: _buildFab,
       ),
       sliver: Form(
         key: _formKey,
         onChanged: () =>
-            setState(() => isValid = _formKey.currentState.validate()),
+            setState(() => _isValid = _formKey.currentState.validate()),
         child: SliverList(
           delegate: SliverChildListDelegate.fixed([
             ..._buildFormContent(),
@@ -58,6 +60,28 @@ class _EditSubmissionScreenState extends State<EditSubmissionScreen> {
           ]),
         ),
       ),
+    );
+  }
+
+  Widget _buildFab(BuildContext context) {
+    return FloatingActionButton.extended(
+      onPressed: _isValid
+          ? () async {
+              try {
+                await services.get<AssignmentBloc>().createSubmission(
+                      assignment: assignment,
+                      comment: _commentController.text,
+                    );
+              } on ConflictError catch (e) {
+                context.scaffold.showSnackBar(SnackBar(
+                  content: Text(e.body.message),
+                ));
+              }
+            }
+          : null,
+      backgroundColor: _isValid ? null : context.theme.disabledColor,
+      icon: Icon(Icons.save),
+      label: Text('Save'),
     );
   }
 
@@ -80,7 +104,7 @@ class _EditSubmissionScreenState extends State<EditSubmissionScreen> {
   }
 
   List<Widget> _buildFormattingOverwriteWarning(BuildContext context) {
-    if (ignoreFormattingOverwrite ||
+    if (_ignoreFormattingOverwrite ||
         submission == null ||
         submission.comment.isEmpty) {
       return [];
@@ -96,7 +120,7 @@ class _EditSubmissionScreenState extends State<EditSubmissionScreen> {
             'Editing this submission will remove all existing formatting.'),
         actions: <Widget>[
           FlatButton(
-            onPressed: () => setState(() => ignoreFormattingOverwrite = true),
+            onPressed: () => setState(() => _ignoreFormattingOverwrite = true),
             textColor: context.theme.highEmphasisColor,
             child: Text('Dismiss'),
           ),
@@ -108,12 +132,12 @@ class _EditSubmissionScreenState extends State<EditSubmissionScreen> {
 
   Widget _buildTextField() {
     return TextFormField(
+      controller: _commentController,
       decoration: InputDecoration(
         labelText: 'Text submission',
       ),
       minLines: 5,
       maxLines: null,
-      initialValue: submission?.comment?.withoutHtmlTags,
       validator: (content) {
         if (content.trim().isEmpty) {
           return 'Your submission may not be empty.';

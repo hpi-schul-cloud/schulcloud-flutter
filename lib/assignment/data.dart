@@ -111,13 +111,14 @@ class Submission implements Entity {
     @required this.schoolId,
     @required this.assignmentId,
     @required this.studentId,
-    this.comment,
+    @required this.comment,
     this.grade,
     this.gradeComment,
   })  : assert(id != null),
         assert(schoolId != null),
         assert(assignmentId != null),
-        assert(studentId != null);
+        assert(studentId != null),
+        assert(comment != null);
 
   Submission.fromJson(Map<String, dynamic> data)
       : this(
