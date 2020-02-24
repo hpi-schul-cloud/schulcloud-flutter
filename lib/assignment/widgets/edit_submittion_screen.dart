@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:schulcloud/app/app.dart';
+import 'package:schulcloud/app/widgets/form.dart';
 
 import '../bloc.dart';
 import '../data.dart';
@@ -24,30 +25,30 @@ class _EditSubmissionScreenState extends State<EditSubmissionScreen> {
   bool _isValid;
   bool _ignoreFormattingOverwrite = false;
   bool _isSaving = false;
+
   TextEditingController _commentController;
+  String get _comment => _commentController.text.plainToSimpleHtml;
 
   Assignment get assignment => widget.assignment;
   Submission get submission => widget.submission;
+  bool get isNewSubmission => submission != null;
+  bool get isExistingSubmission => !isNewSubmission;
 
   @override
   void initState() {
     super.initState();
-    _isValid = submission != null;
+    _isValid = isExistingSubmission;
 
-    // Try to preserve HTML line breaks
-    final initialText = submission?.comment
-        ?.replaceAllMapped(RegExp('<p>(.+?)</p>'), (m) => '${m.group(1)}\n\n')
-        ?.splitMapJoin('<br />', onMatch: (_) => '\n')
-        ?.withoutHtmlTags;
-    _commentController = TextEditingController(text: initialText);
+    _commentController = TextEditingController(
+      text: submission?.comment?.simpleHtmlToPlain,
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return FancyScaffold(
       appBar: FancyAppBar(
-        title:
-            Text(submission == null ? 'Create submission' : 'Edit submission'),
+        title: Text(isNewSubmission ? 'Create submission' : 'Edit submission'),
         subtitle: Text(assignment.name),
       ),
       omitHorizontalPadding: true,
@@ -65,6 +66,13 @@ class _EditSubmissionScreenState extends State<EditSubmissionScreen> {
       ),
       sliver: Form(
         key: _formKey,
+        onWillPop: () async {
+          if (isExistingSubmission && submission.comment == _comment) {
+            return true;
+          }
+          return showDiscardChangesDialog(context);
+        },
+        // submission.comment == _comment,
         onChanged: () =>
             setState(() => _isValid = _formKey.currentState.validate()),
         child: SliverList(
@@ -79,21 +87,12 @@ class _EditSubmissionScreenState extends State<EditSubmissionScreen> {
 
   void _save(BuildContext context) async {
     setState(() => _isSaving = true);
-    // Convert this to a simple HTML so line breaks are also displayed on the web
-    final comment = _commentController.text
-        .splitMapJoin(
-          '\n\n',
-          onMatch: (_) => '',
-          onNonMatch: (s) => '<p>$s</p>',
-        )
-        .replaceAllMapped(RegExp('(.+)\n'), (m) => '${m.group(1)}<br />');
-
     try {
       final bloc = services.get<AssignmentBloc>();
-      if (submission == null) {
-        await bloc.createSubmission(assignment, comment: comment);
+      if (isNewSubmission) {
+        await bloc.createSubmission(assignment, comment: _comment);
       } else {
-        await bloc.updateSubmission(submission, comment: comment);
+        await bloc.updateSubmission(submission, comment: _comment);
       }
     } on ConflictError catch (e) {
       context.scaffold.showSnackBar(SnackBar(
@@ -128,7 +127,7 @@ class _EditSubmissionScreenState extends State<EditSubmissionScreen> {
 
   List<Widget> _buildFormattingOverwriteWarning(BuildContext context) {
     if (_ignoreFormattingOverwrite ||
-        submission == null ||
+        isNewSubmission ||
         submission.comment.isEmpty ||
         _commentController.text == submission.comment) {
       _ignoreFormattingOverwrite = true;

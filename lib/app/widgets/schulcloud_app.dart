@@ -20,8 +20,8 @@ class SchulCloudApp extends StatelessWidget {
 
     return MaterialApp(
       title: appConfig.title,
-      theme: appConfig.createThemeData(),
-      darkTheme: appConfig.createDarkThemeData(),
+      theme: appConfig.createThemeData(Brightness.light),
+      darkTheme: appConfig.createThemeData(Brightness.dark),
       home: services.get<StorageService>().hasToken
           ? LoggedInScreen()
           : LoginScreen(),

@@ -7,7 +7,6 @@ import 'package:get_it/get_it.dart';
 import 'package:html/parser.dart';
 import 'package:http/http.dart';
 import 'package:meta/meta.dart';
-import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/generated/l10n.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -50,6 +49,24 @@ String formatFileSize(int bytes) {
 extension PowerfulString on String {
   /// Removes html tags from a string.
   String get withoutHtmlTags => parse(this).documentElement.text;
+
+  /// Removes HTML tags trying to preserve line breaks;
+  String get simpleHtmlToPlain {
+    return replaceAllMapped(RegExp('</p>(.*?)<p>'), (m) => '\n\n${m[1]}')
+        .replaceAll(RegExp('</?p>'), '')
+        .splitMapJoin('<br />', onMatch: (_) => '\n')
+        .withoutHtmlTags;
+  }
+
+  /// Converts this to a simple HTML subset so line breaks are properly
+  /// displayed on the web
+  String get plainToSimpleHtml {
+    return splitMapJoin(
+      '\n\n',
+      onMatch: (_) => '',
+      onNonMatch: (s) => '<p>$s</p>',
+    ).replaceAllMapped(RegExp('(.+)\n'), (m) => '${m[1]}<br />');
+  }
 
   String get uriComponentEncoded => Uri.encodeComponent(this);
 }

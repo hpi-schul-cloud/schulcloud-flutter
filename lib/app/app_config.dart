@@ -37,37 +37,41 @@ class AppConfig {
   final MaterialColor secondaryColor;
   final MaterialColor accentColor;
 
-  ThemeData createThemeData() {
-    final theme = ThemeData(
-      primarySwatch: primaryColor,
-      accentColor: accentColor,
-      errorColor: errorColor,
-      scaffoldBackgroundColor: Colors.white,
-      fontFamily: 'PT Sans',
-      textTheme: _createTextTheme(Brightness.light),
-      inputDecorationTheme: _createInputDecorationTheme(),
-    );
-    return _fixedThemeData(theme);
-  }
-
-  ThemeData createDarkThemeData() {
+  ThemeData createThemeData(Brightness brightness) {
     var theme = ThemeData(
-      brightness: Brightness.dark,
+      brightness: brightness,
       primarySwatch: primaryColor,
       accentColor: accentColor,
       errorColor: errorColor,
+      scaffoldBackgroundColor:
+          brightness == Brightness.light ? Colors.white : null,
       fontFamily: 'PT Sans',
-      textTheme: _createTextTheme(Brightness.dark),
-      inputDecorationTheme: _createInputDecorationTheme(),
-    );
-    theme = theme.copyWith(
-      chipTheme: theme.chipTheme.copyWith(
-        shape: StadiumBorder(
-          side: BorderSide(color: theme.dividerColor),
+      textTheme: _createTextTheme(brightness),
+      inputDecorationTheme: InputDecorationTheme(
+        border: OutlineInputBorder(),
+      ),
+      dialogTheme: DialogTheme(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
         ),
       ),
     );
-    return _fixedThemeData(theme);
+    if (brightness == Brightness.dark) {
+      theme = theme.copyWith(
+        chipTheme: theme.chipTheme.copyWith(
+          shape: StadiumBorder(
+            side: BorderSide(color: theme.dividerColor),
+          ),
+        ),
+      );
+    }
+    return theme.copyWith(
+      // TabBar assumes a primary colored background
+      tabBarTheme: theme.tabBarTheme.copyWith(
+        labelColor: theme.accentColor,
+        unselectedLabelColor: theme.mediumEmphasisColor,
+      ),
+    );
   }
 
   TextTheme _createTextTheme(Brightness brightness) {
@@ -95,22 +99,6 @@ class AppConfig {
       overline: TextStyle(
         fontWeight: FontWeight.bold,
         fontSize: 12,
-      ),
-    );
-  }
-
-  InputDecorationTheme _createInputDecorationTheme() {
-    return InputDecorationTheme(
-      border: OutlineInputBorder(),
-    );
-  }
-
-  ThemeData _fixedThemeData(ThemeData raw) {
-    return raw.copyWith(
-      // TabBar assumes a primary colored background
-      tabBarTheme: raw.tabBarTheme.copyWith(
-        labelColor: raw.accentColor,
-        unselectedLabelColor: raw.mediumEmphasisColor,
       ),
     );
   }
