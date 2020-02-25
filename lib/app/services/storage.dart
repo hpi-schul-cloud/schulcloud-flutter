@@ -18,19 +18,6 @@ class StorageService {
     this.cache,
   );
 
-  final StreamingSharedPreferences _prefs;
-
-  final Preference<String> userIdString;
-  Stream<Id<User>> get userId => userIdString.map((id) => Id<User>(id));
-
-  final Preference<String> email;
-  bool get hasEmail => email.getValue().isNotEmpty;
-
-  final Preference<String> token;
-  bool get hasToken => token.getValue().isNotEmpty;
-
-  final HiveCache cache;
-
   static Future<StorageService> create() async {
     StreamingSharedPreferences prefs;
     Preference<String> userId;
@@ -58,6 +45,19 @@ class StorageService {
 
     return StorageService._(prefs, userId, email, token, cache);
   }
+
+  final StreamingSharedPreferences _prefs;
+
+  final Preference<String> userIdString;
+  Id<User> get userId => Id<User>(userIdString.getValue());
+
+  final Preference<String> email;
+  bool get hasEmail => email.getValue().isNotEmpty;
+
+  final Preference<String> token;
+  bool get hasToken => token.getValue().isNotEmpty;
+
+  final HiveCache cache;
 
   Future<void> setUserInfo({
     @required String email,
