@@ -24,10 +24,6 @@ extension FancyContext on BuildContext {
 
 final services = GetIt.instance;
 
-/// Converts a hex string (like, '#ffdd00') to a [Color].
-Color hexStringToColor(String hex) =>
-    Color(int.parse('ff${hex.substring(1)}', radix: 16));
-
 /// Limits a string to a certain amount of characters.
 String limitString(String string, int maxLength) =>
     string.length > maxLength ? '${string.substring(0, maxLength)}…' : string;
@@ -69,6 +65,10 @@ extension PowerfulString on String {
   }
 
   String get uriComponentEncoded => Uri.encodeComponent(this);
+
+  /// Converts a hex string (like '#ffdd00' or '#12c0ffee') to a [Color].
+  Color get hexToColor =>
+      Color(int.parse(substring(1).padLeft(8, 'f'), radix: 16));
 }
 
 /// Tries launching a url.

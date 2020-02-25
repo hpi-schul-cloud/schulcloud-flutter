@@ -9,18 +9,18 @@ class AccountAvatar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CircleAvatar(
-      backgroundColor: context.theme.primaryColor,
-      maxRadius: 16,
-      child: CachedRawBuilder<User>(
-        controller: services.get<UserFetcherService>().fetchCurrentUser(),
-        builder: (context, update) {
-          final user = update.data;
-          final initials =
-              user == null ? '…' : '${user.firstName[0]}${user.lastName[0]}';
-          return Text(initials);
-        },
-      ),
+    return CachedRawBuilder<User>(
+      controller: services.get<UserFetcherService>().fetchCurrentUser(),
+      builder: (context, update) {
+        final user = update.data;
+
+        return CircleAvatar(
+          backgroundColor:
+              user?.avatarBackgroundColor ?? context.theme.primaryColor,
+          maxRadius: 16,
+          child: Text(user?.avatarInitials ?? '…'),
+        );
+      },
     );
   }
 }

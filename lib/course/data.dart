@@ -29,7 +29,7 @@ class Course implements Entity {
           teachers: (data['teacherIds'] as List<dynamic>)
               .map((id) => Id<User>(id))
               .toList(),
-          color: hexStringToColor(data['color']),
+          color: (data['color'] as String).hexToColor,
         );
 
   @override
