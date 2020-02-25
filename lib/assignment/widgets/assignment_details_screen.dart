@@ -186,11 +186,10 @@ class _SubmissionTabOverlay extends StatelessWidget {
         }
 
         final submission = update.data;
-        return Align(
-          alignment: AlignmentDirectional.bottomEnd,
-          child: Padding(
-            padding: EdgeInsets.all(16),
-            child: FloatingActionButton.extended(
+        return Scaffold(
+          backgroundColor: Colors.transparent,
+          floatingActionButton: Builder(
+            builder: (context) => FloatingActionButton.extended(
               onPressed: () => context.navigator.push(MaterialPageRoute(
                 builder: (_) => EditSubmissionScreen(
                   assignment: assignment,

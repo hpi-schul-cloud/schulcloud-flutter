@@ -31,7 +31,7 @@ class _EditSubmissionScreenState extends State<EditSubmissionScreen> {
 
   Assignment get assignment => widget.assignment;
   Submission get submission => widget.submission;
-  bool get isNewSubmission => submission != null;
+  bool get isNewSubmission => submission == null;
   bool get isExistingSubmission => !isNewSubmission;
 
   @override
@@ -72,7 +72,6 @@ class _EditSubmissionScreenState extends State<EditSubmissionScreen> {
           }
           return showDiscardChangesDialog(context);
         },
-        // submission.comment == _comment,
         onChanged: () =>
             setState(() => _isValid = _formKey.currentState.validate()),
         child: SliverList(
@@ -94,6 +93,14 @@ class _EditSubmissionScreenState extends State<EditSubmissionScreen> {
       } else {
         await bloc.updateSubmission(submission, comment: _comment);
       }
+
+      // The current scaffold only exists inside the route and is being removed
+      // by Navigator.pop(). To still show the snackbar, we access the outer
+      // (global) scaffold.
+      context.scaffold.context.scaffold.showSnackBar(SnackBar(
+        content: Text('Saved 😊'),
+      ));
+      context.navigator.pop();
     } on ConflictError catch (e) {
       context.scaffold.showSnackBar(SnackBar(
         content: Text(e.body.message),

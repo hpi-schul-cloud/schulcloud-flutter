@@ -47,13 +47,16 @@ class AppConfig {
           brightness == Brightness.light ? Colors.white : null,
       fontFamily: 'PT Sans',
       textTheme: _createTextTheme(brightness),
-      inputDecorationTheme: InputDecorationTheme(
-        border: OutlineInputBorder(),
-      ),
       dialogTheme: DialogTheme(
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
         ),
+      ),
+      inputDecorationTheme: InputDecorationTheme(
+        border: OutlineInputBorder(),
+      ),
+      snackBarTheme: SnackBarThemeData(
+        behavior: SnackBarBehavior.floating,
       ),
     );
     if (brightness == Brightness.dark) {

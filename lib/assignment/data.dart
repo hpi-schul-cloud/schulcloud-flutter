@@ -23,6 +23,7 @@ class Assignment implements Entity {
     @required this.isPrivate,
     @required this.hasPublicSubmissions,
     this.archived = const [],
+    @required this.teamSubmissions,
   })  : assert(id != null),
         assert(name != null),
         assert(schoolId != null),
@@ -31,7 +32,8 @@ class Assignment implements Entity {
         assert(teacherId != null),
         assert(isPrivate != null),
         assert(hasPublicSubmissions != null),
-        assert(archived != null);
+        assert(archived != null),
+        assert(teamSubmissions != null);
 
   Assignment.fromJson(Map<String, dynamic> data)
       : this(
@@ -52,6 +54,7 @@ class Assignment implements Entity {
           archived: (data['archived'] as List<dynamic> ?? [])
               .map((id) => Id<User>(id))
               .toList(),
+          teamSubmissions: data['teamSubmissions'] ?? false,
         );
 
   // used before: 3, 4
@@ -98,6 +101,9 @@ class Assignment implements Entity {
   final List<Id<User>> archived;
   bool get isArchived =>
       archived.contains(services.get<StorageService>().userId);
+
+  @HiveField(17)
+  final bool teamSubmissions;
 
   String get webUrl => scWebUrl('homework/${id.id}');
   String get submissionWebUrl => '$webUrl#activetabid=submission';
