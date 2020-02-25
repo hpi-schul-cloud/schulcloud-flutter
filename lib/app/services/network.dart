@@ -69,8 +69,7 @@ class TooManyRequestsError extends ServerError {
   final Duration timeToWait;
 }
 
-/// A service that offers networking GET, POST and PATCH requests to the backend
-/// servers.
+/// A service that offers networking HTTP requests to the backend servers.
 ///
 /// It depends on the authentication storage, so if the user's token
 /// is stored there, the requests' headers are automatically enriched with the
@@ -116,6 +115,14 @@ class NetworkService {
     return _makeCall(
       path,
       (url) async => http.patch(url, headers: _getHeaders(), body: body),
+    );
+  }
+
+  /// Makes an HTTP DELETE request to the API.
+  Future<http.Response> delete(String path) {
+    return _makeCall(
+      path,
+      (url) async => http.delete(url, headers: _getHeaders()),
     );
   }
 

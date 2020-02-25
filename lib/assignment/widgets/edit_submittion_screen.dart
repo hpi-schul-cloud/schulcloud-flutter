@@ -50,6 +50,27 @@ class _EditSubmissionScreenState extends State<EditSubmissionScreen> {
       appBar: FancyAppBar(
         title: Text(isNewSubmission ? 'Create submission' : 'Edit submission'),
         subtitle: Text(assignment.name),
+        actions: <Widget>[
+          if (isExistingSubmission)
+            IconButton(
+              icon: Icon(Icons.delete),
+              onPressed: () async {
+                final result = await showConfirmDeleteDialog(
+                  context: context,
+                  message: 'Dou you really want to delete this submission?',
+                );
+                if (result) {
+                  await services.get<SubmissionBloc>().delete(submission.id);
+
+                  // Intentionally using a context outside our scaffold. The
+                  // current scaffold only exists inside the route and is being
+                  // removed by Navigator.pop().
+                  context.showSimpleSnackBar('Deleted successfully');
+                  context.navigator.pop();
+                }
+              },
+            ),
+        ],
       ),
       omitHorizontalPadding: true,
       floatingActionButton: Builder(
@@ -87,28 +108,23 @@ class _EditSubmissionScreenState extends State<EditSubmissionScreen> {
   void _save(BuildContext context) async {
     setState(() => _isSaving = true);
     try {
-      final bloc = services.get<AssignmentBloc>();
+      final bloc = services.get<SubmissionBloc>();
       if (isNewSubmission) {
-        await bloc.createSubmission(assignment, comment: _comment);
+        await bloc.create(assignment, comment: _comment);
       } else {
-        await bloc.updateSubmission(submission, comment: _comment);
+        await bloc.update(submission, comment: _comment);
       }
 
       // The current scaffold only exists inside the route and is being removed
       // by Navigator.pop(). To still show the snackbar, we access the outer
       // (global) scaffold.
-      context.scaffold.context.scaffold.showSnackBar(SnackBar(
-        content: Text('Saved 😊'),
-      ));
+      context.scaffold.context.showSimpleSnackBar('Saved 😊');
       context.navigator.pop();
     } on ConflictError catch (e) {
-      context.scaffold.showSnackBar(SnackBar(
-        content: Text(e.body.message),
-      ));
+      context.showSimpleSnackBar(e.body.message);
     } catch (e) {
-      context.scaffold.showSnackBar(SnackBar(
-        content: Text(context.s.app_errorScreen_unknown(exceptionMessage(e))),
-      ));
+      context.showSimpleSnackBar(
+          context.s.app_errorScreen_unknown(exceptionMessage(e)));
     } finally {
       setState(() => _isSaving = false);
     }

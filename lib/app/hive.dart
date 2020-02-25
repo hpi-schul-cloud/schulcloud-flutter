@@ -95,7 +95,7 @@ class HiveCache {
         children.map((child) => child.id.toString()).toList());
   }
 
-  Future<dynamic> get(Id<dynamic> id) => _data.get(id.id);
+  Future<T> get<T extends Entity>(Id<T> id) => _data.get(id.id);
 
   Future<List<T>> getChildrenOfType<T>(Id<dynamic> parent) async {
     final key = parent?.id ?? _rootCacheKey;
@@ -107,6 +107,7 @@ class HiveCache {
         .toList();
   }
 
+  Future<void> delete<T extends Entity>(Id<T> id) => _data.delete(id.id);
   Future<void> clear() => Future.wait([_data.clear(), _children.clear()]);
 }
 

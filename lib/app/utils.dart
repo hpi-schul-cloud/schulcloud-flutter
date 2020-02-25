@@ -20,6 +20,12 @@ extension FancyContext on BuildContext {
   NavigatorState get rootNavigator => Navigator.of(this, rootNavigator: true);
   ScaffoldState get scaffold => Scaffold.of(this);
   S get s => S.of(this);
+
+  void showSimpleSnackBar(String message) {
+    scaffold.showSnackBar(SnackBar(
+      content: Text(message),
+    ));
+  }
 }
 
 final services = GetIt.instance;

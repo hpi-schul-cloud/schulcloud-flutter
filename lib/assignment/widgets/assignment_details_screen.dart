@@ -140,7 +140,7 @@ class _SubmissionTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CachedRawBuilder<Submission>(
-      controller: services.get<AssignmentBloc>().fetchMySubmission(assignment),
+      controller: services.get<SubmissionBloc>().fetchMySubmission(assignment),
       builder: (_, update) {
         if (update.hasError) {
           return SliverFillRemaining(
@@ -175,7 +175,7 @@ class _SubmissionTabOverlay extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CachedRawBuilder<Submission>(
-      controller: services.get<AssignmentBloc>().fetchMySubmission(assignment),
+      controller: services.get<SubmissionBloc>().fetchMySubmission(assignment),
       builder: (_, update) {
         if (update.hasError) {
           return ErrorScreen(update.error, update.stackTrace);

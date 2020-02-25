@@ -78,7 +78,8 @@ Future<void> main({AppConfig appConfig = schulCloudAppConfig}) async {
     ..registerSingleton(CourseBloc())
     ..registerSingleton(FileBloc())
     ..registerSingleton(LoginBloc())
-    ..registerSingleton(NewsBloc());
+    ..registerSingleton(NewsBloc())
+    ..registerSingleton(SubmissionBloc());
 
   runApp(
     FutureBuilder<void>(

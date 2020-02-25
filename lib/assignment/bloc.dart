@@ -18,6 +18,14 @@ class AssignmentBloc {
         parser: (data) => Assignment.fromJson(data),
       );
 
+  CacheController<Course> fetchCourseOfAssignment(Assignment assignment) =>
+      services.get<CourseBloc>().fetchCourse(assignment.courseId);
+}
+
+@immutable
+class SubmissionBloc {
+  const SubmissionBloc();
+
   CacheController<Submission> fetchMySubmission(Assignment assignment) {
     assert(assignment != null);
 
@@ -34,7 +42,7 @@ class AssignmentBloc {
     );
   }
 
-  Future<Submission> createSubmission(
+  Future<Submission> create(
     Assignment assignment, {
     String comment = '',
   }) async {
@@ -52,7 +60,7 @@ class AssignmentBloc {
     return _onSubmissionUpdated(response);
   }
 
-  Future<Submission> updateSubmission(
+  Future<Submission> update(
     Submission oldSubmission, {
     String comment,
   }) async {
@@ -81,6 +89,8 @@ class AssignmentBloc {
     return submission;
   }
 
-  CacheController<Course> fetchCourseOfAssignment(Assignment assignment) =>
-      services.get<CourseBloc>().fetchCourse(assignment.courseId);
+  Future<void> delete(Id<Submission> id) async {
+    await services.get<NetworkService>().delete('submissions/${id.id}');
+    await services.get<StorageService>().cache.delete(id);
+  }
 }

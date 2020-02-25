@@ -25,3 +25,30 @@ Future<bool> showDiscardChangesDialog(BuildContext context) {
     },
   );
 }
+
+Future<bool> showConfirmDeleteDialog({
+  @required BuildContext context,
+  @required String message,
+}) {
+  assert(context != null);
+
+  return showDialog<bool>(
+    context: context,
+    builder: (context) {
+      return AlertDialog(
+        title: Text('Delete?'),
+        content: Text(message),
+        actions: <Widget>[
+          SecondaryButton(
+            onPressed: () => context.navigator.pop(true),
+            child: Text('Delete'),
+          ),
+          PrimaryButton(
+            onPressed: () => context.navigator.pop(false),
+            child: Text('Keep'),
+          ),
+        ],
+      );
+    },
+  );
+}
