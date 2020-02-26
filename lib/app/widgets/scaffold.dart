@@ -54,16 +54,13 @@ class FancyTabbedScaffold extends StatelessWidget {
     Key key,
     @required this.appBarBuilder,
     @required this.tabs,
-    this.tabOverlays,
     this.omitHorizontalPadding = false,
   })  : assert(appBarBuilder != null),
         assert(tabs != null),
-        assert(tabOverlays == null || tabOverlays.length == tabs.length),
         super(key: key);
 
   final Widget Function(bool) appBarBuilder;
   final List<Widget> tabs;
-  final List<Widget> tabOverlays;
   final bool omitHorizontalPadding;
 
   @override
@@ -89,9 +86,7 @@ class FancyTabbedScaffold extends StatelessWidget {
                 SafeArea(
                   top: false,
                   bottom: false,
-                  child: Builder(
-                    builder: (context) => _buildTabContent(context, i),
-                  ),
+                  child: tabs[i],
                 ),
             ],
           ),
@@ -99,12 +94,22 @@ class FancyTabbedScaffold extends StatelessWidget {
       ),
     );
   }
+}
 
-  Widget _buildTabContent(BuildContext context, int index) {
+class TabContent extends StatelessWidget {
+  const TabContent({Key key, this.pageStorageKey, @required this.child})
+      : assert(child != null),
+        super(key: key);
+
+  final PageStorageKey<dynamic> pageStorageKey;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
     final padding = context.mediaQuery.padding;
 
-    Widget content = CustomScrollView(
-      key: PageStorageKey<int>(index),
+    return CustomScrollView(
+      key: pageStorageKey,
       slivers: <Widget>[
         // TODO(JonasWanke): uncomment as soon as flutter fixes https://github.com/flutter/flutter/issues/46089
         // SliverOverlapInjector(
@@ -119,23 +124,11 @@ class FancyTabbedScaffold extends StatelessWidget {
           ),
           sliver: MediaQuery.removePadding(
             context: context,
-            child: tabs[index],
+            child: child,
           ),
         ),
       ],
     );
-
-    final overlay = tabOverlays?.elementAt(index);
-    if (overlay != null) {
-      content = Stack(
-        children: <Widget>[
-          content,
-          overlay,
-        ],
-      );
-    }
-
-    return content;
   }
 }
 

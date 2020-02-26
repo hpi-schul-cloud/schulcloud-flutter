@@ -55,12 +55,6 @@ class _AssignmentDetailsScreenState extends State<AssignmentDetailsScreen>
                 child: EmptyStateScreen(text: ''),
               ),
           ],
-          tabOverlays: <Widget>[
-            null,
-            if (showSubmissionTab)
-              _SubmissionTabOverlay(assignment: assignment),
-            if (showFeedbackTab) null,
-          ],
         );
       },
     );
@@ -83,21 +77,24 @@ class _DetailsTab extends StatelessWidget {
       datesText += '\nDue: ${assignment.dueAt.longDateTimeString}';
     }
 
-    return SliverList(
-      delegate: SliverChildListDelegate([
-        Text(
-          datesText,
-          style: textTheme.body1,
-          textAlign: TextAlign.end,
-        ),
-        Html(
-          data: assignment.description,
-          onLinkTap: tryLaunchingUrl,
-        ),
-        ChipGroup(
-          children: _buildChips(context),
-        ),
-      ]),
+    return TabContent(
+      pageStorageKey: PageStorageKey<String>('details'),
+      child: SliverList(
+        delegate: SliverChildListDelegate([
+          Text(
+            datesText,
+            style: textTheme.body1,
+            textAlign: TextAlign.end,
+          ),
+          Html(
+            data: assignment.description,
+            onLinkTap: tryLaunchingUrl,
+          ),
+          ChipGroup(
+            children: _buildChips(context),
+          ),
+        ]),
+      ),
     );
   }
 
@@ -157,37 +154,43 @@ class _SubmissionTab extends StatelessWidget {
       controller: services.get<SubmissionBloc>().fetchMySubmission(assignment),
       builder: (_, update) {
         if (update.hasError) {
-          return SliverFillRemaining(
-            child: ErrorScreen(update.error, update.stackTrace),
-          );
+          return ErrorScreen(update.error, update.stackTrace);
         }
 
         final submission = update.data;
-        Widget child = submission == null
-            ? Text('You have not submitted anything yet.')
-            : Html(
-                data: submission.comment,
-                onLinkTap: tryLaunchingUrl,
-              );
-        return SliverList(
-          delegate: SliverChildListDelegate([
-            child,
-            if (!assignment.isOverDue) FabSpacer(),
-          ]),
+        return Stack(
+          children: <Widget>[
+            TabContent(
+              pageStorageKey: PageStorageKey<String>('submission'),
+              child: _buildContent(submission),
+            ),
+            _buildOverlay(submission),
+          ],
         );
       },
     );
   }
-}
 
-class _SubmissionTabOverlay extends StatelessWidget {
-  const _SubmissionTabOverlay({Key key, @required this.assignment})
-      : assert(assignment != null),
-        super(key: key);
+  Widget _buildContent(Submission submission) {
+    Widget child = submission == null
+        ? Text('You have not submitted anything yet.')
+        : Html(
+            data: submission.comment,
+            onLinkTap: tryLaunchingUrl,
+          );
+    return SliverList(
+      delegate: SliverChildListDelegate([
+        child,
+        if (!assignment.isOverDue) FabSpacer(),
+      ]),
+    );
+  }
 
-  final Assignment assignment;
-  @override
-  Widget build(BuildContext context) {
+  Widget _buildOverlay(Submission submission) {
+    if (assignment.isOverDue) {
+      return SizedBox.shrink();
+    }
+
     return CachedRawBuilder<User>(
       controller: services.get<UserFetcherService>().fetchCurrentUser(),
       builder: (context, update) {
@@ -199,47 +202,32 @@ class _SubmissionTabOverlay extends StatelessWidget {
         }
         final user = update.data;
 
-        return CachedRawBuilder<Submission>(
-          controller:
-              services.get<SubmissionBloc>().fetchMySubmission(assignment),
-          builder: (_, update) {
-            if (update.hasError) {
-              return ErrorScreen(update.error, update.stackTrace);
-            }
+        String labelText;
+        if (submission == null &&
+            user.hasPermission(Permission.submissionsCreate)) {
+          labelText = 'Create submission';
+        } else if (submission != null &&
+            user.hasPermission(Permission.submissionsEdit)) {
+          labelText = 'Edit submission';
+        }
+        if (labelText == null) {
+          return SizedBox.shrink();
+        }
 
-            if (assignment.isOverDue) {
-              return SizedBox.shrink();
-            }
-
-            final submission = update.data;
-            String labelText;
-            if (submission == null &&
-                user.hasPermission(Permission.submissionsCreate)) {
-              labelText = 'Create submission';
-            } else if (submission != null &&
-                user.hasPermission(Permission.submissionsEdit)) {
-              labelText = 'Edit submission';
-            }
-            if (labelText == null) {
-              return SizedBox.shrink();
-            }
-
-            return Scaffold(
-              backgroundColor: Colors.transparent,
-              floatingActionButton: Builder(
-                builder: (context) => FloatingActionButton.extended(
-                  onPressed: () => context.navigator.push(MaterialPageRoute(
-                    builder: (_) => EditSubmissionScreen(
-                      assignment: assignment,
-                      submission: submission,
-                    ),
-                  )),
-                  label: Text(labelText),
-                  icon: Icon(Icons.edit),
+        return Scaffold(
+          backgroundColor: Colors.transparent,
+          floatingActionButton: Builder(
+            builder: (context) => FloatingActionButton.extended(
+              onPressed: () => context.navigator.push(MaterialPageRoute(
+                builder: (_) => EditSubmissionScreen(
+                  assignment: assignment,
+                  submission: submission,
                 ),
-              ),
-            );
-          },
+              )),
+              label: Text(labelText),
+              icon: Icon(Icons.edit),
+            ),
+          ),
         );
       },
     );
