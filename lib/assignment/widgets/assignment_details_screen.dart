@@ -282,10 +282,8 @@ class _FeedbackTab extends StatelessWidget {
     return CachedRawBuilder<Submission>(
       controller: services.get<SubmissionBloc>().fetchMySubmission(assignment),
       builder: (_, update) {
-        if (!update.hasData) {
-          return update.hasError
-              ? ErrorScreen(update.error, update.stackTrace)
-              : Center(child: CircularProgressIndicator());
+        if (update.hasError) {
+          return ErrorScreen(update.error, update.stackTrace);
         }
 
         final submission = update.data;
@@ -294,7 +292,7 @@ class _FeedbackTab extends StatelessWidget {
           omitHorizontalPadding: true,
           child: SliverList(
             delegate: SliverChildListDelegate.fixed([
-              if (submission.grade != null) ...[
+              if (submission?.grade != null) ...[
                 ListTile(
                   leading: GradeIndicator(grade: submission.grade),
                   title: Text(s.assignment_assignmentDetails_feedback_grade(
@@ -304,7 +302,7 @@ class _FeedbackTab extends StatelessWidget {
               ],
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 16),
-                child: submission.gradeComment != null
+                child: submission?.gradeComment != null
                     ? Html(
                         data: submission.gradeComment,
                         onLinkTap: tryLaunchingUrl,
