@@ -46,9 +46,13 @@ class _EditSubmissionScreenState extends State<EditSubmissionScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final s = context.s;
+
     return FancyScaffold(
       appBar: FancyAppBar(
-        title: Text(isNewSubmission ? 'Create submission' : 'Edit submission'),
+        title: Text(isNewSubmission
+            ? s.assignment_assignmentDetails_submission_create
+            : s.assignment_assignmentDetails_submission_edit),
         subtitle: Text(assignment.name),
         actions: <Widget>[
           if (isExistingSubmission)
@@ -57,7 +61,7 @@ class _EditSubmissionScreenState extends State<EditSubmissionScreen> {
               onPressed: () async {
                 final result = await showConfirmDeleteDialog(
                   context: context,
-                  message: 'Dou you really want to delete this submission?',
+                  message: s.assignment_editSubmission_delete_confirm,
                 );
                 if (result) {
                   await services.get<SubmissionBloc>().delete(submission.id);
@@ -65,7 +69,8 @@ class _EditSubmissionScreenState extends State<EditSubmissionScreen> {
                   // Intentionally using a context outside our scaffold. The
                   // current scaffold only exists inside the route and is being
                   // removed by Navigator.pop().
-                  context.showSimpleSnackBar('Deleted successfully');
+                  context.showSimpleSnackBar(
+                      s.assignment_editSubmission_delete_success);
                   context.navigator.pop();
                 }
               },
@@ -79,9 +84,9 @@ class _EditSubmissionScreenState extends State<EditSubmissionScreen> {
             isEnabled: _isValid,
             onPressed: () => _save(context),
             icon: Icon(Icons.save),
-            label: Text('Save'),
+            label: Text(s.general_save),
             isLoading: _isSaving,
-            loadingLabel: Text('Saving…'),
+            loadingLabel: Text(s.general_saving),
           );
         },
       ),
@@ -97,7 +102,7 @@ class _EditSubmissionScreenState extends State<EditSubmissionScreen> {
             setState(() => _isValid = _formKey.currentState.validate()),
         child: SliverList(
           delegate: SliverChildListDelegate.fixed([
-            ..._buildFormContent(),
+            ..._buildFormContent(context),
             FabSpacer(),
           ]),
         ),
@@ -118,7 +123,8 @@ class _EditSubmissionScreenState extends State<EditSubmissionScreen> {
       // The current scaffold only exists inside the route and is being removed
       // by Navigator.pop(). To still show the snackbar, we access the outer
       // (global) scaffold.
-      context.scaffold.context.showSimpleSnackBar('Saved 😊');
+      context.scaffold.context
+          .showSimpleSnackBar(context.s.general_save_success);
       context.navigator.pop();
     } on ConflictError catch (e) {
       context.showSimpleSnackBar(e.body.message);
@@ -130,20 +136,21 @@ class _EditSubmissionScreenState extends State<EditSubmissionScreen> {
     }
   }
 
-  List<Widget> _buildFormContent() {
+  List<Widget> _buildFormContent(BuildContext context) {
     return [
       ..._buildFormattingOverwriteWarning(context),
       if (assignment.teamSubmissions)
         ListTile(
           leading: Icon(Icons.people),
-          title: Text('Team submissions are not yet supported in this app.'),
+          title: Text(
+              context.s.assignment_editSubmission_teamSubmissionNotSupported),
           trailing: Icon(Icons.open_in_new),
           onTap: () => tryLaunchingUrl(assignment.submissionWebUrl),
         ),
       SizedBox(height: 16),
       Padding(
         padding: EdgeInsets.symmetric(horizontal: 16),
-        child: _buildTextField(),
+        child: _buildTextField(context),
       ),
     ];
   }
@@ -157,19 +164,20 @@ class _EditSubmissionScreenState extends State<EditSubmissionScreen> {
       return [];
     }
 
+    final s = context.s;
+
     return [
       MaterialBanner(
         backgroundColor: context.theme.accentColor,
         leading: Icon(Icons.warning),
         // To align content with the ListTile below
         leadingPadding: EdgeInsets.only(right: 32),
-        content: Text(
-            'Editing this submission will remove all existing formatting.'),
+        content: Text(s.assignment_editSubmission_overwriteFormatting),
         actions: <Widget>[
           FlatButton(
             onPressed: () => setState(() => _ignoreFormattingOverwrite = true),
             textColor: context.theme.highEmphasisColor,
-            child: Text('Dismiss'),
+            child: Text(s.general_dismiss),
           ),
         ],
       ),
@@ -177,17 +185,18 @@ class _EditSubmissionScreenState extends State<EditSubmissionScreen> {
     ];
   }
 
-  Widget _buildTextField() {
+  Widget _buildTextField(BuildContext context) {
+    final s = context.s;
     return TextFormField(
       controller: _commentController,
       decoration: InputDecoration(
-        labelText: 'Text submission',
+        labelText: s.assignment_editSubmission_text,
       ),
       minLines: 5,
       maxLines: null,
       validator: (content) {
         if (content.trim().isEmpty) {
-          return 'Your submission may not be empty.';
+          return s.assignment_editSubmission_text_errorEmpty;
         }
         return null;
       },

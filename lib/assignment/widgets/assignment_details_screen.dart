@@ -30,6 +30,8 @@ class _AssignmentDetailsScreenState extends State<AssignmentDetailsScreen>
 
   @override
   Widget build(BuildContext context) {
+    final s = context.s;
+
     return CachedRawBuilder<User>(
       controller: services.get<UserFetcherService>().fetchCurrentUser(),
       builder: (context, update) {
@@ -39,9 +41,11 @@ class _AssignmentDetailsScreenState extends State<AssignmentDetailsScreen>
         final showFeedbackTab = assignment.isPublic && user?.isTeacher == false;
 
         final tabs = [
-          Tab(text: 'Details'),
-          if (showSubmissionTab) Tab(text: 'Submission'),
-          if (showFeedbackTab) Tab(text: 'Feedback'),
+          Tab(text: s.assignment_assignmentDetails_details),
+          if (showSubmissionTab)
+            Tab(text: s.assignment_assignmentDetails_submission),
+          if (showFeedbackTab)
+            Tab(text: s.assignment_assignmentDetails_feedback),
         ];
         final controller = TabController(length: tabs.length, vsync: this);
 
@@ -76,11 +80,15 @@ class _DetailsTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final textTheme = context.textTheme;
+    final s = context.s;
 
-    var datesText = 'Available: ${assignment.availableAt.longDateTimeString}';
-    if (assignment.dueAt != null) {
-      datesText += '\nDue: ${assignment.dueAt.longDateTimeString}';
-    }
+    final datesText = [
+      s.assignment_assignmentDetails_details_available(
+          assignment.availableAt.longDateTimeString),
+      if (assignment.dueAt != null)
+        s.assignment_assignmentDetails_details_due(
+            assignment.dueAt.longDateTimeString),
+    ].join('\n');
 
     return TabContent(
       pageStorageKey: PageStorageKey<String>('details'),
@@ -152,7 +160,7 @@ class _DetailsTab extends StatelessWidget {
       if (assignment.hasPublicSubmissions)
         Chip(
           avatar: Icon(Icons.public),
-          label: Text('Public submissions'),
+          label: Text(s.assignment_assignment_property_hasPublicSubmissions),
         ),
     ];
   }
@@ -183,7 +191,7 @@ class _SubmissionTab extends StatelessWidget {
               omitHorizontalPadding: true,
               child: _buildContent(context, submission),
             ),
-            _buildOverlay(submission),
+            _buildOverlay(context, submission),
           ],
         );
       },
@@ -192,7 +200,7 @@ class _SubmissionTab extends StatelessWidget {
 
   Widget _buildContent(BuildContext context, Submission submission) {
     Widget child = submission == null
-        ? Text('You have not submitted anything yet.')
+        ? Text(context.s.assignment_assignmentDetails_submission_empty)
         : Html(
             data: submission.comment,
             onLinkTap: tryLaunchingUrl,
@@ -210,10 +218,12 @@ class _SubmissionTab extends StatelessWidget {
     );
   }
 
-  Widget _buildOverlay(Submission submission) {
+  Widget _buildOverlay(BuildContext context, Submission submission) {
     if (assignment.isOverDue) {
       return SizedBox.shrink();
     }
+
+    final s = context.s;
 
     return CachedRawBuilder<User>(
       controller: services.get<UserFetcherService>().fetchCurrentUser(),
@@ -229,10 +239,10 @@ class _SubmissionTab extends StatelessWidget {
         String labelText;
         if (submission == null &&
             user.hasPermission(Permission.submissionsCreate)) {
-          labelText = 'Create submission';
+          labelText = s.assignment_assignmentDetails_submission_create;
         } else if (submission != null &&
             user.hasPermission(Permission.submissionsEdit)) {
-          labelText = 'Edit submission';
+          labelText = s.assignment_assignmentDetails_submission_edit;
         }
         if (labelText == null) {
           return SizedBox.shrink();
@@ -267,6 +277,8 @@ class _FeedbackTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final s = context.s;
+
     return CachedRawBuilder<Submission>(
       controller: services.get<SubmissionBloc>().fetchMySubmission(assignment),
       builder: (_, update) {
@@ -285,7 +297,8 @@ class _FeedbackTab extends StatelessWidget {
               if (submission.grade != null) ...[
                 ListTile(
                   leading: GradeIndicator(grade: submission.grade),
-                  title: Text('You solved ${submission.grade} % correctly.'),
+                  title: Text(s.assignment_assignmentDetails_feedback_grade(
+                      submission.grade)),
                 ),
                 SizedBox(height: 8),
               ],
@@ -296,7 +309,7 @@ class _FeedbackTab extends StatelessWidget {
                         data: submission.gradeComment,
                         onLinkTap: tryLaunchingUrl,
                       )
-                    : Text('No feedback text available.'),
+                    : Text(s.assignment_assignmentDetails_feedback_textEmpty),
               ),
             ]),
           ),
@@ -317,7 +330,7 @@ List<Widget> _buildFileSection(
       Padding(
         padding: EdgeInsets.symmetric(horizontal: 16),
         child: Text(
-          'Files',
+          context.s.assignment_assignmentDetails_filesSection,
           style: context.textTheme.caption,
         ),
       ),

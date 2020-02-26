@@ -4,21 +4,22 @@ import '../utils.dart';
 
 Future<bool> showDiscardChangesDialog(BuildContext context) {
   assert(context != null);
+  final s = context.s;
 
   return showDialog<bool>(
     context: context,
     builder: (context) {
       return AlertDialog(
-        title: Text('Discard changes?'),
-        content: Text('Your changes have not been saved.'),
+        title: Text(s.app_form_discardChanges),
+        content: Text(s.app_form_discardChanges_message),
         actions: <Widget>[
           SecondaryButton(
             onPressed: () => context.navigator.pop(true),
-            child: Text('Discard'),
+            child: Text(s.app_form_discardChanges_discard),
           ),
           PrimaryButton(
             onPressed: () => context.navigator.pop(false),
-            child: Text('Keep editing'),
+            child: Text(s.app_form_discardChanges_keepEditing),
           ),
         ],
       );
@@ -31,21 +32,22 @@ Future<bool> showConfirmDeleteDialog({
   @required String message,
 }) {
   assert(context != null);
+  final s = context.s;
 
   return showDialog<bool>(
     context: context,
     builder: (context) {
       return AlertDialog(
-        title: Text('Delete?'),
+        title: Text(s.app_form_confirmDelete),
         content: Text(message),
         actions: <Widget>[
           SecondaryButton(
             onPressed: () => context.navigator.pop(true),
-            child: Text('Delete'),
+            child: Text(s.app_form_confirmDelete_delete),
           ),
           PrimaryButton(
             onPressed: () => context.navigator.pop(false),
-            child: Text('Keep'),
+            child: Text(s.app_form_confirmDelete_keep),
           ),
         ],
       );
