@@ -19,6 +19,7 @@ class User implements Entity {
     @required this.avatarInitials,
     @required this.avatarBackgroundColor,
     @required this.permissions,
+    @required this.roles,
   })  : assert(id != null),
         assert(firstName != null),
         assert(lastName != null),
@@ -27,7 +28,8 @@ class User implements Entity {
         assert(displayName != null),
         assert(avatarInitials != null),
         assert(avatarBackgroundColor != null),
-        assert(permissions != null);
+        assert(permissions != null),
+        assert(roles != null);
 
   User.fromJson(Map<String, dynamic> data)
       : this(
@@ -41,6 +43,9 @@ class User implements Entity {
           avatarBackgroundColor:
               (data['avatarBackgroundColor'] as String).hexToColor,
           permissions: (data['permissions'] as List<dynamic>).cast<String>(),
+          roles: (data['roles'] as List<dynamic>)
+              .map((id) => Id<Role>(id))
+              .toList(),
         );
 
   @override
@@ -73,6 +78,56 @@ class User implements Entity {
   @HiveField(6)
   final List<String> permissions;
   bool hasPermission(String permission) => permissions.contains(permission);
+
+  @HiveField(6)
+  final List<Id<Role>> roles;
+  bool get isTeacher => hasRole(Role.teacherName);
+  bool hasRole(String name) {
+    // TODO(marcelgarus): Remove the hard-coded mapping and use runtime lookup when upgrading flutter_cached and flattening is supported
+    final id = {
+      Role.teacherName: '0000d186816abba584714c98',
+    }[name];
+    return id != null && roles.contains(Id<Role>(id));
+  }
+}
+
+@immutable
+@HiveType(typeId: typeUser)
+class Role implements Entity {
+  const Role({
+    @required this.id,
+    @required this.name,
+    @required this.displayName,
+    @required this.roles,
+  })  : assert(id != null),
+        assert(name != null),
+        assert(displayName != null),
+        assert(roles != null);
+
+  Role.fromJson(Map<String, dynamic> data)
+      : this(
+          id: Id<User>(data['_id']),
+          name: data['name'],
+          displayName: data['displayName'],
+          roles: (data['roles'] as List<dynamic>)
+              .map((id) => Id<Role>(id))
+              .toList(),
+        );
+
+  static const teacherName = 'teacher';
+
+  @override
+  @HiveField(0)
+  final Id<User> id;
+
+  @HiveField(1)
+  final String name;
+
+  @HiveField(2)
+  final String displayName;
+
+  @HiveField(3)
+  final List<Id<Role>> roles;
 }
 
 @immutable

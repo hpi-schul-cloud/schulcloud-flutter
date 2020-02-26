@@ -93,6 +93,7 @@ class Assignment implements Entity {
 
   @HiveField(11)
   final bool isPrivate;
+  bool get isPublic => !isPrivate;
 
   @HiveField(15)
   final bool hasPublicSubmissions;

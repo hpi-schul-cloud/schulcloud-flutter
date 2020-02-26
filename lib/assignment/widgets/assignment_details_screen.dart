@@ -23,32 +23,46 @@ class AssignmentDetailsScreen extends StatefulWidget {
 
 class _AssignmentDetailsScreenState extends State<AssignmentDetailsScreen>
     with SingleTickerProviderStateMixin {
+  Assignment get assignment => widget.assignment;
+
   @override
   Widget build(BuildContext context) {
-    return FancyTabbedScaffold(
-      appBarBuilder: (innerBoxIsScrolled) => FancyAppBar(
-        title: Text(widget.assignment.name),
-        forceElevated: innerBoxIsScrolled,
-        bottom: TabBar(
+    return CachedRawBuilder<User>(
+      controller: services.get<UserFetcherService>().fetchCurrentUser(),
+      builder: (context, update) {
+        final user = update.data;
+        final showSubmissionTab =
+            assignment.isPrivate || user?.isTeacher == false;
+        final showFeedbackTab = assignment.isPublic && user?.isTeacher == false;
+
+        return FancyTabbedScaffold(
+          appBarBuilder: (innerBoxIsScrolled) => FancyAppBar(
+            title: Text(assignment.name),
+            forceElevated: innerBoxIsScrolled,
+            bottom: TabBar(
+              tabs: [
+                Tab(text: 'Details'),
+                if (showSubmissionTab) Tab(text: 'Submission'),
+                if (showFeedbackTab) Tab(text: 'Feedback'),
+              ],
+            ),
+          ),
           tabs: [
-            Tab(text: 'Details'),
-            Tab(text: 'Submission'),
-            Tab(text: 'Feedback'),
+            _DetailsTab(assignment: assignment),
+            if (showSubmissionTab) _SubmissionTab(assignment: assignment),
+            if (showFeedbackTab)
+              SliverFillRemaining(
+                child: EmptyStateScreen(text: ''),
+              ),
           ],
-        ),
-      ),
-      tabs: [
-        _DetailsTab(assignment: widget.assignment),
-        _SubmissionTab(assignment: widget.assignment),
-        SliverFillRemaining(
-          child: EmptyStateScreen(text: ''),
-        ),
-      ],
-      tabOverlays: <Widget>[
-        null,
-        _SubmissionTabOverlay(assignment: widget.assignment),
-        null,
-      ],
+          tabOverlays: <Widget>[
+            null,
+            if (showSubmissionTab)
+              _SubmissionTabOverlay(assignment: assignment),
+            if (showFeedbackTab) null,
+          ],
+        );
+      },
     );
   }
 }
