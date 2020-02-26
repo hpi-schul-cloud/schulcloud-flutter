@@ -72,6 +72,7 @@ class User implements Entity {
 
   @HiveField(6)
   final List<String> permissions;
+  bool hasPermission(String permission) => permissions.contains(permission);
 }
 
 @immutable

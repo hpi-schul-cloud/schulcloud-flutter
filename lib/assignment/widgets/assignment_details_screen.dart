@@ -174,32 +174,58 @@ class _SubmissionTabOverlay extends StatelessWidget {
   final Assignment assignment;
   @override
   Widget build(BuildContext context) {
-    return CachedRawBuilder<Submission>(
-      controller: services.get<SubmissionBloc>().fetchMySubmission(assignment),
-      builder: (_, update) {
+    return CachedRawBuilder<User>(
+      controller: services.get<UserFetcherService>().fetchCurrentUser(),
+      builder: (context, update) {
         if (update.hasError) {
           return ErrorScreen(update.error, update.stackTrace);
         }
-
-        if (assignment.isOverDue) {
+        if (update.data == null) {
           return SizedBox.shrink();
         }
+        final user = update.data;
 
-        final submission = update.data;
-        return Scaffold(
-          backgroundColor: Colors.transparent,
-          floatingActionButton: Builder(
-            builder: (context) => FloatingActionButton.extended(
-              onPressed: () => context.navigator.push(MaterialPageRoute(
-                builder: (_) => EditSubmissionScreen(
-                  assignment: assignment,
-                  submission: submission,
+        return CachedRawBuilder<Submission>(
+          controller:
+              services.get<SubmissionBloc>().fetchMySubmission(assignment),
+          builder: (_, update) {
+            if (update.hasError) {
+              return ErrorScreen(update.error, update.stackTrace);
+            }
+
+            if (assignment.isOverDue) {
+              return SizedBox.shrink();
+            }
+
+            final submission = update.data;
+            String labelText;
+            if (submission == null &&
+                user.hasPermission(Permission.submissionsCreate)) {
+              labelText = 'Create submission';
+            } else if (submission != null &&
+                user.hasPermission(Permission.submissionsEdit)) {
+              labelText = 'Edit submission';
+            }
+            if (labelText == null) {
+              return SizedBox.shrink();
+            }
+
+            return Scaffold(
+              backgroundColor: Colors.transparent,
+              floatingActionButton: Builder(
+                builder: (context) => FloatingActionButton.extended(
+                  onPressed: () => context.navigator.push(MaterialPageRoute(
+                    builder: (_) => EditSubmissionScreen(
+                      assignment: assignment,
+                      submission: submission,
+                    ),
+                  )),
+                  label: Text(labelText),
+                  icon: Icon(Icons.edit),
                 ),
-              )),
-              label: Text('Edit submission'),
-              icon: Icon(Icons.edit),
-            ),
-          ),
+              ),
+            );
+          },
         );
       },
     );
