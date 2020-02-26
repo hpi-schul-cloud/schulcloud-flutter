@@ -156,6 +156,7 @@ class Submission implements Entity {
 
   @HiveField(7)
   final int grade;
+  static const gradeMax = 100;
 
   @HiveField(8)
   final String gradeComment;

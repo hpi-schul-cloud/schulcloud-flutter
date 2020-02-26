@@ -8,6 +8,7 @@ import 'package:schulcloud/course/course.dart';
 import '../bloc.dart';
 import '../data.dart';
 import 'edit_submittion_screen.dart';
+import 'grade_indicator.dart';
 
 class AssignmentDetailsScreen extends StatefulWidget {
   const AssignmentDetailsScreen({Key key, @required this.assignment})
@@ -50,10 +51,7 @@ class _AssignmentDetailsScreenState extends State<AssignmentDetailsScreen>
           tabs: [
             _DetailsTab(assignment: assignment),
             if (showSubmissionTab) _SubmissionTab(assignment: assignment),
-            if (showFeedbackTab)
-              SliverFillRemaining(
-                child: EmptyStateScreen(text: ''),
-              ),
+            if (showFeedbackTab) _FeedbackTab(assignment: assignment),
           ],
         );
       },
@@ -227,6 +225,51 @@ class _SubmissionTab extends StatelessWidget {
               label: Text(labelText),
               icon: Icon(Icons.edit),
             ),
+          ),
+        );
+      },
+    );
+  }
+}
+
+class _FeedbackTab extends StatelessWidget {
+  const _FeedbackTab({Key key, @required this.assignment})
+      : assert(assignment != null),
+        super(key: key);
+
+  final Assignment assignment;
+
+  @override
+  Widget build(BuildContext context) {
+    return CachedRawBuilder<Submission>(
+      controller: services.get<SubmissionBloc>().fetchMySubmission(assignment),
+      builder: (_, update) {
+        if (!update.hasData) {
+          return update.hasError
+              ? ErrorScreen(update.error, update.stackTrace)
+              : Center(child: CircularProgressIndicator());
+        }
+
+        final submission = update.data;
+        return TabContent(
+          pageStorageKey: PageStorageKey<String>('feedback'),
+          child: SliverList(
+            delegate: SliverChildListDelegate.fixed([
+              if (submission.grade != null) ...[
+                ListTile(
+                  leading: GradeIndicator(grade: submission.grade),
+                  title: Text('You solved ${submission.grade} % correctly.'),
+                ),
+                SizedBox(height: 8),
+              ],
+              if (submission.gradeComment != null)
+                Html(
+                  data: submission.gradeComment,
+                  onLinkTap: tryLaunchingUrl,
+                )
+              else
+                Text('No feedback text available.')
+            ]),
           ),
         );
       },
