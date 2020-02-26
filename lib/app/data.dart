@@ -43,9 +43,7 @@ class User implements Entity {
           avatarBackgroundColor:
               (data['avatarBackgroundColor'] as String).hexToColor,
           permissions: (data['permissions'] as List<dynamic>).cast<String>(),
-          roles: (data['roles'] as List<dynamic>)
-              .map((id) => Id<Role>(id))
-              .toList(),
+          roles: (data['roles'] as List<dynamic>).castIds(),
         );
 
   @override
@@ -109,9 +107,7 @@ class Role implements Entity {
           id: Id<User>(data['_id']),
           name: data['name'],
           displayName: data['displayName'],
-          roles: (data['roles'] as List<dynamic>)
-              .map((id) => Id<Role>(id))
-              .toList(),
+          roles: (data['roles'] as List<dynamic>).castIds(),
         );
 
   static const teacherName = 'teacher';

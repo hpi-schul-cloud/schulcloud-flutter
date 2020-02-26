@@ -51,9 +51,7 @@ class Assignment implements Entity {
           lessonId: Id(data['lessonId'] ?? ''),
           isPrivate: data['private'] ?? false,
           hasPublicSubmissions: data['publicSubmissions'] ?? false,
-          archived: (data['archived'] as List<dynamic> ?? [])
-              .map((id) => Id<User>(id))
-              .toList(),
+          archived: (data['archived'] as List<dynamic> ?? []).castIds(),
           teamSubmissions: data['teamSubmissions'] ?? false,
         );
 

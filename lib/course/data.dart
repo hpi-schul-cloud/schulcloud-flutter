@@ -26,9 +26,7 @@ class Course implements Entity {
           id: Id<Course>(data['_id']),
           name: data['name'],
           description: data['description'],
-          teachers: (data['teacherIds'] as List<dynamic>)
-              .map((id) => Id<User>(id))
-              .toList(),
+          teachers: (data['teacherIds'] as List<dynamic>).castIds(),
           color: (data['color'] as String).hexToColor,
         );
 

@@ -77,6 +77,12 @@ extension PowerfulString on String {
       Color(int.parse(substring(1).padLeft(8, 'f'), radix: 16));
 }
 
+extension IdParsingList on List<dynamic> {
+  List<Id<E>> castIds<E extends Entity>() {
+    return map((id) => Id<E>(id as String)).toList();
+  }
+}
+
 /// Tries launching a url.
 Future<bool> tryLaunchingUrl(String url) async {
   if (await canLaunch(url)) {
