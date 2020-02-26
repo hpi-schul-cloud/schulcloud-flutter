@@ -70,7 +70,7 @@ extension PowerfulString on String {
     ).replaceAllMapped(RegExp('(.+)\n'), (m) => '${m[1]}<br />');
   }
 
-  String get uriComponentEncoded => Uri.encodeComponent(this);
+  String get uriComponentEncoded => Uri.encodeComponent(this ?? '');
 
   /// Converts a hex string (like '#ffdd00' or '#12c0ffee') to a [Color].
   Color get hexToColor =>
