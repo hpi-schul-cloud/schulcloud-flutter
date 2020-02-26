@@ -39,11 +39,18 @@ class FileBloc {
         final body = json.decode(response.body);
         return (body as List<dynamic>)
             .where((data) => data['name'] != null)
-            .map((data) => File.fromJsonAndOwner(data, owner))
+            .map((data) => File.fromJson(data))
             .toList();
       },
     );
   }
+
+  CacheController<File> fetchFile(Id<File> id, [Id<dynamic> parent]) =>
+      fetchSingle(
+        parent: parent,
+        makeNetworkCall: (network) => network.get('files/$id'),
+        parser: (data) => File.fromJson(data),
+      );
 
   CacheController<Course> fetchCourseOwnerOfFiles() => fetchSingle(
         makeNetworkCall: (network) => network.get('courses'),

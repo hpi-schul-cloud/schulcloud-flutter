@@ -4,6 +4,8 @@ import 'package:flutter_html/flutter_html.dart';
 import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/app/chip.dart';
 import 'package:schulcloud/course/course.dart';
+import 'package:schulcloud/file/file.dart';
+import 'package:schulcloud/file/widgets/file_tile.dart';
 
 import '../bloc.dart';
 import '../data.dart';
@@ -82,23 +84,70 @@ class _DetailsTab extends StatelessWidget {
 
     return TabContent(
       pageStorageKey: PageStorageKey<String>('details'),
+      omitHorizontalPadding: true,
       child: SliverList(
-        delegate: SliverChildListDelegate([
-          Text(
-            datesText,
-            style: textTheme.body1,
-            textAlign: TextAlign.end,
+        delegate: SliverChildListDelegate.fixed([
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16),
+            child: Text(
+              datesText,
+              style: textTheme.body1,
+              textAlign: TextAlign.end,
+            ),
           ),
-          Html(
-            data: assignment.description,
-            onLinkTap: tryLaunchingUrl,
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16),
+            child: Html(
+              data: assignment.description,
+              onLinkTap: tryLaunchingUrl,
+            ),
           ),
-          ChipGroup(
-            children: _buildChips(context),
+          ..._buildFileSection(context),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16),
+            child: ChipGroup(
+              children: _buildChips(context),
+            ),
           ),
         ]),
       ),
     );
+  }
+
+  List<Widget> _buildFileSection(BuildContext context) {
+    return [
+      if (assignment.fileIds.isNotEmpty) ...[
+        SizedBox(height: 8),
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: 16),
+          child: Text(
+            'Files',
+            style: context.textTheme.caption,
+          ),
+        ),
+      ],
+      for (final fileId in assignment.fileIds)
+        CachedRawBuilder<File>(
+          controller: services.get<FileBloc>().fetchFile(fileId, assignment.id),
+          builder: (context, update) {
+            if (!update.hasData) {
+              return ListTile(
+                leading: update.hasError == null
+                    ? CircularProgressIndicator()
+                    : null,
+                title:
+                    Text(update.error?.toString() ?? context.s.general_loading),
+              );
+            }
+
+            final file = update.data;
+            return FileTile(
+              file: file,
+              onOpen: (file) => FileBrowser.downloadFile(context, file),
+            );
+          },
+        ),
+    ];
   }
 
   List<Widget> _buildChips(BuildContext context) {

@@ -24,12 +24,15 @@ class File implements Entity, Comparable<File> {
         assert(owner is Id<User> || owner is Id<Course>),
         assert(isDirectory != null);
 
-  File.fromJsonAndOwner(Map<String, dynamic> data, Id<dynamic> owner)
+  File.fromJson(Map<String, dynamic> data)
       : this(
           id: Id(data['_id']),
           name: data['name'],
           mimeType: data['type'],
-          owner: owner,
+          owner: {
+            'user': Id<User>(data['owner']),
+            'course': Id<Course>(data['owner']),
+          }[data['refOwnerModel']],
           createdAt: (data['createdAt'] as String).parseInstant(),
           updatedAt: (data['updatedAt'] as String).parseInstant(),
           isDirectory: data['isDirectory'],

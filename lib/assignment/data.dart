@@ -2,6 +2,7 @@ import 'package:hive/hive.dart';
 import 'package:meta/meta.dart';
 import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/course/course.dart';
+import 'package:schulcloud/file/file.dart';
 import 'package:time_machine/time_machine.dart';
 
 part 'data.g.dart';
@@ -24,6 +25,7 @@ class Assignment implements Entity {
     @required this.hasPublicSubmissions,
     this.archived = const [],
     @required this.teamSubmissions,
+    this.fileIds = const [],
   })  : assert(id != null),
         assert(name != null),
         assert(schoolId != null),
@@ -33,7 +35,8 @@ class Assignment implements Entity {
         assert(isPrivate != null),
         assert(hasPublicSubmissions != null),
         assert(archived != null),
-        assert(teamSubmissions != null);
+        assert(teamSubmissions != null),
+        assert(fileIds != null);
 
   Assignment.fromJson(Map<String, dynamic> data)
       : this(
@@ -53,6 +56,7 @@ class Assignment implements Entity {
           hasPublicSubmissions: data['publicSubmissions'] ?? false,
           archived: (data['archived'] as List<dynamic> ?? []).castIds(),
           teamSubmissions: data['teamSubmissions'] ?? false,
+          fileIds: (data['fileIds'] as List<dynamic> ?? []).castIds(),
         );
 
   // used before: 3, 4
@@ -103,6 +107,9 @@ class Assignment implements Entity {
 
   @HiveField(17)
   final bool teamSubmissions;
+
+  @HiveField(18)
+  final List<Id<File>> fileIds;
 
   String get webUrl => scWebUrl('homework/${id.id}');
   String get submissionWebUrl => '$webUrl#activetabid=submission';
