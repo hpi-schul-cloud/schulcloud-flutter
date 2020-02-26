@@ -126,11 +126,13 @@ class Submission implements Entity {
     @required this.comment,
     this.grade,
     this.gradeComment,
+    this.fileIds = const [],
   })  : assert(id != null),
         assert(schoolId != null),
         assert(assignmentId != null),
         assert(studentId != null),
-        assert(comment != null);
+        assert(comment != null),
+        assert(fileIds != null);
 
   Submission.fromJson(Map<String, dynamic> data)
       : this(
@@ -141,6 +143,7 @@ class Submission implements Entity {
           comment: data['comment'],
           grade: data['grade'],
           gradeComment: data['gradeComment'],
+          fileIds: (data['fileIds'] as List<dynamic> ?? []).castIds(),
         );
 
   @override
@@ -165,4 +168,7 @@ class Submission implements Entity {
 
   @HiveField(8)
   final String gradeComment;
+
+  @HiveField(9)
+  final List<Id<File>> fileIds;
 }

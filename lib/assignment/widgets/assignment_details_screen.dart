@@ -102,7 +102,8 @@ class _DetailsTab extends StatelessWidget {
               onLinkTap: tryLaunchingUrl,
             ),
           ),
-          ..._buildFileSection(context),
+          ..._buildFileSection(context, assignment.fileIds, assignment.id),
+          SizedBox(height: 8),
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 16),
             child: ChipGroup(
@@ -112,42 +113,6 @@ class _DetailsTab extends StatelessWidget {
         ]),
       ),
     );
-  }
-
-  List<Widget> _buildFileSection(BuildContext context) {
-    return [
-      if (assignment.fileIds.isNotEmpty) ...[
-        SizedBox(height: 8),
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16),
-          child: Text(
-            'Files',
-            style: context.textTheme.caption,
-          ),
-        ),
-      ],
-      for (final fileId in assignment.fileIds)
-        CachedRawBuilder<File>(
-          controller: services.get<FileBloc>().fetchFile(fileId, assignment.id),
-          builder: (context, update) {
-            if (!update.hasData) {
-              return ListTile(
-                leading: update.hasError == null
-                    ? CircularProgressIndicator()
-                    : null,
-                title:
-                    Text(update.error?.toString() ?? context.s.general_loading),
-              );
-            }
-
-            final file = update.data;
-            return FileTile(
-              file: file,
-              onOpen: (file) => FileBrowser.downloadFile(context, file),
-            );
-          },
-        ),
-    ];
   }
 
   List<Widget> _buildChips(BuildContext context) {
@@ -209,12 +174,14 @@ class _SubmissionTab extends StatelessWidget {
           return ErrorScreen(update.error, update.stackTrace);
         }
 
+        // TODO(marcelgarus): use Maybe<Submission> to differentiate between loading and no submission when updating flutter_cached
         final submission = update.data;
         return Stack(
           children: <Widget>[
             TabContent(
               pageStorageKey: PageStorageKey<String>('submission'),
-              child: _buildContent(submission),
+              omitHorizontalPadding: true,
+              child: _buildContent(context, submission),
             ),
             _buildOverlay(submission),
           ],
@@ -223,7 +190,7 @@ class _SubmissionTab extends StatelessWidget {
     );
   }
 
-  Widget _buildContent(Submission submission) {
+  Widget _buildContent(BuildContext context, Submission submission) {
     Widget child = submission == null
         ? Text('You have not submitted anything yet.')
         : Html(
@@ -232,7 +199,12 @@ class _SubmissionTab extends StatelessWidget {
           );
     return SliverList(
       delegate: SliverChildListDelegate([
-        child,
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: 16),
+          child: child,
+        ),
+        if (submission != null)
+          ..._buildFileSection(context, submission.fileIds, submission.id),
         if (!assignment.isOverDue) FabSpacer(),
       ]),
     );
@@ -307,6 +279,7 @@ class _FeedbackTab extends StatelessWidget {
         final submission = update.data;
         return TabContent(
           pageStorageKey: PageStorageKey<String>('feedback'),
+          omitHorizontalPadding: true,
           child: SliverList(
             delegate: SliverChildListDelegate.fixed([
               if (submission.grade != null) ...[
@@ -316,17 +289,58 @@ class _FeedbackTab extends StatelessWidget {
                 ),
                 SizedBox(height: 8),
               ],
-              if (submission.gradeComment != null)
-                Html(
-                  data: submission.gradeComment,
-                  onLinkTap: tryLaunchingUrl,
-                )
-              else
-                Text('No feedback text available.')
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16),
+                child: submission.gradeComment != null
+                    ? Html(
+                        data: submission.gradeComment,
+                        onLinkTap: tryLaunchingUrl,
+                      )
+                    : Text('No feedback text available.'),
+              ),
             ]),
           ),
         );
       },
     );
   }
+}
+
+List<Widget> _buildFileSection(
+  BuildContext context,
+  List<Id<File>> fileIds,
+  Id<dynamic> parentId,
+) {
+  return [
+    if (fileIds.isNotEmpty) ...[
+      SizedBox(height: 8),
+      Padding(
+        padding: EdgeInsets.symmetric(horizontal: 16),
+        child: Text(
+          'Files',
+          style: context.textTheme.caption,
+        ),
+      ),
+    ],
+    for (final fileId in fileIds)
+      CachedRawBuilder<File>(
+        controller: services.get<FileBloc>().fetchFile(fileId, parentId),
+        builder: (context, update) {
+          if (!update.hasData) {
+            return ListTile(
+              leading:
+                  update.hasError == null ? CircularProgressIndicator() : null,
+              title:
+                  Text(update.error?.toString() ?? context.s.general_loading),
+            );
+          }
+
+          final file = update.data;
+          return FileTile(
+            file: file,
+            onOpen: (file) => FileBrowser.downloadFile(context, file),
+          );
+        },
+      ),
+  ];
 }
