@@ -5,7 +5,6 @@ import 'package:flutter_cached/flutter_cached.dart';
 import 'package:http/http.dart';
 import 'package:meta/meta.dart';
 import 'package:schulcloud/app/app.dart';
-import 'package:schulcloud/course/course.dart';
 
 import 'data.dart';
 
@@ -17,9 +16,6 @@ class AssignmentBloc {
         makeNetworkCall: (network) => network.get('homework'),
         parser: (data) => Assignment.fromJson(data),
       );
-
-  CacheController<Course> fetchCourseOfAssignment(Assignment assignment) =>
-      services.get<CourseBloc>().fetchCourse(assignment.courseId);
 }
 
 @immutable

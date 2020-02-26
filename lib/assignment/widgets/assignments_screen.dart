@@ -210,9 +210,8 @@ class AssignmentCard extends StatelessWidget {
     return <Widget>[
       if (assignment.courseId != null)
         CachedRawBuilder<Course>(
-          controller: services
-              .get<AssignmentBloc>()
-              .fetchCourseOfAssignment(assignment),
+          controller:
+              services.get<CourseBloc>().fetchCourse(assignment.courseId),
           builder: (_, update) {
             return CourseChip(
               update.data,
