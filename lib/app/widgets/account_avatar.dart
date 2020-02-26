@@ -14,11 +14,15 @@ class AccountAvatar extends StatelessWidget {
       builder: (context, update) {
         final user = update.data;
 
+        final backgroundColor =
+            user?.avatarBackgroundColor ?? context.theme.primaryColor;
         return CircleAvatar(
-          backgroundColor:
-              user?.avatarBackgroundColor ?? context.theme.primaryColor,
+          backgroundColor: backgroundColor,
           maxRadius: 16,
-          child: Text(user?.avatarInitials ?? '…'),
+          child: Text(
+            user?.avatarInitials ?? '…',
+            style: TextStyle(color: backgroundColor.highEmphasisColor),
+          ),
         );
       },
     );
