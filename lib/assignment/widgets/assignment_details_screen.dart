@@ -23,7 +23,7 @@ class AssignmentDetailsScreen extends StatefulWidget {
 }
 
 class _AssignmentDetailsScreenState extends State<AssignmentDetailsScreen>
-    with SingleTickerProviderStateMixin {
+    with TickerProviderStateMixin {
   Assignment get assignment => widget.assignment;
 
   @override
@@ -36,16 +36,21 @@ class _AssignmentDetailsScreenState extends State<AssignmentDetailsScreen>
             assignment.isPrivate || user?.isTeacher == false;
         final showFeedbackTab = assignment.isPublic && user?.isTeacher == false;
 
+        final tabs = [
+          Tab(text: 'Details'),
+          if (showSubmissionTab) Tab(text: 'Submission'),
+          if (showFeedbackTab) Tab(text: 'Feedback'),
+        ];
+        final controller = TabController(length: tabs.length, vsync: this);
+
         return FancyTabbedScaffold(
+          controller: controller,
           appBarBuilder: (innerBoxIsScrolled) => FancyAppBar(
             title: Text(assignment.name),
             forceElevated: innerBoxIsScrolled,
             bottom: TabBar(
-              tabs: [
-                Tab(text: 'Details'),
-                if (showSubmissionTab) Tab(text: 'Submission'),
-                if (showFeedbackTab) Tab(text: 'Feedback'),
-              ],
+              controller: controller,
+              tabs: tabs,
             ),
           ),
           tabs: [

@@ -53,6 +53,7 @@ class FancyTabbedScaffold extends StatelessWidget {
   const FancyTabbedScaffold({
     Key key,
     @required this.appBarBuilder,
+    this.controller,
     @required this.tabs,
     this.omitHorizontalPadding = false,
   })  : assert(appBarBuilder != null),
@@ -60,6 +61,7 @@ class FancyTabbedScaffold extends StatelessWidget {
         super(key: key);
 
   final Widget Function(bool) appBarBuilder;
+  final TabController controller;
   final List<Widget> tabs;
   final bool omitHorizontalPadding;
 
@@ -68,31 +70,36 @@ class FancyTabbedScaffold extends StatelessWidget {
     // Inspired by the [NestedScrollView] sample:
     // https://api.flutter.dev/flutter/widgets/NestedScrollView-class.html#widgets.NestedScrollView.1
 
-    return Scaffold(
-      body: DefaultTabController(
-        length: tabs.length,
-        child: NestedScrollView(
-          headerSliverBuilder: (context, innerBoxIsScrolled) => <Widget>[
-            // TODO(JonasWanke): uncomment as soon as flutter fixes https://github.com/flutter/flutter/issues/46089
-            // SliverOverlapAbsorber(
-            //   handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context),
-            //   child:
-            appBarBuilder(innerBoxIsScrolled),
-            // ),
-          ],
-          body: TabBarView(
-            children: [
-              for (var i = 0; i < tabs.length; i++)
-                SafeArea(
-                  top: false,
-                  bottom: false,
-                  child: tabs[i],
-                ),
-            ],
-          ),
-        ),
+    Widget child = NestedScrollView(
+      headerSliverBuilder: (context, innerBoxIsScrolled) => <Widget>[
+        // TODO(JonasWanke): uncomment as soon as flutter fixes https://github.com/flutter/flutter/issues/46089
+        // SliverOverlapAbsorber(
+        //   handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context),
+        //   child:
+        appBarBuilder(innerBoxIsScrolled),
+        // ),
+      ],
+      body: TabBarView(
+        controller: controller,
+        children: [
+          for (var i = 0; i < tabs.length; i++)
+            SafeArea(
+              top: false,
+              bottom: false,
+              child: tabs[i],
+            ),
+        ],
       ),
     );
+
+    if (controller == null) {
+      child = DefaultTabController(
+        length: tabs.length,
+        child: child,
+      );
+    }
+
+    return child;
   }
 }
 
