@@ -6,8 +6,8 @@ import 'package:time_machine/time_machine.dart';
 part 'data.g.dart';
 
 @immutable
-@HiveType(typeId: typeArticle)
-class Article implements Entity {
+@HiveType(typeId: TypeId.typeArticle)
+class Article implements Entity<Article> {
   const Article({
     @required this.id,
     @required this.title,
@@ -30,6 +30,9 @@ class Article implements Entity {
           imageUrl: null,
           content: removeHtmlTags(data['content']),
         );
+
+  static Future<Article> fetch(Id<Article> id) async =>
+      Article.fromJson(await fetchJsonFrom('news/$id'));
 
   // used before: 4, 5
 
