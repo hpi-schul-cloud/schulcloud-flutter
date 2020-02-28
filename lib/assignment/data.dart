@@ -54,9 +54,9 @@ class Assignment implements Entity {
           lessonId: Id(data['lessonId'] ?? ''),
           isPrivate: data['private'] ?? false,
           hasPublicSubmissions: data['publicSubmissions'] ?? false,
-          archived: (data['archived'] as List<dynamic> ?? []).castIds(),
+          archived: (data['archived'] as List<dynamic> ?? []).castIds<User>(),
           teamSubmissions: data['teamSubmissions'] ?? false,
-          fileIds: (data['fileIds'] as List<dynamic> ?? []).castIds(),
+          fileIds: (data['fileIds'] as List<dynamic> ?? []).castIds<File>(),
         );
 
   // used before: 3, 4
@@ -143,7 +143,7 @@ class Submission implements Entity {
           comment: data['comment'],
           grade: data['grade'],
           gradeComment: data['gradeComment'],
-          fileIds: (data['fileIds'] as List<dynamic> ?? []).castIds(),
+          fileIds: (data['fileIds'] as List<dynamic> ?? []).castIds<File>(),
         );
 
   @override

@@ -207,13 +207,15 @@ class RecurrenceRuleAdapter extends TypeAdapter<RecurrenceRule> {
 }
 
 // Type ids.
-const typeUserId = 40;
 const typeColor = 48;
 const typeChildren = 49;
 const typeInstant = 61;
 const typeRecurrenceRule = 62;
 
 const typeUser = 51;
+const typeUserId = 40;
+const typeRole = 65;
+const typeRoleId = 66;
 
 const typeAssignmentId = 47;
 const typeSubmissionId = 60;
@@ -248,13 +250,15 @@ Future<void> initializeHive() async {
 
   Hive
     // General:
-    ..registerAdapter(IdAdapter<User>(40))
     ..registerAdapter(ColorAdapter())
     ..registerAdapter(ChildrenAdapter())
     ..registerAdapter(InstantAdapter())
     ..registerAdapter(RecurrenceRuleAdapter())
     // App module:
     ..registerAdapter(UserAdapter())
+    ..registerAdapter(IdAdapter<User>(typeUserId))
+    ..registerAdapter(RoleAdapter())
+    ..registerAdapter(IdAdapter<Role>(typeRoleId))
     // Assignments module:
     ..registerAdapter(IdAdapter<Assignment>(typeAssignmentId))
     ..registerAdapter(IdAdapter<Submission>(typeSubmissionId))

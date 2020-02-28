@@ -43,7 +43,7 @@ class User implements Entity {
           avatarBackgroundColor:
               (data['avatarBackgroundColor'] as String).hexToColor,
           permissions: (data['permissions'] as List<dynamic>).cast<String>(),
-          roles: (data['roles'] as List<dynamic>).castIds(),
+          roles: (data['roles'] as List<dynamic>).castIds<Role>(),
         );
 
   @override
@@ -77,7 +77,7 @@ class User implements Entity {
   final List<String> permissions;
   bool hasPermission(String permission) => permissions.contains(permission);
 
-  @HiveField(6)
+  @HiveField(9)
   final List<Id<Role>> roles;
   bool get isTeacher => hasRole(Role.teacherName);
   bool hasRole(String name) {
@@ -90,7 +90,7 @@ class User implements Entity {
 }
 
 @immutable
-@HiveType(typeId: typeUser)
+@HiveType(typeId: typeRole)
 class Role implements Entity {
   const Role({
     @required this.id,
@@ -107,7 +107,7 @@ class Role implements Entity {
           id: Id<User>(data['_id']),
           name: data['name'],
           displayName: data['displayName'],
-          roles: (data['roles'] as List<dynamic>).castIds(),
+          roles: (data['roles'] as List<dynamic>).castIds<Role>(),
         );
 
   static const teacherName = 'teacher';
