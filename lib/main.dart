@@ -2,12 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_native_timezone/flutter_native_timezone.dart';
 import 'package:schulcloud/app/app.dart';
-import 'package:schulcloud/assignment/assignment.dart';
 import 'package:schulcloud/calendar/calendar.dart';
-import 'package:schulcloud/course/course.dart';
 import 'package:schulcloud/file/file.dart';
 import 'package:schulcloud/login/login.dart';
-import 'package:schulcloud/news/news.dart';
 import 'package:time_machine/time_machine.dart';
 
 Future<void> main({AppConfigData appConfig = schulCloudAppConfig}) async {
@@ -25,13 +22,9 @@ Future<void> main({AppConfigData appConfig = schulCloudAppConfig}) async {
     }, instanceName: 'ignored')
     ..registerSingletonAsync((_) => StorageService.create())
     ..registerSingleton(NetworkService(apiUrl: appConfig.apiUrl))
-    ..registerSingleton(UserFetcherService())
-    ..registerSingleton(AssignmentBloc())
     ..registerSingleton(CalendarBloc())
-    ..registerSingleton(CourseBloc())
     ..registerSingleton(FileBloc())
-    ..registerSingleton(LoginBloc())
-    ..registerSingleton(NewsBloc());
+    ..registerSingleton(LoginBloc());
 
   runApp(
     AppConfig(
