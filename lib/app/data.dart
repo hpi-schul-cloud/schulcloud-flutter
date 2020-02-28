@@ -130,6 +130,7 @@ class Role implements Entity {
 class Permission {
   const Permission._();
 
+  static const assignmentEdit = 'HOMEWORK_EDIT';
   static const submissionsCreate = 'SUBMISSIONS_CREATE';
   static const submissionsEdit = 'SUBMISSIONS_EDIT';
 }

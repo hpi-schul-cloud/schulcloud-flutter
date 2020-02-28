@@ -44,18 +44,19 @@ class _AssignmentDetailsScreenState extends State<AssignmentDetailsScreen>
           appBarBuilder: (innerBoxIsScrolled) => FancyAppBar(
             title: Text(assignment.name),
             actions: <Widget>[
-              IconButton(
-                icon: Icon(
-                    assignment.isArchived ? Icons.unarchive : Icons.archive),
-                tooltip: assignment.isArchived
-                    ? s.assignment_assignmentDetails_unarchive
-                    : s.assignment_assignmentDetails_archive,
-                onPressed: () {
-                  services
-                      .get<AssignmentBloc>()
-                      .update(assignment, isArchived: !assignment.isArchived);
-                },
-              )
+              if (user.hasPermission(Permission.assignmentEdit))
+                IconButton(
+                  icon: Icon(
+                      assignment.isArchived ? Icons.unarchive : Icons.archive),
+                  tooltip: assignment.isArchived
+                      ? s.assignment_assignmentDetails_unarchive
+                      : s.assignment_assignmentDetails_archive,
+                  onPressed: () {
+                    services
+                        .get<AssignmentBloc>()
+                        .update(assignment, isArchived: !assignment.isArchived);
+                  },
+                )
             ],
             bottom: TabBar(
               tabs: [
