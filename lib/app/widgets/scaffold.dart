@@ -87,6 +87,9 @@ class FancyTabbedScaffold extends StatelessWidget {
 
     if (controller == null) {
       child = DefaultTabController(
+        // Without this key, changing the tab count doesn't generate a new
+        // [TabController] and hence lengths don't match
+        key: ValueKey(tabs.length),
         length: tabs.length,
         child: child,
       );

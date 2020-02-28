@@ -40,23 +40,18 @@ class _AssignmentDetailsScreenState extends State<AssignmentDetailsScreen>
             assignment.isPrivate || user?.isTeacher == false;
         final showFeedbackTab = assignment.isPublic && user?.isTeacher == false;
 
-        final tabs = [
-          Tab(text: s.assignment_assignmentDetails_details),
-          if (showSubmissionTab)
-            Tab(text: s.assignment_assignmentDetails_submission),
-          if (showFeedbackTab)
-            Tab(text: s.assignment_assignmentDetails_feedback),
-        ];
-        final controller = TabController(length: tabs.length, vsync: this);
-
         return FancyTabbedScaffold(
-          controller: controller,
           appBarBuilder: (innerBoxIsScrolled) => FancyAppBar(
             title: Text(assignment.name),
             forceElevated: innerBoxIsScrolled,
             bottom: TabBar(
-              controller: controller,
-              tabs: tabs,
+              tabs: [
+                Tab(text: s.assignment_assignmentDetails_details),
+                if (showSubmissionTab)
+                  Tab(text: s.assignment_assignmentDetails_submission),
+                if (showFeedbackTab)
+                  Tab(text: s.assignment_assignmentDetails_feedback),
+              ],
             ),
           ),
           tabs: [
