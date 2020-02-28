@@ -6,7 +6,6 @@ import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:meta/meta.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:schulcloud/app/app.dart';
-import 'package:schulcloud/course/course.dart';
 
 import 'data.dart';
 
@@ -29,7 +28,10 @@ class FileBloc {
   //   right away.
   // * We want to filter the files because there are a lot with no names that
   //   shouldn't be displayed.
-  CacheController<List<File>> fetchFiles(Id<dynamic> owner, File parent) {}
+  CacheController<List<File>> fetchFiles(Id<dynamic> owner, File parent) {
+    // TODO(marcelgarus): fetch files
+    throw UnimplementedError('TODO: fetch files');
+  }
 
   Future<void> downloadFile(File file) async {
     assert(file != null);
