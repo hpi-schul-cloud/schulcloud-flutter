@@ -66,7 +66,8 @@ class FileBrowser extends StatelessWidget {
 
   Widget _buildEmbedded(BuildContext context) {
     return CachedRawBuilder<List<File>>(
-      controller: services.get<FileBloc>().fetchFiles(owner.id, parent),
+      controller: // TODO(marcelgarus): make this typesafe
+          parent?.files?.controller ?? (owner as dynamic).files.controller,
       builder: (context, update) {
         if (update.hasError) {
           return ErrorScreen(update.error, update.stackTrace);
@@ -95,7 +96,8 @@ class FileBrowser extends StatelessWidget {
         ),
       ),
       body: CachedBuilder<List<File>>(
-        controller: services.get<FileBloc>().fetchFiles(owner.id, parent),
+        controller: // TODO(marcelgarus): make this typesafe
+            parent?.files?.controller ?? (owner as dynamic).files.controller,
         errorBannerBuilder: (_, error, st) => ErrorBanner(error, st),
         errorScreenBuilder: (_, error, st) => ErrorScreen(error, st),
         builder: (context, files) {
