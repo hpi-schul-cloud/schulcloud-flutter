@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_cached/flutter_cached.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:schulcloud/app/app.dart';
-import 'package:schulcloud/dashboard/widgets/dashboard_card.dart';
+import 'package:schulcloud/dashboard/dashboard.dart';
 import 'package:schulcloud/generated/generated.dart';
-import 'package:schulcloud/news/bloc.dart';
-import 'package:schulcloud/news/data.dart';
-import 'package:schulcloud/news/news.dart';
-import 'package:schulcloud/news/widgets/article_screen.dart';
+
+import '../data.dart';
+import '../news.dart';
+import 'article_screen.dart';
 
 class NewsDashboardCard extends StatelessWidget {
   @override
@@ -17,12 +17,12 @@ class NewsDashboardCard extends StatelessWidget {
     return DashboardCard(
       title: s.news_dashboardCard,
       child: CachedRawBuilder<List<Article>>(
-        controller: services.get<NewsBloc>().fetchArticles(),
+        controller: services.get<StorageService>().root.news.controller,
         builder: (context, update) {
           if (!update.hasData) {
             return Center(
               child: update.hasError
-                  ? Text(update.error.toString())
+                  ? ErrorBanner(update.error, update.stackTrace)
                   : CircularProgressIndicator(),
             );
           }

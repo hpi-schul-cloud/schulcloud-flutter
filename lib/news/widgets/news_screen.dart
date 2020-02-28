@@ -2,7 +2,6 @@ import 'package:flutter_cached/flutter_cached.dart';
 import 'package:flutter/material.dart';
 import 'package:schulcloud/app/app.dart';
 
-import '../bloc.dart';
 import '../data.dart';
 import 'article_preview.dart';
 
@@ -12,7 +11,7 @@ class NewsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: CachedBuilder<List<Article>>(
-        controller: services.get<NewsBloc>().fetchArticles(),
+        controller: services.get<StorageService>().root.news.controller,
         errorBannerBuilder: (_, error, st) => ErrorBanner(error, st),
         errorScreenBuilder: (_, error, st) => ErrorScreen(error, st),
         builder: (_, articles) {
