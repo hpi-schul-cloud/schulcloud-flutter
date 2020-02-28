@@ -63,11 +63,15 @@ extension PowerfulString on String {
   /// Converts this to a simple HTML subset so line breaks are properly
   /// displayed on the web
   String get plainToSimpleHtml {
-    return splitMapJoin(
-      '\n\n',
-      onMatch: (_) => '',
-      onNonMatch: (s) => '<p>$s</p>',
-    ).replaceAllMapped(RegExp('(.+)\n'), (m) => '${m[1]}<br />');
+    // Because the server is doing … stuff, we need to double encode‽
+    return HtmlEscape(HtmlEscapeMode.unknown)
+        .convert(HtmlEscape(HtmlEscapeMode.unknown).convert(this))
+        .splitMapJoin(
+          '\n\n',
+          onMatch: (_) => '',
+          onNonMatch: (s) => '<p>$s</p>',
+        )
+        .replaceAllMapped(RegExp('(.+)\n'), (m) => '${m[1]}<br />');
   }
 
   String get uriComponentEncoded => Uri.encodeComponent(this ?? '');
