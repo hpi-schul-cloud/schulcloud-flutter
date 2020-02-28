@@ -36,7 +36,7 @@ String limitString(String string, int maxLength) =>
 
 /// Prints a file size given in [bytes] as a [String].
 String formatFileSize(int bytes) {
-  const units = ['B', 'kB', 'MB', 'GB', 'TB', 'YB'];
+  const units = ['B', 'kB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
 
   var index = 0;
   var power = 1;
