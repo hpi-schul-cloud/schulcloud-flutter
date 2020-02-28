@@ -41,6 +41,9 @@ class Assignment implements Entity<Assignment>, Comparable {
           isPrivate: data['private'],
         );
 
+  static Future<Assignment> fetch(Id<Assignment> id) async =>
+      Assignment.fromJson(await fetchJsonFrom('homework/$id'));
+
   // used before: 3, 4
 
   @override
@@ -106,6 +109,9 @@ class Submission implements Entity<Submission> {
           grade: data['grade'],
           gradeComment: data['gradeComment'],
         );
+
+  static Future<Submission> fetch(Id<Submission> id) async =>
+      Submission.fromJson(await fetchJsonFrom('submissions/$id'));
 
   @override
   @HiveField(0)
