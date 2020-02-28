@@ -6,7 +6,7 @@ import '../data.dart';
 class GradeIndicator extends StatelessWidget {
   const GradeIndicator({Key key, @required this.grade})
       : assert(grade != null),
-        assert(0 <= grade && grade <= 100),
+        assert(0 <= grade && grade <= Submission.gradeMax),
         super(key: key);
 
   final int grade;
