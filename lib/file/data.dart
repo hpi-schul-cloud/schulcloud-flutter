@@ -4,8 +4,6 @@ import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/course/course.dart';
 import 'package:time_machine/time_machine.dart';
 
-import 'bloc.dart';
-
 part 'data.g.dart';
 
 @HiveType(typeId: TypeId.typeFile)
@@ -27,16 +25,19 @@ class File implements Entity<File>, Comparable<File> {
         files = LazyIds<File>(
           collectionId: 'files in directory $id',
           fetcher: () async {
-            final jsonData =
-                await fetchJsonListFrom('fileStorage', parameters: {
-              'owner': owner.id,
-              if (parent != null) 'parent': parent.id.toString(),
-            });
-            return FileBloc.parseFileList(jsonData, owner);
+            final jsonData = await fetchJsonListFrom(
+              'fileStorage',
+              wrappedInData: false,
+              parameters: {
+                'owner': owner.id,
+                if (parent != null) 'parent': parent.id.toString(),
+              },
+            );
+            return File.fromJsonListAndOwner(jsonData, owner);
           },
         );
 
-  File.fromJsonAndOwner(Map<String, dynamic> data, Id<Entity> owner)
+  File.fromJsonAndOwner(Map<String, dynamic> data, Id<dynamic> owner)
       : this(
           id: Id<File>(data['_id']),
           name: data['name'],
@@ -49,6 +50,19 @@ class File implements Entity<File>, Comparable<File> {
           size: data['size'],
         );
 
+  static List<File> fromJsonListAndOwner(
+          List<Map<String, dynamic>> data, Id<dynamic> owner) =>
+      data.map((data) => File.fromJsonAndOwner(data, owner)).toList();
+
+  static Future<List<File>> fetchByOwner(Id<dynamic> owner) async {
+    final files = await fetchJsonListFrom(
+      'fileStorage',
+      wrappedInData: false,
+      parameters: {'owner': owner.toString()},
+    );
+    return File.fromJsonListAndOwner(files, owner);
+  }
+
   // used before: 7, 8
 
   @override
@@ -60,7 +74,7 @@ class File implements Entity<File>, Comparable<File> {
 
   /// An [Id] for either a [User] or [Course].
   @HiveField(3)
-  final Id<Entity> owner;
+  final Id<dynamic> owner;
 
   @HiveField(10)
   final Instant createdAt;
