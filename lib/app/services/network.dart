@@ -107,7 +107,8 @@ class NetworkService {
   Future<http.Response> post(String path, {dynamic body}) {
     return _makeCall(
       path,
-      (url) async => http.post(url, headers: _getHeaders(), body: body),
+      (url) async =>
+          http.post(url, headers: _getHeaders(), body: json.encode(body)),
     );
   }
 
@@ -115,7 +116,8 @@ class NetworkService {
   Future<http.Response> patch(String path, {dynamic body}) {
     return _makeCall(
       path,
-      (url) async => http.patch(url, headers: _getHeaders(), body: body),
+      (url) async =>
+          http.patch(url, headers: _getHeaders(), body: json.encode(body)),
     );
   }
 
@@ -180,6 +182,7 @@ class NetworkService {
   Map<String, String> _getHeaders() {
     final storage = services.storage;
     return {
+      'Content-Type': 'application/json',
       if (storage.hasToken)
         'Authorization': 'Bearer ${storage.token.getValue()}',
     };
