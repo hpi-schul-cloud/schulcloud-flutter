@@ -73,6 +73,8 @@ class IdCollection<T extends Entity<T>> implements Entity<IdCollection<T>> {
   @override
   final Id<IdCollection<T>> id;
   final List<Id<T>> childrenIds;
+
+  int get typeId => HiveCache.typeIdByType<T>();
 }
 
 class AdapterForIdCollection extends TypeAdapter<IdCollection<dynamic>> {
@@ -81,7 +83,7 @@ class AdapterForIdCollection extends TypeAdapter<IdCollection<dynamic>> {
 
   @override
   void write(BinaryWriter writer, IdCollection<dynamic> collection) => writer
-    ..writeInt(collection.id.typeId)
+    ..writeInt(collection.typeId)
     ..writeString(collection.id.id)
     ..writeStringList(collection.childrenIds.map((id) => id.id).toList());
 
@@ -161,7 +163,7 @@ class HiveCacheImpl {
       }
     }
     throw UnsupportedError("We don't know how to fetch $T. Are you sure you "
-        'registered a Fetcher<$T>?');
+        'registered the type $T?');
   }
 
   Future<void> initialize() async => _box = await Hive.openBox('cache');
@@ -171,8 +173,21 @@ class HiveCacheImpl {
     _fetchers[typeId] = Fetcher<T>(fetch);
   }
 
-  int typeIdByType<T extends Entity<T>>() =>
-      _fetchers.entries.singleWhere((entry) => entry.value is Fetcher<T>).key;
+  int typeIdByType<T extends Entity<T>>() {
+    try {
+      return _fetchers.entries
+          .singleWhere((entry) => entry.value is Fetcher<T>)
+          .key;
+      // Unlike Exceptions, Errors indicate that the programmer did something
+      // wrong. Generally, they should not be caught during runtime. In this
+      // case, however, we throw another Error with more information, so it's
+      // okay to catch the error here.
+      // ignore: avoid_catching_errors
+    } on StateError {
+      throw UnsupportedError('No id for type $T found. Did you forget to '
+          'register the type $T?');
+    }
+  }
 
   Fetcher<dynamic> _getFetcherOfTypeId(int id) =>
       _fetchers[id] ?? (throw UnsupportedError('Unknown type id $id.'));
@@ -184,12 +199,8 @@ class HiveCacheImpl {
 
   void put<T extends Entity<T>>(T entity) {
     print('Entity: $entity with id ${entity.id.id}');
-    final debugIds = {
-      'f346dff9-d57f-436c-87f5-d75b667cdf6a',
-      '5e466e2618248a003661a882',
-    };
-    if (debugIds.contains(entity.id.id)) {
-      print('Debug.');
+    if (entity is IdCollection) {
+      _box.put(entity.id.id, entity);
     }
     _box.put(entity.id.id, entity);
   }
@@ -288,8 +299,21 @@ Future<void> initializeHive() async {
     // Files module:
     ..registerAdapter(FileAdapter());
 
-  await HiveCache.initialize();
   HiveCache
     ..registerEntityType(TypeId.typeUser, User.fetch)
-    ..registerEntityType(TypeId.typeCourse, Course.fetch);
+    ..registerEntityType(TypeId.typeAssignment, Assignment.fetch)
+    ..registerEntityType(TypeId.typeSubmission, Submission.fetch)
+    ..registerEntityType(TypeId.typeEvent, Event.fetch)
+    ..registerEntityType(TypeId.typeCourse, Course.fetch)
+    ..registerEntityType(TypeId.typeLesson, Lesson.fetch)
+    ..registerEntityType<Content>(
+      TypeId.typeContent,
+      (id) => throw UnsupportedError('Contents cannot be fetched by their id.'),
+    )
+    ..registerEntityType<File>(
+        TypeId.typeFile,
+        (id) => throw UnsupportedError('File need to know the type of their '
+            'owner, so they cannot be fetched by their id.'))
+    ..registerEntityType(TypeId.typeArticle, Article.fetch);
+  await HiveCache.initialize();
 }
