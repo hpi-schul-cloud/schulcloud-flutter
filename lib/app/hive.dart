@@ -17,23 +17,27 @@ import 'package:time_machine/time_machine.dart';
 
 import 'data.dart';
 
-bool _isHiveInitialized = false;
+/// An [Entity].
+abstract class Entity<T extends Entity<T>> {
+  const Entity();
 
+  Id<T> get id;
+}
+
+/// An [Id] that identifies an [Entity] among all other [Entity]s.
 class Id<T extends Entity<T>> {
-  Id(this.id) {
-    _box = HiveCache._boxForType<T>(T);
-  }
+  const Id(this.id);
 
   final String id;
-  CacheBox<T> _box;
 
   Type get type => T;
+  int get typeId => HiveCache.typeIdByType<T>();
 
   CacheController<T> get controller {
     return SimpleCacheController<T>(
       saveToCache: HiveCache.put,
       loadFromCache: () => HiveCache.get(this) ?? (throw NotInCacheException()),
-      fetcher: () => _box.fetcher(this),
+      fetcher: () => HiveCache.fetch(this),
     );
   }
 
@@ -53,55 +57,68 @@ class AdapterForId extends TypeAdapter<Id<dynamic>> {
   int get typeId => TypeId.typeId;
 
   @override
-  void write(BinaryWriter writer, Id<dynamic> id) {
-    final type = id.type;
-    final typeId = HiveCache._untypedBoxForType(type).typeId;
-    writer
-      ..writeInt(typeId)
-      ..writeString(id.id);
-  }
+  void write(BinaryWriter writer, Id<dynamic> id) => writer
+    ..writeInt(id.typeId)
+    ..writeString(id.id);
 
   @override
-  Id read(BinaryReader reader) {
-    final typeId = reader.readInt();
-    final box = HiveCache._boxForTypeId(typeId);
-    return box._createId(reader.readString());
-  }
+  Id<dynamic> read(BinaryReader reader) =>
+      HiveCache._createIdOfTypeId(reader.readInt(), reader.readString());
 }
 
-class Collection<T extends Entity<T>> implements Entity<Collection<T>> {
-  Collection({@required this.id, @required this.childrenIds});
+/// A wrapper around multiple [Id]s.
+class IdCollection<T extends Entity<T>> implements Entity<IdCollection<T>> {
+  IdCollection({@required this.id, @required this.childrenIds});
 
   @override
-  final Id<Collection<T>> id;
+  final Id<IdCollection<T>> id;
   final List<Id<T>> childrenIds;
 }
 
-class Ids<T extends Entity<T>> implements Entity<Collection<T>> {
-  Ids({@required this.id, @required this.fetcher});
+class AdapterForIdCollection extends TypeAdapter<IdCollection<dynamic>> {
+  @override
+  int get typeId => TypeId.typeCollection;
 
   @override
-  final Id<Collection<T>> id;
+  void write(BinaryWriter writer, IdCollection<dynamic> collection) => writer
+    ..writeInt(collection.id.typeId)
+    ..writeString(collection.id.id)
+    ..writeStringList(collection.childrenIds.map((id) => id.id).toList());
 
-  List<Id<T>> childrenIds;
+  @override
+  IdCollection<dynamic> read(BinaryReader reader) =>
+      HiveCache._createCollectionOfTypeId(
+        reader.readInt(),
+        reader.readString(),
+        reader.readStringList(),
+      );
+}
+
+/// A fetcher for an [IdCollection].
+class LazyIds<T extends Entity<T>> {
+  LazyIds({@required this.collectionId, @required this.fetcher});
+
+  final String collectionId;
+  Id<IdCollection<T>> get _id => Id<IdCollection<T>>(collectionId);
+
   final FutureOr<List<T>> Function() fetcher;
 
   CacheController<List<T>> get controller {
     return SimpleCacheController<List<T>>(
       fetcher: fetcher,
       loadFromCache: () async {
-        final ids = HiveCache.get(id) ?? (throw NotInCacheException());
+        final ids = HiveCache.get(_id) ?? (throw NotInCacheException());
         return [
           for (final itemId in ids.childrenIds)
             HiveCache.get(itemId) ?? (throw NotInCacheException()),
         ];
       },
       saveToCache: (items) {
-        final collection = Collection<T>(
-          id: id,
-          childrenIds: items.map((item) => item.id),
+        final collection = IdCollection<T>(
+          id: _id,
+          childrenIds: items.map((item) => item.id).toList(),
         );
-        HiveCache.put<Collection<T>>(collection);
+        HiveCache.put<IdCollection<T>>(collection);
         items.forEach(HiveCache.put);
       },
     );
@@ -116,62 +133,69 @@ extension ListOfIds<T extends Entity<T>> on List<Id<T>> {
   }
 }
 
-abstract class Entity<T extends Entity<T>> {
-  const Entity();
+// ignore: non_constant_identifier_names
+final HiveCache = HiveCacheImpl();
 
-  Id<T> get id;
-}
+class Fetcher<T extends Entity<T>> {
+  Fetcher(this.fetch);
 
-class CacheBox<T extends Entity<T>> {
-  CacheBox({@required this.typeId, @required this.box, @required this.fetcher});
-
-  final int typeId;
-  final Box box;
-  final FutureOr<T> Function(Id<T> id) fetcher;
-
-  Type get type => T;
+  final Future<T> Function(Id<T> id) fetch;
 
   Id<T> _createId(String id) => Id<T>(id);
+  IdCollection<T> _createCollection(String id, List<String> children) {
+    return IdCollection<T>(
+      id: Id<IdCollection<T>>(id),
+      childrenIds: children.map((child) => Id<T>(child)).toList(),
+    );
+  }
 }
 
 class HiveCacheImpl {
-  final _boxes = <Type, CacheBox<dynamic>>{};
+  final _fetchers = <int, Fetcher>{};
+  Box<dynamic> _box;
 
-  CacheBox<dynamic> _untypedBoxForType(Type type) {
-    final box = _boxes[type];
-    if (box == null) {
-      throw Exception('Unknown type $type. Did you forget to register a box?');
+  Future<T> fetch<T extends Entity<T>>(Id<T> id) {
+    for (final fetcher in _fetchers.values) {
+      if (fetcher is Fetcher<T>) {
+        return fetcher.fetch(id);
+      }
     }
-    return box;
+    throw UnsupportedError("We don't know how to fetch $T. Are you sure you "
+        'registered a Fetcher<$T>?');
   }
 
-  CacheBox<T> _boxForType<T extends Entity<T>>(Type type) {
-    return _untypedBoxForType(type) as CacheBox<T>;
+  Future<void> initialize() async => _box = await Hive.openBox('cache');
+
+  void registerEntityType<T extends Entity<T>>(
+      int typeId, Future<T> Function(Id<T> id) fetch) {
+    _fetchers[typeId] = Fetcher<T>(fetch);
   }
 
-  CacheBox<dynamic> _boxForTypeId(int typeId) {
-    return _boxes.values.singleWhere((box) => box.typeId == typeId);
-  }
+  int typeIdByType<T extends Entity<T>>() =>
+      _fetchers.entries.singleWhere((entry) => entry.value is Fetcher<T>).key;
 
-  void initialize(Iterable<CacheBox> boxes) {
-    for (final box in boxes) {
-      _boxes[box.type] = box;
-    }
-  }
+  Fetcher<dynamic> _getFetcherOfTypeId(int id) =>
+      _fetchers[id] ?? (throw UnsupportedError('Unknown type id $id.'));
+  Id<dynamic> _createIdOfTypeId(int typeId, String id) =>
+      _getFetcherOfTypeId(typeId)._createId(id);
+  IdCollection<dynamic> _createCollectionOfTypeId(
+          int typeId, String id, List<String> children) =>
+      _getFetcherOfTypeId(typeId)._createCollection(id, children);
 
   void put<T extends Entity<T>>(T entity) {
-    final box = _boxForType<T>(entity.runtimeType);
-    box.box.put(entity.id.id, entity);
+    print('Entity: $entity with id ${entity.id.id}');
+    final debugIds = {
+      'f346dff9-d57f-436c-87f5-d75b667cdf6a',
+      '5e466e2618248a003661a882',
+    };
+    if (debugIds.contains(entity.id.id)) {
+      print('Debug.');
+    }
+    _box.put(entity.id.id, entity);
   }
 
-  T get<T extends Entity<T>>(Id<T> id) {
-    final box = _boxForType<T>(T);
-    return box.box.get(id.id) as T;
-  }
+  T get<T extends Entity<T>>(Id<T> id) => _box.get(id.id) as T;
 }
-
-// ignore: non_constant_identifier_names
-final HiveCache = HiveCacheImpl();
 
 class ColorAdapter extends TypeAdapter<Color> {
   @override
@@ -214,7 +238,7 @@ class RecurrenceRuleAdapter extends TypeAdapter<RecurrenceRule> {
 class TypeId {
   static const typeRoot = 42;
   static const typeId = 40;
-  static const typeCollection = 41;
+  static const typeCollection = 70;
   static const typeColor = 48;
   static const typeChildren = 49;
   static const typeInstant = 61;
@@ -238,16 +262,12 @@ class TypeId {
 }
 
 Future<void> initializeHive() async {
-  if (_isHiveInitialized) {
-    return;
-  }
-  _isHiveInitialized = true;
-
   await Hive.initFlutter();
 
   Hive
     // General:
     ..registerAdapter(AdapterForId())
+    ..registerAdapter(AdapterForIdCollection())
     ..registerAdapter(ColorAdapter())
     ..registerAdapter(InstantAdapter())
     ..registerAdapter(RecurrenceRuleAdapter())
@@ -268,11 +288,8 @@ Future<void> initializeHive() async {
     // Files module:
     ..registerAdapter(FileAdapter());
 
-  HiveCache.initialize({
-    CacheBox<User>(
-      typeId: TypeId.typeUser,
-      box: await Hive.openBox('users'),
-      fetcher: User.fetch,
-    ),
-  });
+  await HiveCache.initialize();
+  HiveCache
+    ..registerEntityType(TypeId.typeUser, User.fetch)
+    ..registerEntityType(TypeId.typeCourse, Course.fetch);
 }

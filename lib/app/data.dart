@@ -5,6 +5,7 @@ import 'package:schulcloud/assignment/assignment.dart';
 import 'package:schulcloud/calendar/calendar.dart';
 import 'package:schulcloud/course/course.dart';
 import 'package:schulcloud/file/file.dart';
+import 'package:schulcloud/news/news.dart';
 
 part 'data.g.dart';
 
@@ -24,8 +25,8 @@ class User implements Entity<User> {
         assert(email != null),
         assert(schoolId != null),
         assert(displayName != null),
-        files = Ids<File>(
-          id: Id<Collection<File>>('files of $id'),
+        files = LazyIds<File>(
+          collectionId: 'files of $id',
           fetcher: () async {
             final files = await fetchJsonListFrom('fileStorage', parameters: {
               'owner': id.toString(),
@@ -69,7 +70,7 @@ class User implements Entity<User> {
   @HiveField(5)
   final String displayName;
 
-  final Ids<File> files;
+  final LazyIds<File> files;
 }
 
 @immutable
@@ -78,37 +79,47 @@ class Root implements Entity<Root> {
   @override
   Id<Root> get id => Id<Root>('root');
 
-  final courses = Ids<Course>(
-    id: Id<Collection<Course>>('courses'),
+  final courses = LazyIds<Course>(
+    collectionId: 'courses',
     fetcher: () async => (await fetchJsonListFrom('courses'))
-        .map((data) => Course.fromJson(data)),
+        .map((data) => Course.fromJson(data))
+        .toList(),
   );
 
-  final assignments = Ids<Assignment>(
-    id: Id<Collection<Assignment>>('assignments'),
+  final assignments = LazyIds<Assignment>(
+    collectionId: 'assignments',
     fetcher: () async => (await fetchJsonListFrom('homework'))
-        .map((data) => Assignment.fromJson(data)),
+        .map((data) => Assignment.fromJson(data))
+        .toList(),
   );
 
-  final submissions = Ids<Submission>(
-    id: Id<Collection<Submission>>('submissions'),
+  final submissions = LazyIds<Submission>(
+    collectionId: 'submissions',
     fetcher: () async => (await fetchJsonListFrom('submissions'))
-        .map((data) => Submission.fromJson(data)),
+        .map((data) => Submission.fromJson(data))
+        .toList(),
   );
 
-  final events = Ids<Event>(
-    id: Id<Collection<Event>>('events'),
+  final events = LazyIds<Event>(
+    collectionId: 'events',
     fetcher: () async {
       final jsonResponse = await fetchJsonListFrom(
         'calendar',
-        wrappedInData: true,
+        wrappedInData: false,
         parameters: {
           // We have to set this query parameter because otherwise—you guessed
           // it—no events are being returned at all 😂
           'all': 'true',
         },
       );
-      return jsonResponse.map((data) => Event.fromJson(data));
+      return jsonResponse.map((data) => Event.fromJson(data)).toList();
     },
+  );
+
+  final news = LazyIds<Article>(
+    collectionId: 'articles',
+    fetcher: () async => (await fetchJsonListFrom('news'))
+        .map((data) => Article.fromJson(data))
+        .toList(),
   );
 }
