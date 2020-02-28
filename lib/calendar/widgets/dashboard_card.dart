@@ -24,7 +24,7 @@ class CalendarDashboardCard extends StatelessWidget {
           if (!update.hasData) {
             return Center(
                 child: update.hasError
-                    ? Text(update.error.toString())
+                    ? ErrorBanner(update.error, update.stackTrace)
                     : CircularProgressIndicator());
           }
 
