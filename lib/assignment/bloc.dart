@@ -16,6 +16,35 @@ class AssignmentBloc {
         makeNetworkCall: () => services.network.get('homework'),
         parser: (data) => Assignment.fromJson(data),
       );
+
+  Future<Assignment> update(
+    Assignment oldAssignment, {
+    bool isArchived,
+  }) async {
+    final userId = services.storage.userId;
+    final request = {
+      if (isArchived != null && isArchived != oldAssignment.isArchived)
+        'archived': isArchived
+            ? oldAssignment.archived + [userId]
+            : oldAssignment.archived.where((id) => id != userId).toList(),
+    };
+    if (request.isEmpty) {
+      return oldAssignment;
+    }
+
+    final response = await services.network.patch(
+      'homework/${oldAssignment.id}',
+      body: request,
+    );
+    return _onAssignmentUpdated(response);
+  }
+
+  Future<Assignment> _onAssignmentUpdated(Response response) async {
+    final assignment = Assignment.fromJson(json.decode(response.body));
+
+    await services.storage.cache.putChildrenOfType(null, [assignment]);
+    return assignment;
+  }
 }
 
 @immutable

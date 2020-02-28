@@ -43,7 +43,20 @@ class _AssignmentDetailsScreenState extends State<AssignmentDetailsScreen>
         return FancyTabbedScaffold(
           appBarBuilder: (innerBoxIsScrolled) => FancyAppBar(
             title: Text(assignment.name),
-            forceElevated: innerBoxIsScrolled,
+            actions: <Widget>[
+              IconButton(
+                icon: Icon(
+                    assignment.isArchived ? Icons.unarchive : Icons.archive),
+                tooltip: assignment.isArchived
+                    ? s.assignment_assignmentDetails_unarchive
+                    : s.assignment_assignmentDetails_archive,
+                onPressed: () {
+                  services
+                      .get<AssignmentBloc>()
+                      .update(assignment, isArchived: !assignment.isArchived);
+                },
+              )
+            ],
             bottom: TabBar(
               tabs: [
                 Tab(text: s.assignment_assignmentDetails_details),
@@ -53,6 +66,7 @@ class _AssignmentDetailsScreenState extends State<AssignmentDetailsScreen>
                   Tab(text: s.assignment_assignmentDetails_feedback),
               ],
             ),
+            forceElevated: innerBoxIsScrolled,
           ),
           tabs: [
             _DetailsTab(assignment: assignment),

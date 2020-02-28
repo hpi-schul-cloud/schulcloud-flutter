@@ -133,6 +133,7 @@ class Id<T> {
 
   @override
   String toString() => id;
+  String toJson() => id;
 }
 
 /// A special kind of item that also carries its id.

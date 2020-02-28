@@ -87,6 +87,11 @@
     "type": "text",
     "description": ""
   },
+  "assignment_assignmentDetails_archive": "Archive",
+  "@assignment_assignmentDetails_archive": {
+    "type": "text",
+    "description": ""
+  },
   "assignment_assignmentDetails_details": "Details",
   "@assignment_assignmentDetails_details": {
     "type": "text",
@@ -139,6 +144,11 @@
   },
   "assignment_assignmentDetails_submission_empty": "You have not submitted anything yet.",
   "@assignment_assignmentDetails_submission_empty": {
+    "type": "text",
+    "description": ""
+  },
+  "assignment_assignmentDetails_unarchive": "Unarchive",
+  "@assignment_assignmentDetails_unarchive": {
     "type": "text",
     "description": ""
   },

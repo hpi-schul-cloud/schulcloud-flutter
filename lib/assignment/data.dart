@@ -49,7 +49,11 @@ class Assignment implements Entity {
           availableAt: (data['availableDate'] as String).parseInstant(),
           dueAt: (data['dueDate'] as String)?.parseInstant(),
           courseId: data['courseId'] != null
-              ? Id<Course>(data['courseId']['_id'])
+              // GET /homework/:id -> courseId is a populated object
+              // PATCH /homework/:id -> courseId is an ID (string)
+              ? Id<Course>(data['courseId'] is String
+                  ? data['courseId']
+                  : data['courseId']['_id'])
               : null,
           lessonId: Id(data['lessonId'] ?? ''),
           isPrivate: data['private'] ?? false,
