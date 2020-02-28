@@ -2,15 +2,10 @@ import 'dart:convert';
 import 'dart:ui';
 
 import 'package:flutter/widgets.dart';
-import 'package:flutter_cached/flutter_cached.dart';
 import 'package:get_it/get_it.dart';
-import 'package:http/http.dart';
-import 'package:meta/meta.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import 'hive.dart';
 import 'services/network.dart';
-import 'services/storage.dart';
 
 final services = GetIt.instance;
 
@@ -25,7 +20,7 @@ Future<List<Map<String, dynamic>>> fetchJsonListFrom(
   String path, {
   // Surprise: The Calendar API's response is different from all others! Would
   // be too easy otherwise ;)
-  bool wrappedInData = false,
+  bool wrappedInData = true,
   Map<String, String> parameters = const {},
 }) async {
   final response =
