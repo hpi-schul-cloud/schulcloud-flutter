@@ -20,8 +20,8 @@ class Course implements Entity<Course> {
         assert(description != null),
         assert(teachers != null),
         assert(color != null),
-        lessons = Ids<Lesson>(
-          id: Id<Collection<Lesson>>('lessons of course $id'),
+        lessons = LazyIds<Lesson>(
+          collectionId: 'lessons of course $id',
           fetcher: () async => (await fetchJsonListFrom('lessons?courseId=$id'))
               .map((data) => Lesson.fromJson(data)),
         );
@@ -56,7 +56,7 @@ class Course implements Entity<Course> {
   @HiveField(4)
   final Color color;
 
-  final Ids<Lesson> lessons;
+  final LazyIds<Lesson> lessons;
 }
 
 @HiveType(typeId: TypeId.typeLesson)
