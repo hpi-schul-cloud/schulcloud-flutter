@@ -65,7 +65,8 @@ class Menu extends StatelessWidget {
             children: [
               SizedBox(height: 8),
               CachedRawBuilder<User>(
-                controller: services.get<StorageService>().currentUserId.controller,
+                controller:
+                    services.get<StorageService>().currentUserId.controller,
                 builder: (context, update) {
                   return Text(
                     update.data?.name ?? context.s.app_navigation_userDataEmpty,
@@ -115,12 +116,11 @@ class Menu extends StatelessWidget {
 
     final s = context.s;
     return [
-      buildItem(Screen.dashboard, s.app_navigation_dashboard, Icons.dashboard),
-      buildItem(Screen.news, s.app_navigation_news, Icons.new_releases),
-      buildItem(Screen.courses, s.app_navigation_courses, Icons.school),
-      buildItem(Screen.homework, s.app_navigation_assignments,
-          Icons.playlist_add_check),
-      buildItem(Screen.files, s.app_navigation_files, Icons.folder),
+      buildItem(Screen.dashboard, s.dashboard, Icons.dashboard),
+      buildItem(Screen.news, s.news, Icons.new_releases),
+      buildItem(Screen.courses, s.course, Icons.school),
+      buildItem(Screen.homework, s.assignment, Icons.playlist_add_check),
+      buildItem(Screen.files, s.file, Icons.folder),
     ];
   }
 }
