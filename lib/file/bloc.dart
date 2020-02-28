@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:flutter/widgets.dart';
-import 'package:flutter_cached/flutter_cached.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:meta/meta.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -12,26 +11,6 @@ import 'data.dart';
 @immutable
 class FileBloc {
   const FileBloc();
-
-  static List<File> parseFileList(
-      List<Map<String, dynamic>> data, Id<Entity> owner) {
-    return data
-        .where((data) => data['name'] != null)
-        .map((data) => File.fromJsonAndOwner(data, owner))
-        .toList();
-  }
-
-  // We don't use [fetchList] here, because of these two reasons why we need
-  // more control:
-  // * Unlike every other api endpoint, the files endpoint doesn't provide a
-  //   json blob that has a 'body' field. Instead, the json returned is a list
-  //   right away.
-  // * We want to filter the files because there are a lot with no names that
-  //   shouldn't be displayed.
-  CacheController<List<File>> fetchFiles(Id<dynamic> owner, File parent) {
-    // TODO(marcelgarus): fetch files
-    throw UnimplementedError('TODO: fetch files');
-  }
 
   Future<void> downloadFile(File file) async {
     assert(file != null);
