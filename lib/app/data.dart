@@ -27,12 +27,7 @@ class User implements Entity<User> {
         assert(displayName != null),
         files = LazyIds<File>(
           collectionId: 'files of $id',
-          fetcher: () async {
-            final files = await fetchJsonListFrom('fileStorage', parameters: {
-              'owner': id.toString(),
-            });
-            return FileBloc.parseFileList(files, id);
-          },
+          fetcher: () => File.fetchByOwner(id),
         );
 
   User.fromJson(Map<String, dynamic> data)
