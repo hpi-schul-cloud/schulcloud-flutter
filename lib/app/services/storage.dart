@@ -1,9 +1,5 @@
 import 'dart:convert';
 
-import 'package:schulcloud/assignment/assignment.dart';
-import 'package:schulcloud/course/course.dart';
-import 'package:schulcloud/file/file.dart';
-import 'package:schulcloud/news/news.dart';
 import 'package:streaming_shared_preferences/streaming_shared_preferences.dart';
 
 import '../app.dart';
@@ -51,6 +47,6 @@ class StorageService {
     return StorageService._(prefs, email, token, root);
   }
 
-  // TODO: clear the HiveCache
+  // TODO(marcelgarus): clear the HiveCache
   Future<void> clear() => Future.wait([_prefs.clear()]);
 }
