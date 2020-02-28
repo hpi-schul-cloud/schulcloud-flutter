@@ -11,7 +11,7 @@ class CourseBloc {
   const CourseBloc();
 
   CacheController<List<Course>> fetchCourses() => fetchList(
-        makeNetworkCall: (network) => network.get('courses'),
+        makeNetworkCall: () => services.network.get('courses'),
         parser: (data) => Course.fromJson(data),
       );
 
@@ -19,7 +19,7 @@ class CourseBloc {
     assert(courseId != null);
 
     return fetchSingle(
-      makeNetworkCall: (network) => network.get('courses/$courseId'),
+      makeNetworkCall: () => services.network.get('courses/$courseId'),
       parser: (data) => Course.fromJson(data),
     );
   }
@@ -27,13 +27,13 @@ class CourseBloc {
   CacheController<List<Lesson>> fetchLessonsOfCourse(Course course) =>
       fetchList(
         parent: course.id,
-        makeNetworkCall: (network) =>
-            network.get('lessons?courseId=${course.id}'),
+        makeNetworkCall: () =>
+            services.network.get('lessons?courseId=${course.id}'),
         parser: (data) => Lesson.fromJson(data),
       );
 
   CacheController<List<User>> fetchTeachersOfCourse(Course course) {
-    final storage = services.get<StorageService>();
+    final storage = services.storage;
     final userFetcher = services.get<UserFetcherService>();
 
     return CacheController(

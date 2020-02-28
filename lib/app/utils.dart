@@ -151,7 +151,7 @@ class LazyMap<K, V> {
   V operator [](K key) => _map.putIfAbsent(key, () => createValueForKey(key));
 }
 
-typedef NetworkCall = Future<Response> Function(NetworkService network);
+typedef NetworkCall = Future<Response> Function();
 typedef JsonParser<T> = T Function(Map<String, dynamic> data);
 
 CacheController<T> fetchSingle<T extends Entity>({
@@ -159,8 +159,7 @@ CacheController<T> fetchSingle<T extends Entity>({
   @required JsonParser<T> parser,
   Id<dynamic> parent,
 }) {
-  final storage = services.get<StorageService>();
-  final network = services.get<NetworkService>();
+  final storage = services.storage;
 
   return CacheController<T>(
     saveToCache: (item) => storage.cache.putChildrenOfType<T>(parent, [item]),
@@ -171,7 +170,7 @@ CacheController<T> fetchSingle<T extends Entity>({
       );
     },
     fetcher: () async {
-      final response = await makeNetworkCall(network);
+      final response = await makeNetworkCall();
       final data = json.decode(response.body);
       return parser(data);
     },
@@ -183,8 +182,7 @@ CacheController<T> fetchSingleOfList<T extends Entity>({
   @required JsonParser<T> parser,
   Id<dynamic> parent,
 }) {
-  final storage = services.get<StorageService>();
-  final network = services.get<NetworkService>();
+  final storage = services.storage;
 
   return CacheController<T>(
     saveToCache: (item) => storage.cache.putChildrenOfType<T>(parent, [item]),
@@ -195,7 +193,7 @@ CacheController<T> fetchSingleOfList<T extends Entity>({
       );
     },
     fetcher: () async {
-      final response = await makeNetworkCall(network);
+      final response = await makeNetworkCall();
       final data = json.decode(response.body);
       // Multiple items can be returned when only one is expected, e.g. multiple
       // submissions to one assignment by one person (demo student):
@@ -217,14 +215,13 @@ CacheController<List<T>> fetchList<T extends Entity>({
   // be too easy otherwise ;)
   bool serviceIsPaginated = true,
 }) {
-  final storage = services.get<StorageService>();
-  final network = services.get<NetworkService>();
+  final storage = services.storage;
 
   return CacheController<List<T>>(
     saveToCache: (items) => storage.cache.putChildrenOfType<T>(parent, items),
     loadFromCache: () => storage.cache.getChildrenOfType<T>(parent),
     fetcher: () async {
-      final response = await makeNetworkCall(network);
+      final response = await makeNetworkCall();
       final body = json.decode(response.body);
       final dataList = serviceIsPaginated ? body['data'] : body;
       return [for (final data in dataList) parser(data)];

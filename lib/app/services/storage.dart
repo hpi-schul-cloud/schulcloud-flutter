@@ -1,3 +1,4 @@
+import 'package:get_it/get_it.dart';
 import 'package:meta/meta.dart';
 import 'package:schulcloud/assignment/assignment.dart';
 import 'package:schulcloud/course/course.dart';
@@ -72,4 +73,8 @@ class StorageService {
   }
 
   Future<void> clear() => Future.wait([_prefs.clear(), cache.clear()]);
+}
+
+extension StorageServiceGetIt on GetIt {
+  StorageService get storage => get<StorageService>();
 }

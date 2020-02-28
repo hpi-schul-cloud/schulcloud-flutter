@@ -31,17 +31,17 @@ class LoginBloc {
     }
 
     // The login throws an exception if it wasn't successful.
-    final rawResponse = await services.get<NetworkService>().post(
-          'authentication',
-          body: LoginRequest(email: email, password: password).toJson(),
-        );
+    final rawResponse = await services.network.post(
+      'authentication',
+      body: LoginRequest(email: email, password: password).toJson(),
+    );
 
     final response = LoginResponse.fromJson(json.decode(rawResponse.body));
-    await services.get<StorageService>().setUserInfo(
-          email: email,
-          userId: response.userId,
-          token: response.accessToken,
-        );
+    await services.storage.setUserInfo(
+      email: email,
+      userId: response.userId,
+      token: response.accessToken,
+    );
   }
 
   Future<void> loginAsDemoStudent() =>

@@ -2,8 +2,9 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/widgets.dart';
-import 'package:meta/meta.dart';
+import 'package:get_it/get_it.dart';
 import 'package:http/http.dart' as http;
+import 'package:meta/meta.dart';
 import 'package:schulcloud/app/app.dart';
 
 import 'storage.dart';
@@ -177,10 +178,14 @@ class NetworkService {
   }
 
   Map<String, String> _getHeaders() {
-    final storage = services.get<StorageService>();
+    final storage = services.storage;
     return {
       if (storage.hasToken)
         'Authorization': 'Bearer ${storage.token.getValue()}',
     };
   }
+}
+
+extension NetworkServiceGetIt on GetIt {
+  NetworkService get network => get<NetworkService>();
 }

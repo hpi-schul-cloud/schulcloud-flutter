@@ -22,9 +22,7 @@ class SchulCloudApp extends StatelessWidget {
       title: appConfig.title,
       theme: appConfig.createThemeData(Brightness.light),
       darkTheme: appConfig.createThemeData(Brightness.dark),
-      home: services.get<StorageService>().hasToken
-          ? LoggedInScreen()
-          : LoginScreen(),
+      home: services.storage.hasToken ? LoggedInScreen() : LoginScreen(),
       localizationsDelegates: [
         S.delegate,
         GlobalMaterialLocalizations.delegate,

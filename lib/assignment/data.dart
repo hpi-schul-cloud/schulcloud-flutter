@@ -102,8 +102,7 @@ class Assignment implements Entity {
 
   @HiveField(16)
   final List<Id<User>> archived;
-  bool get isArchived =>
-      archived.contains(services.get<StorageService>().userId);
+  bool get isArchived => archived.contains(services.storage.userId);
 
   @HiveField(17)
   final bool teamSubmissions;

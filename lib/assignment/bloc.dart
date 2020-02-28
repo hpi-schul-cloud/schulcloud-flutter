@@ -13,7 +13,7 @@ class AssignmentBloc {
   const AssignmentBloc();
 
   CacheController<List<Assignment>> fetchAssignments() => fetchList(
-        makeNetworkCall: (network) => network.get('homework'),
+        makeNetworkCall: () => services.network.get('homework'),
         parser: (data) => Assignment.fromJson(data),
       );
 }
@@ -26,11 +26,11 @@ class SubmissionBloc {
     assert(assignment != null);
 
     return fetchSingleOfList(
-      makeNetworkCall: (network) => network.get(
+      makeNetworkCall: () => services.network.get(
         'submissions',
         parameters: {
           'homeworkId': assignment.id.id,
-          'studentId': services.get<StorageService>().userIdString.getValue(),
+          'studentId': services.storage.userIdString.getValue(),
         },
       ),
       parent: assignment.id,
@@ -44,15 +44,15 @@ class SubmissionBloc {
   }) async {
     final request = {
       'schoolId': assignment.schoolId,
-      'studentId': services.get<StorageService>().userIdString.getValue(),
+      'studentId': services.storage.userIdString.getValue(),
       'homeworkId': assignment.id.id,
       'comment': comment,
     };
 
-    final response = await services.get<NetworkService>().post(
-          'submissions',
-          body: request,
-        );
+    final response = await services.network.post(
+      'submissions',
+      body: request,
+    );
     return _onSubmissionUpdated(response);
   }
 
@@ -68,25 +68,23 @@ class SubmissionBloc {
       return oldSubmission;
     }
 
-    final response = await services.get<NetworkService>().patch(
-          'submissions/${oldSubmission.id}',
-          body: request,
-        );
+    final response = await services.network.patch(
+      'submissions/${oldSubmission.id}',
+      body: request,
+    );
     return _onSubmissionUpdated(response);
   }
 
   Future<Submission> _onSubmissionUpdated(Response response) async {
     final submission = Submission.fromJson(json.decode(response.body));
 
-    await services
-        .get<StorageService>()
-        .cache
+    await services.storage.cache
         .putChildrenOfType(submission.assignmentId, [submission]);
     return submission;
   }
 
   Future<void> delete(Id<Submission> id) async {
-    await services.get<NetworkService>().delete('submissions/${id.id}');
-    await services.get<StorageService>().cache.delete(id);
+    await services.network.delete('submissions/${id.id}');
+    await services.storage.cache.delete(id);
   }
 }
