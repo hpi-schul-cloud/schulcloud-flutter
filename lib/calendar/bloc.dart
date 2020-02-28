@@ -1,6 +1,5 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_cached/flutter_cached.dart';
-import 'package:flutter_cached/src/update.dart';
 import 'package:grec_minimal/grec_minimal.dart';
 import 'package:meta/meta.dart';
 import 'package:schulcloud/app/app.dart';
@@ -17,7 +16,7 @@ class CalendarBloc {
     // The great, thoughtfully designed Calendar API presents us with daily
     // challenges, such as: How do I get today's events?
     // And the simple but ingenious answer to that is:
-    // 1. Download all events (every time). (≈50 kb using the demo account)
+    // 1. Download all events (every time). (≈ 50 kb using the demo account)
     // 2. Implement your own logic to filter them. Have fun 😊
     final allEvents = services.get<StorageService>().root.events.controller
       ..fetch();
