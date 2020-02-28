@@ -15,7 +15,7 @@ dependencies:
   analyzer: ^0.39.4
   cupertino_icons: ^0.1.2
   flare_flutter: ^1.5.8
-  flutter_cached: ^4.1.1
+  flutter_cached: ^4.2.4
   # The current version of flutter_downloader, 1.2.1, causes the build to fail. Until this is fixed, we rely on an older version.
   flutter_downloader: 1.1.9
   flutter_html: ^0.10.4
