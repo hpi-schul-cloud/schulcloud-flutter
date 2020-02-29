@@ -2,10 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:pedantic/pedantic.dart';
 import 'package:schulcloud/app/app.dart';
+import 'package:webview_flutter/webview_flutter.dart';
 
 import '../bloc.dart';
-import 'input.dart';
-import 'morphing_loading_button.dart';
 
 class LoginForm extends StatefulWidget {
   @override
@@ -15,6 +14,7 @@ class LoginForm extends StatefulWidget {
 class _LoginFormState extends State<LoginForm> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  WebViewController controller;
   bool _isEmailValid = true;
   bool _isPasswordValid = true;
 
@@ -64,6 +64,7 @@ class _LoginFormState extends State<LoginForm> {
 
   @override
   Widget build(BuildContext context) {
+    final mediaQuery = MediaQuery.of(context);
     final s = context.s;
 
     return Container(
@@ -72,6 +73,7 @@ class _LoginFormState extends State<LoginForm> {
       width: 400,
       child: Column(
         children: [
+          SizedBox(height: 128),
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 32),
             child: SvgPicture.asset(
@@ -80,39 +82,50 @@ class _LoginFormState extends State<LoginForm> {
               alignment: Alignment.bottomCenter,
             ),
           ),
-          SizedBox(height: 16),
-          LoginInput(
-            controller: _emailController,
-            label: s.login_form_email,
-            error: _isEmailValid ? null : s.login_form_email_error,
-            onChanged: () => setState(() {}),
-          ),
-          SizedBox(height: 16),
-          LoginInput(
-            controller: _passwordController,
-            label: s.login_form_password,
-            obscureText: true,
-            error: _isPasswordValid ? null : s.login_form_password_error,
-            onChanged: () => setState(() {}),
-          ),
-          SizedBox(height: 16),
-          MorphingLoadingButton(
-            onPressed: _login,
-            isLoading: _isLoading,
-            child: Padding(
-              padding: EdgeInsets.all(12),
-              child: Text(
-                _isLoading ? s.general_loading : s.login_form_login,
-                style: TextStyle(color: Colors.white, fontSize: 20),
-              ),
+          SizedBox(height: 32),
+          ConstrainedBox(
+            constraints: BoxConstraints(
+              maxHeight: mediaQuery.size.height -
+                  400 -
+                  mediaQuery.padding.bottom -
+                  mediaQuery.padding.top,
             ),
+            child: WebView(
+                javascriptMode: JavascriptMode.unrestricted,
+                onWebViewCreated: (controller) => this.controller = controller,
+                onPageFinished: (url) async {
+                  if (url == 'https://schul-cloud.org/login') {
+                    // The JavaScript is meant to isolate the login section
+                    // Hopefully there will be an option to only get that
+                    // in a non-hacky way in the future.
+                    await controller.evaluateJavascript('''
+                  var node = document.getElementById('loginarea');
+                  var html = document.getElementsByTagName('html')[0];
+                  html.removeChild(html.childNodes[2]);
+                  html.appendChild(node);
+                  document.getElementsByTagName('h2')[0].innerHTML = ''
+                  ''');
+                  } else if (url == 'https://schul-cloud.org/dashboard') {
+                    var cookies =
+                        await controller.evaluateJavascript('document.cookie');
+                    // Yes, this is not elegant. You may complain about it
+                    // when there is a nice way to get a single cookie via JavaScript.
+                    var jwt = cookies
+                        .split('; ')
+                        .firstWhere((element) => element.startsWith('"jwt='))
+                        .replaceAll('"', '')
+                        .substring(4);
+
+                    final storage = services.get<StorageService>();
+                    await storage.token.setValue(jwt);
+
+                    unawaited(context.navigator.pushReplacement(
+                        TopLevelPageRoute(builder: (_) => LoggedInScreen())));
+                  }
+                },
+                initialUrl: 'https://schul-cloud.org/login'),
           ),
-          SizedBox(height: 8),
-          if (_ambientError != null) Text(_ambientError),
-          Divider(),
-          SizedBox(height: 8),
-          Text(s.login_form_demo),
-          SizedBox(height: 8),
+          SizedBox(height: 32),
           Wrap(
             children: <Widget>[
               SecondaryButton(

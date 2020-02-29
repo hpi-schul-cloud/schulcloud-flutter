@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:pedantic/pedantic.dart';
 import 'package:schulcloud/app/app.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
@@ -17,29 +16,13 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: WebView(
-          javascriptMode: JavascriptMode.unrestricted,
-          onWebViewCreated: (controller) => this.controller = controller,
-          onPageFinished: (url) async {
-            if (url == 'https://schul-cloud.org/dashboard') {
-              var cookies =
-                  await controller.evaluateJavascript('document.cookie');
-              // Yes, this is not elegant. You may complain about it
-              // when there is a nice way to get a single cookie via JavaScript.
-              var jwt = cookies
-                  .split('; ')
-                  .firstWhere((element) => element.startsWith('"jwt='))
-                  .replaceAll('"', '')
-                  .substring(4);
-
-              final storage = services.get<StorageService>();
-              await storage.token.setValue(jwt);
-
-              unawaited(context.navigator.pushReplacement(
-                  TopLevelPageRoute(builder: (_) => LoggedInScreen())));
-            }
-          },
-          initialUrl: 'https://schul-cloud.org/login'),
+      body: CustomScrollView(
+        slivers: <Widget>[
+          SliverList(
+            delegate: SliverChildListDelegate(_buildContent(context)),
+          ),
+        ],
+      ),
     );
   }
 
@@ -49,16 +32,7 @@ class _LoginScreenState extends State<LoginScreen> {
     final s = context.s;
 
     return [
-      SizedBox(height: mediaQuery.padding.top),
-      ConstrainedBox(
-        constraints: BoxConstraints(
-          minHeight: mediaQuery.size.height -
-              100 -
-              mediaQuery.padding.bottom -
-              mediaQuery.padding.top,
-        ),
-        child: LoginForm(),
-      ),
+      LoginForm(),
       SlantedSection(
         color: theme.primaryColor,
         slantBottom: 0,
