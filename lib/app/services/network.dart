@@ -2,10 +2,11 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/widgets.dart';
-import 'package:meta/meta.dart';
 import 'package:http/http.dart' as http;
-import 'package:schulcloud/app/app.dart';
+import 'package:meta/meta.dart';
 
+import '../logger.dart';
+import '../utils.dart';
 import 'storage.dart';
 
 class NoConnectionToServerError implements Exception {}
@@ -33,9 +34,13 @@ class NetworkService {
       InternetAddress.lookup(apiUrl.substring(apiUrl.lastIndexOf('/') + 1));
 
   Future<http.Response> _makeCall(
+    String method,
     String path,
     Future<http.Response> Function(String url) call,
   ) async {
+    assert(method != null);
+    assert(path != null);
+
     try {
       await _ensureConnectionExists();
       final response = await call('$apiUrl/$path');
@@ -44,6 +49,15 @@ class NetworkService {
       if (response.statusCode ~/ 100 == 2) {
         return response;
       }
+
+      // TODO(JonasWanke): use decoded JSON after merging https://github.com/schul-cloud/schulcloud-flutter/pull/155
+      Object body = response.body;
+      try {
+        body = json.decode(body);
+      } on FormatException {
+        // We fall back to the body as a string, set above.
+      }
+      logger.w('Network ${response.statusCode}: $method $path', body);
 
       if (response.statusCode == 401) {
         throw AuthenticationError();
@@ -66,7 +80,8 @@ class NetworkService {
       throw UnimplementedError(
           'We should handle status code ${response.statusCode}. '
           'The body was: ${response.body}');
-    } on SocketException catch (_) {
+    } on SocketException catch (e) {
+      logger.w('No server connection', e);
       throw NoConnectionToServerError();
     }
   }
@@ -97,6 +112,7 @@ class NetworkService {
           ].join('&');
     }
     return _makeCall(
+      'GET',
       path,
       (url) async => http.get(url, headers: _getHeaders()),
     );
@@ -107,6 +123,7 @@ class NetworkService {
     assert(path != null);
 
     return _makeCall(
+      'POST',
       path,
       (url) async => http.post(url, headers: _getHeaders(), body: body),
     );

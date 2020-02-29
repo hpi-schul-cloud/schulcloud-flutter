@@ -29,6 +29,7 @@ class LoginBloc {
       );
     }
 
+    logger.i('Logging in as $email…');
     final storage = services.get<StorageService>();
     await storage.email.setValue(email);
 
@@ -42,7 +43,9 @@ class LoginBloc {
       },
     );
     final String token = json.decode(response.body)['accessToken'];
+    // TODO(JonasWanke): log ID after merging https://github.com/schul-cloud/schulcloud-flutter/pull/155
     await storage.token.setValue(token);
+    logger.i('Logged in!');
   }
 
   Future<void> loginAsDemoStudent() =>
