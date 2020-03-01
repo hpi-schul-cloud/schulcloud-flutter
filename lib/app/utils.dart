@@ -46,6 +46,10 @@ String formatFileSize(int bytes) {
   return '${(bytes / power).toStringAsFixed(index == 0 ? 0 : 1)} ${units[index]}';
 }
 
+extension PowerfulString on String {
+  String get withoutLinebreaks => replaceAll(RegExp('[\r\n]'), '');
+}
+
 /// Removes html tags from a string.
 String removeHtmlTags(String text) {
   final _tagStart = '<'.runes.first;

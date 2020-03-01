@@ -44,14 +44,7 @@ class NewsDashboardCard extends StatelessWidget {
           return Column(
             children: <Widget>[
               for (final article in articles)
-                ListTile(
-                  title: Text(article.title),
-                  subtitle: Html(data: limitString(article.content, 100)),
-                  trailing: Text(article.publishedAt.shortDateString),
-                  onTap: () => context.navigator.push(MaterialPageRoute(
-                    builder: (context) => ArticleScreen(article: article),
-                  )),
-                ),
+                _buildArticlePreview(context, article),
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 16),
                 child: Align(
@@ -67,6 +60,45 @@ class NewsDashboardCard extends StatelessWidget {
             ],
           );
         },
+      ),
+    );
+  }
+
+  Widget _buildArticlePreview(BuildContext context, Article article) {
+    return InkWell(
+      onTap: () => context.navigator.push(MaterialPageRoute(
+        builder: (context) => ArticleScreen(article: article),
+      )),
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.baseline,
+              textBaseline: TextBaseline.alphabetic,
+              children: <Widget>[
+                Expanded(
+                  child: Text(article.title, style: context.textTheme.subhead),
+                ),
+                SizedBox(width: 8),
+                Text(
+                  article.publishedAt.shortDateString,
+                  style: context.textTheme.caption,
+                ),
+              ],
+            ),
+            SizedBox(height: 4),
+            Text(
+              article.content.withoutLinebreaks,
+              maxLines: 3,
+              overflow: TextOverflow.ellipsis,
+              style: context.textTheme.body1.copyWith(
+                color: context.theme.mediumEmphasisColor,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
