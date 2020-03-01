@@ -29,7 +29,15 @@ class NewsDashboardCard extends StatelessWidget {
             );
           }
 
-          Iterable<Article> articles = update.data
+          Iterable<Article> articles = update.data;
+          if (articles.isEmpty) {
+            return Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16),
+              child: Text(s.news_dashboardCard_empty),
+            );
+          }
+
+          articles = update.data
             ..sort((a1, a2) => -a1.publishedAt.compareTo(a2.publishedAt));
           articles = articles.take(articleCount);
 
