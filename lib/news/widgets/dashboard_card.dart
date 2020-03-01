@@ -27,9 +27,11 @@ class NewsDashboardCard extends StatelessWidget {
             );
           }
 
+          Iterable<Article> articles = update.data
+            ..sort((a1, a2) => -a1.publishedAt.compareTo(a2.publishedAt));
           return Column(
             children: <Widget>[
-              for (final article in update.data)
+              for (final article in articles)
                 ListTile(
                   title: Text(article.title),
                   subtitle: Html(data: limitString(article.content, 100)),
