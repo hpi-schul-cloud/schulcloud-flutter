@@ -9,6 +9,8 @@ import '../news.dart';
 import 'article_screen.dart';
 
 class NewsDashboardCard extends StatelessWidget {
+  static const articleCount = 3;
+
   @override
   Widget build(BuildContext context) {
     final s = context.s;
@@ -29,6 +31,8 @@ class NewsDashboardCard extends StatelessWidget {
 
           Iterable<Article> articles = update.data
             ..sort((a1, a2) => -a1.publishedAt.compareTo(a2.publishedAt));
+          articles = articles.take(articleCount);
+
           return Column(
             children: <Widget>[
               for (final article in articles)
