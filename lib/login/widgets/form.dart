@@ -94,7 +94,7 @@ class _LoginFormState extends State<LoginForm> {
                 javascriptMode: JavascriptMode.unrestricted,
                 onWebViewCreated: (controller) => this.controller = controller,
                 onPageFinished: (url) async {
-                  if (url == 'https://schul-cloud.org/login') {
+                  if (url == 'https://${AppConfig.of(context).domain}/login') {
                     // The JavaScript is meant to isolate the login section
                     // Hopefully there will be an option to only get that
                     // in a non-hacky way in the future.
@@ -105,7 +105,8 @@ class _LoginFormState extends State<LoginForm> {
                   html.appendChild(node);
                   document.getElementsByTagName('h2')[0].innerHTML = ''
                   ''');
-                  } else if (url == 'https://schul-cloud.org/dashboard') {
+                  } else if (url ==
+                      'https://${AppConfig.of(context).domain}/dashboard') {
                     var cookies =
                         await controller.evaluateJavascript('document.cookie');
                     // Yes, this is not elegant. You may complain about it
@@ -123,7 +124,7 @@ class _LoginFormState extends State<LoginForm> {
                         TopLevelPageRoute(builder: (_) => LoggedInScreen())));
                   }
                 },
-                initialUrl: 'https://schul-cloud.org/login'),
+                initialUrl: 'https://${AppConfig.of(context).domain}/login'),
           ),
           SizedBox(height: 32),
           Wrap(
