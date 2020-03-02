@@ -11,7 +11,6 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/course/course.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:transparent_image/transparent_image.dart';
 
 import 'data.dart';
 
@@ -86,7 +85,7 @@ class FileBloc {
       appDirectoryAsString = appDirectoryAsString + Platform.pathSeparator;
     }
 
-    final taskId = await FlutterDownloader.enqueue(
+    await FlutterDownloader.enqueue(
       url: signedUrl,
       savedDir: appDirectoryAsString,
       fileName: file.name,
@@ -102,7 +101,6 @@ class FileBloc {
       final taskId = data[0] as String;
       final status = data[1] as DownloadTaskStatus;
       // final progress = data[2] as int;
-
       if (status == DownloadTaskStatus.complete) {
         FlutterDownloader.open(taskId: taskId);
       }
@@ -110,10 +108,8 @@ class FileBloc {
   }
 
   static void _onDownloadStatusUpdate(String taskId, DownloadTaskStatus status, int progress) {
-    print('Download task with id $taskId has status $status and progress $progress');
-
-    final port = IsolateNameServer.lookupPortByName('port123');
-    port.send([taskId, status, progress]);
+    // print('Download task with id $taskId has status $status and progress $progress');
+    IsolateNameServer.lookupPortByName('port123').send([taskId, status, progress]);
   }
 
   Future<void> ensureStoragePermissionGranted() async {
