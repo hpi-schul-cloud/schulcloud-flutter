@@ -1,4 +1,5 @@
 import 'package:flutter/widgets.dart';
+import 'package:get_it/get_it.dart';
 import 'package:meta/meta.dart';
 import 'package:http/http.dart' as http;
 import 'package:schulcloud/app/app.dart';
@@ -23,6 +24,7 @@ class ApiNetworkService {
   Map<String, String> _getHeaders() {
     final storage = services.get<StorageService>();
     return {
+      'Content-Type': 'application/json',
       if (storage.hasToken)
         'Authorization': 'Bearer ${storage.token.getValue()}',
     };
@@ -40,7 +42,7 @@ class ApiNetworkService {
     );
   }
 
-  /// Makes an http post request to the api.
+  /// Makes an HTTP POST request to the api.
   Future<http.Response> post(String path, {Map<String, dynamic> body}) {
     return _network.post(
       _url(path),
@@ -48,4 +50,22 @@ class ApiNetworkService {
       body: body,
     );
   }
+
+  /// Makes an http patch request to the api.
+  Future<http.Response> patch(String path, {Map<String, dynamic> body}) {
+    return _network.patch(
+      _url(path),
+      headers: _getHeaders(),
+      body: body,
+    );
+  }
+
+  /// Makes an http delete request to the api.
+  Future<http.Response> delete(String path) {
+    return _network.delete(_url(path));
+  }
+}
+
+extension ApiNetworkServiceGetIt on GetIt {
+  ApiNetworkService get api => get<ApiNetworkService>();
 }

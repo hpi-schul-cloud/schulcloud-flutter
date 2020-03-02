@@ -11,7 +11,7 @@ class CourseBloc {
   const CourseBloc();
 
   CacheController<List<Course>> fetchCourses() => fetchList(
-        makeNetworkCall: () => services.network.get('courses'),
+        makeNetworkCall: () => services.api.get('courses'),
         parser: (data) => Course.fromJson(data),
       );
 
@@ -19,7 +19,7 @@ class CourseBloc {
     assert(courseId != null);
 
     return fetchSingle(
-      makeNetworkCall: () => services.network.get('courses/$courseId'),
+      makeNetworkCall: () => services.api.get('courses/$courseId'),
       parser: (data) => Course.fromJson(data),
     );
   }
@@ -28,7 +28,7 @@ class CourseBloc {
       fetchList(
         parent: course.id,
         makeNetworkCall: () =>
-            services.network.get('lessons?courseId=${course.id}'),
+            services.api.get('lessons?courseId=${course.id}'),
         parser: (data) => Lesson.fromJson(data),
       );
 

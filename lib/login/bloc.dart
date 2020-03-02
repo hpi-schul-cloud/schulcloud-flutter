@@ -31,7 +31,7 @@ class LoginBloc {
     }
 
     // The login throws an exception if it wasn't successful.
-    final rawResponse = await services.network.post(
+    final rawResponse = await services.api.post(
       'authentication',
       body: LoginRequest(email: email, password: password).toJson(),
     );

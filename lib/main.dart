@@ -73,6 +73,7 @@ Future<void> main({AppConfig appConfig = schulCloudAppConfig}) async {
     ..registerSingletonAsync((_) => StorageService.create())
     ..registerSingleton(NetworkService())
     ..registerSingleton(ApiNetworkService(apiUrl: appConfig.baseApiUrl))
+    ..registerSingleton(UserFetcherService())
     ..registerSingleton(AssignmentBloc())
     ..registerSingleton(CalendarBloc())
     ..registerSingleton(CourseBloc())

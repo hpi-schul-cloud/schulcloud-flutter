@@ -9,7 +9,6 @@ class FancyScaffold extends StatelessWidget {
     @required this.appBar,
     this.floatingActionButton,
     @required this.sliver,
-    this.floatingActionButton,
     this.omitHorizontalPadding = false,
   })  : assert(appBar != null),
         assert(sliver != null),
@@ -19,13 +18,11 @@ class FancyScaffold extends StatelessWidget {
   final Widget appBar;
   final Widget floatingActionButton;
   final Widget sliver;
-  final Widget floatingActionButton;
   final bool omitHorizontalPadding;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton: floatingActionButton,
       body: CustomScrollView(
         slivers: <Widget>[
           appBar,

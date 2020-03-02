@@ -16,7 +16,7 @@ class CalendarBloc {
     final storage = services.storage;
     storage.cache.clear();
     return fetchList(
-      makeNetworkCall: () => services.network.get(
+      makeNetworkCall: () => services.api.get(
         'calendar',
         parameters: {
           // We have to set this query parameter because otherwise—you guessed

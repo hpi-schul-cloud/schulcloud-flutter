@@ -50,17 +50,17 @@ class FileBloc {
   CacheController<File> fetchFile(Id<File> id, [Id<dynamic> parent]) =>
       fetchSingle(
         parent: parent,
-        makeNetworkCall: () => services.network.get('files/$id'),
+        makeNetworkCall: () => services.api.get('files/$id'),
         parser: (data) => File.fromJson(data),
       );
 
   CacheController<Course> fetchCourseOwnerOfFiles() => fetchSingle(
-        makeNetworkCall: () => services.network.get('courses'),
+        makeNetworkCall: () => services.api.get('courses'),
         parser: (data) => Course.fromJson(data),
       );
 
   CacheController<List<Course>> fetchCourses() => fetchList(
-        makeNetworkCall: () => services.network.get('courses'),
+        makeNetworkCall: () => services.api.get('courses'),
         parser: (data) => Course.fromJson(data),
       );
 
@@ -71,7 +71,7 @@ class FileBloc {
 
     /// The signed URL is the URL used to actually download a file instead of
     /// just viewing its JSON representation.
-    final response = await services.network.get(
+    final response = await services.api.get(
       'fileStorage/signedUrl',
       parameters: {'download': null, 'file': file.id.toString()},
     );
@@ -133,7 +133,7 @@ class FileBloc {
       'name': fileName,
       'owner': owner,
       'type': mimeType,
-      'size': fileBuffer.length.toString(),
+      'size': fileBuffer.length,
       'storageFileName': signedInfo['header']['x-amz-meta-flat-name'],
       'thumbnail': signedInfo['header']['x-amz-meta-thumbnail'],
     }));
