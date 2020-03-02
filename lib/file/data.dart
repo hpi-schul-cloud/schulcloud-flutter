@@ -30,7 +30,7 @@ class File implements Entity<File>, Comparable<File> {
               wrappedInData: false,
               parameters: {
                 'owner': owner.id,
-                if (parent != null) 'parent': parent.id.toString(),
+                'parent': id.toString(),
               },
             );
             return File.fromJsonListAndOwner(jsonData, owner);
