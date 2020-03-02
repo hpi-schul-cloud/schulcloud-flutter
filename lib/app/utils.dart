@@ -1,15 +1,27 @@
 import 'dart:convert';
 import 'dart:ui';
 
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_cached/flutter_cached.dart';
 import 'package:get_it/get_it.dart';
 import 'package:http/http.dart';
 import 'package:meta/meta.dart';
+import 'package:schulcloud/app/app.dart';
+import 'package:schulcloud/generated/l10n.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import 'app_config.dart';
 import 'services/network.dart';
 import 'services/storage.dart';
+
+extension FancyContext on BuildContext {
+  MediaQueryData get mediaQuery => MediaQuery.of(this);
+  ThemeData get theme => Theme.of(this);
+  NavigatorState get navigator => Navigator.of(this);
+  NavigatorState get rootNavigator => Navigator.of(this, rootNavigator: true);
+  AppConfigData get appConfig => AppConfig.of(this);
+  S get s => S.of(this);
+}
 
 final services = GetIt.instance;
 
@@ -62,6 +74,16 @@ Future<bool> tryLaunchingUrl(String url) async {
     return true;
   }
   return false;
+}
+
+extension ImmutableMap<K, V> on Map<K, V> {
+  Map<K, V> clone() => Map.of(this);
+
+  Map<K, V> copyWith(K key, V value) {
+    final newMap = clone();
+    newMap[key] = value;
+    return newMap;
+  }
 }
 
 /// An error indicating that a permission wasn't granted by the user.

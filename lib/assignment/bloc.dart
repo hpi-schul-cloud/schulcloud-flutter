@@ -29,7 +29,7 @@ class AssignmentBloc {
       fetchSingle(
         parent: assignment.id,
         makeNetworkCall: (network) =>
-            network.get('course/${assignment.courseId}'),
+            network.get('courses/${assignment.courseId}'),
         parser: (data) => Course.fromJson(data),
       );
 }

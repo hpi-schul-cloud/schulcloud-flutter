@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pedantic/pedantic.dart';
 import 'package:schulcloud/app/app.dart';
-import 'package:schulcloud/generated/generated.dart';
 
 import 'login.dart';
 
@@ -10,8 +9,8 @@ Future<bool> logOut(BuildContext context) async {
     context: context,
     builder: (context) {
       return AlertDialog(
-        title: Text(context.s.app_logOut_title),
-        content: Text(context.s.app_logOut_content),
+        title: Text(context.s.app_signOut_title),
+        content: Text(context.s.app_signOut_content),
         actions: <Widget>[
           FlatButton(
             onPressed: () => Navigator.of(context).pop(false),
@@ -19,7 +18,7 @@ Future<bool> logOut(BuildContext context) async {
           ),
           FlatButton(
             onPressed: () => Navigator.of(context).pop(true),
-            child: Text(context.s.app_logOut_confirm),
+            child: Text(context.s.general_signOut),
           ),
         ],
       );

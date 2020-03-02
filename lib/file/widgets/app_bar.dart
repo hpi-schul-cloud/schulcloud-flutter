@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:schulcloud/app/theming/utils.dart';
+import 'package:schulcloud/app/app.dart';
 
 class FileBrowserAppBar extends StatefulWidget {
   const FileBrowserAppBar({this.backgroundColor, this.title});
@@ -15,12 +15,11 @@ class FileBrowserAppBar extends StatefulWidget {
 class _FileBrowserAppBarState extends State<FileBrowserAppBar> {
   @override
   Widget build(BuildContext context) {
-    final textColor = widget.backgroundColor != null
-        ? highEmphasisOn(widget.backgroundColor)
-        : highEmphasisOnBrightness(Theme.of(context).brightness);
+    final textColor = widget.backgroundColor?.highEmphasisColor ??
+        context.theme.highEmphasisColor;
 
     return Hero(
-      tag: Navigator.of(context),
+      tag: context.navigator,
       transitionOnUserGestures: true,
       flightShuttleBuilder: _buildFlightShuttle,
       child: AppBar(

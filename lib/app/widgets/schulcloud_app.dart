@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:schulcloud/app/app.dart';
-import 'package:schulcloud/app/theming/config.dart';
 import 'package:schulcloud/assignment/assignment.dart';
 import 'package:schulcloud/course/course.dart';
 import 'package:schulcloud/dashboard/dashboard.dart';
@@ -11,13 +10,13 @@ import 'package:schulcloud/generated/l10n.dart';
 import 'package:schulcloud/login/login.dart';
 import 'package:schulcloud/news/news.dart';
 
-import 'app_bar.dart';
+import 'navigation_bar.dart';
 import 'page_route.dart';
 
 class SchulCloudApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final appConfig = AppConfig.of(context);
+    final appConfig = context.appConfig;
     return MaterialApp(
       title: appConfig.title,
       theme: appConfig.createThemeData(),
@@ -41,7 +40,7 @@ enum Screen {
   news,
   courses,
   files,
-  homework,
+  assignments,
 }
 
 class LoggedInScreen extends StatefulWidget {
@@ -86,7 +85,7 @@ class _LoggedInScreenState extends State<LoggedInScreen> {
       Screen.news: (_) => NewsScreen(),
       Screen.files: (_) => FilesScreen(),
       Screen.courses: (_) => CoursesScreen(),
-      Screen.homework: (_) => AssignmentsScreen(),
+      Screen.assignments: (_) => AssignmentsScreen(),
     }[screen];
 
     navigator
@@ -127,7 +126,10 @@ class _LoggedInScreenState extends State<LoggedInScreen> {
               ],
             ),
           ),
-          MyAppBar(onNavigate: _navigateTo, activeScreenStream: _screenStream),
+          MyNavigationBar(
+            onNavigate: _navigateTo,
+            activeScreenStream: _screenStream,
+          ),
         ],
       ),
     );

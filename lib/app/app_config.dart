@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:schulcloud/app/theming/utils.dart';
+import 'package:schulcloud/app/app.dart';
 
 @immutable
 class AppConfigData {
@@ -22,6 +22,7 @@ class AppConfigData {
     'open/logo/logo_with_text.svg',
     'thr/logo/logo_with_text.svg',
   ];
+  static const errorColor = Color(0xFFDC2831);
 
   final String name;
   final String domain;
@@ -37,18 +38,28 @@ class AppConfigData {
     return ThemeData(
       primarySwatch: primaryColor,
       accentColor: accentColor,
+      errorColor: errorColor,
+      scaffoldBackgroundColor: Colors.white,
       fontFamily: 'PT Sans',
       textTheme: _createTextTheme(Brightness.light),
     );
   }
 
   ThemeData createDarkThemeData() {
-    return ThemeData(
+    final theme = ThemeData(
       brightness: Brightness.dark,
       primarySwatch: primaryColor,
       accentColor: accentColor,
+      errorColor: errorColor,
       fontFamily: 'PT Sans',
       textTheme: _createTextTheme(Brightness.dark),
+    );
+    return theme.copyWith(
+      chipTheme: theme.chipTheme.copyWith(
+        shape: StadiumBorder(
+          side: BorderSide(color: theme.dividerColor),
+        ),
+      ),
     );
   }
 
@@ -60,7 +71,7 @@ class AppConfigData {
     // (loading the undocumented AssetManifest.json and matching available
     // assets with the requested one, factoring in dark mode), this is the
     // easiest workaround.
-    if (Theme.of(context).brightness == Brightness.dark) {
+    if (context.theme.isDark) {
       if (darkAssets.contains(assetName)) {
         final folder = assetName.substring(0, assetName.lastIndexOf('/'));
         final fileName = assetName.substring(assetName.lastIndexOf('/') + 1);
@@ -86,12 +97,16 @@ TextTheme _createTextTheme(Brightness brightness) {
     display1: TextStyle(
       fontWeight: FontWeight.bold,
       fontSize: 28,
-      color: fullOpacityOnBrightness(brightness),
+      color: brightness.contrastColor,
     ),
     display2: TextStyle(
       fontWeight: FontWeight.bold,
       fontSize: 32,
-      color: fullOpacityOnBrightness(brightness),
+      color: brightness.contrastColor,
+    ),
+    overline: TextStyle(
+      fontWeight: FontWeight.bold,
+      fontSize: 12,
     ),
   );
 }

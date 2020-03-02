@@ -1,38 +1,51 @@
 import 'package:flutter/material.dart';
+import 'package:schulcloud/app/app.dart';
 
 class DashboardCard extends StatelessWidget {
-  const DashboardCard({Key key, @required this.title, @required this.child})
-      : assert(title != null),
+  const DashboardCard({
+    Key key,
+    @required this.title,
+    @required this.child,
+    this.color,
+    this.omitHorizontalPadding = true,
+    this.footerButtonText,
+    this.onFooterButtonPressed,
+  })  : assert(title != null),
+        assert(omitHorizontalPadding != null),
         assert(child != null),
         super(key: key);
 
   final String title;
   final Widget child;
+  final Color color;
+  final bool omitHorizontalPadding;
+  final String footerButtonText;
+  final VoidCallback onFooterButtonPressed;
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(4),
-      child: Card(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 8),
-          child: Column(
-            children: <Widget>[
-              Align(
-                alignment: Alignment.topLeft,
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: Text(
-                    title,
-                    style: Theme.of(context).textTheme.headline,
-                  ),
-                ),
-              ),
-              SizedBox(height: 8),
-              child,
-            ],
+    return FancyCard(
+      title: title,
+      color: color,
+      omitHorizontalPadding: true,
+      child: Column(
+        children: <Widget>[
+          Padding(
+            padding: omitHorizontalPadding
+                ? EdgeInsets.zero
+                : EdgeInsets.symmetric(horizontal: 16),
+            child: child,
           ),
-        ),
+          if (footerButtonText != null)
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: 16),
+              alignment: Alignment.bottomRight,
+              child: OutlineButton(
+                onPressed: onFooterButtonPressed,
+                child: Text(footerButtonText),
+              ),
+            )
+        ],
       ),
     );
   }
