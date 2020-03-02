@@ -33,7 +33,7 @@ class LoginBloc {
     await storage.email.setValue(email);
 
     // The login throws an exception if it wasn't successful.
-    final response = await services.get<NetworkService>().post(
+    final response = await services.get<ApiNetworkService>().post(
       'authentication',
       body: {
         'strategy': 'local',

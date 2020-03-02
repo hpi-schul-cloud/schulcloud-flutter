@@ -4,9 +4,6 @@ import 'dart:io';
 import 'package:flutter/widgets.dart';
 import 'package:meta/meta.dart';
 import 'package:http/http.dart' as http;
-import 'package:schulcloud/app/app.dart';
-
-import 'storage.dart';
 
 class NoConnectionToServerError implements Exception {}
 
@@ -19,96 +16,89 @@ class TooManyRequestsError implements Exception {
   Duration timeToWait;
 }
 
-/// A service that offers networking POST and GET requests to the backend
-/// servers. It depends on the authentication storage, so if the user's token
-/// is stored there, the requests' headers are automatically enriched with the
-/// access token.
+/// A service that offers networking POST and GET requests to arbitrary
+/// servers.
 @immutable
 class NetworkService {
-  const NetworkService({@required this.apiUrl}) : assert(apiUrl != null);
+  const NetworkService();
 
-  final String apiUrl;
-
-  Future<void> _ensureConnectionExists() =>
-      InternetAddress.lookup(apiUrl.substring(apiUrl.lastIndexOf('/') + 1));
-
-  Future<http.Response> _makeCall(
-    String path,
-    Future<http.Response> Function(String url) call,
-  ) async {
+  /// Calls the given function and turns various status codes and socket
+  /// exceptions into custom error types like [AuthenticationError] or
+  /// [NoConnectionToServerError].
+  Future<http.Response> _makeCall(Future<http.Response> Function() call) async {
+    http.Response response;
     try {
-      await _ensureConnectionExists();
-      final response = await call('$apiUrl/$path');
-
-      // Succeed if its a 2xx status code.
-      if (response.statusCode ~/ 100 == 2) {
-        return response;
-      }
-
-      if (response.statusCode == 401) {
-        throw AuthenticationError();
-      }
-
-      if (response.statusCode == 429) {
-        throw TooManyRequestsError(
-          timeToWait: () {
-            try {
-              return Duration(
-                seconds: json.decode(response.body)['data']['timeToWait'],
-              );
-            } catch (_) {
-              return Duration(seconds: 10);
-            }
-          }(),
-        );
-      }
-
-      throw UnimplementedError(
-          'We should handle status code ${response.statusCode}. '
-          'The body was: ${response.body}');
+      response = await call();
     } on SocketException catch (_) {
       throw NoConnectionToServerError();
     }
+
+    // Succeed if its a 2xx status code.
+    if (response.statusCode ~/ 100 == 2) {
+      return response;
+    }
+
+    if (response.statusCode == 401) {
+      throw AuthenticationError();
+    }
+
+    if (response.statusCode == 429) {
+      // TODO(marcelgarus): Actually handle this. We shouldn't send any more
+      // network calls to the server until the time timed out.
+      throw TooManyRequestsError(
+        timeToWait: () {
+          try {
+            return Duration(
+              seconds: json.decode(response.body)['data']['timeToWait'],
+            );
+          } catch (_) {
+            return Duration(seconds: 10);
+          }
+        }(),
+      );
+    }
+
+    throw UnimplementedError(
+        'We should handle status code ${response.statusCode}. '
+        'The body was: ${response.body}');
   }
 
-  Map<String, String> _getHeaders() {
-    final storage = services.get<StorageService>();
-    return {
-      if (storage.hasToken)
-        'Authorization': 'Bearer ${storage.token.getValue()}',
-    };
-  }
-
-  /// Makes an http get request to the api.
+  /// Makes an http get request.
   Future<http.Response> get(
-    String path, {
+    String url, {
     Map<String, String> parameters = const {},
+    Map<String, String> headers,
   }) {
-    assert(path != null);
+    assert(url != null);
     assert(parameters != null);
 
-    // Add the parameters to the path.
+    // Add the parameters to the url.
     if (parameters.isNotEmpty) {
       // ignore: prefer_interpolation_to_compose_strings, parameter_assignments
-      path += '?' +
+      url += '?' +
           [
             for (final parameter in parameters.entries)
               '${Uri.encodeComponent(parameter.key)}=${Uri.encodeComponent(parameter.value)}'
           ].join('&');
     }
-    return _makeCall(
-      path,
-      (url) async => http.get(url, headers: _getHeaders()),
-    );
+    return _makeCall(() => http.get(url, headers: headers));
   }
 
-  /// Makes an http post request to the api.
-  Future<http.Response> post(String path, {dynamic body}) {
-    assert(path != null);
+  /// Makes an http post request.
+  Future<http.Response> post(
+    String url, {
+    Map<String, String> headers,
+    dynamic body,
+  }) {
+    return _makeCall(() => http.post(url, headers: headers, body: body));
+  }
 
-    return _makeCall(
-      path,
-      (url) async => http.post(url, headers: _getHeaders(), body: body),
-    );
+  /// Makes an http put request.
+  Future<http.Response> put(
+    String url, {
+    Map<String, String> headers,
+    dynamic body,
+  }) {
+    return _makeCall(() => http.put(url, headers: headers, body: body));
   }
 }

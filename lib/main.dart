@@ -70,7 +70,9 @@ Future<void> main({AppConfigData appConfig = schulCloudAppConfig}) async {
       });
     }, instanceName: 'ignored')
     ..registerSingletonAsync((_) => StorageService.create())
-    ..registerSingleton(NetworkService(apiUrl: appConfig.apiUrl))
+    ..registerSingleton(NetworkService())
+    ..registerSingleton(ApiNetworkService(apiUrl: appConfig.apiUrl))
+    ..registerSingleton(ClientNetworkService(clientUrl: appConfig.host))
     ..registerSingleton(UserFetcherService())
     ..registerSingleton(AssignmentBloc())
     ..registerSingleton(CalendarBloc())

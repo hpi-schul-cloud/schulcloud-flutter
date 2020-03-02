@@ -114,23 +114,19 @@ class LazyMap<K, V> {
 }
 
 CacheController<T> fetchSingle<T extends Entity>({
-  @required Future<Response> Function(NetworkService network) makeNetworkCall,
+  @required
+      Future<Response> Function(ApiNetworkService network) makeNetworkCall,
   @required T Function(Map<String, dynamic> data) parser,
   Id<dynamic> parent,
 }) {
   final storage = services.get<StorageService>();
-  final network = services.get<NetworkService>();
+  final api = services.get<ApiNetworkService>();
 
   return CacheController<T>(
     saveToCache: (item) => storage.cache.putChildrenOfType<T>(parent, [item]),
-    loadFromCache: () async {
-      return (await storage.cache.getChildrenOfType<T>(parent)).singleWhere(
-        (_) => true,
-        orElse: () => throw NotInCacheException(),
-      );
-    },
+    loadFromCache: () => throw NotInCacheException(),
     fetcher: () async {
-      final response = await makeNetworkCall(network);
+      final response = await makeNetworkCall(api);
       final data = json.decode(response.body);
       return parser(data);
     },
@@ -138,7 +134,8 @@ CacheController<T> fetchSingle<T extends Entity>({
 }
 
 CacheController<List<T>> fetchList<T extends Entity>({
-  @required Future<Response> Function(NetworkService network) makeNetworkCall,
+  @required
+      Future<Response> Function(ApiNetworkService network) makeNetworkCall,
   @required T Function(Map<String, dynamic> data) parser,
   Id<dynamic> parent,
   // Surprise: The Calendar API's response is different from all others! Would
@@ -146,13 +143,13 @@ CacheController<List<T>> fetchList<T extends Entity>({
   bool serviceIsPaginated = true,
 }) {
   final storage = services.get<StorageService>();
-  final network = services.get<NetworkService>();
+  final api = services.get<ApiNetworkService>();
 
   return CacheController<List<T>>(
     saveToCache: (items) => storage.cache.putChildrenOfType<T>(parent, items),
-    loadFromCache: () => storage.cache.getChildrenOfType<T>(parent),
+    loadFromCache: () => throw NotInCacheException(),
     fetcher: () async {
-      final response = await makeNetworkCall(network);
+      final response = await makeNetworkCall(api);
       final body = json.decode(response.body);
       final dataList = serviceIsPaginated ? body['data'] : body;
       return [for (final data in dataList) parser(data)];
