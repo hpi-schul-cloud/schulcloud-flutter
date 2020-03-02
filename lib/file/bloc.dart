@@ -85,8 +85,6 @@ class FileBloc {
     if (Platform.isIOS && appDirectoryAsString.endsWith(Platform.pathSeparator) == false){
       appDirectoryAsString = appDirectoryAsString + Platform.pathSeparator;
     }
-    print(Platform.pathSeparator);
-    print(appDirectoryAsString);
 
     final taskId = await FlutterDownloader.enqueue(
       url: signedUrl,
