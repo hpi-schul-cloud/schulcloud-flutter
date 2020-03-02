@@ -28,9 +28,9 @@ class AppConfig {
 
   final String name;
   final String domain;
-  String get host => 'https://$domain';
-  String webUrl(String path) => '$host/$path';
-  String get apiUrl => 'https://api.$domain';
+  String get baseWebUrl => 'https://$domain';
+  String webUrl(String path) => '$baseWebUrl/$path';
+  String get baseApiUrl => 'https://api.$domain';
 
   final String title;
   final MaterialColor primaryColor;
