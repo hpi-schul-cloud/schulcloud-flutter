@@ -5,20 +5,21 @@ import 'package:schulcloud/app/app.dart';
 import 'login.dart';
 
 Future<bool> logOut(BuildContext context) async {
+  final s = context.s;
   final confirmed = await showDialog(
     context: context,
     builder: (context) {
       return AlertDialog(
-        title: Text(context.s.app_signOut_title),
-        content: Text(context.s.app_signOut_content),
+        title: Text(s.app_signOut_title),
+        content: Text(s.app_signOut_content),
         actions: <Widget>[
           FlatButton(
-            onPressed: () => Navigator.of(context).pop(false),
-            child: Text(context.s.general_cancel),
+            onPressed: () => context.navigator.pop(false),
+            child: Text(s.general_cancel),
           ),
           FlatButton(
-            onPressed: () => Navigator.of(context).pop(true),
-            child: Text(context.s.general_signOut),
+            onPressed: () => context.navigator.pop(true),
+            child: Text(s.general_signOut),
           ),
         ],
       );
@@ -32,8 +33,7 @@ Future<bool> logOut(BuildContext context) async {
     // leads to the issue that logging out becomes impossible.
     unawaited(services.get<StorageService>().clear());
 
-    final navigator = Navigator.of(context, rootNavigator: true)
-      ..popUntil((route) => route.isFirst);
+    final navigator = context.rootNavigator..popUntil((route) => route.isFirst);
     unawaited(navigator.pushReplacement(TopLevelPageRoute(
       builder: (_) => LoginScreen(),
     )));
