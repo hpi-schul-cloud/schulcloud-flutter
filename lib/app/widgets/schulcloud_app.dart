@@ -38,10 +38,16 @@ class _LoggedInScreenState extends State<LoggedInScreen> {
   NavigatorState get currentNavigator =>
       _navigatorKeys[selectedTabIndex].currentState;
 
-  void selectTab(int index) {
+  void selectTab(int index, {bool popIfAlreadySelected = false}) {
     assert(0 <= index && index <= _BottomTab.count);
 
-    setState(() => selectedTabIndex = index);
+    final pop = popIfAlreadySelected && selectedTabIndex == index;
+    setState(() {
+      selectedTabIndex = index;
+      if (pop) {
+        currentNavigator.popUntil((route) => route.isFirst);
+      }
+    });
   }
 
   /// When the user tries to pop, we first try to pop with the inner navigator.
@@ -86,7 +92,7 @@ class _LoggedInScreenState extends State<LoggedInScreen> {
           selectedItemColor: theme.accentColor,
           unselectedItemColor: theme.mediumEmphasisColor,
           currentIndex: selectedTabIndex,
-          onTap: selectTab,
+          onTap: (index) => selectTab(index, popIfAlreadySelected: true),
           items: [
             for (final tab in _BottomTab.values)
               BottomNavigationBarItem(
