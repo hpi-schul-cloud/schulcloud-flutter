@@ -13,11 +13,14 @@ void _showStackTrace(
     builder: (_) {
       return Scaffold(
         appBar: AppBar(title: Text(context.s.app_errorScreen_stackTrace)),
-        body: ListView(children: [
-          Text(error.toString()),
-          Divider(),
-          Text(stackTrace.toString()),
-        ]),
+        body: ListView(
+          padding: EdgeInsets.all(16),
+          children: [
+            SelectableText(error.toString()),
+            Divider(),
+            SelectableText(stackTrace.toString()),
+          ],
+        ),
       );
     },
   ));

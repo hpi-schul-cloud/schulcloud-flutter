@@ -11,6 +11,7 @@ import 'package:schulcloud/generated/l10n.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'app_config.dart';
+import 'services/network.dart';
 import 'services/storage.dart';
 
 extension FancyContext on BuildContext {
@@ -73,6 +74,16 @@ Future<bool> tryLaunchingUrl(String url) async {
     return true;
   }
   return false;
+}
+
+extension ImmutableMap<K, V> on Map<K, V> {
+  Map<K, V> clone() => Map.of(this);
+
+  Map<K, V> copyWith(K key, V value) {
+    final newMap = clone();
+    newMap[key] = value;
+    return newMap;
+  }
 }
 
 /// An error indicating that a permission wasn't granted by the user.

@@ -33,6 +33,7 @@ class EmptyStateScreen extends StatelessWidget {
         children: <Widget>[
           child ??
               SvgPicture.asset('assets/empty_states/default.svg', height: 300),
+          SizedBox(height: 16),
           Text(text, textAlign: TextAlign.center),
           if (actions.isNotEmpty || onRetry != null) ...[
             SizedBox(height: 16),
