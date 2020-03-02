@@ -8,24 +8,30 @@ part 'data.g.dart';
 
 @immutable
 @HiveType(typeId: typeAssignment)
-class Assignment implements Entity, Comparable {
+class Assignment implements Entity {
   const Assignment({
     @required this.id,
     @required this.name,
     @required this.schoolId,
+    @required this.createdAt,
     @required this.availableAt,
-    @required this.dueDate,
+    this.dueAt,
     @required this.teacherId,
     this.description,
     this.courseId,
     this.lessonId,
-    this.isPrivate,
+    @required this.isPrivate,
+    @required this.hasPublicSubmissions,
+    this.archived = const [],
   })  : assert(id != null),
         assert(name != null),
         assert(schoolId != null),
-        assert(dueDate != null),
+        assert(createdAt != null),
         assert(availableAt != null),
-        assert(teacherId != null);
+        assert(teacherId != null),
+        assert(isPrivate != null),
+        assert(hasPublicSubmissions != null),
+        assert(archived != null);
 
   Assignment.fromJson(Map<String, dynamic> data)
       : this(
@@ -34,11 +40,18 @@ class Assignment implements Entity, Comparable {
           teacherId: data['teacherId'],
           name: data['name'],
           description: data['description'],
+          createdAt: (data['createdAt'] as String).parseApiInstant(),
           availableAt: (data['availableDate'] as String).parseApiInstant(),
-          dueDate: (data['dueDate'] as String).parseApiInstant(),
-          courseId: Id<Course>(data['courseId']['_id']),
+          dueAt: (data['dueDate'] as String)?.parseApiInstant(),
+          courseId: data['courseId'] != null
+              ? Id<Course>(data['courseId']['_id'])
+              : null,
           lessonId: Id(data['lessonId'] ?? ''),
-          isPrivate: data['private'],
+          isPrivate: data['private'] ?? false,
+          hasPublicSubmissions: data['publicSubmissions'] ?? false,
+          archived: (data['archived'] as List<dynamic> ?? [])
+              .map((id) => Id<User>(id))
+              .toList(),
         );
 
   // used before: 3, 4
@@ -53,11 +66,14 @@ class Assignment implements Entity, Comparable {
   @HiveField(2)
   final String schoolId;
 
+  @HiveField(14)
+  final Instant createdAt;
+
   @HiveField(13)
   final Instant availableAt;
 
   @HiveField(12)
-  final Instant dueDate;
+  final Instant dueAt;
 
   @HiveField(5)
   final String description;
@@ -74,10 +90,13 @@ class Assignment implements Entity, Comparable {
   @HiveField(11)
   final bool isPrivate;
 
-  @override
-  int compareTo(Object other) {
-    return dueDate.compareTo((other as Assignment).dueDate);
-  }
+  @HiveField(15)
+  final bool hasPublicSubmissions;
+
+  @HiveField(16)
+  final List<Id<User>> archived;
+  bool get isArchived =>
+      archived.contains(services.get<StorageService>().userId);
 }
 
 @immutable
