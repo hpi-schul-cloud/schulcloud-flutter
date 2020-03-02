@@ -4,13 +4,12 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_cached/flutter_cached.dart';
 import 'package:get_it/get_it.dart';
+import 'package:html/parser.dart';
 import 'package:http/http.dart';
 import 'package:meta/meta.dart';
-import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/generated/l10n.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import 'app_config.dart';
 import 'services/network.dart';
 import 'services/storage.dart';
 
@@ -19,15 +18,17 @@ extension FancyContext on BuildContext {
   ThemeData get theme => Theme.of(this);
   NavigatorState get navigator => Navigator.of(this);
   NavigatorState get rootNavigator => Navigator.of(this, rootNavigator: true);
-  AppConfigData get appConfig => AppConfig.of(this);
+  ScaffoldState get scaffold => Scaffold.of(this);
   S get s => S.of(this);
+
+  void showSimpleSnackBar(String message) {
+    scaffold.showSnackBar(SnackBar(
+      content: Text(message),
+    ));
+  }
 }
 
 final services = GetIt.instance;
-
-/// Converts a hex string (like, '#ffdd00') to a [Color].
-Color hexStringToColor(String hex) =>
-    Color(int.parse('ff${hex.substring(1)}', radix: 16));
 
 /// Limits a string to a certain amount of characters.
 String limitString(String string, int maxLength) =>
@@ -35,7 +36,7 @@ String limitString(String string, int maxLength) =>
 
 /// Prints a file size given in [bytes] as a [String].
 String formatFileSize(int bytes) {
-  const units = ['B', 'kB', 'MB', 'GB', 'TB', 'YB'];
+  const units = ['B', 'kB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
 
   var index = 0;
   var power = 1;
@@ -47,24 +48,43 @@ String formatFileSize(int bytes) {
   return '${(bytes / power).toStringAsFixed(index == 0 ? 0 : 1)} ${units[index]}';
 }
 
-/// Removes html tags from a string.
-String removeHtmlTags(String text) {
-  final _tagStart = '<'.runes.first;
-  final _tagEnd = '>'.runes.first;
+extension PowerfulString on String {
+  /// Removes html tags from a string.
+  String get withoutHtmlTags => parse(this).documentElement.text;
 
-  final buffer = StringBuffer();
-  var isInTag = false;
-
-  for (final rune in text.codeUnits) {
-    if (rune == _tagStart) {
-      isInTag = true;
-    } else if (rune == _tagEnd) {
-      isInTag = false;
-    } else if (!isInTag) {
-      buffer.writeCharCode(rune);
-    }
+  /// Removes HTML tags trying to preserve line breaks;
+  String get simpleHtmlToPlain {
+    return replaceAllMapped(RegExp('</p>(.*?)<p>'), (m) => '\n\n${m[1]}')
+        .replaceAll(RegExp('</?p>'), '')
+        .splitMapJoin('<br />', onMatch: (_) => '\n')
+        .withoutHtmlTags;
   }
-  return buffer.toString();
+
+  /// Converts this to a simple HTML subset so line breaks are properly
+  /// displayed on the web
+  String get plainToSimpleHtml {
+    // Because the server is doing … stuff, we need to double encode‽
+    return HtmlEscape(HtmlEscapeMode.unknown)
+        .convert(HtmlEscape(HtmlEscapeMode.unknown).convert(this))
+        .splitMapJoin(
+          '\n\n',
+          onMatch: (_) => '',
+          onNonMatch: (s) => '<p>$s</p>',
+        )
+        .replaceAllMapped(RegExp('(.+)\n'), (m) => '${m[1]}<br />');
+  }
+
+  String get uriComponentEncoded => Uri.encodeComponent(this ?? '');
+
+  /// Converts a hex string (like '#ffdd00' or '#12c0ffee') to a [Color].
+  Color get hexToColor =>
+      Color(int.parse(substring(1).padLeft(8, 'f'), radix: 16));
+}
+
+extension IdParsingList on List<dynamic> {
+  List<Id<E>> castIds<E extends Entity>() {
+    return map((id) => Id<E>(id as String)).toList();
+  }
 }
 
 /// Tries launching a url.
@@ -74,6 +94,13 @@ Future<bool> tryLaunchingUrl(String url) async {
     return true;
   }
   return false;
+}
+
+String exceptionMessage(dynamic error) {
+  if (error is ServerError && error.body.message != null) {
+    return error.body.message;
+  }
+  return error.toString();
 }
 
 extension ImmutableMap<K, V> on Map<K, V> {
@@ -106,6 +133,7 @@ class Id<T> {
 
   @override
   String toString() => id;
+  String toJson() => id;
 }
 
 /// A special kind of item that also carries its id.
@@ -124,43 +152,72 @@ class LazyMap<K, V> {
   V operator [](K key) => _map.putIfAbsent(key, () => createValueForKey(key));
 }
 
+typedef NetworkCall = Future<Response> Function();
+typedef JsonParser<T> = T Function(Map<String, dynamic> data);
+
 CacheController<T> fetchSingle<T extends Entity>({
-  @required
-      Future<Response> Function(ApiNetworkService network) makeNetworkCall,
-  @required T Function(Map<String, dynamic> data) parser,
+  @required NetworkCall makeNetworkCall,
+  @required JsonParser<T> parser,
   Id<dynamic> parent,
 }) {
-  final storage = services.get<StorageService>();
-  final api = services.get<ApiNetworkService>();
+  final storage = services.storage;
 
   return SimpleCacheController<T>(
     saveToCache: (item) => storage.cache.putChildrenOfType<T>(parent, [item]),
     loadFromCache: () => throw NotInCacheException(),
     fetcher: () async {
-      final response = await makeNetworkCall(api);
+      final response = await makeNetworkCall();
       final data = json.decode(response.body);
       return parser(data);
     },
   );
 }
 
+CacheController<T> fetchSingleOfList<T extends Entity>({
+  @required NetworkCall makeNetworkCall,
+  @required JsonParser<T> parser,
+  Id<dynamic> parent,
+}) {
+  final storage = services.storage;
+
+  return SimpleCacheController<T>(
+    saveToCache: (item) => storage.cache.putChildrenOfType<T>(parent, [item]),
+    loadFromCache: () async {
+      return (await storage.cache.getChildrenOfType<T>(parent)).singleWhere(
+        (_) => true,
+        orElse: () => throw NotInCacheException(),
+      );
+    },
+    fetcher: () async {
+      final response = await makeNetworkCall();
+      final data = json.decode(response.body);
+      // Multiple items can be returned when only one is expected, e.g. multiple
+      // submissions to one assignment by one person (demo student):
+      // https://api.schul-cloud.org/submissions?homeworkId=59a662f6a2049554a93fed43&studentId=599ec14d8e4e364ec18ff46d
+      final items = data['data'];
+      if (items.isEmpty) {
+        return null;
+      }
+      return parser(items.first);
+    },
+  );
+}
+
 CacheController<List<T>> fetchList<T extends Entity>({
-  @required
-      Future<Response> Function(ApiNetworkService network) makeNetworkCall,
-  @required T Function(Map<String, dynamic> data) parser,
+  @required NetworkCall makeNetworkCall,
+  @required JsonParser<T> parser,
   Id<dynamic> parent,
   // Surprise: The Calendar API's response is different from all others! Would
   // be too easy otherwise ;)
   bool serviceIsPaginated = true,
 }) {
-  final storage = services.get<StorageService>();
-  final api = services.get<ApiNetworkService>();
+  final storage = services.storage;
 
   return SimpleCacheController<List<T>>(
     saveToCache: (items) => storage.cache.putChildrenOfType<T>(parent, items),
     loadFromCache: () => throw NotInCacheException(),
     fetcher: () async {
-      final response = await makeNetworkCall(api);
+      final response = await makeNetworkCall();
       final body = json.decode(response.body);
       final dataList = serviceIsPaginated ? body['data'] : body;
       return [for (final data in dataList) parser(data)];

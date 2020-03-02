@@ -13,10 +13,10 @@ class CalendarBloc {
   const CalendarBloc();
 
   CacheController<List<Event>> fetchEvents() {
-    final storage = services.get<StorageService>();
+    final storage = services.storage;
     storage.cache.clear();
     return fetchList(
-      makeNetworkCall: (network) => network.get(
+      makeNetworkCall: () => services.network.get(
         'calendar',
         parameters: {
           // We have to set this query parameter because otherwise—you guessed

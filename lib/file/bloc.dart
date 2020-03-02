@@ -24,8 +24,7 @@ class FileBloc {
   // * We want to filter the files because there are a lot with no names that
   //   shouldn't be displayed.
   CacheController<List<File>> fetchFiles(Id<dynamic> owner, File parent) {
-    final storage = services.get<StorageService>();
-    final api = services.get<ApiNetworkService>();
+    final storage = services.storage;
 
     return SimpleCacheController<List<File>>(
       saveToCache: (files) =>
@@ -37,23 +36,31 @@ class FileBloc {
           'owner': owner.id,
           if (parent != null) 'parent': parent.id.id,
         };
-        final response = await api.get('fileStorage', parameters: queries);
+        final response =
+            await services.api.get('fileStorage', parameters: queries);
         final body = json.decode(response.body);
         return (body as List<dynamic>)
             .where((data) => data['name'] != null)
-            .map((data) => File.fromJsonAndOwner(data, owner))
+            .map((data) => File.fromJson(data))
             .toList();
       },
     );
   }
 
+  CacheController<File> fetchFile(Id<File> id, [Id<dynamic> parent]) =>
+      fetchSingle(
+        parent: parent,
+        makeNetworkCall: () => services.network.get('files/$id'),
+        parser: (data) => File.fromJson(data),
+      );
+
   CacheController<Course> fetchCourseOwnerOfFiles() => fetchSingle(
-        makeNetworkCall: (network) => network.get('courses'),
+        makeNetworkCall: () => services.network.get('courses'),
         parser: (data) => Course.fromJson(data),
       );
 
   CacheController<List<Course>> fetchCourses() => fetchList(
-        makeNetworkCall: (network) => network.get('courses'),
+        makeNetworkCall: () => services.network.get('courses'),
         parser: (data) => Course.fromJson(data),
       );
 
@@ -64,7 +71,7 @@ class FileBloc {
 
     /// The signed URL is the URL used to actually download a file instead of
     /// just viewing its JSON representation.
-    final response = await services.get<ClientNetworkService>().get(
+    final response = await services.network.get(
       'fileStorage/signedUrl',
       parameters: {'download': null, 'file': file.id.toString()},
     );

@@ -47,7 +47,7 @@ const _schulCloudYellow = MaterialColor(0xffe2661d, {
   900: Color(0xfff4790d),
 });
 
-const schulCloudAppConfig = AppConfigData(
+const schulCloudAppConfig = AppConfig(
   name: 'sc',
   domain: 'schul-cloud.org',
   title: 'Schul-Cloud',
@@ -56,7 +56,7 @@ const schulCloudAppConfig = AppConfigData(
   accentColor: _schulCloudYellow,
 );
 
-Future<void> main({AppConfigData appConfig = schulCloudAppConfig}) async {
+Future<void> main({AppConfig appConfig = schulCloudAppConfig}) async {
   await initializeHive();
 
   services
@@ -69,35 +69,32 @@ Future<void> main({AppConfigData appConfig = schulCloudAppConfig}) async {
         'timeZone': await FlutterNativeTimezone.getLocalTimezone(),
       });
     }, instanceName: 'ignored')
+    ..registerSingleton(appConfig)
     ..registerSingletonAsync((_) => StorageService.create())
     ..registerSingleton(NetworkService())
-    ..registerSingleton(ApiNetworkService(apiUrl: appConfig.apiUrl))
-    ..registerSingleton(ClientNetworkService(clientUrl: appConfig.host))
-    ..registerSingleton(UserFetcherService())
+    ..registerSingleton(ApiNetworkService(apiUrl: appConfig.baseApiUrl))
     ..registerSingleton(AssignmentBloc())
     ..registerSingleton(CalendarBloc())
     ..registerSingleton(CourseBloc())
     ..registerSingleton(FileBloc())
     ..registerSingleton(LoginBloc())
-    ..registerSingleton(NewsBloc());
+    ..registerSingleton(NewsBloc())
+    ..registerSingleton(SubmissionBloc());
 
   runApp(
-    AppConfig(
-      data: appConfig,
-      child: FutureBuilder<void>(
-        future: services.allReady(),
-        builder: (_, snapshot) {
-          if (!snapshot.hasData) {
-            return Container(
-              color: Colors.white,
-              alignment: Alignment.center,
-              child: CircularProgressIndicator(),
-            );
-          }
+    FutureBuilder<void>(
+      future: services.allReady(),
+      builder: (_, snapshot) {
+        if (!snapshot.hasData) {
+          return Container(
+            color: Colors.white,
+            alignment: Alignment.center,
+            child: CircularProgressIndicator(),
+          );
+        }
 
-          return SchulCloudApp();
-        },
-      ),
+        return SchulCloudApp();
+      },
     ),
   );
 }

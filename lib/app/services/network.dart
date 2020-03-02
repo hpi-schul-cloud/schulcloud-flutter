@@ -2,18 +2,72 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/widgets.dart';
-import 'package:meta/meta.dart';
+import 'package:get_it/get_it.dart';
 import 'package:http/http.dart' as http;
+import 'package:meta/meta.dart';
+import 'package:schulcloud/app/app.dart';
 
+import 'storage.dart';
+
+@immutable
+class ErrorBody {
+  const ErrorBody({
+    @required this.name,
+    @required this.message,
+    @required this.code,
+    @required this.className,
+    this.data = const {},
+    this.errors = const {},
+  })  : assert(name != null),
+        assert(message != null),
+        assert(code != null),
+        assert(code >= 100),
+        assert(className != null),
+        assert(data != null),
+        assert(errors != null);
+
+  ErrorBody.fromJson(Map<String, dynamic> data)
+      : this(
+          name: data['name'],
+          message: data['message'],
+          code: data['code'],
+          className: data['className'],
+          data: data['data'],
+          errors: data['errors'],
+        );
+
+  final String name;
+  final String message;
+  final int code;
+  final String className;
+  final Map<String, dynamic> data;
+  final Map<String, dynamic> errors;
+}
+
+@immutable
 class NoConnectionToServerError implements Exception {}
 
-class AuthenticationError implements Exception {}
+@immutable
+class ServerError implements Exception {
+  const ServerError(this.body) : assert(body != null);
 
-class TooManyRequestsError implements Exception {
-  TooManyRequestsError({@required this.timeToWait})
-      : assert(timeToWait != null);
+  final ErrorBody body;
+}
 
-  Duration timeToWait;
+class ConflictError extends ServerError {
+  const ConflictError(ErrorBody body) : super(body);
+}
+
+class AuthenticationError extends ServerError {
+  const AuthenticationError(ErrorBody body) : super(body);
+}
+
+class TooManyRequestsError extends ServerError {
+  const TooManyRequestsError(ErrorBody body, {@required this.timeToWait})
+      : assert(timeToWait != null),
+        super(body);
+
+  final Duration timeToWait;
 }
 
 /// A service that offers networking POST and GET requests to arbitrary
@@ -38,29 +92,32 @@ class NetworkService {
       return response;
     }
 
+    final body = ErrorBody.fromJson(json.decode(response.body));
+
     if (response.statusCode == 401) {
-      throw AuthenticationError();
+      throw AuthenticationError(body);
+    }
+
+    if (response.statusCode == 409 && body.className == 'conflict') {
+      throw ConflictError(body);
     }
 
     if (response.statusCode == 429) {
-      // TODO(marcelgarus): Actually handle this. We shouldn't send any more
-      // network calls to the server until the time timed out.
-      throw TooManyRequestsError(
-        timeToWait: () {
-          try {
-            return Duration(
-              seconds: json.decode(response.body)['data']['timeToWait'],
-            );
-          } catch (_) {
-            return Duration(seconds: 10);
-          }
-        }(),
-      );
+      final timeToWait = () {
+        try {
+          return Duration(
+            seconds: body.data['timeToWait'],
+          );
+        } catch (_) {
+          return Duration(seconds: 10);
+        }
+      }();
+      throw TooManyRequestsError(body, timeToWait: timeToWait);
     }
 
     throw UnimplementedError(
         'We should handle status code ${response.statusCode}. '
-        'The body was: ${response.body}');
+        'Response body: ${response.body}');
   }
 
   /// Makes an http get request.
@@ -74,12 +131,12 @@ class NetworkService {
 
     // Add the parameters to the url.
     if (parameters.isNotEmpty) {
-      // ignore: prefer_interpolation_to_compose_strings, parameter_assignments
-      url += '?' +
-          [
-            for (final parameter in parameters.entries)
-              '${Uri.encodeComponent(parameter.key)}=${Uri.encodeComponent(parameter.value)}'
-          ].join('&');
+      final params = parameters.entries
+          .map((e) =>
+              '${e.key.uriComponentEncoded}=${e.value.uriComponentEncoded}')
+          .join('&');
+      // ignore: parameter_assignments
+      url += '?$params';
     }
     return _makeCall(() => http.get(url, headers: headers));
   }
@@ -105,4 +162,22 @@ class NetworkService {
   }) {
     return _makeCall(() => http.put(url, headers: headers, body: body));
   }
+
+  /// Makes an http patch request.
+  Future<http.Response> patch(
+    String url, {
+    Map<String, String> headers,
+    Map<String, dynamic> body,
+  }) {
+    return _makeCall(() => http.patch(url, headers: headers, body: body));
+  }
+
+  // Makes an http delete request.
+  Future<http.Response> delete(String url) {
+    return _makeCall(() => http.delete(url));
+  }
+}
+
+extension NetworkServiceGetIt on GetIt {
+  NetworkService get network => get<NetworkService>();
 }

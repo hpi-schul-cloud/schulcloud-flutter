@@ -95,7 +95,7 @@ class HiveCache {
         children.map((child) => child.id.toString()).toList());
   }
 
-  Future<dynamic> get(Id<dynamic> id) => _data.get(id.id);
+  Future<T> get<T extends Entity>(Id<T> id) => _data.get(id.id);
 
   Future<List<T>> getChildrenOfType<T>(Id<dynamic> parent) async {
     final key = parent?.id ?? _rootCacheKey;
@@ -107,6 +107,7 @@ class HiveCache {
         .toList();
   }
 
+  Future<void> delete<T extends Entity>(Id<T> id) => _data.delete(id.id);
   Future<void> clear() => Future.wait([_data.clear(), _children.clear()]);
 }
 
@@ -206,13 +207,15 @@ class RecurrenceRuleAdapter extends TypeAdapter<RecurrenceRule> {
 }
 
 // Type ids.
-const typeUserId = 40;
 const typeColor = 48;
 const typeChildren = 49;
 const typeInstant = 61;
 const typeRecurrenceRule = 62;
 
 const typeUser = 51;
+const typeUserId = 40;
+const typeRole = 65;
+const typeRoleId = 66;
 
 const typeAssignmentId = 47;
 const typeSubmissionId = 60;
@@ -247,13 +250,15 @@ Future<void> initializeHive() async {
 
   Hive
     // General:
-    ..registerAdapter(IdAdapter<User>(40))
     ..registerAdapter(ColorAdapter())
     ..registerAdapter(ChildrenAdapter())
     ..registerAdapter(InstantAdapter())
     ..registerAdapter(RecurrenceRuleAdapter())
     // App module:
     ..registerAdapter(UserAdapter())
+    ..registerAdapter(IdAdapter<User>(typeUserId))
+    ..registerAdapter(RoleAdapter())
+    ..registerAdapter(IdAdapter<Role>(typeRoleId))
     // Assignments module:
     ..registerAdapter(IdAdapter<Assignment>(typeAssignmentId))
     ..registerAdapter(IdAdapter<Submission>(typeSubmissionId))
