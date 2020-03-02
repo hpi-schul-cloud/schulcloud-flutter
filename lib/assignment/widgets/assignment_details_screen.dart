@@ -44,7 +44,7 @@ class _AssignmentDetailsScreenState extends State<AssignmentDetailsScreen>
           appBarBuilder: (innerBoxIsScrolled) => FancyAppBar(
             title: Text(assignment.name),
             actions: <Widget>[
-              if (user.hasPermission(Permission.assignmentEdit))
+              if (user?.hasPermission(Permission.assignmentEdit) == true)
                 IconButton(
                   icon: Icon(
                       assignment.isArchived ? Icons.unarchive : Icons.archive),

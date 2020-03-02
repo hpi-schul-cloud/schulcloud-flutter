@@ -5,6 +5,8 @@ import 'package:schulcloud/app/app.dart';
 import 'login.dart';
 
 Future<bool> logOut(BuildContext context) async {
+  logger.i('Logging out…');
+  
   final s = context.s;
   final confirmed = await showDialog(
     context: context,
@@ -39,5 +41,6 @@ Future<bool> logOut(BuildContext context) async {
     )));
   }
 
+  logger.i('Logged out!');
   return confirmed;
 }
