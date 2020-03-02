@@ -12,6 +12,10 @@ import 'data.dart';
 class AssignmentBloc {
   const AssignmentBloc();
 
+  CacheController<Assignment> fetchAssignment(Id<Assignment> id) => fetchSingle(
+        makeNetworkCall: () => services.network.get('homework/$id'),
+        parser: (data) => Assignment.fromJson(data),
+      );
   CacheController<List<Assignment>> fetchAssignments() => fetchList(
         makeNetworkCall: () => services.network.get('homework'),
         parser: (data) => Assignment.fromJson(data),

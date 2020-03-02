@@ -157,9 +157,7 @@ class AssignmentCard extends StatelessWidget {
   final SetFlagFilterCallback<Assignment> setFlagFilterCallback;
 
   void _showAssignmentDetailsScreen(BuildContext context) {
-    context.navigator.push(MaterialPageRoute(
-      builder: (context) => AssignmentDetailsScreen(assignment: assignment),
-    ));
+    context.navigator.pushNamed('/homework/${assignment.id}');
   }
 
   @override

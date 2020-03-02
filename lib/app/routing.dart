@@ -13,6 +13,7 @@ final router = Router(
       routes: [
         dashboardRoutes,
         newsRoutes,
+        assignmentRoutes,
       ],
     ),
     Route.any(

@@ -13,11 +13,11 @@ import 'edit_submittion_screen.dart';
 import 'grade_indicator.dart';
 
 class AssignmentDetailsScreen extends StatefulWidget {
-  const AssignmentDetailsScreen({Key key, @required this.assignment})
-      : assert(assignment != null),
-        super(key: key);
+  const AssignmentDetailsScreen(this.assignmentId, {this.initialTab})
+      : assert(assignmentId != null);
 
-  final Assignment assignment;
+  final Id<Assignment> assignmentId;
+  final String initialTab;
 
   @override
   _AssignmentDetailsScreenState createState() =>
@@ -26,54 +26,79 @@ class AssignmentDetailsScreen extends StatefulWidget {
 
 class _AssignmentDetailsScreenState extends State<AssignmentDetailsScreen>
     with TickerProviderStateMixin {
-  Assignment get assignment => widget.assignment;
-
   @override
   Widget build(BuildContext context) {
     final s = context.s;
 
-    return CachedRawBuilder<User>(
-      controller: services.get<UserFetcherService>().fetchCurrentUser(),
+    return CachedRawBuilder<Assignment>(
+      controller:
+          services.get<AssignmentBloc>().fetchAssignment(widget.assignmentId),
       builder: (context, update) {
-        final user = update.data;
-        final showSubmissionTab =
-            assignment.isPrivate || user?.isTeacher == false;
-        final showFeedbackTab = assignment.isPublic && user?.isTeacher == false;
+        if (!update.hasData) {
+          return Center(
+            child: update.hasError
+                ? ErrorScreen(update.error, update.stackTrace)
+                : CircularProgressIndicator(),
+          );
+        }
 
-        return FancyTabbedScaffold(
-          appBarBuilder: (innerBoxIsScrolled) => FancyAppBar(
-            title: Text(assignment.name),
-            actions: <Widget>[
-              if (user.hasPermission(Permission.assignmentEdit))
-                IconButton(
-                  icon: Icon(
-                      assignment.isArchived ? Icons.unarchive : Icons.archive),
-                  tooltip: assignment.isArchived
-                      ? s.assignment_assignmentDetails_unarchive
-                      : s.assignment_assignmentDetails_archive,
-                  onPressed: () {
-                    services
-                        .get<AssignmentBloc>()
-                        .update(assignment, isArchived: !assignment.isArchived);
-                  },
-                )
-            ],
-            bottom: TabBar(
+        final assignment = update.data;
+        return CachedRawBuilder<User>(
+          controller: services.get<UserFetcherService>().fetchCurrentUser(),
+          builder: (context, update) {
+            final user = update.data;
+            final showSubmissionTab =
+                assignment.isPrivate || user?.isTeacher == false;
+            final showFeedbackTab =
+                assignment.isPublic && user?.isTeacher == false;
+
+            final tabs = [
+              'extended',
+              if (showSubmissionTab) 'submission',
+              if (showFeedbackTab) 'feedback',
+            ];
+            var initialTabIndex = tabs.indexOf(widget.initialTab);
+            if (initialTabIndex < 0) {
+              initialTabIndex = null;
+            }
+
+            return FancyTabbedScaffold(
+              initialTabIndex: initialTabIndex,
+              appBarBuilder: (innerBoxIsScrolled) => FancyAppBar(
+                title: Text(assignment.name),
+                actions: <Widget>[
+                  if (user?.hasPermission(Permission.assignmentEdit) == true)
+                    IconButton(
+                      icon: Icon(assignment.isArchived
+                          ? Icons.unarchive
+                          : Icons.archive),
+                      tooltip: assignment.isArchived
+                          ? s.assignment_assignmentDetails_unarchive
+                          : s.assignment_assignmentDetails_archive,
+                      onPressed: () {
+                        services.get<AssignmentBloc>().update(assignment,
+                            isArchived: !assignment.isArchived);
+                      },
+                    )
+                ],
+                bottom: TabBar(
+                  tabs: [
+                    Tab(text: s.assignment_assignmentDetails_details),
+                    if (showSubmissionTab)
+                      Tab(text: s.assignment_assignmentDetails_submission),
+                    if (showFeedbackTab)
+                      Tab(text: s.assignment_assignmentDetails_feedback),
+                  ],
+                ),
+                forceElevated: innerBoxIsScrolled,
+              ),
               tabs: [
-                Tab(text: s.assignment_assignmentDetails_details),
-                if (showSubmissionTab)
-                  Tab(text: s.assignment_assignmentDetails_submission),
-                if (showFeedbackTab)
-                  Tab(text: s.assignment_assignmentDetails_feedback),
+                _DetailsTab(assignment: assignment),
+                if (showSubmissionTab) _SubmissionTab(assignment: assignment),
+                if (showFeedbackTab) _FeedbackTab(assignment: assignment),
               ],
-            ),
-            forceElevated: innerBoxIsScrolled,
-          ),
-          tabs: [
-            _DetailsTab(assignment: assignment),
-            if (showSubmissionTab) _SubmissionTab(assignment: assignment),
-            if (showFeedbackTab) _FeedbackTab(assignment: assignment),
-          ],
+            );
+          },
         );
       },
     );
