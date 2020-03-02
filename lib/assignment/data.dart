@@ -83,7 +83,7 @@ class Assignment implements Entity {
 
   @HiveField(12)
   final Instant dueAt;
-  bool get isOverDue => dueAt != null && dueAt < Instant.now();
+  bool get isOverdue => dueAt != null && dueAt < Instant.now();
 
   @HiveField(5)
   final String description;
