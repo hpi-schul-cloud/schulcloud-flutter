@@ -5,10 +5,11 @@ import 'package:intl/intl.dart';
 import 'package:time_machine/time_machine.dart';
 
 import '../chip.dart';
+import '../datetime_utils.dart';
 import '../utils.dart';
 import 'sort_filter.dart';
 
-typedef Predicate<T, D> = bool Function(T item, D data);
+typedef Test<T, D> = bool Function(T item, D data);
 typedef Selector<T, R> = R Function(T item);
 
 abstract class Filter<T, S> {
@@ -47,16 +48,9 @@ class DateRangeFilter<T> extends Filter<T, DateRangeFilterSelection> {
   @override
   bool filter(T item, DateRangeFilterSelection selection) {
     final date = selector(item);
-    if (date == null) {
-      return true;
-    }
-    if (selection.start != null && selection.start > date) {
-      return false;
-    }
-    if (selection.end != null && selection.end < date) {
-      return false;
-    }
-    return true;
+    final start = selection.start ?? LocalDate.minIsoValue;
+    final end = selection.end ?? LocalDate.maxIsoValue;
+    return date == null || (start <= date && date <= end);
   }
 
   @override
@@ -106,9 +100,7 @@ class DateRangeFilter<T> extends Filter<T, DateRangeFilterSelection> {
         firstDate: firstDate?.toDateTimeUnspecified() ?? DateTime(1900),
         lastDate: lastDate?.toDateTimeUnspecified() ?? DateTime(2100),
       ),
-      onChanged: (newDate) {
-        onChanged(newDate == null ? null : LocalDate.dateTime(newDate));
-      },
+      onChanged: (newDate) => onChanged(newDate?.asLocalDate),
       decoration: InputDecoration(
         prefixIcon: Icon(Icons.calendar_today),
         hintText: hintText,

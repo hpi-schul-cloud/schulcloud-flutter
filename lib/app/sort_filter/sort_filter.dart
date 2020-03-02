@@ -149,7 +149,7 @@ class SortFilterWidget<T> extends StatelessWidget {
       children: <Widget>[
         _buildSortSection(),
         for (final filterKey in config.filters.keys)
-          _buildFilterSection(context, filterKey)
+          _buildFilterSection(context, filterKey),
       ],
     );
   }
