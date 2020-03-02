@@ -63,7 +63,7 @@
   "@app_navigation_userDataEmpty": {
     "type": "text"
   },
-  "app_signOut_content": "Du brauchst deine Anmeldedaten, um dich wieder anzumelden.",
+  "app_signOut_content": "Du musst dich danach erneut anmelden, um die App zu benutzen.",
   "@app_signOut_content": {
     "type": "text",
     "description": ""

@@ -63,7 +63,7 @@
   "@app_navigation_userDataEmpty": {
     "type": "text"
   },
-  "app_signOut_content": "You'll need your login credentials to log in again.",
+  "app_signOut_content": "You will need to provide your login credentials to use the app again.",
   "@app_signOut_content": {
     "type": "text",
     "description": ""
