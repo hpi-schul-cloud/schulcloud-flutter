@@ -30,6 +30,10 @@ class LoginBloc {
       );
     }
 
+    logger.i('Logging in as $email…');
+    final storage = services.get<StorageService>();
+    await storage.email.setValue(email);
+
     // The login throws an exception if it wasn't successful.
     final rawResponse = await services.network.post(
       'authentication',
@@ -42,6 +46,7 @@ class LoginBloc {
       userId: response.userId,
       token: response.accessToken,
     );
+    logger.i('Logged in with userId ${response.userId}!');
   }
 
   Future<void> loginAsDemoStudent() =>
