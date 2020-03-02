@@ -1,3 +1,4 @@
+import 'package:get_it/get_it.dart';
 import 'package:meta/meta.dart';
 import 'package:schulcloud/assignment/assignment.dart';
 import 'package:schulcloud/course/course.dart';
@@ -17,19 +18,6 @@ class StorageService {
     this.token,
     this.cache,
   );
-
-  final StreamingSharedPreferences _prefs;
-
-  final Preference<String> userIdString;
-  Stream<Id<User>> get userId => userIdString.map((id) => Id<User>(id));
-
-  final Preference<String> email;
-  bool get hasEmail => email.getValue().isNotEmpty;
-
-  final Preference<String> token;
-  bool get hasToken => token.getValue().isNotEmpty;
-
-  final HiveCache cache;
 
   static Future<StorageService> create() async {
     StreamingSharedPreferences prefs;
@@ -59,6 +47,19 @@ class StorageService {
     return StorageService._(prefs, userId, email, token, cache);
   }
 
+  final StreamingSharedPreferences _prefs;
+
+  final Preference<String> userIdString;
+  Id<User> get userId => Id<User>(userIdString.getValue());
+
+  final Preference<String> email;
+  bool get hasEmail => email.getValue().isNotEmpty;
+
+  final Preference<String> token;
+  bool get hasToken => token.getValue().isNotEmpty;
+
+  final HiveCache cache;
+
   Future<void> setUserInfo({
     @required String email,
     @required String userId,
@@ -72,4 +73,8 @@ class StorageService {
   }
 
   Future<void> clear() => Future.wait([_prefs.clear(), cache.clear()]);
+}
+
+extension StorageServiceGetIt on GetIt {
+  StorageService get storage => get<StorageService>();
 }

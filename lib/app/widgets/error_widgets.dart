@@ -4,6 +4,7 @@ import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/login/login.dart';
 
 import '../services/network.dart';
+import '../utils.dart';
 import 'buttons.dart';
 import 'empty_state.dart';
 
@@ -44,7 +45,7 @@ class _MessageAndActions {
         child: Text(s.app_errorScreen_authError),
       ));
     } else {
-      message = s.app_errorScreen_unknown(error);
+      message = s.app_errorScreen_unknown(exceptionMessage(error));
       actions.add(SecondaryButton(
         onPressed: () => _showStackTrace(context, error, stackTrace),
         child: Text(s.app_errorScreen_unknown_showStackTrace),

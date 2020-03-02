@@ -210,14 +210,18 @@ class AssignmentCard extends StatelessWidget {
     return <Widget>[
       if (assignment.courseId != null)
         CachedRawBuilder<Course>(
-          controller: services
-              .get<AssignmentBloc>()
-              .fetchCourseOfAssignment(assignment),
-          builder: (_, update) => !update.hasData
-              ? SizedBox.shrink()
-              : CourseChip(course: update.data),
+          controller:
+              services.get<CourseBloc>().fetchCourse(assignment.courseId),
+          builder: (_, update) {
+            return CourseChip(
+              update.data,
+              onPressed: () {
+                // TODO(JonasWanke): filter list by course, https://github.com/schul-cloud/schulcloud-flutter/issues/145
+              },
+            );
+          },
         ),
-      if (assignment.dueAt != null && assignment.dueAt < Instant.now())
+      if (assignment.isOverdue)
         ActionChip(
           avatar: Icon(
             Icons.flag,

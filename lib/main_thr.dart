@@ -27,7 +27,7 @@ const _thrOrange = MaterialColor(0xfff56b00, {
   900: Color(0xffec4e01),
 });
 
-const thrAppConfig = AppConfigData(
+const thrAppConfig = AppConfig(
   name: 'thr',
   domain: 'schulcloud-thueringen.de',
   title: 'Thüringer Schulcloud',

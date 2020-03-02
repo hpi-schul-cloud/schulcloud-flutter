@@ -27,7 +27,7 @@ const _openRed = MaterialColor(0xffdf0b40, {
   900: Color(0xffc4002c),
 });
 
-const openAppConfig = AppConfigData(
+const openAppConfig = AppConfig(
   name: 'open',
   domain: 'open.schul-cloud.org',
   title: 'Open Schul-Cloud',
