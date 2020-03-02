@@ -16,14 +16,13 @@ import 'page_route.dart';
 class SchulCloudApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final appConfig = context.appConfig;
+    final appConfig = services.get<AppConfig>();
+
     return MaterialApp(
       title: appConfig.title,
-      theme: appConfig.createThemeData(),
-      darkTheme: appConfig.createDarkThemeData(),
-      home: services.get<StorageService>().hasToken
-          ? LoggedInScreen()
-          : LoginScreen(),
+      theme: appConfig.createThemeData(Brightness.light),
+      darkTheme: appConfig.createThemeData(Brightness.dark),
+      home: services.storage.hasToken ? LoggedInScreen() : LoginScreen(),
       localizationsDelegates: [
         S.delegate,
         GlobalMaterialLocalizations.delegate,
@@ -114,23 +113,19 @@ class _LoggedInScreenState extends State<LoggedInScreen> {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: _onWillPop,
-      child: Column(
-        children: <Widget>[
-          Expanded(
-            child: Navigator(
-              key: _navigatorKey,
-              onGenerateRoute: (_) =>
-                  MaterialPageRoute(builder: (_) => DashboardScreen()),
-              observers: [
-                HeroController(),
-              ],
-            ),
-          ),
-          MyNavigationBar(
-            onNavigate: _navigateTo,
-            activeScreenStream: _screenStream,
-          ),
-        ],
+      child: Scaffold(
+        body: Navigator(
+          key: _navigatorKey,
+          onGenerateRoute: (_) =>
+              MaterialPageRoute(builder: (_) => DashboardScreen()),
+          observers: [
+            HeroController(),
+          ],
+        ),
+        bottomNavigationBar: MyNavigationBar(
+          onNavigate: _navigateTo,
+          activeScreenStream: _screenStream,
+        ),
       ),
     );
   }

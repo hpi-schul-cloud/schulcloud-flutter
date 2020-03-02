@@ -2,6 +2,7 @@ import 'package:hive/hive.dart';
 import 'package:meta/meta.dart';
 import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/course/course.dart';
+import 'package:schulcloud/file/file.dart';
 import 'package:time_machine/time_machine.dart';
 
 part 'data.g.dart';
@@ -23,6 +24,8 @@ class Assignment implements Entity {
     @required this.isPrivate,
     @required this.hasPublicSubmissions,
     this.archived = const [],
+    @required this.teamSubmissions,
+    this.fileIds = const [],
   })  : assert(id != null),
         assert(name != null),
         assert(schoolId != null),
@@ -31,7 +34,9 @@ class Assignment implements Entity {
         assert(teacherId != null),
         assert(isPrivate != null),
         assert(hasPublicSubmissions != null),
-        assert(archived != null);
+        assert(archived != null),
+        assert(teamSubmissions != null),
+        assert(fileIds != null);
 
   Assignment.fromJson(Map<String, dynamic> data)
       : this(
@@ -40,18 +45,22 @@ class Assignment implements Entity {
           teacherId: data['teacherId'],
           name: data['name'],
           description: data['description'],
-          createdAt: (data['createdAt'] as String).parseApiInstant(),
-          availableAt: (data['availableDate'] as String).parseApiInstant(),
-          dueAt: (data['dueDate'] as String)?.parseApiInstant(),
+          createdAt: (data['createdAt'] as String).parseInstant(),
+          availableAt: (data['availableDate'] as String).parseInstant(),
+          dueAt: (data['dueDate'] as String)?.parseInstant(),
           courseId: data['courseId'] != null
-              ? Id<Course>(data['courseId']['_id'])
+              // GET /homework/:id -> courseId is a populated object
+              // PATCH /homework/:id -> courseId is an ID (string)
+              ? Id<Course>(data['courseId'] is String
+                  ? data['courseId']
+                  : data['courseId']['_id'])
               : null,
           lessonId: Id(data['lessonId'] ?? ''),
           isPrivate: data['private'] ?? false,
           hasPublicSubmissions: data['publicSubmissions'] ?? false,
-          archived: (data['archived'] as List<dynamic> ?? [])
-              .map((id) => Id<User>(id))
-              .toList(),
+          archived: (data['archived'] as List<dynamic> ?? []).castIds<User>(),
+          teamSubmissions: data['teamSubmissions'] ?? false,
+          fileIds: (data['fileIds'] as List<dynamic> ?? []).castIds<File>(),
         );
 
   // used before: 3, 4
@@ -74,6 +83,7 @@ class Assignment implements Entity {
 
   @HiveField(12)
   final Instant dueAt;
+  bool get isOverdue => dueAt != null && dueAt < Instant.now();
 
   @HiveField(5)
   final String description;
@@ -89,14 +99,23 @@ class Assignment implements Entity {
 
   @HiveField(11)
   final bool isPrivate;
+  bool get isPublic => !isPrivate;
 
   @HiveField(15)
   final bool hasPublicSubmissions;
 
   @HiveField(16)
   final List<Id<User>> archived;
-  bool get isArchived =>
-      archived.contains(services.get<StorageService>().userId);
+  bool get isArchived => archived.contains(services.storage.userId);
+
+  @HiveField(17)
+  final bool teamSubmissions;
+
+  @HiveField(18)
+  final List<Id<File>> fileIds;
+
+  String get webUrl => scWebUrl('homework/${id.id}');
+  String get submissionWebUrl => '$webUrl#activetabid=submission';
 }
 
 @immutable
@@ -107,13 +126,16 @@ class Submission implements Entity {
     @required this.schoolId,
     @required this.assignmentId,
     @required this.studentId,
-    this.comment,
+    @required this.comment,
     this.grade,
     this.gradeComment,
+    this.fileIds = const [],
   })  : assert(id != null),
         assert(schoolId != null),
         assert(assignmentId != null),
-        assert(studentId != null);
+        assert(studentId != null),
+        assert(comment != null),
+        assert(fileIds != null);
 
   Submission.fromJson(Map<String, dynamic> data)
       : this(
@@ -124,6 +146,7 @@ class Submission implements Entity {
           comment: data['comment'],
           grade: data['grade'],
           gradeComment: data['gradeComment'],
+          fileIds: (data['fileIds'] as List<dynamic> ?? []).castIds<File>(),
         );
 
   @override
@@ -144,7 +167,11 @@ class Submission implements Entity {
 
   @HiveField(7)
   final int grade;
+  static const gradeMax = 100;
 
   @HiveField(8)
   final String gradeComment;
+
+  @HiveField(9)
+  final List<Id<File>> fileIds;
 }

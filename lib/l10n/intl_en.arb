@@ -28,6 +28,41 @@
   "@app_errorScreen_unknown_showStackTrace": {
     "type": "text"
   },
+  "app_form_confirmDelete": "Delete?",
+  "@app_form_confirmDelete": {
+    "type": "text",
+    "description": ""
+  },
+  "app_form_confirmDelete_delete": "Delete",
+  "@app_form_confirmDelete_delete": {
+    "type": "text",
+    "description": ""
+  },
+  "app_form_confirmDelete_keep": "Keep",
+  "@app_form_confirmDelete_keep": {
+    "type": "text",
+    "description": ""
+  },
+  "app_form_discardChanges": "Discard changes?",
+  "@app_form_discardChanges": {
+    "type": "text",
+    "description": ""
+  },
+  "app_form_discardChanges_discard": "Discard",
+  "@app_form_discardChanges_discard": {
+    "type": "text",
+    "description": ""
+  },
+  "app_form_discardChanges_keepEditing": "Keep editing",
+  "@app_form_discardChanges_keepEditing": {
+    "type": "text",
+    "description": ""
+  },
+  "app_form_discardChanges_message": "Your changes have not been saved.",
+  "@app_form_discardChanges_message": {
+    "type": "text",
+    "description": ""
+  },
   "app_logOut_confirm": "Log out",
   "@app_logOut_confirm": {
     "type": "text",
@@ -49,6 +84,71 @@
   },
   "assignment": "Assignments",
   "@assignment": {
+    "type": "text",
+    "description": ""
+  },
+  "assignment_assignmentDetails_archive": "Archive",
+  "@assignment_assignmentDetails_archive": {
+    "type": "text",
+    "description": ""
+  },
+  "assignment_assignmentDetails_details": "Details",
+  "@assignment_assignmentDetails_details": {
+    "type": "text",
+    "description": ""
+  },
+  "assignment_assignmentDetails_details_available": "Available: {availableAt}",
+  "@assignment_assignmentDetails_details_available": {
+    "type": "text",
+    "description": ""
+  },
+  "assignment_assignmentDetails_details_due": "Due: {dueAt}",
+  "@assignment_assignmentDetails_details_due": {
+    "type": "text",
+    "description": ""
+  },
+  "assignment_assignmentDetails_feedback": "Feedback",
+  "@assignment_assignmentDetails_feedback": {
+    "type": "text",
+    "description": ""
+  },
+  "assignment_assignmentDetails_feedback_grade": "You solved {grade} % correctly.",
+  "@assignment_assignmentDetails_feedback_grade": {
+    "type": "text",
+    "description": ""
+  },
+  "assignment_assignmentDetails_feedback_textEmpty": "No feedback text available.",
+  "@assignment_assignmentDetails_feedback_textEmpty": {
+    "type": "text",
+    "description": ""
+  },
+  "assignment_assignmentDetails_filesSection": "Files",
+  "@assignment_assignmentDetails_filesSection": {
+    "type": "text",
+    "description": ""
+  },
+  "assignment_assignmentDetails_submission": "Submission",
+  "@assignment_assignmentDetails_submission": {
+    "type": "text",
+    "description": ""
+  },
+  "assignment_assignmentDetails_submission_create": "Create submission",
+  "@assignment_assignmentDetails_submission_create": {
+    "type": "text",
+    "description": ""
+  },
+  "assignment_assignmentDetails_submission_edit": "Edit submission",
+  "@assignment_assignmentDetails_submission_edit": {
+    "type": "text",
+    "description": ""
+  },
+  "assignment_assignmentDetails_submission_empty": "You have not submitted anything yet.",
+  "@assignment_assignmentDetails_submission_empty": {
+    "type": "text",
+    "description": ""
+  },
+  "assignment_assignmentDetails_unarchive": "Unarchive",
+  "@assignment_assignmentDetails_unarchive": {
     "type": "text",
     "description": ""
   },
@@ -134,17 +234,35 @@
   "@assignment_detailsScreen_mySubmission": {
     "type": "text"
   },
-  "assignment_submissionScreen_gradeTitle": "Grade: {grade}",
-  "@assignment_submissionScreen_gradeTitle": {
-    "type": "text"
+  "assignment_editSubmission_delete_confirm": "Dou you really want to delete this submission?",
+  "@assignment_editSubmission_delete_confirm": {
+    "type": "text",
+    "description": ""
   },
-  "assignment_submissionScreen_tabFeedback": "Feedback",
-  "@assignment_submissionScreen_tabFeedback": {
-    "type": "text"
+  "assignment_editSubmission_delete_success": "Deleted successfully",
+  "@assignment_editSubmission_delete_success": {
+    "type": "text",
+    "description": ""
   },
-  "assignment_submissionScreen_tabSubmission": "Submission",
-  "@assignment_submissionScreen_tabSubmission": {
-    "type": "text"
+  "assignment_editSubmission_overwriteFormatting": "Editing this submission will remove all existing formatting.",
+  "@assignment_editSubmission_overwriteFormatting": {
+    "type": "text",
+    "description": ""
+  },
+  "assignment_editSubmission_teamSubmissionNotSupported": "Team submissions are not yet supported in this app.",
+  "@assignment_editSubmission_teamSubmissionNotSupported": {
+    "type": "text",
+    "description": ""
+  },
+  "assignment_editSubmission_text": "Text submission",
+  "@assignment_editSubmission_text": {
+    "type": "text",
+    "description": ""
+  },
+  "assignment_editSubmission_text_errorEmpty": "Your submission may not be empty.",
+  "@assignment_editSubmission_text_errorEmpty": {
+    "type": "text",
+    "description": ""
   },
   "calendar_dashboardCard": "Schedule",
   "@calendar_dashboardCard": {
@@ -240,6 +358,11 @@
     "type": "text",
     "description": ""
   },
+  "general_dismiss": "Dismiss",
+  "@general_dismiss": {
+    "type": "text",
+    "description": ""
+  },
   "general_loading": "Loading…",
   "@general_loading": {
     "type": "text"
@@ -247,6 +370,21 @@
   "general_placeholder": "—",
   "@general_placeholder": {
     "type": "text"
+  },
+  "general_save": "Save",
+  "@general_save": {
+    "type": "text",
+    "description": ""
+  },
+  "general_save_success": "Saved \uD83D\uDE0A",
+  "@general_save_success": {
+    "type": "text",
+    "description": ""
+  },
+  "general_saving": "Saving…",
+  "@general_saving": {
+    "type": "text",
+    "description": ""
   },
   "general_user_unknown": "unknown",
   "@general_user_unknown": {

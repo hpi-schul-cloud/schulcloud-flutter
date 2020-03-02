@@ -33,8 +33,8 @@ class Event implements Entity {
           title: data['title'],
           description: data['description'],
           location: data['location'],
-          start: (data['start'] as int).parseApiInstant(),
-          end: (data['end'] as int).parseApiInstant(),
+          start: (data['start'] as int).parseInstant(),
+          end: (data['end'] as int).parseInstant(),
           allDay: data['allDay'],
           recurrence: _parseRecurrence(data),
         );
@@ -102,7 +102,6 @@ class Event implements Entity {
           final until = InstantPattern.extendedIso
               .parse(attributes['until'])
               .value
-              .serverTimeToActual()
               .toDateTimeUtc();
 
           // The day of week in the recurrency is incorrectly stored in the

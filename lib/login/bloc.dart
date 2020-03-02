@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 import 'package:schulcloud/app/app.dart';
+import 'package:schulcloud/login/data.dart';
 
 class InvalidLoginSyntaxError implements Exception {
   InvalidLoginSyntaxError({this.isEmailValid, this.isPasswordValid});
@@ -30,20 +31,17 @@ class LoginBloc {
     }
 
     // The login throws an exception if it wasn't successful.
-    final rawResponse = await services.get<NetworkService>().post(
+    final rawResponse = await services.network.post(
       'authentication',
-      body: {
-        'strategy': 'local',
-        'username': email,
-        'password': password,
-      },
+      body: LoginRequest(email: email, password: password).toJson(),
     );
-    final response = json.decode(rawResponse.body);
-    await services.get<StorageService>().setUserInfo(
-          email: email,
-          userId: response['account']['userId'],
-          token: response['accessToken'],
-        );
+
+    final response = LoginResponse.fromJson(json.decode(rawResponse.body));
+    await services.storage.setUserInfo(
+      email: email,
+      userId: response.userId,
+      token: response.accessToken,
+    );
   }
 
   Future<void> loginAsDemoStudent() =>
