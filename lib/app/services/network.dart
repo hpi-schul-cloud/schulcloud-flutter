@@ -88,9 +88,13 @@ class NetworkService {
   Future<http.Response> post(
     String url, {
     Map<String, String> headers,
-    dynamic body,
+    Map<String, dynamic> body,
   }) {
-    return _makeCall(() => http.post(url, headers: headers, body: body));
+    print('Making call to url $url.');
+    print('Headers: $headers');
+    print('Body: ${json.encode(body)}');
+    return _makeCall(
+        () => http.post(url, headers: headers, body: json.encode(body)));
   }
 
   /// Makes an http put request.

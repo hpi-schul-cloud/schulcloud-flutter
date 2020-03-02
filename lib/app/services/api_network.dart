@@ -41,7 +41,7 @@ class ApiNetworkService {
   }
 
   /// Makes an http post request to the api.
-  Future<http.Response> post(String path, {dynamic body}) {
+  Future<http.Response> post(String path, {Map<String, dynamic> body}) {
     return _network.post(
       _url(path),
       headers: _getHeaders(),

@@ -30,7 +30,7 @@ class ClientNetworkService {
   Future<http.Response> post(
     String path, {
     Map<String, String> headers,
-    dynamic body,
+    Map<String, dynamic> body,
   }) =>
       _network.post(_url(path), headers: headers, body: body);
 }
