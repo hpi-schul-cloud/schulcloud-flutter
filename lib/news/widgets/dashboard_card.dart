@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_cached/flutter_cached.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:schulcloud/app/app.dart';
+import 'package:schulcloud/dashboard/dashboard.dart';
 
 import '../bloc.dart';
 import '../data.dart';
@@ -15,9 +16,11 @@ class NewsDashboardCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final s = context.s;
 
-    return FancyCard(
-      omitHorizontalPadding: true,
+    return DashboardCard(
       title: s.news_dashboardCard,
+      footerButtonText: s.news_dashboardCard_all,
+      onFooterButtonPressed: () => context.navigator
+          .push(MaterialPageRoute(builder: (context) => NewsScreen())),
       child: CachedRawBuilder<List<Article>>(
         controller: services.get<NewsBloc>().fetchArticles(),
         builder: (context, update) {
@@ -45,18 +48,6 @@ class NewsDashboardCard extends StatelessWidget {
             children: <Widget>[
               for (final article in articles)
                 _buildArticlePreview(context, article),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 16),
-                child: Align(
-                  alignment: Alignment.bottomRight,
-                  child: OutlineButton(
-                    onPressed: () => context.navigator.push(MaterialPageRoute(
-                      builder: (context) => NewsScreen(),
-                    )),
-                    child: Text(s.news_dashboardCard_all),
-                  ),
-                ),
-              ),
             ],
           );
         },

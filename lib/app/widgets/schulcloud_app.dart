@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:logger_flutter/logger_flutter.dart';
 import 'package:rxdart/rxdart.dart';
-import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/assignment/assignment.dart';
 import 'package:schulcloud/course/course.dart';
 import 'package:schulcloud/dashboard/dashboard.dart';
@@ -10,20 +10,23 @@ import 'package:schulcloud/generated/l10n.dart';
 import 'package:schulcloud/login/login.dart';
 import 'package:schulcloud/news/news.dart';
 
+import '../app_config.dart';
+import '../services/navigator_observer.dart';
+import '../services/storage.dart';
+import '../utils.dart';
 import 'navigation_bar.dart';
 import 'page_route.dart';
 
 class SchulCloudApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final appConfig = context.appConfig;
+    final appConfig = services.get<AppConfig>();
+
     return MaterialApp(
       title: appConfig.title,
-      theme: appConfig.createThemeData(),
-      darkTheme: appConfig.createDarkThemeData(),
-      home: services.get<StorageService>().hasToken
-          ? LoggedInScreen()
-          : LoginScreen(),
+      theme: appConfig.createThemeData(Brightness.light),
+      darkTheme: appConfig.createThemeData(Brightness.dark),
+      home: services.storage.hasToken ? LoggedInScreen() : LoginScreen(),
       localizationsDelegates: [
         S.delegate,
         GlobalMaterialLocalizations.delegate,
@@ -112,25 +115,24 @@ class _LoggedInScreenState extends State<LoggedInScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: _onWillPop,
-      child: Column(
-        children: <Widget>[
-          Expanded(
-            child: Navigator(
-              key: _navigatorKey,
-              onGenerateRoute: (_) =>
-                  MaterialPageRoute(builder: (_) => DashboardScreen()),
-              observers: [
-                HeroController(),
-              ],
-            ),
+    return LogConsoleOnShake(
+      child: WillPopScope(
+        onWillPop: _onWillPop,
+        child: Scaffold(
+          body: Navigator(
+            key: _navigatorKey,
+            onGenerateRoute: (_) =>
+                MaterialPageRoute(builder: (_) => DashboardScreen()),
+            observers: [
+              LoggingNavigatorObserver(),
+              HeroController(),
+            ],
           ),
-          MyNavigationBar(
+          bottomNavigationBar: MyNavigationBar(
             onNavigate: _navigateTo,
             activeScreenStream: _screenStream,
           ),
-        ],
+        ),
       ),
     );
   }

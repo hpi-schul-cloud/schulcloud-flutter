@@ -37,16 +37,15 @@ class FileBrowser extends StatelessWidget {
     ));
   }
 
-  Future<void> _downloadFile(BuildContext context, File file) async {
+  static Future<void> downloadFile(BuildContext context, File file) async {
     assert(file.isNotDirectory);
 
     try {
       await services.get<FileBloc>().downloadFile(file);
-      Scaffold.of(context).showSnackBar(SnackBar(
-        content: Text(context.s.file_fileBrowser_downloading(file.name)),
-      ));
+      context.showSimpleSnackBar(
+          context.s.file_fileBrowser_downloading(file.name));
     } on PermissionNotGranted {
-      Scaffold.of(context).showSnackBar(SnackBar(
+      context.scaffold.showSnackBar(SnackBar(
         content: Text(
           context.s.file_fileBrowser_download_storageAccess,
         ),
@@ -78,7 +77,7 @@ class FileBrowser extends StatelessWidget {
           files: files,
           primary: false,
           onOpenDirectory: (directory) => _openDirectory(context, directory),
-          onDownloadFile: (file) => _downloadFile(context, file),
+          onDownloadFile: (file) => downloadFile(context, file),
         );
       },
     );
@@ -104,7 +103,7 @@ class FileBrowser extends StatelessWidget {
           return FileList(
             files: files,
             onOpenDirectory: (directory) => _openDirectory(context, directory),
-            onDownloadFile: (file) => _downloadFile(context, file),
+            onDownloadFile: (file) => downloadFile(context, file),
           );
         },
       ),

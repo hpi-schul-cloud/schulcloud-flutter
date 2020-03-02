@@ -4,18 +4,22 @@ import 'package:schulcloud/app/app.dart';
 class FancyCard extends StatelessWidget {
   const FancyCard({
     Key key,
-    this.onTap,
-    this.omitHorizontalPadding = false,
-    this.color,
     this.title,
     @required this.child,
-  }) : super(key: key);
+    this.onTap,
+    this.color,
+    this.omitHorizontalPadding = false,
+    this.omitBottomPadding = false,
+  })  : assert(omitHorizontalPadding != null),
+        assert(omitBottomPadding != null),
+        super(key: key);
 
-  final VoidCallback onTap;
-  final bool omitHorizontalPadding;
-  final Color color;
   final String title;
   final Widget child;
+  final VoidCallback onTap;
+  final Color color;
+  final bool omitHorizontalPadding;
+  final bool omitBottomPadding;
 
   @override
   Widget build(BuildContext context) {
@@ -29,6 +33,7 @@ class FancyCard extends StatelessWidget {
             ? BorderSide(color: context.theme.dividerColor, width: 1)
             : BorderSide.none,
       ),
+      clipBehavior: Clip.antiAlias,
       margin: EdgeInsets.zero,
       borderOnForeground: true,
       color: color,
@@ -60,7 +65,7 @@ class FancyCard extends StatelessWidget {
               : EdgeInsets.symmetric(horizontal: 16),
           child: child,
         ),
-        SizedBox(height: 16),
+        if (!omitBottomPadding) SizedBox(height: 16),
       ],
     );
   }
