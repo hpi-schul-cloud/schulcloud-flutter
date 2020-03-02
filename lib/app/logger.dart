@@ -35,7 +35,7 @@ class FancyPrinter extends LogPrinter {
     final timeStr = timeFormat.format(Instant.now().inLocalZone().clockTime);
     String stackTraceStr;
     if (event.stackTrace != null ||
-        [Level.error, Level.wtf, Level.warning].contains(event.level)) {
+        [Level.error, Level.wtf].contains(event.level)) {
       stackTraceStr = _formatStackTrace(event.stackTrace ?? StackTrace.current);
     }
     final errorStr = stringifyMessage(event.error);
