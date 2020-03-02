@@ -7,6 +7,7 @@ class FancyScaffold extends StatelessWidget {
   const FancyScaffold({
     Key key,
     @required this.appBar,
+    this.floatingActionButton,
     @required this.sliver,
     this.omitHorizontalPadding = false,
   })  : assert(appBar != null),
@@ -14,6 +15,7 @@ class FancyScaffold extends StatelessWidget {
         super(key: key);
 
   final Widget appBar;
+  final Widget floatingActionButton;
   final Widget sliver;
   final bool omitHorizontalPadding;
 
@@ -22,6 +24,7 @@ class FancyScaffold extends StatelessWidget {
     final padding = context.mediaQuery.padding;
 
     return Scaffold(
+      floatingActionButton: floatingActionButton,
       body: CustomScrollView(
         slivers: <Widget>[
           appBar,
