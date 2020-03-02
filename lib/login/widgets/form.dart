@@ -75,7 +75,9 @@ class _LoginFormState extends State<LoginForm> {
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 32),
             child: SvgPicture.asset(
-              context.appConfig.assetName(context, 'logo/logo_with_text.svg'),
+              services
+                  .get<AppConfig>()
+                  .assetName(context, 'logo/logo_with_text.svg'),
               height: 64,
               alignment: Alignment.bottomCenter,
             ),

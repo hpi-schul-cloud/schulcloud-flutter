@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_cached/flutter_cached.dart';
 import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/course/course.dart';
+import 'package:schulcloud/dashboard/dashboard.dart';
 import 'package:time_machine/time_machine.dart';
 
 import '../assignment.dart';
@@ -11,9 +12,13 @@ import '../bloc.dart';
 class AssignmentDashboardCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return FancyCard(
-      title: context.s.assignment_dashboardCard,
-      omitHorizontalPadding: true,
+    final s = context.s;
+
+    return DashboardCard(
+      title: s.assignment_dashboardCard,
+      footerButtonText: s.assignment_dashboardCard_all,
+      onFooterButtonPressed: () => context.navigator
+          .push(MaterialPageRoute(builder: (context) => AssignmentsScreen())),
       child: CachedRawBuilder<List<Assignment>>(
         controller: services.get<AssignmentBloc>().fetchAssignments(),
         builder: (context, update) {
@@ -29,8 +34,8 @@ class AssignmentDashboardCard extends StatelessWidget {
           final start = LocalDate.today();
           final end = start.addDays(7);
           final openAssignments = update.data.where((h) {
-            final dueDate = h.dueDate.inLocalZone().localDateTime.calendarDate;
-            return start <= dueDate && dueDate <= end;
+            final dueAt = h.dueAt?.inLocalZone()?.localDateTime?.calendarDate;
+            return dueAt == null || (start <= dueAt && dueAt <= end);
           });
 
           // Assignments are shown grouped by subject
@@ -39,38 +44,27 @@ class AssignmentDashboardCard extends StatelessWidget {
 
           return Column(
             children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Text(
-                    openAssignments.length.toString(),
-                    style: context.textTheme.display3,
-                  ),
-                  SizedBox(width: 4),
-                  Text(
-                    context.s.assignment_dashboardCard_header(
-                        openAssignments.length),
-                    style: context.textTheme.subhead,
-                  )
-                ],
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Text(
+                      openAssignments.length.toString(),
+                      style: context.textTheme.display3,
+                    ),
+                    SizedBox(width: 4),
+                    Text(
+                      s.assignment_dashboardCard_header(openAssignments.length),
+                      style: context.textTheme.subhead,
+                    )
+                  ],
+                ),
               ),
               ...subjects.keys.map(
                 (c) => _CourseAssignmentCountTile(
                   courseId: c,
                   assignmentCount: subjects[c].length,
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Align(
-                  alignment: Alignment.bottomRight,
-                  child: OutlineButton(
-                    onPressed: () {
-                      context.navigator.push(MaterialPageRoute(
-                          builder: (context) => AssignmentsScreen()));
-                    },
-                    child: Text(context.s.assignment_dashboardCard_all),
-                  ),
                 ),
               ),
             ],
@@ -84,10 +78,9 @@ class AssignmentDashboardCard extends StatelessWidget {
 class _CourseAssignmentCountTile extends StatelessWidget {
   const _CourseAssignmentCountTile({
     Key key,
-    @required this.courseId,
+    this.courseId,
     @required this.assignmentCount,
-  })  : assert(courseId != null),
-        assert(assignmentCount != null),
+  })  : assert(assignmentCount != null),
         super(key: key);
 
   final Id<Course> courseId;
@@ -95,35 +88,38 @@ class _CourseAssignmentCountTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (courseId == null) {
+      return _buildListTile(context, null, shouldHaveCourse: false);
+    }
+
     return CachedRawBuilder<Course>(
       controller: services.get<CourseBloc>().fetchCourse(courseId),
       builder: (context, update) {
-        if (!update.hasData) {
+        if (update.hasError) {
           return ListTile(
-            title: Text(update.hasError
-                ? update.error.toString()
-                : context.s.general_loading),
+            title: Text(update.error.toString()),
           );
         }
 
-        var course = update.data;
-        return ListTile(
-          leading: AnimatedContainer(
-            duration: Duration(milliseconds: 200),
-            width: 16,
-            height: 16,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: course?.color ?? context.theme.disabledColor,
-            ),
-          ),
-          title: TextOrPlaceholder(course?.name),
-          trailing: Text(
-            assignmentCount.toString(),
-            style: context.textTheme.headline,
-          ),
-        );
+        return _buildListTile(context, update.data);
       },
+    );
+  }
+
+  Widget _buildListTile(
+    BuildContext context,
+    Course course, {
+    bool shouldHaveCourse = true,
+  }) {
+    return ListTile(
+      leading: CourseColorDot(course: course),
+      title: shouldHaveCourse
+          ? TextOrPlaceholder(course?.name)
+          : Text(context.s.assignment_dashboardCard_noCourse),
+      trailing: Text(
+        assignmentCount.toString(),
+        style: context.textTheme.headline,
+      ),
     );
   }
 }

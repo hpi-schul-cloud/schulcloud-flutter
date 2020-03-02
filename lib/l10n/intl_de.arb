@@ -28,6 +28,41 @@
   "@app_errorScreen_unknown_showStackTrace": {
     "type": "text"
   },
+  "app_form_confirmDelete": "Löschen?",
+  "@app_form_confirmDelete": {
+    "type": "text",
+    "description": ""
+  },
+  "app_form_confirmDelete_delete": "Löschen",
+  "@app_form_confirmDelete_delete": {
+    "type": "text",
+    "description": ""
+  },
+  "app_form_confirmDelete_keep": "Behalten",
+  "@app_form_confirmDelete_keep": {
+    "type": "text",
+    "description": ""
+  },
+  "app_form_discardChanges": "Änderungen verwerfen?",
+  "@app_form_discardChanges": {
+    "type": "text",
+    "description": ""
+  },
+  "app_form_discardChanges_discard": "Verwerfen",
+  "@app_form_discardChanges_discard": {
+    "type": "text",
+    "description": ""
+  },
+  "app_form_discardChanges_keepEditing": "Weiter bearbeiten",
+  "@app_form_discardChanges_keepEditing": {
+    "type": "text",
+    "description": ""
+  },
+  "app_form_discardChanges_message": "Deine Änderungen wurden noch nicht gespeichert.",
+  "@app_form_discardChanges_message": {
+    "type": "text",
+    "description": ""
+  },
   "app_logOut_confirm": "Abmelden",
   "@app_logOut_confirm": {
     "type": "text",
@@ -52,9 +87,130 @@
     "type": "text",
     "description": ""
   },
-  "assignment_assignmentsScreen_overdue": "Überfällig",
-  "@assignment_assignmentsScreen_overdue": {
-    "type": "text"
+  "assignment_assignmentDetails_archive": "Archivieren",
+  "@assignment_assignmentDetails_archive": {
+    "type": "text",
+    "description": ""
+  },
+  "assignment_assignmentDetails_details": "Details",
+  "@assignment_assignmentDetails_details": {
+    "type": "text",
+    "description": ""
+  },
+  "assignment_assignmentDetails_details_available": "Verfügbar: {availableAt}",
+  "@assignment_assignmentDetails_details_available": {
+    "type": "text",
+    "description": ""
+  },
+  "assignment_assignmentDetails_details_due": "Bis: {dueAt}",
+  "@assignment_assignmentDetails_details_due": {
+    "type": "text",
+    "description": ""
+  },
+  "assignment_assignmentDetails_feedback": "Feedback",
+  "@assignment_assignmentDetails_feedback": {
+    "type": "text",
+    "description": ""
+  },
+  "assignment_assignmentDetails_feedback_grade": "Du hast {grade} % richtig gelöst.",
+  "@assignment_assignmentDetails_feedback_grade": {
+    "type": "text",
+    "description": ""
+  },
+  "assignment_assignmentDetails_feedback_textEmpty": "Kein Bewertungstext vorhanden.",
+  "@assignment_assignmentDetails_feedback_textEmpty": {
+    "type": "text",
+    "description": ""
+  },
+  "assignment_assignmentDetails_filesSection": "Dateien",
+  "@assignment_assignmentDetails_filesSection": {
+    "type": "text",
+    "description": ""
+  },
+  "assignment_assignmentDetails_submission": "Abgabe",
+  "@assignment_assignmentDetails_submission": {
+    "type": "text",
+    "description": ""
+  },
+  "assignment_assignmentDetails_submission_create": "Abgabe erstellen",
+  "@assignment_assignmentDetails_submission_create": {
+    "type": "text",
+    "description": ""
+  },
+  "assignment_assignmentDetails_submission_edit": "Abgabe bearbeiten",
+  "@assignment_assignmentDetails_submission_edit": {
+    "type": "text",
+    "description": ""
+  },
+  "assignment_assignmentDetails_submission_empty": "Du hast noch nichts abgegeben.",
+  "@assignment_assignmentDetails_submission_empty": {
+    "type": "text",
+    "description": ""
+  },
+  "assignment_assignmentDetails_unarchive": "Wiederherstellen",
+  "@assignment_assignmentDetails_unarchive": {
+    "type": "text",
+    "description": ""
+  },
+  "assignment_assignment_isArchived": "Archiviert",
+  "@assignment_assignment_isArchived": {
+    "type": "text",
+    "description": ""
+  },
+  "assignment_assignment_isPrivate": "Privat",
+  "@assignment_assignment_isPrivate": {
+    "type": "text",
+    "description": ""
+  },
+  "assignment_assignment_overdue": "Überfällig",
+  "@assignment_assignment_overdue": {
+    "type": "text",
+    "description": ""
+  },
+  "assignment_assignment_property_availableAt": "Verfügbarkeitsdatum",
+  "@assignment_assignment_property_availableAt": {
+    "type": "text",
+    "description": ""
+  },
+  "assignment_assignment_property_createdAt": "Erstelldatum",
+  "@assignment_assignment_property_createdAt": {
+    "type": "text",
+    "description": ""
+  },
+  "assignment_assignment_property_dueAt": "Abgabedatum",
+  "@assignment_assignment_property_dueAt": {
+    "type": "text",
+    "description": ""
+  },
+  "assignment_assignment_property_hasPublicSubmissions": "Öffentliche Abgaben",
+  "@assignment_assignment_property_hasPublicSubmissions": {
+    "type": "text",
+    "description": ""
+  },
+  "assignment_assignment_property_isArchived": "Archiviert",
+  "@assignment_assignment_property_isArchived": {
+    "type": "text",
+    "description": ""
+  },
+  "assignment_assignment_property_isPrivate": "Private Aufgabe",
+  "@assignment_assignment_property_isPrivate": {
+    "type": "text",
+    "description": ""
+  },
+  "assignment_assignment_property_more": "Mehr",
+  "@assignment_assignment_property_more": {
+    "type": "text",
+    "description": ""
+  },
+  "assignment_assignmentsScreen_empty": "Es wurden keine Aufgaben gefunden, die deinen Filtern entsprechen.",
+  "@assignment_assignmentsScreen_empty": {
+    "type": "text",
+    "description": ""
+  },
+  "assignment_assignmentsScreen_empty_editFilters": "Filter ändern",
+  "@assignment_assignmentsScreen_empty_editFilters": {
+    "type": "text",
+    "description": ""
   },
   "assignment_dashboardCard": "Hausaufgaben",
   "@assignment_dashboardCard": {
@@ -69,21 +225,44 @@
     "type": "text",
     "description": ""
   },
+  "assignment_dashboardCard_noCourse": "(ohne Kurs)",
+  "@assignment_dashboardCard_noCourse": {
+    "type": "text",
+    "description": ""
+  },
   "assignment_detailsScreen_mySubmission": "Meine Abgabe",
   "@assignment_detailsScreen_mySubmission": {
     "type": "text"
   },
-  "assignment_submissionScreen_gradeTitle": "Note: {grade}",
-  "@assignment_submissionScreen_gradeTitle": {
-    "type": "text"
+  "assignment_editSubmission_delete_confirm": "Möchtest du diese Abgabe wirklich löschen?",
+  "@assignment_editSubmission_delete_confirm": {
+    "type": "text",
+    "description": ""
   },
-  "assignment_submissionScreen_tabFeedback": "Feedback",
-  "@assignment_submissionScreen_tabFeedback": {
-    "type": "text"
+  "assignment_editSubmission_delete_success": "Erfolgreich gelöscht",
+  "@assignment_editSubmission_delete_success": {
+    "type": "text",
+    "description": ""
   },
-  "assignment_submissionScreen_tabSubmission": "Abgabe",
-  "@assignment_submissionScreen_tabSubmission": {
-    "type": "text"
+  "assignment_editSubmission_overwriteFormatting": "Durch das Bearbeiten dieser Abgabe geht die vorhandene Formatierung verloren.",
+  "@assignment_editSubmission_overwriteFormatting": {
+    "type": "text",
+    "description": ""
+  },
+  "assignment_editSubmission_teamSubmissionNotSupported": "Teamabgaben werden in dieser App noch nicht unterstützt.",
+  "@assignment_editSubmission_teamSubmissionNotSupported": {
+    "type": "text",
+    "description": ""
+  },
+  "assignment_editSubmission_text": "Textabgabe",
+  "@assignment_editSubmission_text": {
+    "type": "text",
+    "description": ""
+  },
+  "assignment_editSubmission_text_errorEmpty": "Deine Abgabe darf nicht leer sein.",
+  "@assignment_editSubmission_text_errorEmpty": {
+    "type": "text",
+    "description": ""
   },
   "calendar_dashboardCard": "Stundenplan",
   "@calendar_dashboardCard": {
@@ -179,6 +358,11 @@
     "type": "text",
     "description": ""
   },
+  "general_dismiss": "Verstanden",
+  "@general_dismiss": {
+    "type": "text",
+    "description": ""
+  },
   "general_loading": "Lädt…",
   "@general_loading": {
     "type": "text"
@@ -186,6 +370,21 @@
   "general_placeholder": "—",
   "@general_placeholder": {
     "type": "text"
+  },
+  "general_save": "Speichern",
+  "@general_save": {
+    "type": "text",
+    "description": ""
+  },
+  "general_save_success": "Gespeichert \uD83D\uDE0A",
+  "@general_save_success": {
+    "type": "text",
+    "description": ""
+  },
+  "general_saving": "Speichert…",
+  "@general_saving": {
+    "type": "text",
+    "description": ""
   },
   "general_user_unknown": "Unbekannt",
   "@general_user_unknown": {
