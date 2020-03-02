@@ -4,12 +4,8 @@
   "@app_emptyState_retry": {
     "type": "text"
   },
-  "app_errorScreen_authError": "Seems like this device's authentication expired.\nMaybe logging out and in again helps?",
+  "app_errorScreen_authError": "Seems like this device's authentication expired.\nMaybe signing out and in again helps?",
   "@app_errorScreen_authError": {
-    "type": "text"
-  },
-  "app_errorScreen_authError_logOut": "Log out",
-  "@app_errorScreen_authError_logOut": {
     "type": "text"
   },
   "app_errorScreen_noConnection": "We can't connect to the server.\nAre you sure you're connected to the internet?",
@@ -28,18 +24,38 @@
   "@app_errorScreen_unknown_showStackTrace": {
     "type": "text"
   },
-  "app_logOut_confirm": "Log out",
-  "@app_logOut_confirm": {
+  "app_form_confirmDelete": "Delete?",
+  "@app_form_confirmDelete": {
     "type": "text",
     "description": ""
   },
-  "app_logOut_content": "You'll need your login credentials to log in again.",
-  "@app_logOut_content": {
+  "app_form_confirmDelete_delete": "Delete",
+  "@app_form_confirmDelete_delete": {
     "type": "text",
     "description": ""
   },
-  "app_logOut_title": "Log out?",
-  "@app_logOut_title": {
+  "app_form_confirmDelete_keep": "Keep",
+  "@app_form_confirmDelete_keep": {
+    "type": "text",
+    "description": ""
+  },
+  "app_form_discardChanges": "Discard changes?",
+  "@app_form_discardChanges": {
+    "type": "text",
+    "description": ""
+  },
+  "app_form_discardChanges_discard": "Discard",
+  "@app_form_discardChanges_discard": {
+    "type": "text",
+    "description": ""
+  },
+  "app_form_discardChanges_keepEditing": "Keep editing",
+  "@app_form_discardChanges_keepEditing": {
+    "type": "text",
+    "description": ""
+  },
+  "app_form_discardChanges_message": "Your changes have not been saved.",
+  "@app_form_discardChanges_message": {
     "type": "text",
     "description": ""
   },
@@ -47,8 +63,83 @@
   "@app_navigation_userDataEmpty": {
     "type": "text"
   },
+  "app_signOut_content": "You'll need your login credentials to log in again.",
+  "@app_signOut_content": {
+    "type": "text",
+    "description": ""
+  },
+  "app_signOut_title": "Sign out?",
+  "@app_signOut_title": {
+    "type": "text",
+    "description": ""
+  },
   "assignment": "Assignments",
   "@assignment": {
+    "type": "text",
+    "description": ""
+  },
+  "assignment_assignmentDetails_archive": "Archive",
+  "@assignment_assignmentDetails_archive": {
+    "type": "text",
+    "description": ""
+  },
+  "assignment_assignmentDetails_details": "Details",
+  "@assignment_assignmentDetails_details": {
+    "type": "text",
+    "description": ""
+  },
+  "assignment_assignmentDetails_details_available": "Available: {availableAt}",
+  "@assignment_assignmentDetails_details_available": {
+    "type": "text",
+    "description": ""
+  },
+  "assignment_assignmentDetails_details_due": "Due: {dueAt}",
+  "@assignment_assignmentDetails_details_due": {
+    "type": "text",
+    "description": ""
+  },
+  "assignment_assignmentDetails_feedback": "Feedback",
+  "@assignment_assignmentDetails_feedback": {
+    "type": "text",
+    "description": ""
+  },
+  "assignment_assignmentDetails_feedback_grade": "You solved {grade} % correctly.",
+  "@assignment_assignmentDetails_feedback_grade": {
+    "type": "text",
+    "description": ""
+  },
+  "assignment_assignmentDetails_feedback_textEmpty": "No feedback text available.",
+  "@assignment_assignmentDetails_feedback_textEmpty": {
+    "type": "text",
+    "description": ""
+  },
+  "assignment_assignmentDetails_filesSection": "Files",
+  "@assignment_assignmentDetails_filesSection": {
+    "type": "text",
+    "description": ""
+  },
+  "assignment_assignmentDetails_submission": "Submission",
+  "@assignment_assignmentDetails_submission": {
+    "type": "text",
+    "description": ""
+  },
+  "assignment_assignmentDetails_submission_create": "Create submission",
+  "@assignment_assignmentDetails_submission_create": {
+    "type": "text",
+    "description": ""
+  },
+  "assignment_assignmentDetails_submission_edit": "Edit submission",
+  "@assignment_assignmentDetails_submission_edit": {
+    "type": "text",
+    "description": ""
+  },
+  "assignment_assignmentDetails_submission_empty": "You have not submitted anything yet.",
+  "@assignment_assignmentDetails_submission_empty": {
+    "type": "text",
+    "description": ""
+  },
+  "assignment_assignmentDetails_unarchive": "Unarchive",
+  "@assignment_assignmentDetails_unarchive": {
     "type": "text",
     "description": ""
   },
@@ -134,17 +225,35 @@
   "@assignment_detailsScreen_mySubmission": {
     "type": "text"
   },
-  "assignment_submissionScreen_gradeTitle": "Grade: {grade}",
-  "@assignment_submissionScreen_gradeTitle": {
-    "type": "text"
+  "assignment_editSubmission_delete_confirm": "Dou you really want to delete this submission?",
+  "@assignment_editSubmission_delete_confirm": {
+    "type": "text",
+    "description": ""
   },
-  "assignment_submissionScreen_tabFeedback": "Feedback",
-  "@assignment_submissionScreen_tabFeedback": {
-    "type": "text"
+  "assignment_editSubmission_delete_success": "Deleted successfully",
+  "@assignment_editSubmission_delete_success": {
+    "type": "text",
+    "description": ""
   },
-  "assignment_submissionScreen_tabSubmission": "Submission",
-  "@assignment_submissionScreen_tabSubmission": {
-    "type": "text"
+  "assignment_editSubmission_overwriteFormatting": "Editing this submission will remove all existing formatting.",
+  "@assignment_editSubmission_overwriteFormatting": {
+    "type": "text",
+    "description": ""
+  },
+  "assignment_editSubmission_teamSubmissionNotSupported": "Team submissions are not yet supported in this app.",
+  "@assignment_editSubmission_teamSubmissionNotSupported": {
+    "type": "text",
+    "description": ""
+  },
+  "assignment_editSubmission_text": "Text submission",
+  "@assignment_editSubmission_text": {
+    "type": "text",
+    "description": ""
+  },
+  "assignment_editSubmission_text_errorEmpty": "Your submission may not be empty.",
+  "@assignment_editSubmission_text_errorEmpty": {
+    "type": "text",
+    "description": ""
   },
   "calendar_dashboardCard": "Schedule",
   "@calendar_dashboardCard": {
@@ -215,8 +324,33 @@
   "@file_files_my_description": {
     "type": "text"
   },
+  "file_fileTile_details_createdAt": "Created: {createdAt}",
+  "@file_fileTile_details_createdAt": {
+    "type": "text",
+    "description": ""
+  },
+  "file_fileTile_details_modifiedAt": "Last modified: {modifiedAt}",
+  "@file_fileTile_details_modifiedAt": {
+    "type": "text",
+    "description": ""
+  },
+  "file_fileTile_details_offline": "Make available offline",
+  "@file_fileTile_details_offline": {
+    "type": "text",
+    "description": ""
+  },
+  "file_fileTile_details_open": "Open",
+  "@file_fileTile_details_open": {
+    "type": "text",
+    "description": ""
+  },
   "general_cancel": "Cancel",
   "@general_cancel": {
+    "type": "text",
+    "description": ""
+  },
+  "general_dismiss": "Dismiss",
+  "@general_dismiss": {
     "type": "text",
     "description": ""
   },
@@ -228,64 +362,28 @@
   "@general_placeholder": {
     "type": "text"
   },
+  "general_save": "Save",
+  "@general_save": {
+    "type": "text",
+    "description": ""
+  },
+  "general_save_success": "Saved \uD83D\uDE0A",
+  "@general_save_success": {
+    "type": "text",
+    "description": ""
+  },
+  "general_saving": "Saving…",
+  "@general_saving": {
+    "type": "text",
+    "description": ""
+  },
+  "general_signOut": "Sign out",
+  "@general_signOut": {
+    "type": "text",
+    "description": ""
+  },
   "general_user_unknown": "unknown",
   "@general_user_unknown": {
-    "type": "text"
-  },
-  "login_form_demo": "Don't have an account yet? Try it out!",
-  "@login_form_demo": {
-    "type": "text"
-  },
-  "login_form_demo_student": "Demo as a student",
-  "@login_form_demo_student": {
-    "type": "text"
-  },
-  "login_form_demo_teacher": "Demo as a teacher",
-  "@login_form_demo_teacher": {
-    "type": "text"
-  },
-  "login_form_email": "Email",
-  "@login_form_email": {
-    "type": "text"
-  },
-  "login_form_email_error": "Enter an email address.",
-  "@login_form_email_error": {
-    "type": "text"
-  },
-  "login_form_errorAuth": "Email or password is wrong.",
-  "@login_form_errorAuth": {
-    "type": "text"
-  },
-  "login_form_errorNoConnection": "No connection to the server.",
-  "@login_form_errorNoConnection": {
-    "type": "text"
-  },
-  "login_form_errorRateLimit": "Too many requests. Try again in {timeToWait}.",
-  "@login_form_errorRateLimit": {
-    "type": "text"
-  },
-  "login_form_login": "Login",
-  "@login_form_login": {
-    "type": "text"
-  },
-  "login_form_password": "Password",
-  "@login_form_password": {
-    "type": "text"
-  },
-  "login_form_password_error": "Enter a password",
-  "@login_form_password_error": {
-    "type": "text"
-  },
-  "login_loginScreen_about": "Das Hasso-Plattner-Institut für Digital Engineering entwickelt unter der Leitung von Prof. Dr. Christoph Meinel zusammen mit MINT-EC, dem nationalen Excellence-Schulnetzwerk von über 300 Schulen bundesweit und unterstützt vom Bundesministerium für Bildung und Forschung die HPI Schul-Cloud. Sie soll die technische Grundlage schaffen, dass Lehrkräfte und Schüler in jedem Unterrichtsfach auch moderne digitale Lehr- und Lerninhalte nutzen können, und zwar so, wie Apps über Smartphones oder Tablets nutzbar sind.",
-  "@login_loginScreen_about": {
-    "type": "text"
-  },
-  "login_loginScreen_moreInformation": "scroll down for more information",
-  "@login_loginScreen_moreInformation": {
-    "type": "text"
-  },
-  "login_loginScreen_placeholder": "There could go some other information down here.",
-  "@login_loginScreen_placeholder": {
     "type": "text"
   },
   "news": "News",
@@ -308,6 +406,11 @@
   "news_dashboardCard_all": "All articles",
   "@news_dashboardCard_all": {
     "type": "text"
+  },
+  "news_dashboardCard_empty": "No articles available.",
+  "@news_dashboardCard_empty": {
+    "type": "text",
+    "description": ""
   },
   "settings": "Settings",
   "@settings": {
@@ -340,5 +443,75 @@
   "settings_version": "Version",
   "@settings_version": {
     "type": "text"
+  },
+  "signIn_form_demo": "Don't have an account yet? Try it out!",
+  "@signIn_form_demo": {
+    "type": "text",
+    "description": ""
+  },
+  "signIn_form_demo_student": "Demo as a student",
+  "@signIn_form_demo_student": {
+    "type": "text",
+    "description": ""
+  },
+  "signIn_form_demo_teacher": "Demo as a teacher",
+  "@signIn_form_demo_teacher": {
+    "type": "text",
+    "description": ""
+  },
+  "signIn_form_email": "Email",
+  "@signIn_form_email": {
+    "type": "text",
+    "description": ""
+  },
+  "signIn_form_email_error": "Enter an email address.",
+  "@signIn_form_email_error": {
+    "type": "text",
+    "description": ""
+  },
+  "signIn_form_errorAuth": "Email or password is wrong.",
+  "@signIn_form_errorAuth": {
+    "type": "text",
+    "description": ""
+  },
+  "signIn_form_errorNoConnection": "No connection to the server.",
+  "@signIn_form_errorNoConnection": {
+    "type": "text",
+    "description": ""
+  },
+  "signIn_form_errorRateLimit": "Too many requests. Try again in {timeToWait}.",
+  "@signIn_form_errorRateLimit": {
+    "type": "text",
+    "description": ""
+  },
+  "signIn_form_password": "Password",
+  "@signIn_form_password": {
+    "type": "text",
+    "description": ""
+  },
+  "signIn_form_password_error": "Enter a password",
+  "@signIn_form_password_error": {
+    "type": "text",
+    "description": ""
+  },
+  "signIn_form_signIn": "Sign in",
+  "@signIn_form_signIn": {
+    "type": "text",
+    "description": ""
+  },
+  "signIn_signInScreen_about": "Das Hasso-Plattner-Institut für Digital Engineering entwickelt unter der Leitung von Prof. Dr. Christoph Meinel zusammen mit MINT-EC, dem nationalen Excellence-Schulnetzwerk von über 300 Schulen bundesweit und unterstützt vom Bundesministerium für Bildung und Forschung die HPI Schul-Cloud. Sie soll die technische Grundlage schaffen, dass Lehrkräfte und Schüler in jedem Unterrichtsfach auch moderne digitale Lehr- und Lerninhalte nutzen können, und zwar so, wie Apps über Smartphones oder Tablets nutzbar sind.",
+  "@signIn_signInScreen_about": {
+    "type": "text",
+    "description": ""
+  },
+  "signIn_signInScreen_moreInformation": "scroll down for more information",
+  "@signIn_signInScreen_moreInformation": {
+    "type": "text",
+    "description": ""
+  },
+  "signIn_signInScreen_placeholder": "There could go some other information down here.",
+  "@signIn_signInScreen_placeholder": {
+    "type": "text",
+    "description": ""
   }
 }

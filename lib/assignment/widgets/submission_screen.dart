@@ -49,10 +49,8 @@ class SubmissionScreen extends StatelessWidget {
                 labelColor: Colors.black,
                 labelStyle: TextStyle(fontSize: 16),
                 tabs: <Widget>[
-                  Tab(
-                    text: context.s.assignment_submissionScreen_tabSubmission,
-                  ),
-                  Tab(text: context.s.assignment_submissionScreen_tabFeedback),
+                  Tab(text: context.s.assignment_assignmentDetails_submission),
+                  Tab(text: context.s.assignment_assignmentDetails_feedback),
                 ],
               ),
             ),
@@ -72,7 +70,7 @@ class SubmissionScreen extends StatelessWidget {
                   children: <Widget>[
                     if (submission.grade != null)
                       Text(
-                        context.s.assignment_submissionScreen_gradeTitle(
+                        context.s.assignment_assignmentDetails_feedback_grade(
                             submission.grade),
                       ),
                     Html(

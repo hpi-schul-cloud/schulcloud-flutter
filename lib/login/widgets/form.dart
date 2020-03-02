@@ -38,11 +38,11 @@ class _LoginFormState extends State<LoginForm> {
       _isEmailValid = e.isEmailValid;
       _isPasswordValid = e.isPasswordValid;
     } on NoConnectionToServerError {
-      _ambientError = context.s.login_form_errorNoConnection;
+      _ambientError = context.s.signIn_form_errorNoConnection;
     } on AuthenticationError {
-      _ambientError = context.s.login_form_errorAuth;
+      _ambientError = context.s.signIn_form_errorAuth;
     } on TooManyRequestsError catch (error) {
-      _ambientError = context.s.login_form_errorRateLimit(error.timeToWait);
+      _ambientError = context.s.signIn_form_errorRateLimit(error.timeToWait);
     } finally {
       setState(() => _isLoading = false);
     }
@@ -83,16 +83,16 @@ class _LoginFormState extends State<LoginForm> {
           SizedBox(height: 16),
           LoginInput(
             controller: _emailController,
-            label: s.login_form_email,
-            error: _isEmailValid ? null : s.login_form_email_error,
+            label: s.signIn_form_email,
+            error: _isEmailValid ? null : s.signIn_form_email_error,
             onChanged: () => setState(() {}),
           ),
           SizedBox(height: 16),
           LoginInput(
             controller: _passwordController,
-            label: s.login_form_password,
+            label: s.signIn_form_password,
             obscureText: true,
-            error: _isPasswordValid ? null : s.login_form_password_error,
+            error: _isPasswordValid ? null : s.signIn_form_password_error,
             onChanged: () => setState(() {}),
           ),
           SizedBox(height: 16),
@@ -102,7 +102,7 @@ class _LoginFormState extends State<LoginForm> {
             child: Padding(
               padding: EdgeInsets.all(12),
               child: Text(
-                _isLoading ? s.general_loading : s.login_form_login,
+                _isLoading ? s.general_loading : s.signIn_form_signIn,
                 style: TextStyle(color: Colors.white, fontSize: 20),
               ),
             ),
@@ -111,18 +111,18 @@ class _LoginFormState extends State<LoginForm> {
           if (_ambientError != null) Text(_ambientError),
           Divider(),
           SizedBox(height: 8),
-          Text(s.login_form_demo),
+          Text(s.signIn_form_demo),
           SizedBox(height: 8),
           Wrap(
             children: <Widget>[
               SecondaryButton(
                 onPressed: _loginAsDemoStudent,
-                child: Text(s.login_form_demo_student),
+                child: Text(s.signIn_form_demo_student),
               ),
               SizedBox(width: 8),
               SecondaryButton(
                 onPressed: _loginAsDemoTeacher,
-                child: Text(s.login_form_demo_teacher),
+                child: Text(s.signIn_form_demo_teacher),
               ),
             ],
           ),
