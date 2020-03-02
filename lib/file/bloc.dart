@@ -27,7 +27,7 @@ class FileBloc {
     final storage = services.get<StorageService>();
     final api = services.get<ApiNetworkService>();
 
-    return CacheController<List<File>>(
+    return SimpleCacheController<List<File>>(
       saveToCache: (files) =>
           storage.cache.putChildrenOfType<File>(parent?.id ?? owner, files),
       loadFromCache: () =>
@@ -95,11 +95,10 @@ class FileBloc {
 
   Future<void> uploadFile({@required String owner, String parent}) async {
     final network = services.get<NetworkService>();
-    final client = services.get<ClientNetworkService>();
     final api = services.get<ApiNetworkService>();
 
-    final file = await FilePicker.getFile();
-    file.name;
+    // final file = await FilePicker.getFile();
+    // file.name;
 
     const fileName = 'test.txt';
     const mimeType = 'text';

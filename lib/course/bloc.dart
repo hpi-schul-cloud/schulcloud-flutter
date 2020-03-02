@@ -36,7 +36,7 @@ class CourseBloc {
     final storage = services.get<StorageService>();
     final userFetcher = services.get<UserFetcherService>();
 
-    return CacheController(
+    return SimpleCacheController(
       saveToCache: (teachers) =>
           storage.cache.putChildrenOfType<User>(course.id, teachers),
       loadFromCache: () => storage.cache.getChildrenOfType<User>(course.id),

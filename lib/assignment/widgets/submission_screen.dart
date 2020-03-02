@@ -24,7 +24,7 @@ class SubmissionScreen extends StatelessWidget {
     return DefaultTabController(
       length: 2,
       child: CachedRawBuilder(
-        controllerBuilder: () =>
+        controller:
             services.get<AssignmentBloc>().fetchCourseOfAssignment(assignment),
         builder: (_, courseUpdate) {
           final course = courseUpdate.data;

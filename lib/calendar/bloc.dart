@@ -41,7 +41,7 @@ class CalendarBloc {
         return u;
       }
 
-      return CacheUpdate(
+      return CacheUpdate.raw(
         isFetching: u.isFetching,
         data: u.data
             .map(_getTodaysInstanceOrNull)

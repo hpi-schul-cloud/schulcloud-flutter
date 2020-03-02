@@ -133,7 +133,7 @@ CacheController<T> fetchSingle<T extends Entity>({
   final storage = services.get<StorageService>();
   final api = services.get<ApiNetworkService>();
 
-  return CacheController<T>(
+  return SimpleCacheController<T>(
     saveToCache: (item) => storage.cache.putChildrenOfType<T>(parent, [item]),
     loadFromCache: () => throw NotInCacheException(),
     fetcher: () async {
@@ -156,7 +156,7 @@ CacheController<List<T>> fetchList<T extends Entity>({
   final storage = services.get<StorageService>();
   final api = services.get<ApiNetworkService>();
 
-  return CacheController<List<T>>(
+  return SimpleCacheController<List<T>>(
     saveToCache: (items) => storage.cache.putChildrenOfType<T>(parent, items),
     loadFromCache: () => throw NotInCacheException(),
     fetcher: () async {
