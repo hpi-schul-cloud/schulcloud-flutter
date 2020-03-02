@@ -107,8 +107,6 @@ class _LoggedInScreenState extends State<LoggedInScreen> {
   }
 }
 
-typedef L10nStringGetter = String Function(S);
-
 @immutable
 class _BottomTab {
   const _BottomTab({

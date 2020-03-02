@@ -48,6 +48,8 @@ String formatFileSize(int bytes) {
   return '${(bytes / power).toStringAsFixed(index == 0 ? 0 : 1)} ${units[index]}';
 }
 
+typedef L10nStringGetter = String Function(S);
+
 extension PowerfulString on String {
   /// Removes html tags from a string.
   String get withoutHtmlTags => parse(this).documentElement.text;
