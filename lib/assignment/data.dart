@@ -15,6 +15,7 @@ class Assignment implements Entity {
     @required this.name,
     @required this.schoolId,
     @required this.createdAt,
+    @required this.updatedAt,
     @required this.availableAt,
     this.dueAt,
     @required this.teacherId,
@@ -30,6 +31,7 @@ class Assignment implements Entity {
         assert(name != null),
         assert(schoolId != null),
         assert(createdAt != null),
+        assert(updatedAt != null),
         assert(availableAt != null),
         assert(teacherId != null),
         assert(isPrivate != null),
@@ -46,6 +48,7 @@ class Assignment implements Entity {
           name: data['name'],
           description: data['description'],
           createdAt: (data['createdAt'] as String).parseInstant(),
+          updatedAt: (data['updatedAt'] as String).parseInstant(),
           availableAt: (data['availableDate'] as String).parseInstant(),
           dueAt: (data['dueDate'] as String)?.parseInstant(),
           courseId: data['courseId'] != null
@@ -77,10 +80,11 @@ class Assignment implements Entity {
 
   @HiveField(14)
   final Instant createdAt;
+  @HiveField(19)
+  final Instant updatedAt;
 
   @HiveField(13)
   final Instant availableAt;
-
   @HiveField(12)
   final Instant dueAt;
   bool get isOverdue => dueAt != null && dueAt < Instant.now();

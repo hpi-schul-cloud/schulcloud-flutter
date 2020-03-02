@@ -9,7 +9,16 @@ import 'widgets/assignments_screen.dart';
 const _activeTabPrefix = 'activetabid=';
 final assignmentRoutes = Route.path(
   'homework',
-  builder: (_) => MaterialPageRoute(builder: (_) => AssignmentsScreen()),
+  builder: (result) {
+    // Query string is stored inside the fragment, e.g.:
+    // https://schul-cloud.org/homework/#?dueDateFrom=2020-03-09&dueDateTo=2020-03-27&private=true&publicSubmissions=false&sort=updatedAt&sortorder=1&teamSubmissions=true
+    final query = Uri.parse(result.uri.fragment).queryParameters;
+    final selection =
+        AssignmentsScreen.sortFilterConfig.tryParseWebQuery(query);
+    return MaterialPageRoute(
+      builder: (_) => AssignmentsScreen(sortFilterSelection: selection),
+    );
+  },
   routes: [
     Route.path(
       '{assignmentId}',

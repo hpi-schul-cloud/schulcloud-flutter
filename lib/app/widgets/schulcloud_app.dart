@@ -144,7 +144,7 @@ class _BottomTab {
   static final assignment = _BottomTab(
     icon: Icons.playlist_add_check,
     title: (s) => s.assignment,
-    initialRoute: services.get<AppConfig>().webUrl('assignments'),
+    initialRoute: services.get<AppConfig>().webUrl('homework'),
   );
   static final file = _BottomTab(
     icon: Icons.folder,
