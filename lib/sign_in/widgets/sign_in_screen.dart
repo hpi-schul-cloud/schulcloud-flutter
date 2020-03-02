@@ -4,7 +4,7 @@ import 'package:schulcloud/app/app.dart';
 import 'form.dart';
 import 'slanted_section.dart';
 
-class LoginScreen extends StatelessWidget {
+class SignInScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -32,7 +32,7 @@ class LoginScreen extends StatelessWidget {
               mediaQuery.padding.bottom -
               mediaQuery.padding.top,
         ),
-        child: LoginForm(),
+        child: SignInForm(),
       ),
       SlantedSection(
         color: theme.primaryColor,
@@ -41,7 +41,7 @@ class LoginScreen extends StatelessWidget {
           height: 50,
           padding: EdgeInsets.only(bottom: mediaQuery.padding.bottom),
           alignment: Alignment.center,
-          child: Text(s.login_loginScreen_moreInformation),
+          child: Text(s.signIn_signInScreen_moreInformation),
         ),
       ),
       SlantedSection(
@@ -50,7 +50,7 @@ class LoginScreen extends StatelessWidget {
         child: Padding(
           padding: EdgeInsets.all(16),
           child: Text(
-            s.login_loginScreen_about,
+            s.signIn_signInScreen_about,
             textAlign: TextAlign.justify,
           ),
         ),
@@ -58,7 +58,7 @@ class LoginScreen extends StatelessWidget {
       Container(
         padding: EdgeInsets.all(16),
         alignment: Alignment.center,
-        child: Text(s.login_loginScreen_placeholder),
+        child: Text(s.signIn_signInScreen_placeholder),
       ),
     ];
   }

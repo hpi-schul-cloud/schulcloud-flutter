@@ -8,10 +8,6 @@
   "@app_errorScreen_authError": {
     "type": "text"
   },
-  "app_errorScreen_authError_logOut": "Abmelden",
-  "@app_errorScreen_authError_logOut": {
-    "type": "text"
-  },
   "app_errorScreen_noConnection": "Es konnte keine Verbindung zum Server aufgebaut werden.\nBist du mit dem Internet verbunden?",
   "@app_errorScreen_noConnection": {
     "type": "text"
@@ -63,24 +59,19 @@
     "type": "text",
     "description": ""
   },
-  "app_logOut_confirm": "Abmelden",
-  "@app_logOut_confirm": {
-    "type": "text",
-    "description": ""
-  },
-  "app_logOut_content": "Du brauchst deine Anmeldedaten, um dich wieder anzumelden.",
-  "@app_logOut_content": {
-    "type": "text",
-    "description": ""
-  },
-  "app_logOut_title": "Abmelden?",
-  "@app_logOut_title": {
-    "type": "text",
-    "description": ""
-  },
   "app_navigation_userDataEmpty": "—",
   "@app_navigation_userDataEmpty": {
     "type": "text"
+  },
+  "app_signOut_content": "Du brauchst deine Anmeldedaten, um dich wieder anzumelden.",
+  "@app_signOut_content": {
+    "type": "text",
+    "description": ""
+  },
+  "app_signOut_title": "Abmelden?",
+  "@app_signOut_title": {
+    "type": "text",
+    "description": ""
   },
   "assignment": "Hausaufgaben",
   "@assignment": {
@@ -386,64 +377,13 @@
     "type": "text",
     "description": ""
   },
+  "general_signOut": "Abmelden",
+  "@general_signOut": {
+    "type": "text",
+    "description": ""
+  },
   "general_user_unknown": "Unbekannt",
   "@general_user_unknown": {
-    "type": "text"
-  },
-  "login_form_demo": "Du hast noch keinen Account? Jetzt testen!",
-  "@login_form_demo": {
-    "type": "text"
-  },
-  "login_form_demo_student": "Demo als Schüler",
-  "@login_form_demo_student": {
-    "type": "text"
-  },
-  "login_form_demo_teacher": "Demo als Lehrer",
-  "@login_form_demo_teacher": {
-    "type": "text"
-  },
-  "login_form_email": "E-Mail",
-  "@login_form_email": {
-    "type": "text"
-  },
-  "login_form_email_error": "E-Mail-Adresse",
-  "@login_form_email_error": {
-    "type": "text"
-  },
-  "login_form_errorAuth": "E-Mail oder Passwort sind falsch.",
-  "@login_form_errorAuth": {
-    "type": "text"
-  },
-  "login_form_errorNoConnection": "Keine Verbindung zum Server",
-  "@login_form_errorNoConnection": {
-    "type": "text"
-  },
-  "login_form_errorRateLimit": "Zu viele Versuche. Versuche es erneut in {timeToWait}.",
-  "@login_form_errorRateLimit": {
-    "type": "text"
-  },
-  "login_form_login": "Login",
-  "@login_form_login": {
-    "type": "text"
-  },
-  "login_form_password": "Passwort",
-  "@login_form_password": {
-    "type": "text"
-  },
-  "login_form_password_error": "Passwort eingeben",
-  "@login_form_password_error": {
-    "type": "text"
-  },
-  "login_loginScreen_about": "Das Hasso-Plattner-Institut für Digital Engineering entwickelt unter der Leitung von Prof. Dr. Christoph Meinel zusammen mit MINT-EC, dem nationalen Excellence-Schulnetzwerk von über 300 Schulen bundesweit und unterstützt vom Bundesministerium für Bildung und Forschung die HPI Schul-Cloud. Sie soll die technische Grundlage schaffen, dass Lehrkräfte und Schüler in jedem Unterrichtsfach auch moderne digitale Lehr- und Lerninhalte nutzen können, und zwar so, wie Apps über Smartphones oder Tablets nutzbar sind.",
-  "@login_loginScreen_about": {
-    "type": "text"
-  },
-  "login_loginScreen_moreInformation": "Scrolle herunter für mehr Informationen",
-  "@login_loginScreen_moreInformation": {
-    "type": "text"
-  },
-  "login_loginScreen_placeholder": "Hier könnten noch weitere Informationen stehen.",
-  "@login_loginScreen_placeholder": {
     "type": "text"
   },
   "news": "Neuigkeiten",
@@ -498,5 +438,75 @@
   "settings_version": "Version",
   "@settings_version": {
     "type": "text"
+  },
+  "signIn_form_demo": "Du hast noch keinen Account? Jetzt testen!",
+  "@signIn_form_demo": {
+    "type": "text",
+    "description": ""
+  },
+  "signIn_form_demo_student": "Demo als Schüler",
+  "@signIn_form_demo_student": {
+    "type": "text",
+    "description": ""
+  },
+  "signIn_form_demo_teacher": "Demo als Lehrer",
+  "@signIn_form_demo_teacher": {
+    "type": "text",
+    "description": ""
+  },
+  "signIn_form_email": "E-Mail",
+  "@signIn_form_email": {
+    "type": "text",
+    "description": ""
+  },
+  "signIn_form_email_error": "E-Mail-Adresse",
+  "@signIn_form_email_error": {
+    "type": "text",
+    "description": ""
+  },
+  "signIn_form_errorAuth": "E-Mail oder Passwort sind falsch.",
+  "@signIn_form_errorAuth": {
+    "type": "text",
+    "description": ""
+  },
+  "signIn_form_errorNoConnection": "Keine Verbindung zum Server",
+  "@signIn_form_errorNoConnection": {
+    "type": "text",
+    "description": ""
+  },
+  "signIn_form_errorRateLimit": "Zu viele Versuche. Versuche es erneut in {timeToWait}.",
+  "@signIn_form_errorRateLimit": {
+    "type": "text",
+    "description": ""
+  },
+  "signIn_form_password": "Passwort",
+  "@signIn_form_password": {
+    "type": "text",
+    "description": ""
+  },
+  "signIn_form_password_error": "Passwort eingeben",
+  "@signIn_form_password_error": {
+    "type": "text",
+    "description": ""
+  },
+  "signIn_form_signIn": "Einloggen",
+  "@signIn_form_signIn": {
+    "type": "text",
+    "description": ""
+  },
+  "signIn_signInScreen_about": "Das Hasso-Plattner-Institut für Digital Engineering entwickelt unter der Leitung von Prof. Dr. Christoph Meinel zusammen mit MINT-EC, dem nationalen Excellence-Schulnetzwerk von über 300 Schulen bundesweit und unterstützt vom Bundesministerium für Bildung und Forschung die HPI Schul-Cloud. Sie soll die technische Grundlage schaffen, dass Lehrkräfte und Schüler in jedem Unterrichtsfach auch moderne digitale Lehr- und Lerninhalte nutzen können, und zwar so, wie Apps über Smartphones oder Tablets nutzbar sind.",
+  "@signIn_signInScreen_about": {
+    "type": "text",
+    "description": ""
+  },
+  "signIn_signInScreen_moreInformation": "Scrolle herunter für mehr Informationen",
+  "@signIn_signInScreen_moreInformation": {
+    "type": "text",
+    "description": ""
+  },
+  "signIn_signInScreen_placeholder": "Hier könnten noch weitere Informationen stehen.",
+  "@signIn_signInScreen_placeholder": {
+    "type": "text",
+    "description": ""
   }
 }
