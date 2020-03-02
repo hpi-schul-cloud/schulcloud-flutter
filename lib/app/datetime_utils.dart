@@ -37,3 +37,7 @@ extension UserLocalDateFormatting on LocalDate {
   String get longString =>
       LocalDatePattern.createWithCurrentCulture('D').format(this);
 }
+
+extension TimeMachineInterop on DateTime {
+  LocalDate get asLocalDate => LocalDate.dateTime(this);
+}
