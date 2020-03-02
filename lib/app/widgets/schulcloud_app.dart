@@ -1,23 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:rxdart/rxdart.dart';
 import 'package:schulcloud/app/app.dart';
-import 'package:schulcloud/assignment/assignment.dart';
-import 'package:schulcloud/course/course.dart';
-import 'package:schulcloud/dashboard/dashboard.dart';
-import 'package:schulcloud/file/file.dart';
 import 'package:schulcloud/generated/l10n.dart';
 import 'package:schulcloud/login/login.dart';
-import 'package:schulcloud/news/news.dart';
 
-import 'navigation_bar.dart';
-import 'page_route.dart';
+import '../routing.dart';
 
 class SchulCloudApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final appConfig = services.get<AppConfig>();
-
     return MaterialApp(
       title: appConfig.title,
       theme: appConfig.createThemeData(Brightness.light),
@@ -33,76 +25,34 @@ class SchulCloudApp extends StatelessWidget {
   }
 }
 
-/// The screens that can be navigated to.
-enum Screen {
-  dashboard,
-  news,
-  courses,
-  files,
-  assignments,
-}
-
 class LoggedInScreen extends StatefulWidget {
   @override
   _LoggedInScreenState createState() => _LoggedInScreenState();
 }
 
 class _LoggedInScreenState extends State<LoggedInScreen> {
-  final _navigatorKey = GlobalKey<NavigatorState>();
-  NavigatorState get navigator => _navigatorKey.currentState;
+  final _navigatorKeys =
+      List.generate(_BottomTab.count, (_) => GlobalKey<NavigatorState>());
 
-  /// When the user navigates (via the menu or pressing the back button), we
-  /// add the new screen to the stream. The menu listens to the stream to
-  /// highlight the appropriate item.
-  BehaviorSubject<Screen> _controller;
-  Stream<Screen> _screenStream;
+  var selectedTabIndex = 0;
+  NavigatorState get currentNavigator =>
+      _navigatorKeys[selectedTabIndex].currentState;
 
-  @override
-  void initState() {
-    super.initState();
-    _controller = BehaviorSubject<Screen>();
-    _screenStream = _controller.stream;
-  }
+  void selectTab(int index) {
+    assert(0 <= index && index <= _BottomTab.count);
 
-  @override
-  void dispose() {
-    _controller?.close();
-    super.dispose();
-  }
-
-  void _navigateTo(Screen screen) {
-    // If we are at the root of a screen and try to change to the same screen,
-    // we just stay here.
-    if (!navigator.canPop() && screen == _controller.value) {
-      return;
-    }
-
-    _controller.add(screen);
-
-    final targetScreenBuilder = {
-      Screen.dashboard: (_) => DashboardScreen(),
-      Screen.news: (_) => NewsScreen(),
-      Screen.files: (_) => FilesScreen(),
-      Screen.courses: (_) => CoursesScreen(),
-      Screen.assignments: (_) => AssignmentsScreen(),
-    }[screen];
-
-    navigator
-      ..popUntil((route) => route.isFirst)
-      ..pushReplacement(TopLevelPageRoute(
-        builder: targetScreenBuilder,
-      ));
+    setState(() => selectedTabIndex = index);
   }
 
   /// When the user tries to pop, we first try to pop with the inner navigator.
   /// If that's not possible (we are at a top-level location), we go to the
   /// dashboard. Only if we were already there, we pop (aka close the app).
   Future<bool> _onWillPop() async {
-    if (navigator.canPop()) {
-      navigator.pop();
+    if (currentNavigator.canPop()) {
+      currentNavigator.pop();
       return false;
-    } else if (_controller.value != Screen.dashboard) {
-      _navigateTo(Screen.dashboard);
+    } else if (selectedTabIndex != 0) {
+      selectTab(0);
       return false;
     } else {
       return true;
@@ -111,22 +61,89 @@ class _LoggedInScreenState extends State<LoggedInScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final s = context.s;
+    final theme = context.theme;
+    final barColor = theme.bottomAppBarColor;
+
     return WillPopScope(
       onWillPop: _onWillPop,
       child: Scaffold(
-        body: Navigator(
-          key: _navigatorKey,
-          onGenerateRoute: (_) =>
-              MaterialPageRoute(builder: (_) => DashboardScreen()),
-          observers: [
-            HeroController(),
+        body: IndexedStack(
+          children: <Widget>[
+            for (var i = 0; i < _BottomTab.count; i++)
+              Navigator(
+                key: _navigatorKeys[i],
+                initialRoute: _BottomTab.values[i].initialRoute,
+                onGenerateRoute: router.onGenerateRoute,
+                observers: [
+                  HeroController(),
+                ],
+              ),
           ],
         ),
-        bottomNavigationBar: MyNavigationBar(
-          onNavigate: _navigateTo,
-          activeScreenStream: _screenStream,
+        bottomNavigationBar: BottomNavigationBar(
+          selectedItemColor: theme.accentColor,
+          unselectedItemColor: theme.mediumEmphasisColor,
+          currentIndex: selectedTabIndex,
+          onTap: selectTab,
+          items: [
+            for (final tab in _BottomTab.values)
+              BottomNavigationBarItem(
+                icon: Icon(tab.icon),
+                title: Text(tab.title(s)),
+                backgroundColor: barColor,
+              )
+          ],
         ),
       ),
     );
   }
+}
+
+typedef L10nStringGetter = String Function(S);
+
+@immutable
+class _BottomTab {
+  const _BottomTab({
+    @required this.icon,
+    @required this.title,
+    @required this.initialRoute,
+  })  : assert(icon != null),
+        assert(title != null),
+        assert(initialRoute != null);
+
+  final IconData icon;
+  final L10nStringGetter title;
+  final String initialRoute;
+
+  static final values = [dashboard, news, course, assignment, file];
+  static int get count => values.length;
+
+  // We don't use relative URLs as they would start with a '/' and hence the
+  // navigator automatically populates our initial back stack with '/'.
+  static final dashboard = _BottomTab(
+    icon: Icons.dashboard,
+    title: (s) => s.dashboard,
+    initialRoute: services.get<AppConfig>().webUrl('dashboard'),
+  );
+  static final news = _BottomTab(
+    icon: Icons.new_releases,
+    title: (s) => s.news,
+    initialRoute: services.get<AppConfig>().webUrl('news'),
+  );
+  static final course = _BottomTab(
+    icon: Icons.school,
+    title: (s) => s.course,
+    initialRoute: services.get<AppConfig>().webUrl('courses'),
+  );
+  static final assignment = _BottomTab(
+    icon: Icons.playlist_add_check,
+    title: (s) => s.assignment,
+    initialRoute: services.get<AppConfig>().webUrl('assignments'),
+  );
+  static final file = _BottomTab(
+    icon: Icons.folder,
+    title: (s) => s.file,
+    initialRoute: services.get<AppConfig>().webUrl('files'),
+  );
 }
