@@ -1,4 +1,7 @@
 import 'dart:convert';
+import 'dart:io';
+import 'dart:isolate';
+import 'dart:ui';
 
 import 'package:flutter/widgets.dart';
 import 'package:flutter_cached/flutter_cached.dart';
@@ -7,6 +10,8 @@ import 'package:meta/meta.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/course/course.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:transparent_image/transparent_image.dart';
 
 import 'data.dart';
 
@@ -75,13 +80,42 @@ class FileBloc {
     );
     final signedUrl = json.decode(response.body)['url'];
 
-    await FlutterDownloader.enqueue(
+    final appDirectory = await getApplicationDocumentsDirectory();
+    var appDirectoryAsString = appDirectory.path;
+    if (Platform.isIOS && appDirectoryAsString.endsWith(Platform.pathSeparator) == false){
+      appDirectoryAsString = appDirectoryAsString + Platform.pathSeparator;
+    }
+    print(Platform.pathSeparator);
+    print(appDirectoryAsString);
+
+    final taskId = await FlutterDownloader.enqueue(
       url: signedUrl,
-      savedDir: '/sdcard/Download',
+      savedDir: appDirectoryAsString,
       fileName: file.name,
       showNotification: true,
-      openFileFromNotification: true,
+      openFileFromNotification: true, // Android only
     );
+
+    FlutterDownloader.registerCallback(_onDownloadStatusUpdate);
+
+    final port = ReceivePort();
+    IsolateNameServer.registerPortWithName(port.sendPort, 'port123');
+    port.listen((data) {
+      final taskId = data[0] as String;
+      final status = data[1] as DownloadTaskStatus;
+      // final progress = data[2] as int;
+
+      if (status == DownloadTaskStatus.complete) {
+        FlutterDownloader.open(taskId: taskId);
+      }
+    });
+  }
+
+  static void _onDownloadStatusUpdate(String taskId, DownloadTaskStatus status, int progress) {
+    print('Download task with id $taskId has status $status and progress $progress');
+
+    final port = IsolateNameServer.lookupPortByName('port123');
+    port.send([taskId, status, progress]);
   }
 
   Future<void> ensureStoragePermissionGranted() async {
