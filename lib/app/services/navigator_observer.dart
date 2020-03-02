@@ -27,7 +27,5 @@ class LoggingNavigatorObserver extends NavigatorObserver {
         'Navigator didReplace ${routeToString(oldRoute)} → ${routeToString(newRoute)}');
   }
 
-  String routeToString(Route<dynamic> route) {
-    return route?.settings?.name;
-  }
+  String routeToString(Route<dynamic> route) => route?.settings?.name;
 }
