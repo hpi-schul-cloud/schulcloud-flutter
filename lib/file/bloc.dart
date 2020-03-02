@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:dartx/dartx_io.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_cached/flutter_cached.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
@@ -23,7 +25,7 @@ class FileBloc {
   //   shouldn't be displayed.
   CacheController<List<File>> fetchFiles(Id<dynamic> owner, File parent) {
     final storage = services.get<StorageService>();
-    final network = services.get<NetworkService>();
+    final api = services.get<ApiNetworkService>();
 
     return CacheController<List<File>>(
       saveToCache: (files) =>
@@ -35,7 +37,7 @@ class FileBloc {
           'owner': owner.id,
           if (parent != null) 'parent': parent.id.id,
         };
-        final response = await network.get('fileStorage', parameters: queries);
+        final response = await api.get('fileStorage', parameters: queries);
         final body = json.decode(response.body);
         return (body as List<dynamic>)
             .where((data) => data['name'] != null)
@@ -62,7 +64,7 @@ class FileBloc {
 
     /// The signed URL is the URL used to actually download a file instead of
     /// just viewing its JSON representation.
-    final response = await services.get<NetworkService>().get(
+    final response = await services.get<ClientNetworkService>().get(
       'fileStorage/signedUrl',
       parameters: {'download': null, 'file': file.id.toString()},
     );
@@ -90,4 +92,60 @@ class FileBloc {
       throw PermissionNotGranted();
     }
   }
+
+  Future<void> uploadFile({@required String owner, String parent}) async {
+    final network = services.get<NetworkService>();
+    final client = services.get<ClientNetworkService>();
+    final api = services.get<ApiNetworkService>();
+
+    final file = await FilePicker.getFile();
+    file.name;
+
+    const fileName = 'test.txt';
+    const mimeType = 'text';
+    final fileBuffer = utf8.encode('Dies ist eine Testdatei.');
+
+    // Request a signed url.
+    final signedUrlResponse = await api.post('fileStorage/signedUrl', body: {
+      'filename': fileName,
+      'fileType': mimeType,
+      if (parent != null) 'parent': parent,
+    });
+    print(signedUrlResponse);
+    print(signedUrlResponse.body);
+    final signedInfo = json.decode(signedUrlResponse.body);
+
+    // Upload the file to the storage server.
+    print(await network.put(
+      signedInfo['url'],
+      headers: (signedInfo['header'] as Map).cast<String, String>(),
+      body: fileBuffer,
+    ));
+
+    // Notify the api backend.
+    print(await api.post('fileStorage', body: {
+      'name': fileName,
+      'owner': owner,
+      'type': mimeType,
+      'size': fileBuffer.length.toString(),
+      'storageFileName': signedInfo['header']['x-amz-meta-flat-name'],
+      'thumbnail': signedInfo['header']['x-amz-meta-thumbnail'],
+    }));
+  }
+
+  /*
+  var parentId = file.parent || getCurrentParent();
+  var params = {
+      name: file.name,
+      owner: getOwnerId(),
+      type: file.type,
+      size: file.size,
+      storageFileName: file.signedUrl.header['x-amz-meta-flat-name'],
+      thumbnail: file.signedUrl.header['x-amz-meta-thumbnail']
+  };
+
+  $.post('/files/fileModel', params);
+  this.removeFile(file);
+  */
+
 }
