@@ -42,7 +42,7 @@ class FancyScaffold extends StatelessWidget {
   }
 }
 
-typedef AppBarBuilder = Widget Function(bool innerBoxIsScrolled);
+typedef AppBarBuilder = Widget Function(bool isInnerBoxScrolled);
 
 class FancyTabbedScaffold extends StatelessWidget {
   const FancyTabbedScaffold({
