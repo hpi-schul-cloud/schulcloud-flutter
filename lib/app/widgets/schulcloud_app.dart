@@ -69,6 +69,7 @@ class _LoggedInScreenState extends State<LoggedInScreen> {
       onWillPop: _onWillPop,
       child: Scaffold(
         body: IndexedStack(
+          index: selectedTabIndex,
           children: <Widget>[
             for (var i = 0; i < _BottomTab.count; i++)
               Navigator(

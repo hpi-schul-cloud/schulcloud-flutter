@@ -9,6 +9,10 @@ import 'data.dart';
 class NewsBloc {
   const NewsBloc();
 
+  CacheController<Article> fetchArticle(Id<Article> id) => fetchSingle(
+        makeNetworkCall: () => services.network.get('news/$id'),
+        parser: (data) => Article.fromJson(data),
+      );
   CacheController<List<Article>> fetchArticles() => fetchList(
         makeNetworkCall: () => services.network.get('news'),
         parser: (data) => Article.fromJson(data),

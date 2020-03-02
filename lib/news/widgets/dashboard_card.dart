@@ -7,7 +7,6 @@ import 'package:schulcloud/dashboard/dashboard.dart';
 import '../bloc.dart';
 import '../data.dart';
 import '../news.dart';
-import 'article_screen.dart';
 
 class NewsDashboardCard extends StatelessWidget {
   @override
@@ -37,9 +36,8 @@ class NewsDashboardCard extends StatelessWidget {
                   title: Text(article.title),
                   subtitle: Html(data: limitString(article.content, 100)),
                   trailing: Text(article.publishedAt.shortDateString),
-                  onTap: () => context.navigator.push(MaterialPageRoute(
-                    builder: (context) => ArticleScreen(article: article),
-                  )),
+                  onTap: () =>
+                      context.navigator.pushNamed('/news/${article.id}'),
                 ),
             ],
           );
