@@ -57,6 +57,7 @@ class StorageService {
   final Preference<String> token;
   bool get hasToken => token.getValue().isNotEmpty;
   bool get isSignedIn => hasToken;
+  bool get isSignedOut => !isSignedIn;
 
   final HiveCache cache;
 

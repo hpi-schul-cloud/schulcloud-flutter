@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'top_level_screen_wrapper.dart';
+
 class TopLevelPageRoute<T> extends PageRoute<T> {
   TopLevelPageRoute({
     @required this.builder,
@@ -16,9 +18,13 @@ class TopLevelPageRoute<T> extends PageRoute<T> {
   String get barrierLabel => null;
 
   @override
-  Widget buildPage(BuildContext context, Animation<double> animation,
-          Animation<double> secondaryAnimation) =>
-      builder(context);
+  Widget buildPage(
+    BuildContext context,
+    Animation<double> animation,
+    Animation<double> secondaryAnimation,
+  ) {
+    return TopLevelScreenWrapper(child: builder(context));
+  }
 
   @override
   Widget buildTransitions(BuildContext context, Animation<double> animation,

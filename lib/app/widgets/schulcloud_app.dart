@@ -42,15 +42,15 @@ class SchulCloudApp extends StatelessWidget {
 
 class LoggedInScreen extends StatefulWidget {
   @override
-  _LoggedInScreenState createState() => _LoggedInScreenState();
+  LoggedInScreenState createState() => LoggedInScreenState();
 }
 
-class _LoggedInScreenState extends State<LoggedInScreen> {
-  final _navigatorKeys =
+class LoggedInScreenState extends State<LoggedInScreen> {
+  static final _navigatorKeys =
       List.generate(_BottomTab.count, (_) => GlobalKey<NavigatorState>());
 
-  var selectedTabIndex = 0;
-  NavigatorState get currentNavigator =>
+  static var selectedTabIndex = 0;
+  static NavigatorState get currentNavigator =>
       _navigatorKeys[selectedTabIndex].currentState;
 
   void selectTab(int index, {bool popIfAlreadySelected = false}) {
@@ -86,39 +86,37 @@ class _LoggedInScreenState extends State<LoggedInScreen> {
     final theme = context.theme;
     final barColor = theme.bottomAppBarColor;
 
-    return LogConsoleOnShake(
-      child: WillPopScope(
-        onWillPop: _onWillPop,
-        child: Scaffold(
-          body: IndexedStack(
-            index: selectedTabIndex,
-            children: <Widget>[
-              for (var i = 0; i < _BottomTab.count; i++)
-                Navigator(
-                  key: _navigatorKeys[i],
-                  initialRoute: _BottomTab.values[i].initialRoute,
-                  onGenerateRoute: router.onGenerateRoute,
-                  observers: [
-                    LoggingNavigatorObserver(),
-                    HeroController(),
-                  ],
-                ),
-            ],
-          ),
-          bottomNavigationBar: BottomNavigationBar(
-            selectedItemColor: theme.accentColor,
-            unselectedItemColor: theme.mediumEmphasisColor,
-            currentIndex: selectedTabIndex,
-            onTap: (index) => selectTab(index, popIfAlreadySelected: true),
-            items: [
-              for (final tab in _BottomTab.values)
-                BottomNavigationBarItem(
-                  icon: Icon(tab.icon),
-                  title: Text(tab.title(s)),
-                  backgroundColor: barColor,
-                )
-            ],
-          ),
+    return WillPopScope(
+      onWillPop: _onWillPop,
+      child: Scaffold(
+        body: IndexedStack(
+          index: selectedTabIndex,
+          children: <Widget>[
+            for (var i = 0; i < _BottomTab.count; i++)
+              Navigator(
+                key: _navigatorKeys[i],
+                initialRoute: _BottomTab.values[i].initialRoute,
+                onGenerateRoute: router.onGenerateRoute,
+                observers: [
+                  LoggingNavigatorObserver(),
+                  HeroController(),
+                ],
+              ),
+          ],
+        ),
+        bottomNavigationBar: BottomNavigationBar(
+          selectedItemColor: theme.accentColor,
+          unselectedItemColor: theme.mediumEmphasisColor,
+          currentIndex: selectedTabIndex,
+          onTap: (index) => selectTab(index, popIfAlreadySelected: true),
+          items: [
+            for (final tab in _BottomTab.values)
+              BottomNavigationBarItem(
+                icon: Icon(tab.icon),
+                title: Text(tab.title(s)),
+                backgroundColor: barColor,
+              )
+          ],
         ),
       ),
     );
