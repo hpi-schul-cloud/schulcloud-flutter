@@ -4,12 +4,8 @@
   "@app_emptyState_retry": {
     "type": "text"
   },
-  "app_errorScreen_authError": "Seems like this device's authentication expired.\nMaybe logging out and in again helps?",
+  "app_errorScreen_authError": "Seems like this device's authentication expired.\nMaybe signing out and in again helps?",
   "@app_errorScreen_authError": {
-    "type": "text"
-  },
-  "app_errorScreen_authError_logOut": "Log out",
-  "@app_errorScreen_authError_logOut": {
     "type": "text"
   },
   "app_errorScreen_noConnection": "We can't connect to the server.\nAre you sure you're connected to the internet?",
@@ -63,24 +59,19 @@
     "type": "text",
     "description": ""
   },
-  "app_logOut_confirm": "Log out",
-  "@app_logOut_confirm": {
-    "type": "text",
-    "description": ""
-  },
-  "app_logOut_content": "You'll need your login credentials to log in again.",
-  "@app_logOut_content": {
-    "type": "text",
-    "description": ""
-  },
-  "app_logOut_title": "Log out?",
-  "@app_logOut_title": {
-    "type": "text",
-    "description": ""
-  },
   "app_navigation_userDataEmpty": "—",
   "@app_navigation_userDataEmpty": {
     "type": "text"
+  },
+  "app_signOut_content": "You will need to provide your login credentials to use the app again.",
+  "@app_signOut_content": {
+    "type": "text",
+    "description": ""
+  },
+  "app_signOut_title": "Sign out?",
+  "@app_signOut_title": {
+    "type": "text",
+    "description": ""
   },
   "assignment": "Assignments",
   "@assignment": {
@@ -391,64 +382,13 @@
     "type": "text",
     "description": ""
   },
+  "general_signOut": "Sign out",
+  "@general_signOut": {
+    "type": "text",
+    "description": ""
+  },
   "general_user_unknown": "unknown",
   "@general_user_unknown": {
-    "type": "text"
-  },
-  "login_form_demo": "Don't have an account yet? Try it out!",
-  "@login_form_demo": {
-    "type": "text"
-  },
-  "login_form_demo_student": "Demo as a student",
-  "@login_form_demo_student": {
-    "type": "text"
-  },
-  "login_form_demo_teacher": "Demo as a teacher",
-  "@login_form_demo_teacher": {
-    "type": "text"
-  },
-  "login_form_email": "Email",
-  "@login_form_email": {
-    "type": "text"
-  },
-  "login_form_email_error": "Enter an email address.",
-  "@login_form_email_error": {
-    "type": "text"
-  },
-  "login_form_errorAuth": "Email or password is wrong.",
-  "@login_form_errorAuth": {
-    "type": "text"
-  },
-  "login_form_errorNoConnection": "No connection to the server.",
-  "@login_form_errorNoConnection": {
-    "type": "text"
-  },
-  "login_form_errorRateLimit": "Too many requests. Try again in {timeToWait}.",
-  "@login_form_errorRateLimit": {
-    "type": "text"
-  },
-  "login_form_login": "Login",
-  "@login_form_login": {
-    "type": "text"
-  },
-  "login_form_password": "Password",
-  "@login_form_password": {
-    "type": "text"
-  },
-  "login_form_password_error": "Enter a password",
-  "@login_form_password_error": {
-    "type": "text"
-  },
-  "login_loginScreen_about": "Das Hasso-Plattner-Institut für Digital Engineering entwickelt unter der Leitung von Prof. Dr. Christoph Meinel zusammen mit MINT-EC, dem nationalen Excellence-Schulnetzwerk von über 300 Schulen bundesweit und unterstützt vom Bundesministerium für Bildung und Forschung die HPI Schul-Cloud. Sie soll die technische Grundlage schaffen, dass Lehrkräfte und Schüler in jedem Unterrichtsfach auch moderne digitale Lehr- und Lerninhalte nutzen können, und zwar so, wie Apps über Smartphones oder Tablets nutzbar sind.",
-  "@login_loginScreen_about": {
-    "type": "text"
-  },
-  "login_loginScreen_moreInformation": "scroll down for more information",
-  "@login_loginScreen_moreInformation": {
-    "type": "text"
-  },
-  "login_loginScreen_placeholder": "There could go some other information down here.",
-  "@login_loginScreen_placeholder": {
     "type": "text"
   },
   "news": "News",
@@ -471,6 +411,11 @@
   "news_dashboardCard_all": "All articles",
   "@news_dashboardCard_all": {
     "type": "text"
+  },
+  "news_dashboardCard_empty": "No articles available.",
+  "@news_dashboardCard_empty": {
+    "type": "text",
+    "description": ""
   },
   "settings": "Settings",
   "@settings": {
@@ -503,5 +448,75 @@
   "settings_version": "Version",
   "@settings_version": {
     "type": "text"
+  },
+  "signIn_form_demo": "Don't have an account yet? Try it out!",
+  "@signIn_form_demo": {
+    "type": "text",
+    "description": ""
+  },
+  "signIn_form_demo_student": "Demo as a student",
+  "@signIn_form_demo_student": {
+    "type": "text",
+    "description": ""
+  },
+  "signIn_form_demo_teacher": "Demo as a teacher",
+  "@signIn_form_demo_teacher": {
+    "type": "text",
+    "description": ""
+  },
+  "signIn_form_email": "Email",
+  "@signIn_form_email": {
+    "type": "text",
+    "description": ""
+  },
+  "signIn_form_email_error": "Enter an email address.",
+  "@signIn_form_email_error": {
+    "type": "text",
+    "description": ""
+  },
+  "signIn_form_errorAuth": "Email or password is wrong.",
+  "@signIn_form_errorAuth": {
+    "type": "text",
+    "description": ""
+  },
+  "signIn_form_errorNoConnection": "No connection to the server.",
+  "@signIn_form_errorNoConnection": {
+    "type": "text",
+    "description": ""
+  },
+  "signIn_form_errorRateLimit": "Too many requests. Try again in {timeToWait}.",
+  "@signIn_form_errorRateLimit": {
+    "type": "text",
+    "description": ""
+  },
+  "signIn_form_password": "Password",
+  "@signIn_form_password": {
+    "type": "text",
+    "description": ""
+  },
+  "signIn_form_password_error": "Enter a password",
+  "@signIn_form_password_error": {
+    "type": "text",
+    "description": ""
+  },
+  "signIn_form_signIn": "Sign in",
+  "@signIn_form_signIn": {
+    "type": "text",
+    "description": ""
+  },
+  "signIn_signInScreen_about": "Das Hasso-Plattner-Institut für Digital Engineering entwickelt unter der Leitung von Prof. Dr. Christoph Meinel zusammen mit MINT-EC, dem nationalen Excellence-Schulnetzwerk von über 300 Schulen bundesweit und unterstützt vom Bundesministerium für Bildung und Forschung die HPI Schul-Cloud. Sie soll die technische Grundlage schaffen, dass Lehrkräfte und Schüler in jedem Unterrichtsfach auch moderne digitale Lehr- und Lerninhalte nutzen können, und zwar so, wie Apps über Smartphones oder Tablets nutzbar sind.",
+  "@signIn_signInScreen_about": {
+    "type": "text",
+    "description": ""
+  },
+  "signIn_signInScreen_moreInformation": "scroll down for more information",
+  "@signIn_signInScreen_moreInformation": {
+    "type": "text",
+    "description": ""
+  },
+  "signIn_signInScreen_placeholder": "There could go some other information down here.",
+  "@signIn_signInScreen_placeholder": {
+    "type": "text",
+    "description": ""
   }
 }

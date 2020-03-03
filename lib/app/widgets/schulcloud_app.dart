@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:logger_flutter/logger_flutter.dart';
 import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/generated/l10n.dart';
 import 'package:schulcloud/login/login.dart';
 
+import '../app_config.dart';
 import '../routing.dart';
+import '../services/navigator_observer.dart';
+import '../services/storage.dart';
+import '../utils.dart';
 
 class SchulCloudApp extends StatelessWidget {
   @override
@@ -71,36 +76,39 @@ class _LoggedInScreenState extends State<LoggedInScreen> {
     final theme = context.theme;
     final barColor = theme.bottomAppBarColor;
 
-    return WillPopScope(
-      onWillPop: _onWillPop,
-      child: Scaffold(
-        body: IndexedStack(
-          index: selectedTabIndex,
-          children: <Widget>[
-            for (var i = 0; i < _BottomTab.count; i++)
-              Navigator(
-                key: _navigatorKeys[i],
-                initialRoute: _BottomTab.values[i].initialRoute,
-                onGenerateRoute: router.onGenerateRoute,
-                observers: [
-                  HeroController(),
-                ],
-              ),
-          ],
-        ),
-        bottomNavigationBar: BottomNavigationBar(
-          selectedItemColor: theme.accentColor,
-          unselectedItemColor: theme.mediumEmphasisColor,
-          currentIndex: selectedTabIndex,
-          onTap: (index) => selectTab(index, popIfAlreadySelected: true),
-          items: [
-            for (final tab in _BottomTab.values)
-              BottomNavigationBarItem(
-                icon: Icon(tab.icon),
-                title: Text(tab.title(s)),
-                backgroundColor: barColor,
-              )
-          ],
+    return LogConsoleOnShake(
+      child: WillPopScope(
+        onWillPop: _onWillPop,
+        child: Scaffold(
+          body: IndexedStack(
+            index: selectedTabIndex,
+            children: <Widget>[
+              for (var i = 0; i < _BottomTab.count; i++)
+                Navigator(
+                  key: _navigatorKeys[i],
+                  initialRoute: _BottomTab.values[i].initialRoute,
+                  onGenerateRoute: router.onGenerateRoute,
+                  observers: [
+                    LoggingNavigatorObserver(),
+                    HeroController(),
+                  ],
+                ),
+            ],
+          ),
+          bottomNavigationBar: BottomNavigationBar(
+            selectedItemColor: theme.accentColor,
+            unselectedItemColor: theme.mediumEmphasisColor,
+            currentIndex: selectedTabIndex,
+            onTap: (index) => selectTab(index, popIfAlreadySelected: true),
+            items: [
+              for (final tab in _BottomTab.values)
+                BottomNavigationBarItem(
+                  icon: Icon(tab.icon),
+                  title: Text(tab.title(s)),
+                  backgroundColor: barColor,
+                )
+            ],
+          ),
         ),
       ),
     );
@@ -121,7 +129,7 @@ class _BottomTab {
   final L10nStringGetter title;
   final String initialRoute;
 
-  static final values = [dashboard, news, course, assignment, file];
+  static final values = [dashboard, course, assignment, file, news];
   static int get count => values.length;
 
   // We don't use relative URLs as they would start with a '/' and hence the
@@ -130,11 +138,6 @@ class _BottomTab {
     icon: Icons.dashboard,
     title: (s) => s.dashboard,
     initialRoute: services.get<AppConfig>().webUrl('dashboard'),
-  );
-  static final news = _BottomTab(
-    icon: Icons.new_releases,
-    title: (s) => s.news,
-    initialRoute: services.get<AppConfig>().webUrl('news'),
   );
   static final course = _BottomTab(
     icon: Icons.school,
@@ -150,5 +153,10 @@ class _BottomTab {
     icon: Icons.folder,
     title: (s) => s.file,
     initialRoute: services.get<AppConfig>().webUrl('files'),
+  );
+  static final news = _BottomTab(
+    icon: Icons.new_releases,
+    title: (s) => s.news,
+    initialRoute: services.get<AppConfig>().webUrl('news'),
   );
 }

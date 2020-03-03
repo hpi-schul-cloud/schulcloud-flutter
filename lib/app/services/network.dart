@@ -2,11 +2,13 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/widgets.dart';
-import 'package:get_it/get_it.dart';
 import 'package:http/http.dart' as http;
 import 'package:meta/meta.dart';
+import 'package:get_it/get_it.dart';
 import 'package:schulcloud/app/app.dart';
 
+import '../logger.dart';
+import '../utils.dart';
 import 'storage.dart';
 
 @immutable
@@ -98,6 +100,7 @@ class NetworkService {
       path += '?$params';
     }
     return _makeCall(
+      'GET',
       path,
       (url) async => http.get(url, headers: _getHeaders()),
     );
@@ -106,6 +109,7 @@ class NetworkService {
   /// Makes an HTTP POST request to the API.
   Future<http.Response> post(String path, {dynamic body}) {
     return _makeCall(
+      'POST',
       path,
       (url) async =>
           http.post(url, headers: _getHeaders(), body: json.encode(body)),
@@ -115,6 +119,7 @@ class NetworkService {
   /// Makes an HTTP PATCH request to the API.
   Future<http.Response> patch(String path, {dynamic body}) {
     return _makeCall(
+      'PATCH',
       path,
       (url) async =>
           http.patch(url, headers: _getHeaders(), body: json.encode(body)),
@@ -124,6 +129,7 @@ class NetworkService {
   /// Makes an HTTP DELETE request to the API.
   Future<http.Response> delete(String path) {
     return _makeCall(
+      'DELETE',
       path,
       (url) async => http.delete(url, headers: _getHeaders()),
     );
@@ -133,9 +139,11 @@ class NetworkService {
       InternetAddress.lookup(apiUrl.substring(apiUrl.lastIndexOf('/') + 1));
 
   Future<http.Response> _makeCall(
+    String method,
     String path,
     Future<http.Response> Function(String url) call,
   ) async {
+    assert(method != null);
     assert(path != null);
 
     try {
@@ -149,6 +157,8 @@ class NetworkService {
       }
 
       final body = ErrorBody.fromJson(json.decode(response.body));
+      logger.w('Network ${response.statusCode}: $method $path', body);
+
       if (response.statusCode == 401) {
         throw AuthenticationError(body);
       }
@@ -170,11 +180,12 @@ class NetworkService {
         throw TooManyRequestsError(body, timeToWait: timeToWait);
       }
 
+      logger.e('Unhandled status code ${response.statusCode}. See above '
+          'warning for more information');
       throw UnimplementedError(
-          'We should handle status code ${response.statusCode}. '
-          'URL: $url, '
-          'Response body: ${response.body}');
-    } on SocketException catch (_) {
+          'We should handle status code ${response.statusCode}.');
+    } on SocketException catch (e) {
+      logger.w('No server connection', e);
       throw NoConnectionToServerError();
     }
   }
