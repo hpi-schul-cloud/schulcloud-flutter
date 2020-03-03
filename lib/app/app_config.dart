@@ -7,13 +7,13 @@ import 'theming_utils.dart';
 class AppConfig {
   const AppConfig({
     @required this.name,
-    @required this.domain,
+    @required this.host,
     @required this.title,
     @required this.primaryColor,
     @required this.secondaryColor,
     @required this.accentColor,
   })  : assert(name != null),
-        assert(domain != null),
+        assert(host != null),
         assert(title != null),
         assert(primaryColor != null),
         assert(secondaryColor != null),
@@ -27,10 +27,10 @@ class AppConfig {
   static const errorColor = Color(0xFFDC2831);
 
   final String name;
-  final String domain;
-  String get baseWebUrl => 'https://$domain';
+  final String host;
+  String get baseWebUrl => 'https://$host';
   String webUrl(String path) => '$baseWebUrl/$path';
-  String get baseApiUrl => 'https://api.$domain';
+  String get baseApiUrl => 'https://api.$host';
 
   final String title;
   final MaterialColor primaryColor;

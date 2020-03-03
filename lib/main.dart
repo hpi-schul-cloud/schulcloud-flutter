@@ -49,7 +49,7 @@ const _schulCloudYellow = MaterialColor(0xffe2661d, {
 
 const schulCloudAppConfig = AppConfig(
   name: 'sc',
-  domain: 'schul-cloud.org',
+  host: 'schul-cloud.org',
   title: 'Schul-Cloud',
   primaryColor: _schulCloudRed,
   secondaryColor: _schulCloudOrange,
