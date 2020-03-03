@@ -1,7 +1,7 @@
-import 'package:flutter_cached/flutter_cached.dart';
 import 'package:flare_flutter/flare_actor.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_cached/flutter_cached.dart';
 import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/course/course.dart';
 
@@ -9,21 +9,24 @@ import '../bloc.dart';
 import '../data.dart';
 import 'app_bar.dart';
 import 'file_tile.dart';
-import 'page_route.dart';
 
 class FileBrowser extends StatelessWidget {
-  FileBrowser({
-    @required this.owner,
-    this.parent,
+  const FileBrowser(
+    this.ownerId,
+    this.parentId, {
     this.isEmbedded = false,
-  })  : assert(owner != null),
-        assert(parent == null || parent.isDirectory),
+  })  : assert(ownerId != null),
         assert(isEmbedded != null);
 
-  final Entity owner;
-  Course get ownerAsCourse => owner is Course ? owner : null;
+  FileBrowser.myFiles(
+    Id<File> parentId, {
+    bool isEmbedded = false,
+  }) : this(services.storage.userId, parentId, isEmbedded: isEmbedded);
 
-  final File parent;
+  final Id<Entity> ownerId;
+  bool get isOwnerCourse => ownerId is Id<Course>;
+  bool get isOwnerMe => ownerId == services.storage.userId;
+  final Id<File> parentId;
 
   /// Whether this widget is embedded into another screen. If true, doesn't
   /// show an app bar.
@@ -32,9 +35,15 @@ class FileBrowser extends StatelessWidget {
   void _openDirectory(BuildContext context, File file) {
     assert(file.isDirectory);
 
-    context.navigator.push(FileBrowserPageRoute(
-      builder: (context) => FileBrowser(owner: owner, parent: file),
-    ));
+    if (isOwnerCourse) {
+      context.navigator.pushNamed('/files/courses/$ownerId/${file.id}');
+    } else if (isOwnerMe) {
+      context.navigator.pushNamed('/files/my/${file.id}');
+    } else {
+      // TODO(JonasWanke): Use logger
+      print(
+          'Unknown owner: $ownerId (type: ${ownerId.runtimeType}) while trying to open directory $file');
+    }
   }
 
   static Future<void> downloadFile(BuildContext context, File file) async {
@@ -64,7 +73,7 @@ class FileBrowser extends StatelessWidget {
 
   Widget _buildEmbedded(BuildContext context) {
     return CachedRawBuilder<List<File>>(
-      controller: services.get<FileBloc>().fetchFiles(owner.id, parent),
+      controller: services.get<FileBloc>().fetchFiles(ownerId, parentId),
       builder: (context, update) {
         if (update.hasError) {
           return ErrorScreen(update.error, update.stackTrace);
@@ -84,16 +93,51 @@ class FileBrowser extends StatelessWidget {
   }
 
   Widget _buildStandalone(BuildContext context) {
+    FileBrowserAppBar buildLoadingErrorAppBar(dynamic error) {
+      return FileBrowserAppBar(
+        title: error?.toString() ?? context.s.general_loading,
+      );
+    }
+
+    Widget appBar;
+    if (parentId != null) {
+      appBar = CachedRawBuilder<File>(
+        controller: services.get<FileBloc>().fetchFile(parentId),
+        builder: (context, update) {
+          if (!update.hasData) {
+            return buildLoadingErrorAppBar(update.error);
+          }
+
+          final parent = update.data;
+          return FileBrowserAppBar(title: parent.name);
+        },
+      );
+    } else if (isOwnerCourse) {
+      appBar = CachedRawBuilder<Course>(
+        controller: services.get<CourseBloc>().fetchCourse(ownerId),
+        builder: (context, update) {
+          if (!update.hasData) {
+            return buildLoadingErrorAppBar(update.error);
+          }
+
+          final course = update.data;
+          return FileBrowserAppBar(
+            title: course.name,
+            backgroundColor: course.color,
+          );
+        },
+      );
+    } else if (isOwnerMe) {
+      appBar = FileBrowserAppBar(title: context.s.file_files_my);
+    }
+
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: AppBar().preferredSize,
-        child: FileBrowserAppBar(
-          backgroundColor: ownerAsCourse?.color,
-          title: parent?.name ?? ownerAsCourse?.name ?? context.s.file_files_my,
-        ),
+        child: appBar,
       ),
       body: CachedBuilder<List<File>>(
-        controller: services.get<FileBloc>().fetchFiles(owner.id, parent),
+        controller: services.get<FileBloc>().fetchFiles(ownerId, parentId),
         errorBannerBuilder: (_, error, st) => ErrorBanner(error, st),
         errorScreenBuilder: (_, error, st) => ErrorScreen(error, st),
         builder: (context, files) {

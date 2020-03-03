@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_cached/flutter_cached.dart';
 import 'package:schulcloud/app/app.dart';
-import 'package:schulcloud/file/file.dart';
 
 import '../bloc.dart';
 import '../data.dart';
@@ -10,12 +9,6 @@ class CourseDetailsScreen extends StatelessWidget {
   const CourseDetailsScreen(this.courseId) : assert(courseId != null);
 
   final Id<Course> courseId;
-
-  void _showCourseFiles(BuildContext context, Course course) {
-    context.navigator.push(FileBrowserPageRoute(
-      builder: (context) => FileBrowser(owner: course),
-    ));
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +28,8 @@ class CourseDetailsScreen extends StatelessWidget {
             actions: <Widget>[
               IconButton(
                 icon: Icon(Icons.folder),
-                onPressed: () => _showCourseFiles(context, course),
+                onPressed: () =>
+                    context.navigator.pushNamed('/files/courses/${course.id}'),
               ),
             ],
           ),

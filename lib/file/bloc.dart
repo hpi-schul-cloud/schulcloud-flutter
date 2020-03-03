@@ -16,26 +16,30 @@ class FileBloc {
 
   // We don't use [fetchList] here, because of these two reasons why we need
   // more control:
-  // * Unlike every other api endpoint, the files endpoint doesn't provide a
+  // * Unlike most other API endpoints, the files endpoint doesn't provide a
   //   json blob that has a 'body' field. Instead, the json returned is a list
   //   right away.
   // * We want to filter the files because there are a lot with no names that
   //   shouldn't be displayed.
-  CacheController<List<File>> fetchFiles(Id<dynamic> owner, File parent) {
+  CacheController<List<File>> fetchFiles(
+    Id<dynamic> ownerId, [
+    Id<File> parentId,
+  ]) {
     final storage = services.storage;
-    final network = services.network;
 
     return CacheController<List<File>>(
       saveToCache: (files) =>
-          storage.cache.putChildrenOfType<File>(parent?.id ?? owner, files),
+          storage.cache.putChildrenOfType<File>(parentId ?? ownerId, files),
       loadFromCache: () =>
-          storage.cache.getChildrenOfType<File>(parent?.id ?? owner),
+          storage.cache.getChildrenOfType<File>(parentId ?? ownerId),
       fetcher: () async {
-        final queries = <String, String>{
-          'owner': owner.id,
-          if (parent != null) 'parent': parent.id.id,
-        };
-        final response = await network.get('fileStorage', parameters: queries);
+        final response = await services.network.get(
+          'fileStorage',
+          parameters: {
+            'owner': ownerId.id,
+            if (parentId != null) 'parent': parentId.id,
+          },
+        );
         final body = json.decode(response.body);
         return (body as List<dynamic>)
             .where((data) => data['name'] != null)
