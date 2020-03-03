@@ -48,7 +48,7 @@ String formatFileSize(int bytes) {
   return '${(bytes / power).toStringAsFixed(index == 0 ? 0 : 1)} ${units[index]}';
 }
 
-extension PowerfulString on String {
+extension LegenWaitForItDaryString on String {
   String get withoutLinebreaks => replaceAll(RegExp('[\r\n]'), '');
 
   /// Removes html tags from a string.
