@@ -1,8 +1,8 @@
 import 'package:meta/meta.dart';
 
 @immutable
-class LoginRequest {
-  const LoginRequest({
+class SignInRequest {
+  const SignInRequest({
     @required this.email,
     @required this.password,
   })  : assert(email != null),
@@ -20,14 +20,14 @@ class LoginRequest {
 }
 
 @immutable
-class LoginResponse {
-  const LoginResponse({
+class SignInResponse {
+  const SignInResponse({
     @required this.accessToken,
     @required this.userId,
   })  : assert(accessToken != null),
         assert(userId != null);
 
-  LoginResponse.fromJson(Map<String, dynamic> data)
+  SignInResponse.fromJson(Map<String, dynamic> data)
       : this(
           accessToken: data['accessToken'],
           userId: data['account']['userId'],

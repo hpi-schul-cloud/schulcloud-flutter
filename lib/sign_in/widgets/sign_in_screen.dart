@@ -5,7 +5,7 @@ import 'package:schulcloud/app/app.dart';
 import 'form.dart';
 import 'slanted_section.dart';
 
-class LoginScreen extends StatelessWidget {
+class SignInScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return LogConsoleOnShake(
@@ -35,7 +35,7 @@ class LoginScreen extends StatelessWidget {
               mediaQuery.padding.bottom -
               mediaQuery.padding.top,
         ),
-        child: LoginForm(),
+        child: SignInForm(),
       ),
       SlantedSection(
         color: theme.primaryColor,

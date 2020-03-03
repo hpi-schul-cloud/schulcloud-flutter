@@ -35,7 +35,7 @@ class AccountButton extends StatelessWidget {
     return InkWell(
       customBorder: CircleBorder(),
       onTap: () {
-        showDialog(context: context, builder: (context) => AccountDialog());
+        showDialog(context: context, builder: (_) => AccountDialog());
       },
       child: Padding(
         padding: EdgeInsets.all(8),
