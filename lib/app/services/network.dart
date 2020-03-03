@@ -37,6 +37,16 @@ class ErrorBody {
           data: data['data'],
           errors: data['errors'],
         );
+  Map<String, dynamic> toJson() {
+    return {
+      'name': name,
+      'message': message,
+      'code': code,
+      'className': className,
+      'data': data,
+      'errors': errors,
+    };
+  }
 
   final String name;
   final String message;
