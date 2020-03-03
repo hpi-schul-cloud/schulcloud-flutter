@@ -12,6 +12,23 @@ import 'data.dart';
 class CalendarBloc {
   const CalendarBloc();
 
+  CacheController<List<Event>> fetchEvents() {
+    final storage = services.storage;
+    storage.cache.clear();
+    return fetchList(
+      makeNetworkCall: () => services.network.get(
+        'calendar',
+        parameters: {
+          // We have to set this query parameter because otherwise—you guessed
+          // it—no events are being returned at all 😂
+          'all': 'true',
+        },
+      ),
+      parser: (data) => Event.fromJson(data),
+      serviceIsPaginated: false,
+    );
+  }
+
   Stream<CacheUpdate<List<Event>>> fetchTodaysEvents() {
     // The great, thoughtfully designed Calendar API presents us with daily
     // challenges, such as: How do I get today's events?

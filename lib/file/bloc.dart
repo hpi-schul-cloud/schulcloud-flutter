@@ -19,7 +19,7 @@ class FileBloc {
 
     /// The signed URL is the URL used to actually download a file instead of
     /// just viewing its JSON representation.
-    final response = await services.get<NetworkService>().get(
+    final response = await services.network.get(
       'fileStorage/signedUrl',
       parameters: {'download': null, 'file': file.id.toString()},
     );

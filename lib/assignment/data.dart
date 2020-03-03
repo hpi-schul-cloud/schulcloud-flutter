@@ -2,30 +2,41 @@ import 'package:hive/hive.dart';
 import 'package:meta/meta.dart';
 import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/course/course.dart';
+import 'package:schulcloud/file/file.dart';
 import 'package:time_machine/time_machine.dart';
 
 part 'data.g.dart';
 
 @immutable
 @HiveType(typeId: TypeId.typeAssignment)
-class Assignment implements Entity<Assignment>, Comparable {
+class Assignment implements Entity<Assignment>, Comparable<Assignment> {
   const Assignment({
     @required this.id,
     @required this.name,
     @required this.schoolId,
+    @required this.createdAt,
     @required this.availableAt,
-    @required this.dueDate,
+    this.dueAt,
     @required this.teacherId,
     this.description,
     this.courseId,
     this.lessonId,
-    this.isPrivate,
+    @required this.isPrivate,
+    @required this.hasPublicSubmissions,
+    this.archived = const [],
+    @required this.teamSubmissions,
+    this.fileIds = const [],
   })  : assert(id != null),
         assert(name != null),
         assert(schoolId != null),
-        assert(dueDate != null),
+        assert(createdAt != null),
         assert(availableAt != null),
-        assert(teacherId != null);
+        assert(teacherId != null),
+        assert(isPrivate != null),
+        assert(hasPublicSubmissions != null),
+        assert(archived != null),
+        assert(teamSubmissions != null),
+        assert(fileIds != null);
 
   Assignment.fromJson(Map<String, dynamic> data)
       : this(
@@ -34,11 +45,22 @@ class Assignment implements Entity<Assignment>, Comparable {
           teacherId: data['teacherId'],
           name: data['name'],
           description: data['description'],
-          availableAt: (data['availableDate'] as String).parseApiInstant(),
-          dueDate: (data['dueDate'] as String).parseApiInstant(),
-          courseId: Id<Course>(data['courseId']['_id']),
+          createdAt: (data['createdAt'] as String).parseInstant(),
+          availableAt: (data['availableDate'] as String).parseInstant(),
+          dueAt: (data['dueDate'] as String)?.parseInstant(),
+          courseId: data['courseId'] != null
+              // GET /homework/:id -> courseId is a populated object
+              // PATCH /homework/:id -> courseId is an ID (string)
+              ? Id<Course>(data['courseId'] is String
+                  ? data['courseId']
+                  : data['courseId']['_id'])
+              : null,
           lessonId: Id(data['lessonId'] ?? ''),
-          isPrivate: data['private'],
+          isPrivate: data['private'] ?? false,
+          hasPublicSubmissions: data['publicSubmissions'] ?? false,
+          archived: (data['archived'] as List<dynamic> ?? []).castIds<User>(),
+          teamSubmissions: data['teamSubmissions'] ?? false,
+          fileIds: (data['fileIds'] as List<dynamic> ?? []).castIds<File>(),
         );
 
   static Future<Assignment> fetch(Id<Assignment> id) async =>
@@ -56,11 +78,15 @@ class Assignment implements Entity<Assignment>, Comparable {
   @HiveField(2)
   final String schoolId;
 
+  @HiveField(14)
+  final Instant createdAt;
+
   @HiveField(13)
   final Instant availableAt;
 
   @HiveField(12)
-  final Instant dueDate;
+  final Instant dueAt;
+  bool get isOverdue => dueAt != null && dueAt < Instant.now();
 
   @HiveField(5)
   final String description;
@@ -76,10 +102,27 @@ class Assignment implements Entity<Assignment>, Comparable {
 
   @HiveField(11)
   final bool isPrivate;
+  bool get isPublic => !isPrivate;
+
+  @HiveField(15)
+  final bool hasPublicSubmissions;
+
+  @HiveField(16)
+  final List<Id<User>> archived;
+  bool get isArchived => archived.contains(services.storage.userId);
+
+  @HiveField(17)
+  final bool teamSubmissions;
+
+  @HiveField(18)
+  final List<Id<File>> fileIds;
+
+  String get webUrl => scWebUrl('homework/${id.value}');
+  String get submissionWebUrl => '$webUrl#activetabid=submission';
 
   @override
-  int compareTo(Object other) {
-    return dueDate.compareTo((other as Assignment).dueDate);
+  int compareTo(Assignment other) {
+    return other.id.value.compareTo(id.value);
   }
 }
 
@@ -91,23 +134,27 @@ class Submission implements Entity<Submission> {
     @required this.schoolId,
     @required this.assignmentId,
     @required this.studentId,
-    this.comment,
+    @required this.comment,
     this.grade,
     this.gradeComment,
+    this.fileIds = const [],
   })  : assert(id != null),
         assert(schoolId != null),
         assert(assignmentId != null),
-        assert(studentId != null);
+        assert(studentId != null),
+        assert(comment != null),
+        assert(fileIds != null);
 
   Submission.fromJson(Map<String, dynamic> data)
       : this(
-          id: Id(data['_id']),
+          id: Id<Submission>(data['_id']),
           schoolId: data['schoolId'],
           assignmentId: Id(data['homeworkId']),
           studentId: Id(data['studentId']),
           comment: data['comment'],
           grade: data['grade'],
           gradeComment: data['gradeComment'],
+          fileIds: (data['fileIds'] as List<dynamic> ?? []).castIds<File>(),
         );
 
   static Future<Submission> fetch(Id<Submission> id) async =>
@@ -131,7 +178,11 @@ class Submission implements Entity<Submission> {
 
   @HiveField(7)
   final int grade;
+  static const gradeMax = 100;
 
   @HiveField(8)
   final String gradeComment;
+
+  @HiveField(9)
+  final List<Id<File>> fileIds;
 }

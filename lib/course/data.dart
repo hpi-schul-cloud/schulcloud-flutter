@@ -36,10 +36,8 @@ class Course implements Entity<Course> {
           id: Id<Course>(data['_id']),
           name: data['name'],
           description: data['description'],
-          teachers: (data['teacherIds'] as List<dynamic>)
-              .map((id) => Id<User>(id))
-              .toList(),
-          color: hexStringToColor(data['color']),
+          teachers: (data['teacherIds'] as List<dynamic>).castIds<User>(),
+          color: (data['color'] as String).hexToColor,
         );
 
   static Future<Course> fetch(Id<Course> id) async =>

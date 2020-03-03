@@ -29,30 +29,32 @@ class File implements Entity<File>, Comparable<File> {
               'fileStorage',
               wrappedInData: false,
               parameters: {
-                'owner': owner.id,
+                'owner': owner.value,
                 'parent': id.toString(),
               },
             );
-            return File.fromJsonListAndOwner(jsonData, owner);
+            return File.fromJsonList(jsonData);
           },
         );
 
-  File.fromJsonAndOwner(Map<String, dynamic> data, Id<dynamic> owner)
+  File.fromJson(Map<String, dynamic> data)
       : this(
           id: Id<File>(data['_id']),
           name: data['name'],
-          owner: owner,
-          createdAt: (data['createdAt'] as String).parseApiInstant(),
-          updatedAt: (data['updatedAt'] as String).parseApiInstant(),
-          parent: data['parent'] == null ? null : Id<File>(data['parent']),
-          isDirectory: data['isDirectory'],
           mimeType: data['mimeType'],
+          owner: {
+            'user': Id<User>(data['owner']),
+            'course': Id<Course>(data['owner']),
+          }[data['refOwnerModel']],
+          createdAt: (data['createdAt'] as String).parseInstant(),
+          updatedAt: (data['updatedAt'] as String).parseInstant(),
+          isDirectory: data['isDirectory'],
+          parent: data['parent'] == null ? null : Id<File>(data['parent']),
           size: data['size'],
         );
 
-  static List<File> fromJsonListAndOwner(
-          List<Map<String, dynamic>> data, Id<dynamic> owner) =>
-      data.map((data) => File.fromJsonAndOwner(data, owner)).toList();
+  static List<File> fromJsonList(List<Map<String, dynamic>> data) =>
+      data.map((data) => File.fromJson(data)).toList();
 
   static Future<List<File>> fetchByOwner(Id<dynamic> owner) async {
     final files = await fetchJsonListFrom(
@@ -60,7 +62,7 @@ class File implements Entity<File>, Comparable<File> {
       wrappedInData: false,
       parameters: {'owner': owner.toString()},
     );
-    return File.fromJsonListAndOwner(files, owner);
+    return File.fromJsonList(files);
   }
 
   // used before: 7, 8

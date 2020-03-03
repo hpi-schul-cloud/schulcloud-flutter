@@ -26,9 +26,9 @@ abstract class Entity<T extends Entity<T>> {
 
 /// An [Id] that identifies an [Entity] among all other [Entity]s.
 class Id<T extends Entity<T>> {
-  const Id(this.id);
+  const Id(this.value);
 
-  final String id;
+  final String value;
 
   Type get type => T;
   int get typeId => HiveCache.typeIdByType<T>();
@@ -41,15 +41,15 @@ class Id<T extends Entity<T>> {
     );
   }
 
-  Id<S> cast<S extends Entity<S>>() => Id<S>(id);
+  Id<S> cast<S extends Entity<S>>() => Id<S>(value);
 
   @override
-  bool operator ==(other) => other is Id<T> && other.id == id;
+  bool operator ==(other) => other is Id<T> && other.value == value;
   @override
-  int get hashCode => id.hashCode;
+  int get hashCode => value.hashCode;
 
   @override
-  String toString() => id;
+  String toString() => value;
 }
 
 class AdapterForId extends TypeAdapter<Id<dynamic>> {
@@ -59,7 +59,7 @@ class AdapterForId extends TypeAdapter<Id<dynamic>> {
   @override
   void write(BinaryWriter writer, Id<dynamic> id) => writer
     ..writeInt(id.typeId)
-    ..writeString(id.id);
+    ..writeString(id.value);
 
   @override
   Id<dynamic> read(BinaryReader reader) =>
@@ -84,8 +84,8 @@ class AdapterForIdCollection extends TypeAdapter<IdCollection<dynamic>> {
   @override
   void write(BinaryWriter writer, IdCollection<dynamic> collection) => writer
     ..writeInt(collection.typeId)
-    ..writeString(collection.id.id)
-    ..writeStringList(collection.childrenIds.map((id) => id.id).toList());
+    ..writeString(collection.id.value)
+    ..writeStringList(collection.childrenIds.map((id) => id.value).toList());
 
   @override
   IdCollection<dynamic> read(BinaryReader reader) =>
@@ -132,6 +132,12 @@ extension ListOfIds<T extends Entity<T>> on List<Id<T>> {
     return CacheController.combiningControllers(
       map((id) => id.controller).toList(),
     );
+  }
+}
+
+extension IdParsingList on List<dynamic> {
+  List<Id<T>> castIds<T extends Entity<T>>() {
+    return map((id) => Id<T>(id as String)).toList();
   }
 }
 
@@ -198,14 +204,14 @@ class HiveCacheImpl {
       _getFetcherOfTypeId(typeId)._createCollection(id, children);
 
   void put<T extends Entity<T>>(T entity) {
-    print('Entity: $entity with id ${entity.id.id}');
+    print('Entity: $entity with id ${entity.id.value}');
     if (entity is IdCollection) {
-      _box.put(entity.id.id, entity);
+      _box.put(entity.id.value, entity);
     }
-    _box.put(entity.id.id, entity);
+    _box.put(entity.id.value, entity);
   }
 
-  T get<T extends Entity<T>>(Id<T> id) => _box.get(id.id) as T;
+  T get<T extends Entity<T>>(Id<T> id) => _box.get(id.value) as T;
 }
 
 class ColorAdapter extends TypeAdapter<Color> {
@@ -256,6 +262,7 @@ class TypeId {
   static const typeRecurrenceRule = 62;
 
   static const typeUser = 51;
+  static const typeRole = 65;
 
   static const typeAssignment = 54;
   static const typeSubmission = 55;
@@ -284,6 +291,7 @@ Future<void> initializeHive() async {
     ..registerAdapter(RecurrenceRuleAdapter())
     // App module:
     ..registerAdapter(UserAdapter())
+    ..registerAdapter(RoleAdapter())
     // Assignments module:
     ..registerAdapter(AssignmentAdapter())
     ..registerAdapter(SubmissionAdapter())

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:schulcloud/generated/generated.dart';
+import 'package:logger_flutter/logger_flutter.dart';
+import 'package:schulcloud/app/app.dart';
 
 import 'form.dart';
 import 'slanted_section.dart';
@@ -7,20 +8,22 @@ import 'slanted_section.dart';
 class LoginScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: CustomScrollView(
-        slivers: <Widget>[
-          SliverList(
-            delegate: SliverChildListDelegate(_buildContent(context)),
-          ),
-        ],
+    return LogConsoleOnShake(
+      child: Scaffold(
+        body: CustomScrollView(
+          slivers: <Widget>[
+            SliverList(
+              delegate: SliverChildListDelegate(_buildContent(context)),
+            ),
+          ],
+        ),
       ),
     );
   }
 
   List<Widget> _buildContent(BuildContext context) {
     final mediaQuery = MediaQuery.of(context);
-    final theme = Theme.of(context);
+    final theme = context.theme;
     final s = context.s;
 
     return [
@@ -41,7 +44,7 @@ class LoginScreen extends StatelessWidget {
           height: 50,
           padding: EdgeInsets.only(bottom: mediaQuery.padding.bottom),
           alignment: Alignment.center,
-          child: Text(s.login_loginScreen_moreInformation),
+          child: Text(s.signIn_signInScreen_moreInformation),
         ),
       ),
       SlantedSection(
@@ -50,7 +53,7 @@ class LoginScreen extends StatelessWidget {
         child: Padding(
           padding: EdgeInsets.all(16),
           child: Text(
-            s.login_loginScreen_about,
+            s.signIn_signInScreen_about,
             textAlign: TextAlign.justify,
           ),
         ),
@@ -58,7 +61,7 @@ class LoginScreen extends StatelessWidget {
       Container(
         padding: EdgeInsets.all(16),
         alignment: Alignment.center,
-        child: Text(s.login_loginScreen_placeholder),
+        child: Text(s.signIn_signInScreen_placeholder),
       ),
     ];
   }

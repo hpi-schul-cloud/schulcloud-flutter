@@ -3,11 +3,29 @@ import 'dart:ui';
 
 import 'package:flutter/widgets.dart';
 import 'package:get_it/get_it.dart';
+import 'package:flutter/material.dart';
+import 'package:html/parser.dart';
+import 'package:schulcloud/generated/l10n.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'services/network.dart';
 
 final services = GetIt.instance;
+
+extension FancyContext on BuildContext {
+  MediaQueryData get mediaQuery => MediaQuery.of(this);
+  ThemeData get theme => Theme.of(this);
+  NavigatorState get navigator => Navigator.of(this);
+  NavigatorState get rootNavigator => Navigator.of(this, rootNavigator: true);
+  ScaffoldState get scaffold => Scaffold.of(this);
+  S get s => S.of(this);
+
+  void showSimpleSnackBar(String message) {
+    scaffold.showSnackBar(SnackBar(
+      content: Text(message),
+    ));
+  }
+}
 
 /// Gets some json from the server.
 Future<Map<String, dynamic>> fetchJsonFrom(String path) async {
@@ -40,7 +58,7 @@ String limitString(String string, int maxLength) =>
 
 /// Prints a file size given in [bytes] as a [String].
 String formatFileSize(int bytes) {
-  const units = ['B', 'kB', 'MB', 'GB', 'TB', 'YB'];
+  const units = ['B', 'kB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
 
   var index = 0;
   var power = 1;
@@ -52,24 +70,37 @@ String formatFileSize(int bytes) {
   return '${(bytes / power).toStringAsFixed(index == 0 ? 0 : 1)} ${units[index]}';
 }
 
-/// Removes html tags from a string.
-String removeHtmlTags(String text) {
-  final _tagStart = '<'.runes.first;
-  final _tagEnd = '>'.runes.first;
+extension PowerfulString on String {
+  /// Removes html tags from a string.
+  String get withoutHtmlTags => parse(this).documentElement.text;
 
-  final buffer = StringBuffer();
-  var isInTag = false;
-
-  for (final rune in text.codeUnits) {
-    if (rune == _tagStart) {
-      isInTag = true;
-    } else if (rune == _tagEnd) {
-      isInTag = false;
-    } else if (!isInTag) {
-      buffer.writeCharCode(rune);
-    }
+  /// Removes HTML tags trying to preserve line breaks;
+  String get simpleHtmlToPlain {
+    return replaceAllMapped(RegExp('</p>(.*?)<p>'), (m) => '\n\n${m[1]}')
+        .replaceAll(RegExp('</?p>'), '')
+        .splitMapJoin('<br />', onMatch: (_) => '\n')
+        .withoutHtmlTags;
   }
-  return buffer.toString();
+
+  /// Converts this to a simple HTML subset so line breaks are properly
+  /// displayed on the web
+  String get plainToSimpleHtml {
+    // Because the server is doing … stuff, we need to double encode‽
+    return HtmlEscape(HtmlEscapeMode.unknown)
+        .convert(HtmlEscape(HtmlEscapeMode.unknown).convert(this))
+        .splitMapJoin(
+          '\n\n',
+          onMatch: (_) => '',
+          onNonMatch: (s) => '<p>$s</p>',
+        )
+        .replaceAllMapped(RegExp('(.+)\n'), (m) => '${m[1]}<br />');
+  }
+
+  String get uriComponentEncoded => Uri.encodeComponent(this ?? '');
+
+  /// Converts a hex string (like '#ffdd00' or '#12c0ffee') to a [Color].
+  Color get hexToColor =>
+      Color(int.parse(substring(1).padLeft(8, 'f'), radix: 16));
 }
 
 /// Tries launching a url.
@@ -79,6 +110,23 @@ Future<bool> tryLaunchingUrl(String url) async {
     return true;
   }
   return false;
+}
+
+String exceptionMessage(dynamic error) {
+  if (error is ServerError && error.body.message != null) {
+    return error.body.message;
+  }
+  return error.toString();
+}
+
+extension ImmutableMap<K, V> on Map<K, V> {
+  Map<K, V> clone() => Map.of(this);
+
+  Map<K, V> copyWith(K key, V value) {
+    final newMap = clone();
+    newMap[key] = value;
+    return newMap;
+  }
 }
 
 /// An error indicating that a permission wasn't granted by the user.
@@ -104,14 +152,13 @@ class LazyMap<K, V> {
   // be too easy otherwise ;)
   bool serviceIsPaginated = true,
 }) {
-  final storage = services.get<StorageService>();
-  final network = services.get<NetworkService>();
+  final storage = services.storage;
 
   return CacheController<List<T>>(
     saveToCache: (items) => storage.cache.putChildrenOfType<T>(parent, items),
     loadFromCache: () => storage.cache.getChildrenOfType<T>(parent),
     fetcher: () async {
-      final response = await makeNetworkCall(network);
+      final response = await makeNetworkCall();
       final body = json.decode(response.body);
       final dataList = serviceIsPaginated ? body['data'] : body;
       return [for (final data in dataList) parser(data)];

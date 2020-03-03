@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:schulcloud/app/app.dart';
-import 'package:schulcloud/app/theming/utils.dart';
 import 'package:sprintf/sprintf.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
@@ -83,43 +82,32 @@ class _LessonScreenState extends State<LessonScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        iconTheme: IconThemeData(color: Colors.black),
-        title: Column(
-          children: <Widget>[
-            Text(
-              widget.lesson.name,
-              style: TextStyle(color: Colors.black),
+      body: CustomScrollView(
+        slivers: <Widget>[
+          FancyAppBar(
+            title: Text(widget.lesson.name),
+            subtitle: Text(widget.course.name),
+            actions: <Widget>[
+              IconButton(
+                icon: Icon(Icons.web),
+                onPressed: _showLessonContentMenu,
+              ),
+            ],
+          ),
+          SliverFillRemaining(
+            child: WebView(
+              initialUrl: _textOrUrl(widget.lesson.contents[0]),
+              onWebViewCreated: (controller) => _controller = controller,
+              javascriptMode: JavascriptMode.unrestricted,
             ),
-            Text(
-              widget.course.name,
-              style: TextStyle(color: Colors.black),
-            ),
-          ],
-        ),
-        backgroundColor: widget.course.color,
-      ),
-      body: AppBarActions(
-        actions: <Widget>[
-          IconButton(
-            icon: Icon(Icons.web),
-            onPressed: _showLessonContentMenu,
           ),
         ],
-        child: Padding(
-          padding: EdgeInsets.all(8),
-          child: WebView(
-            initialUrl: _textOrUrl(widget.lesson.contents[0]),
-            onWebViewCreated: (controller) => _controller = controller,
-            javascriptMode: JavascriptMode.unrestricted,
-          ),
-        ),
       ),
     );
   }
 
   String _createTextSource(String html) {
-    final theme = Theme.of(context);
+    final theme = context.theme;
 
     String cssColor(Color color) {
       return 'rgba(${color.red}, ${color.green}, ${color.blue}, ${color.opacity})';
@@ -129,8 +117,8 @@ class _LessonScreenState extends State<LessonScreen> {
       contentTextFormat,
       [
         html,
-        AppConfig.of(context).host,
-        cssColor(highEmphasisOnBrightness(theme.brightness)),
+        services.get<AppConfig>().baseWebUrl,
+        cssColor(theme.contrastColor),
         cssColor(theme.accentColor),
       ],
     );

@@ -1,7 +1,6 @@
 import 'package:flutter_cached/flutter_cached.dart';
 import 'package:flutter/material.dart';
 import 'package:schulcloud/app/app.dart';
-import 'package:schulcloud/generated/generated.dart';
 
 import '../data.dart';
 import 'course_card.dart';
@@ -20,11 +19,19 @@ class CoursesScreen extends StatelessWidget {
               text: context.s.course_coursesScreen_empty,
             );
           }
-          return GridView.count(
-            childAspectRatio: 1.5,
-            crossAxisCount: 2,
-            children: <Widget>[
-              for (var course in courses) CourseCard(course: course),
+          return CustomScrollView(
+            slivers: <Widget>[
+              FancyAppBar(title: Text(context.s.course)),
+              SliverPadding(
+                padding: EdgeInsets.fromLTRB(16, 8, 16, 16),
+                sliver: SliverGrid.count(
+                  childAspectRatio: 1.5,
+                  crossAxisCount: 2,
+                  children: <Widget>[
+                    for (var course in courses) CourseCard(course: course),
+                  ],
+                ),
+              ),
             ],
           );
         },

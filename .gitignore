@@ -4,7 +4,6 @@ local/
 # Generated dart files.
 *.g.dart
 lib/generated/**
-!lib/generated/generated.dart
 
 # Windows related
 windows/

@@ -3,7 +3,6 @@ import 'package:flutter_cached/flutter_cached.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/dashboard/dashboard.dart';
-import 'package:schulcloud/generated/generated.dart';
 
 import '../data.dart';
 import '../news.dart';
@@ -16,6 +15,9 @@ class NewsDashboardCard extends StatelessWidget {
 
     return DashboardCard(
       title: s.news_dashboardCard,
+      footerButtonText: s.news_dashboardCard_all,
+      onFooterButtonPressed: () => context.navigator
+          .push(MaterialPageRoute(builder: (context) => NewsScreen())),
       child: CachedRawBuilder<List<Article>>(
         controller: services.get<StorageService>().root.news.controller,
         builder: (context, update) {
@@ -29,32 +31,15 @@ class NewsDashboardCard extends StatelessWidget {
 
           return Column(
             children: <Widget>[
-              ...ListTile.divideTiles(
-                  context: context,
-                  tiles: update.data.map(
-                    (a) => ListTile(
-                      title: Text(a.title),
-                      subtitle: Html(data: limitString(a.content, 100)),
-                      trailing: Text(a.publishedAt.shortDateString),
-                      onTap: () => Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => ArticleScreen(article: a))),
-                    ),
+              for (final article in update.data)
+                ListTile(
+                  title: Text(article.title),
+                  subtitle: Html(data: limitString(article.content, 100)),
+                  trailing: Text(article.publishedAt.shortDateString),
+                  onTap: () => context.navigator.push(MaterialPageRoute(
+                    builder: (context) => ArticleScreen(article: article),
                   )),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Align(
-                  alignment: Alignment.bottomRight,
-                  child: OutlineButton(
-                    onPressed: () {
-                      Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => NewsScreen()));
-                    },
-                    child: Text(s.news_dashboardCard_all),
-                  ),
                 ),
-              )
             ],
           );
         },

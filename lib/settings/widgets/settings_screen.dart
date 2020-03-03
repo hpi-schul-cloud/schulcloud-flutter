@@ -2,7 +2,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:package_info/package_info.dart';
 import 'package:schulcloud/app/app.dart';
-import 'package:schulcloud/generated/generated.dart';
 
 import 'licenses.dart';
 
@@ -69,18 +68,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ListTile(
             leading: Icon(Icons.person_outline),
             title: Text(s.settings_imprint),
-            onTap: () {
-              final domain = AppConfig.of(context).domain;
-              tryLaunchingUrl('https://$domain/impressum');
-            },
+            onTap: () => tryLaunchingUrl(scWebUrl('impressum')),
           ),
           ListTile(
             leading: Icon(Icons.lightbulb_outline),
             title: Text(s.settings_privacyPolicy),
-            onTap: () {
-              final domain = AppConfig.of(context).domain;
-              tryLaunchingUrl('https://$domain/datenschutz');
-            },
+            onTap: () => tryLaunchingUrl(scWebUrl('datenschutz')),
           ),
           ListTile(
             leading: Icon(Icons.info_outline),

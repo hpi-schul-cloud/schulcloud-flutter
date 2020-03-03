@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:schulcloud/app/app.dart';
-import 'package:schulcloud/generated/generated.dart';
 
 /// Displays the author's name as well as an avatar, if available.
 ///
@@ -29,7 +28,7 @@ class _AuthorViewState extends State<AuthorView> {
       padding: EdgeInsets.fromLTRB(0, 4, 8, 4),
       child: TextOrPlaceholder(
         isPlaceholder ? null : context.s.news_authorView(author.name),
-        style: Theme.of(context).textTheme.caption.copyWith(fontSize: 16),
+        style: context.textTheme.caption.copyWith(fontSize: 16),
       ),
     );
   }
