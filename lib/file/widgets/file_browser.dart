@@ -93,14 +93,50 @@ class FileBrowser extends StatelessWidget {
   }
 
   Widget _buildStandalone(BuildContext context) {
-    FileBrowserAppBar buildLoadingErrorAppBar(dynamic error) {
+    FileBrowserAppBar buildLoadingErrorAppBar(
+      dynamic error, [
+      Color backgroundColor,
+    ]) {
       return FileBrowserAppBar(
         title: error?.toString() ?? context.s.general_loading,
+        backgroundColor: backgroundColor,
       );
     }
 
     Widget appBar;
-    if (parentId != null) {
+    if (isOwnerCourse) {
+      appBar = CachedRawBuilder<Course>(
+        controller: services.get<CourseBloc>().fetchCourse(ownerId),
+        builder: (context, update) {
+          if (!update.hasData) {
+            return buildLoadingErrorAppBar(update.error);
+          }
+
+          final course = update.data;
+          if (parentId == null) {
+            return FileBrowserAppBar(
+              title: course.name,
+              backgroundColor: course.color,
+            );
+          }
+
+          return CachedRawBuilder<File>(
+            controller: services.get<FileBloc>().fetchFile(parentId),
+            builder: (context, update) {
+              if (!update.hasData) {
+                return buildLoadingErrorAppBar(update.error, course.color);
+              }
+
+              final parent = update.data;
+              return FileBrowserAppBar(
+                title: parent.name,
+                backgroundColor: course.color,
+              );
+            },
+          );
+        },
+      );
+    } else if (parentId != null) {
       appBar = CachedRawBuilder<File>(
         controller: services.get<FileBloc>().fetchFile(parentId),
         builder: (context, update) {
@@ -110,21 +146,6 @@ class FileBrowser extends StatelessWidget {
 
           final parent = update.data;
           return FileBrowserAppBar(title: parent.name);
-        },
-      );
-    } else if (isOwnerCourse) {
-      appBar = CachedRawBuilder<Course>(
-        controller: services.get<CourseBloc>().fetchCourse(ownerId),
-        builder: (context, update) {
-          if (!update.hasData) {
-            return buildLoadingErrorAppBar(update.error);
-          }
-
-          final course = update.data;
-          return FileBrowserAppBar(
-            title: course.name,
-            backgroundColor: course.color,
-          );
         },
       );
     } else if (isOwnerMe) {
