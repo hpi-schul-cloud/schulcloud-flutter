@@ -179,10 +179,11 @@ class SortFilterWidget<T> extends StatelessWidget {
     return _Section(
       title: filter.title,
       child: filter.buildWidget(
-          context,
-          selection.filterSelections[filterKey],
-          (data) => onSelectionChange(
-              selection.withFilterSelection(filterKey, data))),
+        context,
+        selection.filterSelections[filterKey],
+        (data) =>
+            onSelectionChange(selection.withFilterSelection(filterKey, data)),
+      ),
     );
   }
 }
@@ -203,10 +204,7 @@ class _Section extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
-          Text(
-            title,
-            style: context.textTheme.overline,
-          ),
+          Text(title, style: context.textTheme.overline),
           SizedBox(height: 4),
           child,
         ],

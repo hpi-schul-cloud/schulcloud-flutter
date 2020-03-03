@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_cached/flutter_cached.dart';
-import 'package:schulcloud/app/app.dart';
 
+import '../data.dart';
+import '../services/storage.dart';
+import '../theming_utils.dart';
+import '../utils.dart';
 import 'account_dialog.dart';
 
 class AccountAvatar extends StatelessWidget {
@@ -13,9 +16,9 @@ class AccountAvatar extends StatelessWidget {
       controller: services.storage.userId.controller,
       builder: (context, update) {
         final user = update.data;
-
         final backgroundColor =
             user?.avatarBackgroundColor ?? context.theme.primaryColor;
+
         return CircleAvatar(
           backgroundColor: backgroundColor,
           maxRadius: 16,

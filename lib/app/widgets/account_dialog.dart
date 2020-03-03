@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_cached/flutter_cached.dart';
-import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/login/login.dart';
 import 'package:schulcloud/settings/settings.dart';
 
 import '../data.dart';
+import '../services/storage.dart';
+import '../utils.dart';
 
 class AccountDialog extends StatelessWidget {
   void _openSettings(BuildContext context) {

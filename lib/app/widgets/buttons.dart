@@ -128,9 +128,7 @@ class FancyFab extends StatelessWidget {
     return SizedBox(
       height: 24,
       width: 24,
-      child: CircularProgressIndicator(
-        strokeWidth: 3,
-      ),
+      child: CircularProgressIndicator(strokeWidth: 3),
     );
   }
 }

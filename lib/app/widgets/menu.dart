@@ -20,7 +20,7 @@ class Menu extends StatelessWidget {
       Navigator.pop(context, target);
 
   void _openSettings(BuildContext context) {
-    Navigator.of(context).push(MaterialPageRoute(
+    context.navigator.push(MaterialPageRoute(
       builder: (_) => SettingsScreen(),
     ));
   }
@@ -28,7 +28,7 @@ class Menu extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: Theme.of(context).canvasColor,
+      color: context.theme.canvasColor,
       elevation: 12,
       borderRadius: BorderRadius.only(
         topLeft: Radius.circular(16),

@@ -346,8 +346,9 @@ List<Widget> _buildFileSection(
             return ListTile(
               leading:
                   update.hasError == null ? CircularProgressIndicator() : null,
-              title:
-                  Text(update.error?.toString() ?? context.s.general_loading),
+              title: Text(
+                update.error?.toString() ?? context.s.general_loading,
+              ),
             );
           }
 

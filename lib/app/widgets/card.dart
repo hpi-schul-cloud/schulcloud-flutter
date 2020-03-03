@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:schulcloud/app/app.dart';
+
+import '../theming_utils.dart';
+import '../utils.dart';
 
 class FancyCard extends StatelessWidget {
   const FancyCard({

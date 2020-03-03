@@ -11,9 +11,6 @@ class ChipGroup extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Wrap(
-      spacing: 8,
-      children: children,
-    );
+    return Wrap(spacing: 8, children: children);
   }
 }

@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
+
 import '../utils.dart';
 
 extension BottomSheetCreation on BuildContext {
-  Future<T> showFancyBottomSheet<T>({
-    @required WidgetBuilder builder,
-  }) {
+  Future<T> showFancyBottomSheet<T>({@required WidgetBuilder builder}) {
     return showModalBottomSheet<T>(
       context: this,
       isScrollControlled: true,
@@ -36,9 +35,7 @@ class FancyBottomSheet extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
-          Center(
-            child: _DragIndicator(),
-          ),
+          Center(child: _DragIndicator()),
           SizedBox(height: 8),
           builder(context),
         ],
@@ -55,10 +52,7 @@ class _DragIndicator extends StatelessWidget {
         color: context.theme.dividerColor,
         shape: StadiumBorder(),
       ),
-      child: SizedBox(
-        width: 36,
-        height: 8,
-      ),
+      child: SizedBox(width: 36, height: 8),
     );
   }
 }

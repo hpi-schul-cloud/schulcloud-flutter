@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/login/login.dart';
 
+import '../app.dart';
 import '../services/network.dart';
 import '../utils.dart';
 import 'buttons.dart';
