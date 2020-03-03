@@ -16,8 +16,7 @@ class NewsDashboardCard extends StatelessWidget {
     return DashboardCard(
       title: s.news_dashboardCard,
       footerButtonText: s.news_dashboardCard_all,
-      onFooterButtonPressed: () => context.navigator
-          .push(MaterialPageRoute(builder: (context) => NewsScreen())),
+      onFooterButtonPressed: () => context.navigator.pushNamed('/news'),
       child: CachedRawBuilder<List<Article>>(
         controller: services.get<NewsBloc>().fetchArticles(),
         builder: (context, update) {
