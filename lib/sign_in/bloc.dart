@@ -31,11 +31,16 @@ class SignInBloc {
       );
     }
 
+    logger.i('Logging in as $email…');
+
     // The sign in throws an exception if it wasn't successful.
     final rawResponse = await services.network.post(
       'authentication',
       body: SignInRequest(email: email, password: password).toJson(),
     );
+
+    final storage = services.get<StorageService>();
+    await storage.email.setValue(email);
 
     final response = SignInResponse.fromJson(json.decode(rawResponse.body));
     await services.storage.setUserInfo(
@@ -43,6 +48,7 @@ class SignInBloc {
       userId: response.userId,
       token: response.accessToken,
     );
+    logger.i('Logged in with userId ${response.userId}!');
   }
 
   Future<void> signInAsDemoStudent() =>

@@ -42,6 +42,8 @@ class FancyScaffold extends StatelessWidget {
   }
 }
 
+typedef AppBarBuilder = Widget Function(bool isInnerBoxScrolled);
+
 class FancyTabbedScaffold extends StatelessWidget {
   const FancyTabbedScaffold({
     Key key,
@@ -53,7 +55,7 @@ class FancyTabbedScaffold extends StatelessWidget {
         assert(tabs != null),
         super(key: key);
 
-  final Widget Function(bool) appBarBuilder;
+  final AppBarBuilder appBarBuilder;
   final TabController controller;
   final List<Widget> tabs;
   final bool omitHorizontalPadding;

@@ -44,7 +44,7 @@ class _AssignmentDetailsScreenState extends State<AssignmentDetailsScreen>
           appBarBuilder: (innerBoxIsScrolled) => FancyAppBar(
             title: Text(assignment.name),
             actions: <Widget>[
-              if (user.hasPermission(Permission.assignmentEdit))
+              if (user?.hasPermission(Permission.assignmentEdit) == true)
                 IconButton(
                   icon: Icon(
                       assignment.isArchived ? Icons.unarchive : Icons.archive),
@@ -147,7 +147,7 @@ class _DetailsTab extends StatelessWidget {
             return CourseChip(course);
           },
         ),
-      if (assignment.isOverDue)
+      if (assignment.isOverdue)
         ActionChip(
           avatar: Icon(
             Icons.flag,
@@ -222,13 +222,13 @@ class _SubmissionTab extends StatelessWidget {
         ),
         if (submission != null)
           ..._buildFileSection(context, submission.fileIds, submission.id),
-        if (!assignment.isOverDue) FabSpacer(),
+        if (!assignment.isOverdue) FabSpacer(),
       ]),
     );
   }
 
   Widget _buildOverlay(BuildContext context, Submission submission) {
-    if (assignment.isOverDue) {
+    if (assignment.isOverdue) {
       return SizedBox.shrink();
     }
 

@@ -63,7 +63,7 @@
   "@app_navigation_userDataEmpty": {
     "type": "text"
   },
-  "app_signOut_content": "Du brauchst deine Anmeldedaten, um dich wieder anzumelden.",
+  "app_signOut_content": "Du musst dich danach erneut anmelden, um die App zu benutzen.",
   "@app_signOut_content": {
     "type": "text",
     "description": ""
@@ -406,6 +406,11 @@
   "news_dashboardCard_all": "Alle Artikel",
   "@news_dashboardCard_all": {
     "type": "text"
+  },
+  "news_dashboardCard_empty": "Keine Artikel vorhanden.",
+  "@news_dashboardCard_empty": {
+    "type": "text",
+    "description": ""
   },
   "settings": "Einstellungen",
   "@settings": {

@@ -221,7 +221,7 @@ class AssignmentCard extends StatelessWidget {
             );
           },
         ),
-      if (assignment.isOverDue)
+      if (assignment.isOverdue)
         ActionChip(
           avatar: Icon(
             Icons.flag,

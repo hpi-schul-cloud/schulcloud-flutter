@@ -37,14 +37,12 @@ class DashboardCard extends StatelessWidget {
             child: child,
           ),
           if (footerButtonText != null)
-            Padding(
+            Container(
               padding: EdgeInsets.symmetric(horizontal: 16),
-              child: Align(
-                alignment: Alignment.bottomRight,
-                child: OutlineButton(
-                  onPressed: onFooterButtonPressed,
-                  child: Text(footerButtonText),
-                ),
+              alignment: Alignment.bottomRight,
+              child: OutlineButton(
+                onPressed: onFooterButtonPressed,
+                child: Text(footerButtonText),
               ),
             )
         ],

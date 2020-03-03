@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:schulcloud/app/app.dart';
-import 'package:schulcloud/app/widgets/form.dart';
 
 import '../bloc.dart';
 import '../data.dart';
@@ -59,10 +58,8 @@ class _EditSubmissionScreenState extends State<EditSubmissionScreen> {
             IconButton(
               icon: Icon(Icons.delete),
               onPressed: () async {
-                final result = await showConfirmDeleteDialog(
-                  context: context,
-                  message: s.assignment_editSubmission_delete_confirm,
-                );
+                final result = await context.showConfirmDeleteDialog(
+                    s.assignment_editSubmission_delete_confirm);
                 if (result) {
                   await services.get<SubmissionBloc>().delete(submission.id);
 
@@ -96,7 +93,7 @@ class _EditSubmissionScreenState extends State<EditSubmissionScreen> {
           if (isExistingSubmission && submission.comment == _comment) {
             return true;
           }
-          return showDiscardChangesDialog(context);
+          return context.showDiscardChangesDialog();
         },
         onChanged: () =>
             setState(() => _isValid = _formKey.currentState.validate()),

@@ -63,7 +63,7 @@
   "@app_navigation_userDataEmpty": {
     "type": "text"
   },
-  "app_signOut_content": "You'll need your login credentials to log in again.",
+  "app_signOut_content": "You will need to provide your login credentials to use the app again.",
   "@app_signOut_content": {
     "type": "text",
     "description": ""
@@ -406,6 +406,11 @@
   "news_dashboardCard_all": "All articles",
   "@news_dashboardCard_all": {
     "type": "text"
+  },
+  "news_dashboardCard_empty": "No articles available.",
+  "@news_dashboardCard_empty": {
+    "type": "text",
+    "description": ""
   },
   "settings": "Settings",
   "@settings": {
