@@ -202,6 +202,11 @@
     "type": "text",
     "description": ""
   },
+  "assignment_assignment_property_updatedAt": "Letzte Aktualisierung",
+  "@assignment_assignment_property_updatedAt": {
+    "type": "text",
+    "description": ""
+  },
   "assignment_assignmentsScreen_empty": "Es wurden keine Aufgaben gefunden, die deinen Filtern entsprechen.",
   "@assignment_assignmentsScreen_empty": {
     "type": "text",
