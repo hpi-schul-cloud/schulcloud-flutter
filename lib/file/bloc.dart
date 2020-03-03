@@ -100,7 +100,8 @@ class FileBloc {
     }
   }
 
-  Future<void> uploadFile({@required String owner, String parent}) async {
+  Future<void> uploadFile(
+      {@required Id<dynamic> owner, Id<File> parent}) async {
     final network = services.get<NetworkService>();
     final api = services.get<ApiNetworkService>();
 
@@ -108,7 +109,7 @@ class FileBloc {
     // file.name;
 
     const fileName = 'test.txt';
-    const mimeType = 'text';
+    const mimeType = 'text/plain';
     final fileBuffer = utf8.encode('Dies ist eine Testdatei.');
 
     // Request a signed url.
@@ -131,7 +132,8 @@ class FileBloc {
     // Notify the api backend.
     print(await api.post('fileStorage', body: {
       'name': fileName,
-      'owner': owner,
+      'owner': owner.id,
+      'refOwnerModel': owner is Id<User> ? 'user' : 'course',
       'type': mimeType,
       'size': fileBuffer.length,
       'storageFileName': signedInfo['header']['x-amz-meta-flat-name'],
