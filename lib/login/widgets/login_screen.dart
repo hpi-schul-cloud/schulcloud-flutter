@@ -44,7 +44,7 @@ class LoginScreen extends StatelessWidget {
           height: 50,
           padding: EdgeInsets.only(bottom: mediaQuery.padding.bottom),
           alignment: Alignment.center,
-          child: Text(s.login_loginScreen_moreInformation),
+          child: Text(s.signIn_signInScreen_moreInformation),
         ),
       ),
       SlantedSection(
@@ -53,7 +53,7 @@ class LoginScreen extends StatelessWidget {
         child: Padding(
           padding: EdgeInsets.all(16),
           child: Text(
-            s.login_loginScreen_about,
+            s.signIn_signInScreen_about,
             textAlign: TextAlign.justify,
           ),
         ),
@@ -61,7 +61,7 @@ class LoginScreen extends StatelessWidget {
       Container(
         padding: EdgeInsets.all(16),
         alignment: Alignment.center,
-        child: Text(s.login_loginScreen_placeholder),
+        child: Text(s.signIn_signInScreen_placeholder),
       ),
     ];
   }
