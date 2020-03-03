@@ -4,6 +4,7 @@ import 'package:schulcloud/assignment/assignment.dart';
 import 'package:schulcloud/course/course.dart';
 import 'package:schulcloud/dashboard/dashboard.dart';
 import 'package:schulcloud/news/routes.dart';
+import 'package:schulcloud/settings/settings.dart';
 
 final router = Router(
   routes: [
@@ -11,9 +12,10 @@ final router = Router(
       ['schul-cloud.org', 'www.schul-cloud.org'],
       isOptional: true,
       routes: [
+        assignmentRoutes,
         dashboardRoutes,
         newsRoutes,
-        assignmentRoutes,
+        settingsRoutes,
       ],
     ),
     Route.any(

@@ -2,18 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_cached/flutter_cached.dart';
 import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/login/login.dart';
-import 'package:schulcloud/settings/settings.dart';
 
 import '../data.dart';
 import '../services/user_fetcher.dart';
 
 class AccountDialog extends StatelessWidget {
-  void _openSettings(BuildContext context) {
-    context.navigator.push(MaterialPageRoute(
-      builder: (_) => SettingsScreen(),
-    ));
-  }
-
   @override
   Widget build(BuildContext context) {
     AboutDialog();
@@ -26,7 +19,7 @@ class AccountDialog extends StatelessWidget {
       ),
       actions: <Widget>[
         FlatButton(
-          onPressed: () => _openSettings(context),
+          onPressed: () => context.navigator.pushNamed('/settings'),
           child: Text('Settings'),
         ),
         FlatButton(
