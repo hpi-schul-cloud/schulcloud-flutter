@@ -1,17 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:logger_flutter/logger_flutter.dart';
-import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/generated/l10n.dart';
-import 'package:schulcloud/login/login.dart';
 
 import '../app_config.dart';
 import '../routing.dart';
 import '../services/navigator_observer.dart';
 import '../services/storage.dart';
+import '../theming_utils.dart';
 import '../utils.dart';
 
 class SchulCloudApp extends StatelessWidget {
+  static final navigatorKey = GlobalKey<NavigatorState>();
+  static NavigatorState get navigator => navigatorKey.currentState;
+
   @override
   Widget build(BuildContext context) {
     final appConfig = services.get<AppConfig>();
@@ -19,7 +21,15 @@ class SchulCloudApp extends StatelessWidget {
       title: appConfig.title,
       theme: appConfig.createThemeData(Brightness.light),
       darkTheme: appConfig.createThemeData(Brightness.dark),
-      home: services.storage.hasToken ? LoggedInScreen() : LoginScreen(),
+      navigatorKey: navigatorKey,
+      initialRoute: services.storage.isSignedIn
+          ? appSchemeLink('signedInScreen')
+          : services.get<AppConfig>().webUrl('login'),
+      onGenerateRoute: router.onGenerateRoute,
+      navigatorObservers: [
+        LoggingNavigatorObserver(),
+        HeroController(),
+      ],
       localizationsDelegates: [
         S.delegate,
         GlobalMaterialLocalizations.delegate,

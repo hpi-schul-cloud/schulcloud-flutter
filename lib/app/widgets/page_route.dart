@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 
 class TopLevelPageRoute<T> extends PageRoute<T> {
-  TopLevelPageRoute({@required this.builder}) : assert(builder != null);
+  TopLevelPageRoute({
+    @required this.builder,
+    @required RouteSettings settings,
+  })  : assert(builder != null),
+        super(settings: settings);
 
   final WidgetBuilder builder;
 

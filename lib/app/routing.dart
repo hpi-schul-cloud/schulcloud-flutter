@@ -16,6 +16,8 @@ import 'widgets/schulcloud_app.dart';
 final hostRegExp =
     RegExp('(?:www\.)?${RegExp.escape(services.get<AppConfig>().host)}');
 
+String appSchemeLink(String path) => 'app://org.schulcloud.android/$path';
+
 final router = Router(
   routes: [
     Route(
@@ -23,7 +25,10 @@ final router = Router(
       routes: [
         Route(
           matcher: Matcher.path('signedInScreen'),
-          builder: (_) => TopLevelPageRoute(builder: (_) => LoggedInScreen()),
+          builder: (result) => TopLevelPageRoute(
+            builder: (_) => LoggedInScreen(),
+            settings: result.settings,
+          ),
         ),
       ],
     ),

@@ -6,7 +6,7 @@ import 'login.dart';
 
 Future<bool> logOut(BuildContext context) async {
   logger.i('Logging out…');
-  
+
   final s = context.s;
   final confirmed = await showDialog(
     context: context,
@@ -35,10 +35,7 @@ Future<bool> logOut(BuildContext context) async {
     // leads to the issue that logging out becomes impossible.
     unawaited(services.get<StorageService>().clear());
 
-    final navigator = context.rootNavigator..popUntil((route) => route.isFirst);
-    unawaited(navigator.pushReplacement(TopLevelPageRoute(
-      builder: (_) => LoginScreen(),
-    )));
+    unawaited(SchulCloudApp.navigator.pushReplacementNamed('/login'));
   }
 
   logger.i('Logged out!');

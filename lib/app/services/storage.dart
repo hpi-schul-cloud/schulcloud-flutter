@@ -53,10 +53,10 @@ class StorageService {
   Id<User> get userId => Id<User>(userIdString.getValue());
 
   final Preference<String> email;
-  bool get hasEmail => email.getValue().isNotEmpty;
 
   final Preference<String> token;
   bool get hasToken => token.getValue().isNotEmpty;
+  bool get isSignedIn => hasToken;
 
   final HiveCache cache;
 

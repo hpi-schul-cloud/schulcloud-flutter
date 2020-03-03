@@ -4,5 +4,8 @@ import 'package:schulcloud/login/login.dart';
 
 final loginRoutes = Route(
   matcher: Matcher.path('login'),
-  builder: (_) => TopLevelPageRoute(builder: (_) => LoginScreen()),
+  builder: (result) => TopLevelPageRoute(
+    builder: (_) => LoginScreen(),
+    settings: result.settings,
+  ),
 );

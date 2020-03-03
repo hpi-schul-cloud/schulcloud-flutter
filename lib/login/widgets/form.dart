@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:pedantic/pedantic.dart';
 import 'package:schulcloud/app/app.dart';
+import 'package:schulcloud/app/routing.dart';
 
 import '../bloc.dart';
 import 'input.dart';
@@ -29,9 +30,8 @@ class _LoginFormState extends State<LoginForm> {
       setState(() => _ambientError = null);
 
       // Logged in.
-      unawaited(context.navigator.pushReplacement(TopLevelPageRoute(
-        builder: (_) => LoggedInScreen(),
-      )));
+      unawaited(SchulCloudApp.navigator
+          .pushReplacementNamed(appSchemeLink('signedInScreen')));
     } on InvalidLoginSyntaxError catch (e) {
       // We will display syntax errors on the text fields themselves.
       _ambientError = null;
