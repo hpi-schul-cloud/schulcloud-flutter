@@ -105,7 +105,7 @@ class LazyIds<T extends Entity<T>> {
   LazyIds({@required this.collectionId, @required this.fetcher});
 
   final String collectionId;
-  Id<IdCollection<T>> get _id => Id<IdCollection<T>>(collectionId);
+  // Id<IdCollection<T>> get _id => Id<IdCollection<T>>(collectionId);
 
   final FutureOr<List<T>> Function() fetcher;
 

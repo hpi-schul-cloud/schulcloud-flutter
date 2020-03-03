@@ -78,6 +78,7 @@ class ArticlePreview extends StatelessWidget {
               style: theme.textTheme.display2,
             ),
             TextOrPlaceholder(
+              // ignore: deprecated_member_use_from_same_package
               _isPlaceholder ? null : limitString(article.content, 200),
               style: theme.textTheme.body2,
             ),
