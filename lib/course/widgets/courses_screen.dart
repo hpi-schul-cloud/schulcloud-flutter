@@ -25,12 +25,14 @@ class CoursesScreen extends StatelessWidget {
               FancyAppBar(title: Text(context.s.course)),
               SliverPadding(
                 padding: EdgeInsets.fromLTRB(16, 8, 16, 16),
-                sliver: SliverGrid.count(
-                  childAspectRatio: 1.5,
-                  crossAxisCount: 2,
-                  children: <Widget>[
-                    for (var course in courses) CourseCard(course: course),
-                  ],
+                sliver: SliverList(
+                  delegate: SliverChildListDelegate([
+                    for (var course in courses)
+                      Padding(
+                        padding: EdgeInsets.only(bottom: 16),
+                        child: CourseCard(course: course),
+                      )
+                  ]),
                 ),
               ),
             ],
