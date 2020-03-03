@@ -18,8 +18,7 @@ class CalendarBloc {
     // And the simple but ingenious answer to that is:
     // 1. Download all events (every time). (≈ 50 kb using the demo account)
     // 2. Implement your own logic to filter them. Have fun 😊
-    final allEvents = services.get<StorageService>().root.events.controller
-      ..fetch();
+    final allEvents = services.storage.root.events.controller;
     return allEvents.updates.map((u) {
       if (!u.hasData) {
         return u;

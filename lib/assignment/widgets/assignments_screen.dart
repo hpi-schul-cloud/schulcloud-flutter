@@ -80,7 +80,7 @@ class _AssignmentsScreenState extends State<AssignmentsScreen> {
 
     return Scaffold(
       body: CachedBuilder<List<Assignment>>(
-        controller: services.get<StorageService>().root.assignments.controller,
+        controller: services.storage.root.assignments.controller,
         errorBannerBuilder: (_, error, st) => ErrorBanner(error, st),
         errorScreenBuilder: (_, error, st) => ErrorScreen(error, st),
         builder: (context, allAssignments) {

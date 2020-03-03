@@ -11,7 +11,7 @@ class NewsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: CachedBuilder<List<Article>>(
-        controller: services.get<StorageService>().root.news.controller,
+        controller: services.storage.root.news.controller,
         errorBannerBuilder: (_, error, st) => ErrorBanner(error, st),
         errorScreenBuilder: (_, error, st) => ErrorScreen(error, st),
         builder: (_, articles) {

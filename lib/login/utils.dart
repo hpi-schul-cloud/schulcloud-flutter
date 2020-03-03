@@ -6,7 +6,7 @@ import 'login.dart';
 
 Future<bool> logOut(BuildContext context) async {
   logger.i('Logging out…');
-  
+
   final s = context.s;
   final confirmed = await showDialog(
     context: context,
@@ -33,7 +33,7 @@ Future<bool> logOut(BuildContext context) async {
 
     // This should probably be awaited, but right now awaiting it
     // leads to the issue that logging out becomes impossible.
-    unawaited(services.get<StorageService>().clear());
+    unawaited(services.storage.clear());
 
     final navigator = context.rootNavigator..popUntil((route) => route.isFirst);
     unawaited(navigator.pushReplacement(TopLevelPageRoute(

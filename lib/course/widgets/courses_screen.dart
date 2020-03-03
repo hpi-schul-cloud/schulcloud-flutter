@@ -10,7 +10,7 @@ class CoursesScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: CachedBuilder<List<Course>>(
-        controller: services.get<StorageService>().root.courses.controller,
+        controller: services.storage.root.courses.controller,
         errorBannerBuilder: (_, error, st) => ErrorBanner(error, st),
         errorScreenBuilder: (_, error, st) => ErrorScreen(error, st),
         builder: (context, courses) {

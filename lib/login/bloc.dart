@@ -31,8 +31,7 @@ class LoginBloc {
     }
 
     logger.i('Logging in as $email…');
-    final storage = services.get<StorageService>();
-    await storage.email.setValue(email);
+    await services.storage.email.setValue(email);
 
     // The login throws an exception if it wasn't successful.
     final rawResponse = await services.network.post(

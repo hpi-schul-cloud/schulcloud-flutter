@@ -29,8 +29,7 @@ class _CoursesList extends StatelessWidget {
     return FancyCard(
       title: context.s.file_files_course,
       child: CachedRawBuilder(
-        controller: services.get<StorageService>().root.courses.controller
-          ..fetch(),
+        controller: services.storage.root.courses.controller,
         builder: (context, update) {
           return GridView.extent(
             primary: false,
@@ -85,7 +84,7 @@ class _UserFiles extends StatelessWidget {
       title: context.s.file_files_my,
       omitHorizontalPadding: true,
       child: CachedRawBuilder(
-        controller: services.get<StorageService>().currentUserId.controller,
+        controller: services.storage.currentUserId.controller,
         builder: (context, update) {
           return update.hasData
               ? FileBrowser(owner: update.data, isEmbedded: true)

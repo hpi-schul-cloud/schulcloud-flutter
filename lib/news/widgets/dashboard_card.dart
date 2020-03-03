@@ -19,7 +19,7 @@ class NewsDashboardCard extends StatelessWidget {
       onFooterButtonPressed: () => context.navigator
           .push(MaterialPageRoute(builder: (context) => NewsScreen())),
       child: CachedRawBuilder<List<Article>>(
-        controller: services.get<StorageService>().root.news.controller,
+        controller: services.storage.root.news.controller,
         builder: (context, update) {
           if (!update.hasData) {
             return Center(

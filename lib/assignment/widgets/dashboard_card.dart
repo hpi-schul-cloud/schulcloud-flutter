@@ -19,7 +19,7 @@ class AssignmentDashboardCard extends StatelessWidget {
       onFooterButtonPressed: () => context.navigator
           .push(MaterialPageRoute(builder: (context) => AssignmentsScreen())),
       child: CachedRawBuilder<List<Assignment>>(
-        controller: services.get<StorageService>().root.assignments.controller,
+        controller: services.storage.root.assignments.controller,
         builder: (context, update) {
           if (!update.hasData) {
             return Center(

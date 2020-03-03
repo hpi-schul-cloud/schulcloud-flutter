@@ -32,7 +32,7 @@ class _AssignmentDetailsScreenState extends State<AssignmentDetailsScreen>
     final s = context.s;
 
     return CachedRawBuilder<User>(
-      controller: services.get<StorageService>().currentUserId.controller,
+      controller: services.storage.currentUserId.controller,
       builder: (context, update) {
         final user = update.data;
         final showSubmissionTab =
@@ -231,7 +231,7 @@ class _SubmissionTab extends StatelessWidget {
     final s = context.s;
 
     return CachedRawBuilder<User>(
-      controller: services.get<StorageService>().currentUserId.controller,
+      controller: services.storage.currentUserId.controller,
       builder: (context, update) {
         if (update.hasError) {
           return ErrorScreen(update.error, update.stackTrace);
