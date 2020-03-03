@@ -9,6 +9,7 @@ Route _buildSubdirRoute(Id<Entity> Function(RouteResult result) ownerGetter) {
     builder: (result) => FileBrowserPageRoute(
       builder: (_) =>
           FileBrowser(ownerGetter(result), Id<File>(result['parentId'])),
+      settings: result.settings,
     ),
   );
 }
