@@ -42,7 +42,7 @@ class _MessageAndActions {
       message = s.app_errorScreen_authError;
       actions.add(SecondaryButton(
         onPressed: () => logOut(context),
-        child: Text(s.general_signOut),
+        child: Text(s.app_errorScreen_authError_logOut),
       ));
     } else {
       message = s.app_errorScreen_unknown(exceptionMessage(error));
