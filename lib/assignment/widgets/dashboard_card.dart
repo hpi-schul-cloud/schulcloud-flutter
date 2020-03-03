@@ -17,8 +17,7 @@ class AssignmentDashboardCard extends StatelessWidget {
     return DashboardCard(
       title: s.assignment_dashboardCard,
       footerButtonText: s.assignment_dashboardCard_all,
-      onFooterButtonPressed: () => context.navigator
-          .push(MaterialPageRoute(builder: (context) => AssignmentsScreen())),
+      onFooterButtonPressed: () => context.navigator.pushNamed('/homework'),
       child: CachedRawBuilder<List<Assignment>>(
         controller: services.get<AssignmentBloc>().fetchAssignments(),
         builder: (context, update) {

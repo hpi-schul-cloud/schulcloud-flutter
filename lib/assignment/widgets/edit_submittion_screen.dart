@@ -1,11 +1,51 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_cached/flutter_cached.dart';
 import 'package:schulcloud/app/app.dart';
 
 import '../bloc.dart';
 import '../data.dart';
 
-class EditSubmissionScreen extends StatefulWidget {
-  const EditSubmissionScreen({
+class EditSubmissionScreen extends StatelessWidget {
+  const EditSubmissionScreen(this.assignmentId) : assert(assignmentId != null);
+
+  final Id<Assignment> assignmentId;
+
+  @override
+  Widget build(BuildContext context) {
+    return CachedRawBuilder<Assignment>(
+      controller: services.get<AssignmentBloc>().fetchAssignment(assignmentId),
+      builder: (_, assignmentUpdate) {
+        final assignment = assignmentUpdate.data;
+        return CachedRawBuilder<Submission>(
+          controller:
+              services.get<SubmissionBloc>().fetchMySubmission(assignmentId),
+          builder: (_, update) {
+            final submission = update.data;
+
+            if (assignmentUpdate.hasError || update.hasError) {
+              return Center(
+                child:
+                    Text((assignmentUpdate.error ?? update.error).toString()),
+              );
+            }
+
+            if (assignmentUpdate.data == null) {
+              return Center(child: CircularProgressIndicator());
+            }
+
+            return EditSubmissionForm(
+              assignment: assignment,
+              submission: submission,
+            );
+          },
+        );
+      },
+    );
+  }
+}
+
+class EditSubmissionForm extends StatefulWidget {
+  const EditSubmissionForm({
     Key key,
     @required this.assignment,
     this.submission,
@@ -16,10 +56,10 @@ class EditSubmissionScreen extends StatefulWidget {
   final Submission submission;
 
   @override
-  _EditSubmissionScreenState createState() => _EditSubmissionScreenState();
+  _EditSubmissionFormState createState() => _EditSubmissionFormState();
 }
 
-class _EditSubmissionScreenState extends State<EditSubmissionScreen> {
+class _EditSubmissionFormState extends State<EditSubmissionForm> {
   final _formKey = GlobalKey<FormState>();
   bool _isValid;
   bool _ignoreFormattingOverwrite = false;

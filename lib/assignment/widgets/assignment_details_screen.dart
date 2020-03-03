@@ -210,7 +210,8 @@ class _SubmissionTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CachedRawBuilder<Submission>(
-      controller: services.get<SubmissionBloc>().fetchMySubmission(assignment),
+      controller:
+          services.get<SubmissionBloc>().fetchMySubmission(assignment.id),
       builder: (_, update) {
         if (update.hasError) {
           return ErrorScreen(update.error, update.stackTrace);
@@ -286,12 +287,8 @@ class _SubmissionTab extends StatelessWidget {
           backgroundColor: Colors.transparent,
           floatingActionButton: Builder(
             builder: (context) => FloatingActionButton.extended(
-              onPressed: () => context.navigator.push(MaterialPageRoute(
-                builder: (_) => EditSubmissionScreen(
-                  assignment: assignment,
-                  submission: submission,
-                ),
-              )),
+              onPressed: () => context.navigator
+                  .pushNamed('/homework/${assignment.id}/submission'),
               label: Text(labelText),
               icon: Icon(Icons.edit),
             ),
@@ -314,7 +311,8 @@ class _FeedbackTab extends StatelessWidget {
     final s = context.s;
 
     return CachedRawBuilder<Submission>(
-      controller: services.get<SubmissionBloc>().fetchMySubmission(assignment),
+      controller:
+          services.get<SubmissionBloc>().fetchMySubmission(assignment.id),
       builder: (_, update) {
         if (update.hasError) {
           return ErrorScreen(update.error, update.stackTrace);

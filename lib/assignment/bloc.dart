@@ -55,18 +55,18 @@ class AssignmentBloc {
 class SubmissionBloc {
   const SubmissionBloc();
 
-  CacheController<Submission> fetchMySubmission(Assignment assignment) {
-    assert(assignment != null);
+  CacheController<Submission> fetchMySubmission(Id<Assignment> assignmentId) {
+    assert(assignmentId != null);
 
     return fetchSingleOfList(
       makeNetworkCall: () => services.network.get(
         'submissions',
         parameters: {
-          'homeworkId': assignment.id.id,
+          'homeworkId': assignmentId.id,
           'studentId': services.storage.userIdString.getValue(),
         },
       ),
-      parent: assignment.id,
+      parent: assignmentId,
       parser: (data) => Submission.fromJson(data),
     );
   }

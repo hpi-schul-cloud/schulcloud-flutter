@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart' hide Route;
 import 'package:flutter_deep_linking/flutter_deep_linking.dart';
 import 'package:schulcloud/app/app.dart';
+import 'package:schulcloud/assignment/widgets/edit_submittion_screen.dart';
 
 import 'data.dart';
 import 'widgets/assignment_details_screen.dart';
@@ -35,6 +36,15 @@ final assignmentRoutes = Route.path(
           ),
         );
       },
+      routes: [
+        Route.path(
+          'submission',
+          builder: (result) => MaterialPageRoute(
+            builder: (_) =>
+                EditSubmissionScreen(Id<Assignment>(result['assignmentId'])),
+          ),
+        ),
+      ],
     ),
   ],
 );
