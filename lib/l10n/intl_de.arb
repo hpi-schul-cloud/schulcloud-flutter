@@ -63,6 +63,16 @@
   "@app_navigation_userDataEmpty": {
     "type": "text"
   },
+  "app_notFound": "Seite nicht gefunden",
+  "@app_notFound": {
+    "type": "text",
+    "description": ""
+  },
+  "app_notFound_message": "404 – Wir konnten die von dir aufgerufene Seite nicht finden:\n{uri}",
+  "@app_notFound_message": {
+    "type": "text",
+    "description": ""
+  },
   "app_signOut_content": "Du musst dich danach erneut anmelden, um die App zu benutzen.",
   "@app_signOut_content": {
     "type": "text",

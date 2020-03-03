@@ -10,6 +10,7 @@ import 'package:schulcloud/settings/settings.dart';
 
 import 'app_config.dart';
 import 'utils.dart';
+import 'widgets/not_found_screen.dart';
 import 'widgets/page_route.dart';
 import 'widgets/schulcloud_app.dart';
 
@@ -50,9 +51,7 @@ final router = Router(
     ),
     Route(
       matcher: Matcher.any(),
-      materialPageRouteBuilder: (_, result) => Center(
-        child: Text('Page ${result.uri} not found'),
-      ),
+      materialPageRouteBuilder: (_, result) => NotFoundScreen(result.uri),
     ),
   ],
 );

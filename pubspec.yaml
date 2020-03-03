@@ -69,6 +69,7 @@ flutter:
     - assets/empty_states/files.flr
     - assets/icon_logout.svg
     - assets/file_thumbnails/
+    - assets/sloth_error.svg
     - assets/theme/sc/logo/logo_with_text.svg
     - assets/theme/brb/logo/logo_with_text.svg
     - assets/theme/n21/logo/logo_with_text.svg
