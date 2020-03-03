@@ -1,3 +1,4 @@
+import 'package:flutter_cached/flutter_cached.dart';
 import 'package:hive/hive.dart';
 import 'package:meta/meta.dart';
 import 'package:schulcloud/app/app.dart';
@@ -23,7 +24,7 @@ class Assignment implements Entity<Assignment>, Comparable<Assignment> {
     this.lessonId,
     @required this.isPrivate,
     @required this.hasPublicSubmissions,
-    this.archived = const [],
+    this.archivedBy = const [],
     @required this.teamSubmissions,
     this.fileIds = const [],
   })  : assert(id != null),
@@ -34,7 +35,7 @@ class Assignment implements Entity<Assignment>, Comparable<Assignment> {
         assert(teacherId != null),
         assert(isPrivate != null),
         assert(hasPublicSubmissions != null),
-        assert(archived != null),
+        assert(archivedBy != null),
         assert(teamSubmissions != null),
         assert(fileIds != null);
 
@@ -58,7 +59,7 @@ class Assignment implements Entity<Assignment>, Comparable<Assignment> {
           lessonId: Id(data['lessonId'] ?? ''),
           isPrivate: data['private'] ?? false,
           hasPublicSubmissions: data['publicSubmissions'] ?? false,
-          archived: (data['archived'] as List<dynamic> ?? []).castIds<User>(),
+          archivedBy: (data['archived'] as List<dynamic> ?? []).castIds<User>(),
           teamSubmissions: data['teamSubmissions'] ?? false,
           fileIds: (data['fileIds'] as List<dynamic> ?? []).castIds<File>(),
         );
@@ -108,8 +109,8 @@ class Assignment implements Entity<Assignment>, Comparable<Assignment> {
   final bool hasPublicSubmissions;
 
   @HiveField(16)
-  final List<Id<User>> archived;
-  bool get isArchived => archived.contains(services.storage.userId);
+  final List<Id<User>> archivedBy;
+  bool get isArchived => archivedBy.contains(services.storage.userId);
 
   @HiveField(17)
   final bool teamSubmissions;
@@ -123,6 +124,37 @@ class Assignment implements Entity<Assignment>, Comparable<Assignment> {
   @override
   int compareTo(Assignment other) {
     return other.id.value.compareTo(id.value);
+  }
+
+  Future<Assignment> update({bool isArchived}) async {
+    final userId = services.storage.userId;
+    final request = {
+      if (isArchived != null && isArchived != this.isArchived)
+        'archived': isArchived
+            ? archivedBy + [userId]
+            : archivedBy.where((id) => id != userId).toList(),
+    };
+    if (request.isEmpty) {
+      return this;
+    }
+
+    return Assignment.fromJson(
+        await services.network.patch('homework/$id', body: request).json)
+      ..saveToCache();
+  }
+
+  // TODO(marcelgarus): create some kind of LazyId.
+  CacheController<Submission> get mySubmission {
+    return SimpleCacheController(
+      fetcher: () async => Submission.fromJson(
+          (await fetchJsonListFrom('submissions', parameters: {
+        'homeworkId': id.value,
+        'studentId': services.storage.userIdString.getValue(),
+      }))
+              .singleWhere((_) => true, orElse: () => null)),
+      saveToCache: HiveCache.put,
+      loadFromCache: () => throw NotInCacheException(),
+    );
   }
 }
 
@@ -185,4 +217,35 @@ class Submission implements Entity<Submission> {
 
   @HiveField(9)
   final List<Id<File>> fileIds;
+
+  static Future<Submission> create(
+    Assignment assignment, {
+    String comment = '',
+  }) async {
+    final request = {
+      'schoolId': assignment.schoolId,
+      'studentId': services.storage.userIdString.getValue(),
+      'homeworkId': assignment.id.value,
+      'comment': comment,
+    };
+
+    return Submission.fromJson(
+        await services.network.post('submissions', body: request).json)
+      ..saveToCache();
+  }
+
+  Future<Submission> update({String comment}) async {
+    final request = {
+      if (comment != null && comment != this.comment) 'comment': comment,
+    };
+    if (request.isEmpty) {
+      return this;
+    }
+
+    return Submission.fromJson(
+        await services.network.patch('submissions/$id', body: request).json)
+      ..saveToCache();
+  }
+
+  Future<void> delete() => services.network.delete('submissions/$id');
 }

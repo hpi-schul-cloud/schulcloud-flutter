@@ -24,6 +24,10 @@ abstract class Entity<T extends Entity<T>> {
   Id<T> get id;
 }
 
+extension SaveableEntity<T extends Entity<T>> on Entity<T> {
+  void saveToCache() => HiveCache.put(this);
+}
+
 /// An [Id] that identifies an [Entity] among all other [Entity]s.
 class Id<T extends Entity<T>> {
   const Id(this.value);
@@ -109,19 +113,25 @@ class LazyIds<T extends Entity<T>> {
     return SimpleCacheController<List<T>>(
       fetcher: fetcher,
       loadFromCache: () async {
-        final ids = HiveCache.get(_id) ?? (throw NotInCacheException());
-        return [
-          for (final itemId in ids.childrenIds)
-            HiveCache.get(itemId) ?? (throw NotInCacheException()),
-        ];
+        // TODO(marcelgarus): Activate the cache.
+        throw NotInCacheException();
+
+        // final ids = HiveCache.get(_id) ?? (throw NotInCacheException());
+        // return [
+        //   for (final itemId in ids.childrenIds)
+        //     HiveCache.get(itemId) ?? (throw NotInCacheException()),
+        // ];
       },
       saveToCache: (items) {
-        final collection = IdCollection<T>(
-          id: _id,
-          childrenIds: items.map((item) => item.id).toList(),
-        );
-        HiveCache.put<IdCollection<T>>(collection);
-        items.forEach(HiveCache.put);
+        // TODO(marcelgarus): Activate the cache.
+        return;
+
+        // final collection = IdCollection<T>(
+        //   id: _id,
+        //   childrenIds: items.map((item) => item.id).toList(),
+        // );
+        // HiveCache.put<IdCollection<T>>(collection);
+        // items.forEach(HiveCache.put);
       },
     );
   }
@@ -204,7 +214,7 @@ class HiveCacheImpl {
       _getFetcherOfTypeId(typeId)._createCollection(id, children);
 
   void put<T extends Entity<T>>(T entity) {
-    print('Entity: $entity with id ${entity.id.value}');
+    // print('Entity: $entity with id ${entity.id.value}');
     if (entity is IdCollection) {
       _box.put(entity.id.value, entity);
     }
@@ -309,6 +319,10 @@ Future<void> initializeHive() async {
 
   HiveCache
     ..registerEntityType(TypeId.typeUser, User.fetch)
+    ..registerEntityType<Role>(
+        TypeId.typeRole,
+        (id) =>
+            throw UnsupportedError('Roles cannot be fetched by their id yet.'))
     ..registerEntityType(TypeId.typeAssignment, Assignment.fetch)
     ..registerEntityType(TypeId.typeSubmission, Submission.fetch)
     ..registerEntityType(TypeId.typeEvent, Event.fetch)

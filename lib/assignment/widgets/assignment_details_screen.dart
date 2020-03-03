@@ -51,9 +51,7 @@ class _AssignmentDetailsScreenState extends State<AssignmentDetailsScreen>
                       ? s.assignment_assignmentDetails_unarchive
                       : s.assignment_assignmentDetails_archive,
                   onPressed: () {
-                    services
-                        .get<AssignmentBloc>()
-                        .update(assignment, isArchived: !assignment.isArchived);
+                    assignment.update(isArchived: !assignment.isArchived);
                   },
                 )
             ],
@@ -183,9 +181,7 @@ class _SubmissionTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CachedRawBuilder<Submission>(
-      /// TODO(marcelgarus): fetch the user's submission
-      // controller: services.get<StorageService>().currentUserId.controller,
-      controller: null,
+      controller: assignment.mySubmission,
       builder: (_, update) {
         if (update.hasError) {
           return ErrorScreen(update.error, update.stackTrace);
@@ -289,9 +285,7 @@ class _FeedbackTab extends StatelessWidget {
     final s = context.s;
 
     return CachedRawBuilder<Submission>(
-      // TODO(marcelgarus): fetch the current user's permission
-      controller:
-          null, //services.get<SubmissionBloc>().fetchMySubmission(assignment),
+      controller: assignment.mySubmission,
       builder: (_, update) {
         if (update.hasError) {
           return ErrorScreen(update.error, update.stackTrace);
@@ -346,8 +340,7 @@ List<Widget> _buildFileSection(
     ],
     for (final fileId in fileIds)
       CachedRawBuilder<File>(
-        // TODO(marcelgarus): make typesafe
-        controller: parentId.controller.map((data) => data?.files).controller,
+        controller: fileId.controller,
         builder: (context, update) {
           if (!update.hasData) {
             return ListTile(

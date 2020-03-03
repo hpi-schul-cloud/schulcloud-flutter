@@ -5,7 +5,6 @@ import 'package:schulcloud/login/login.dart';
 import 'package:schulcloud/settings/settings.dart';
 
 import '../data.dart';
-import '../services/user_fetcher.dart';
 
 class AccountDialog extends StatelessWidget {
   void _openSettings(BuildContext context) {
@@ -19,7 +18,7 @@ class AccountDialog extends StatelessWidget {
     AboutDialog();
     return AlertDialog(
       content: CachedRawBuilder<User>(
-        controller: services.get<UserFetcherService>().fetchCurrentUser(),
+        controller: services.storage.userId.controller,
         builder: (context, update) {
           return Text(update?.data?.displayName ?? context.s.general_loading);
         },

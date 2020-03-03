@@ -10,7 +10,7 @@ class AccountAvatar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CachedRawBuilder<User>(
-      controller: services.get<UserFetcherService>().fetchCurrentUser(),
+      controller: services.storage.userId.controller,
       builder: (context, update) {
         final user = update.data;
 

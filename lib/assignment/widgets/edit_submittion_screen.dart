@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:schulcloud/app/app.dart';
 
-import '../bloc.dart';
 import '../data.dart';
 
 class EditSubmissionScreen extends StatefulWidget {
@@ -61,7 +60,7 @@ class _EditSubmissionScreenState extends State<EditSubmissionScreen> {
                 final result = await context.showConfirmDeleteDialog(
                     s.assignment_editSubmission_delete_confirm);
                 if (result) {
-                  await services.get<SubmissionBloc>().delete(submission.id);
+                  await submission.delete();
 
                   // Intentionally using a context outside our scaffold. The
                   // current scaffold only exists inside the route and is being
@@ -110,11 +109,10 @@ class _EditSubmissionScreenState extends State<EditSubmissionScreen> {
   void _save(BuildContext context) async {
     setState(() => _isSaving = true);
     try {
-      final bloc = services.get<SubmissionBloc>();
       if (isNewSubmission) {
-        await bloc.create(assignment, comment: _comment);
+        await Submission.create(assignment, comment: _comment);
       } else {
-        await bloc.update(submission, comment: _comment);
+        await submission.update(comment: _comment);
       }
 
       // The current scaffold only exists inside the route and is being removed

@@ -193,6 +193,11 @@
     "type": "text",
     "description": ""
   },
+  "assignment_assignment_property_updatedAt": "Last update",
+  "@assignment_assignment_property_updatedAt": {
+    "type": "text",
+    "description": ""
+  },
   "assignment_assignmentsScreen_empty": "No assignments found matching your filter criteria.",
   "@assignment_assignmentsScreen_empty": {
     "type": "text",
@@ -385,6 +390,11 @@
   "general_user_unknown": "unknown",
   "@general_user_unknown": {
     "type": "text"
+  },
+  "news": "News",
+  "@news": {
+    "type": "text",
+    "description": ""
   },
   "news_articlePreview_subtitle": "published on {published} by {author}",
   "@news_articlePreview_subtitle": {

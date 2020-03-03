@@ -113,7 +113,7 @@ enum ContentType {
 @immutable
 @HiveType(typeId: TypeId.typeContent)
 class Content implements Entity<Content> {
-  Content({
+  const Content({
     @required this.id,
     @required this.title,
     @required this.type,

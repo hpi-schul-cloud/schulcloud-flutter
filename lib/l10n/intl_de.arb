@@ -193,6 +193,11 @@
     "type": "text",
     "description": ""
   },
+  "assignment_assignment_property_updatedAt": "Letzte Aktualisierung",
+  "@assignment_assignment_property_updatedAt": {
+    "type": "text",
+    "description": ""
+  },
   "assignment_assignmentsScreen_empty": "Es wurden keine Aufgaben gefunden, die deinen Filtern entsprechen.",
   "@assignment_assignmentsScreen_empty": {
     "type": "text",
@@ -385,6 +390,11 @@
   "general_user_unknown": "Unbekannt",
   "@general_user_unknown": {
     "type": "text"
+  },
+  "news": "Neuigkeiten",
+  "@news": {
+    "type": "text",
+    "description": ""
   },
   "news_articlePreview_subtitle": "Veröffentlicht am {published} von {author}",
   "@news_articlePreview_subtitle": {

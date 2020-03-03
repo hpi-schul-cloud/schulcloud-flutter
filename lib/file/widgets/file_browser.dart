@@ -29,6 +29,12 @@ class FileBrowser extends StatelessWidget {
   /// show an app bar.
   final bool isEmbedded;
 
+  CacheController<List<File>> get _filesController {
+    // The owner is either a [User] or a [Course]. Either way, the [owner] is
+    // guaranteed to have a [files] field.
+    return parent?.files?.controller ?? (owner as dynamic).files.controller;
+  }
+
   void _openDirectory(BuildContext context, File file) {
     assert(file.isDirectory);
 
@@ -64,8 +70,7 @@ class FileBrowser extends StatelessWidget {
 
   Widget _buildEmbedded(BuildContext context) {
     return CachedRawBuilder<List<File>>(
-      controller: // TODO(marcelgarus): make this typesafe
-          parent?.files?.controller ?? (owner as dynamic).files.controller,
+      controller: _filesController,
       builder: (context, update) {
         if (update.hasError) {
           return ErrorScreen(update.error, update.stackTrace);
@@ -94,8 +99,7 @@ class FileBrowser extends StatelessWidget {
         ),
       ),
       body: CachedBuilder<List<File>>(
-        controller: // TODO(marcelgarus): make this typesafe
-            parent?.files?.controller ?? (owner as dynamic).files.controller,
+        controller: _filesController,
         errorBannerBuilder: (_, error, st) => ErrorBanner(error, st),
         errorScreenBuilder: (_, error, st) => ErrorScreen(error, st),
         builder: (context, files) {

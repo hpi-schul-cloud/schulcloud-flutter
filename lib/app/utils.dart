@@ -5,6 +5,7 @@ import 'package:flutter/widgets.dart';
 import 'package:get_it/get_it.dart';
 import 'package:flutter/material.dart';
 import 'package:html/parser.dart';
+import 'package:http/http.dart';
 import 'package:schulcloud/generated/l10n.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -27,11 +28,17 @@ extension FancyContext on BuildContext {
   }
 }
 
-/// Gets some json from the server.
-Future<Map<String, dynamic>> fetchJsonFrom(String path) async {
-  final response = await services.get<NetworkService>().get(path);
-  return json.decode(response.body);
+extension ResponseToJson on Response {
+  Map<String, dynamic> get json => jsonDecode(body);
 }
+
+extension FutureResponseToJson on Future<Response> {
+  Future<Map<String, dynamic>> get json async => (await this).json;
+}
+
+/// Gets some json from the server.
+Future<Map<String, dynamic>> fetchJsonFrom(String path) =>
+    services.network.get(path).json;
 
 /// Gets a json list from the server.
 Future<List<Map<String, dynamic>>> fetchJsonListFrom(
@@ -41,18 +48,17 @@ Future<List<Map<String, dynamic>>> fetchJsonListFrom(
   bool wrappedInData = true,
   Map<String, String> parameters = const {},
 }) async {
-  final response =
-      await services.get<NetworkService>().get(path, parameters: parameters);
-  final jsonData = json.decode(response.body);
-  final jsonBody = wrappedInData ? jsonData['data'] : jsonData;
-  return (jsonBody as List).cast<Map<String, dynamic>>();
+  var jsonData = jsonDecode(
+      (await services.network.get(path, parameters: parameters)).body);
+  if (wrappedInData) {
+    jsonData = jsonData['data'];
+  }
+  return (jsonData as List).cast<Map<String, dynamic>>();
 }
 
-/// Converts a hex string (like, '#ffdd00') to a [Color].
-Color hexStringToColor(String hex) =>
-    Color(int.parse('ff${hex.substring(1)}', radix: 16));
-
 /// Limits a string to a certain amount of characters.
+@Deprecated('Rather than limiting Strings to a certain amount of characters, '
+    'they should be clipped visually, for example after 3 lines')
 String limitString(String string, int maxLength) =>
     string.length > maxLength ? '${string.substring(0, maxLength)}…' : string;
 
@@ -143,25 +149,3 @@ class LazyMap<K, V> {
 
   V operator [](K key) => _map.putIfAbsent(key, () => createValueForKey(key));
 }
-
-/*CacheController<List<T>> fetchList<T extends Entity>({
-  @required Future<Response> Function(NetworkService network) makeNetworkCall,
-  @required T Function(Map<String, dynamic> data) parser,
-  Id<dynamic> parent,
-  // Surprise: The Calendar API's response is different from all others! Would
-  // be too easy otherwise ;)
-  bool serviceIsPaginated = true,
-}) {
-  final storage = services.storage;
-
-  return CacheController<List<T>>(
-    saveToCache: (items) => storage.cache.putChildrenOfType<T>(parent, items),
-    loadFromCache: () => storage.cache.getChildrenOfType<T>(parent),
-    fetcher: () async {
-      final response = await makeNetworkCall();
-      final body = json.decode(response.body);
-      final dataList = serviceIsPaginated ? body['data'] : body;
-      return [for (final data in dataList) parser(data)];
-    },
-  );
-}*/

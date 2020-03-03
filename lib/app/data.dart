@@ -93,7 +93,8 @@ class User implements Entity<User> {
   final List<Id<Role>> roles;
   bool get isTeacher => hasRole(Role.teacherName);
   bool hasRole(String name) {
-    // TODO(marcelgarus): Remove the hard-coded mapping and use runtime lookup when upgrading flutter_cached and flattening is supported
+    // TODO(marcelgarus): Remove the hard-coded mapping and use runtime lookup
+    // when upgrading flutter_cached and flattening is supported.
     final id = {
       Role.teacherName: '0000d186816abba584714c98',
     }[name];

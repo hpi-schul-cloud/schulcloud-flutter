@@ -2,10 +2,6 @@ import 'dart:convert';
 
 import 'package:get_it/get_it.dart';
 import 'package:meta/meta.dart';
-import 'package:schulcloud/assignment/assignment.dart';
-import 'package:schulcloud/course/course.dart';
-import 'package:schulcloud/file/file.dart';
-import 'package:schulcloud/news/news.dart';
 import 'package:streaming_shared_preferences/streaming_shared_preferences.dart';
 
 import '../app.dart';
