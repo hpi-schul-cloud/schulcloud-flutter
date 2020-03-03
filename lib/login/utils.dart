@@ -2,10 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:pedantic/pedantic.dart';
 import 'package:schulcloud/app/app.dart';
 
-import 'login.dart';
-
 Future<bool> logOut(BuildContext context) async {
   logger.i('Logging out…');
+
+  if (services.storage.isSignedOut) {
+    logger.i('Already signed out');
+    return true;
+  }
 
   final s = context.s;
   final confirmed = await showDialog(
@@ -29,15 +32,7 @@ Future<bool> logOut(BuildContext context) async {
   );
 
   if (confirmed) {
-    // Actually log out.
-
-    // This should probably be awaited, but right now awaiting it
-    // leads to the issue that logging out becomes impossible.
-    unawaited(services.get<StorageService>().clear());
-
-    unawaited(SchulCloudApp.navigator.pushReplacementNamed('/login'));
+    unawaited(SchulCloudApp.navigator.pushReplacementNamed('/logout'));
   }
-
-  logger.i('Logged out!');
   return confirmed;
 }
