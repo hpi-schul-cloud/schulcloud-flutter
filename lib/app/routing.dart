@@ -13,6 +13,7 @@ final router = Router(
       isOptional: true,
       routes: [
         assignmentRoutes,
+        courseRoutes,
         dashboardRoutes,
         newsRoutes,
         settingsRoutes,

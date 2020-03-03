@@ -4,23 +4,16 @@ import 'package:schulcloud/app/app.dart';
 
 import '../bloc.dart';
 import '../data.dart';
-import 'course_detail_screen.dart';
 
 class CourseCard extends StatelessWidget {
   const CourseCard({@required this.course}) : assert(course != null);
 
   final Course course;
 
-  void _openDetailsScreen(BuildContext context) {
-    context.navigator.push(MaterialPageRoute(
-      builder: (context) => CourseDetailsScreen(course: course),
-    ));
-  }
-
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => _openDetailsScreen(context),
+      onTap: () => context.navigator.pushNamed('/courses/${course.id}'),
       child: Card(
         child: Column(
           children: <Widget>[

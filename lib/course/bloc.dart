@@ -24,11 +24,17 @@ class CourseBloc {
     );
   }
 
-  CacheController<List<Lesson>> fetchLessonsOfCourse(Course course) =>
+  CacheController<List<Lesson>> fetchLessonsOfCourse(Id<Course> courseId) =>
       fetchList(
-        parent: course.id,
-        makeNetworkCall: () =>
-            services.network.get('lessons?courseId=${course.id}'),
+        parent: courseId,
+        makeNetworkCall: () => services.network.get(
+          'lessons',
+          parameters: {'courseId': courseId.id},
+        ),
+        parser: (data) => Lesson.fromJson(data),
+      );
+  CacheController<Lesson> fetchLesson(Id<Lesson> id) => fetchSingle(
+        makeNetworkCall: () => services.network.get('lessons/$id'),
         parser: (data) => Lesson.fromJson(data),
       );
 

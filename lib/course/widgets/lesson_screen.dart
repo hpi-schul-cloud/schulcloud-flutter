@@ -1,19 +1,21 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_cached/flutter_cached.dart';
 import 'package:schulcloud/app/app.dart';
 import 'package:sprintf/sprintf.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
+import '../bloc.dart';
 import '../data.dart';
 
 class LessonScreen extends StatefulWidget {
-  const LessonScreen({@required this.course, @required this.lesson})
-      : assert(course != null),
-        assert(lesson != null);
+  const LessonScreen({@required this.courseId, @required this.lessonId})
+      : assert(courseId != null),
+        assert(lessonId != null);
 
-  final Course course;
-  final Lesson lesson;
+  final Id<Course> courseId;
+  final Id<Lesson> lessonId;
 
   @override
   _LessonScreenState createState() => _LessonScreenState();
@@ -69,49 +71,79 @@ class _LessonScreenState extends State<LessonScreen> {
 
   WebViewController _controller;
 
-  void _showLessonContentMenu() {
-    showModalBottomSheet(
-      context: context,
-      builder: (_) => BottomSheet(
-        builder: (_) => _buildBottomSheetContent(),
-        onClosing: () {},
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: CustomScrollView(
-        slivers: <Widget>[
-          FancyAppBar(
-            title: Text(widget.lesson.name),
-            subtitle: Text(widget.course.name),
+    return CachedRawBuilder<Lesson>(
+      controller: services.get<CourseBloc>().fetchLesson(widget.lessonId),
+      builder: (context, update) {
+        if (update.hasError) {
+          return ErrorScreen(update.error, update.stackTrace);
+        } else if (!update.hasData) {
+          return Center(child: CircularProgressIndicator());
+        }
+
+        final lesson = update.data;
+        // TODO(marcelgarus): use FancyScaffold when flutter_cached supports slivers
+        return FancyScaffold(
+          appBar: FancyAppBar(
+            title: Text(lesson.name),
+            subtitle: CachedRawBuilder<Course>(
+              controller:
+                  services.get<CourseBloc>().fetchCourse(widget.courseId),
+              builder: (_, update) {
+                final course = update.data;
+                return Text(course?.name ?? context.s.general_loading);
+              },
+            ),
             actions: <Widget>[
               IconButton(
                 icon: Icon(Icons.web),
-                onPressed: _showLessonContentMenu,
+                onPressed: () => _showLessonContentMenu(context, lesson),
               ),
             ],
           ),
-          SliverFillRemaining(
+          sliver: SliverFillRemaining(
             child: WebView(
-              initialUrl: _textOrUrl(widget.lesson.contents[0]),
+              initialUrl: _buildWebViewUrl(lesson.contents[0]),
               onWebViewCreated: (controller) => _controller = controller,
               javascriptMode: JavascriptMode.unrestricted,
             ),
           ),
+        );
+      },
+    );
+  }
+
+  void _showLessonContentMenu(BuildContext context, Lesson lesson) {
+    context.showFancyBottomSheet(
+      builder: (context) => Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          for (final content in lesson.contents)
+            NavigationItem(
+              icon: Icons.textsms,
+              text: content.title,
+              onPressed: () {
+                if (_controller == null) {
+                  return;
+                }
+                _controller.loadUrl(_buildWebViewUrl(content));
+                Navigator.pop(context);
+              },
+              isActive: false,
+            ),
         ],
       ),
     );
   }
 
+  String _buildWebViewUrl(Content content) =>
+      content.isText ? _createTextSource(content.text) : content.url;
   String _createTextSource(String html) {
     final theme = context.theme;
 
-    String cssColor(Color color) {
-      return 'rgba(${color.red}, ${color.green}, ${color.blue}, ${color.opacity})';
-    }
+    String cssColor(Color color) =>
+        'rgba(${color.red}, ${color.green}, ${color.blue}, ${color.opacity})';
 
     final fullHtml = sprintf(
       contentTextFormat,
@@ -127,29 +159,5 @@ class _LessonScreenState extends State<LessonScreen> {
       mimeType: 'text/html',
       encoding: Encoding.getByName('utf-8'),
     ).toString();
-  }
-
-  String _textOrUrl(Content content) =>
-      content.isText ? _createTextSource(content.text) : content.url;
-
-  Widget _buildBottomSheetContent() {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        for (var content in widget.lesson.contents)
-          NavigationItem(
-            icon: Icons.textsms,
-            text: content.title,
-            onPressed: () {
-              if (_controller == null) {
-                return;
-              }
-              _controller.loadUrl(_textOrUrl(content));
-              Navigator.pop(context);
-            },
-            isActive: false,
-          ),
-      ],
-    );
   }
 }

@@ -3,7 +3,6 @@ import 'package:schulcloud/app/app.dart';
 
 import '../data.dart';
 import 'course_color_dot.dart';
-import 'course_detail_screen.dart';
 
 class CourseChip extends StatelessWidget {
   const CourseChip(this.course, {Key key, this.onPressed}) : super(key: key);
@@ -24,9 +23,7 @@ class CourseChip extends StatelessWidget {
       avatar: CourseColorDot(course: course),
       label: TextOrPlaceholder(course?.name),
       onPressed: onPressed ??
-          () => context.navigator.push(MaterialPageRoute(
-                builder: (_) => CourseDetailsScreen(course: course),
-              )),
+          () => context.navigator.pushNamed('/courses/${course.id}'),
     );
   }
 }
