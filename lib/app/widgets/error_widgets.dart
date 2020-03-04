@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:schulcloud/app/app.dart';
-import 'package:schulcloud/login/login.dart';
+import 'package:schulcloud/sign_in/sign_in.dart';
 
 import '../services/network.dart';
+import '../utils.dart';
 import 'buttons.dart';
 import 'empty_state.dart';
 
@@ -13,11 +14,14 @@ void _showStackTrace(
     builder: (_) {
       return Scaffold(
         appBar: AppBar(title: Text(context.s.app_errorScreen_stackTrace)),
-        body: ListView(children: [
-          Text(error.toString()),
-          Divider(),
-          Text(stackTrace.toString()),
-        ]),
+        body: ListView(
+          padding: EdgeInsets.all(16),
+          children: [
+            SelectableText(error.toString()),
+            Divider(),
+            SelectableText(stackTrace.toString()),
+          ],
+        ),
       );
     },
   ));
@@ -37,11 +41,11 @@ class _MessageAndActions {
     } else if (error is AuthenticationError) {
       message = s.app_errorScreen_authError;
       actions.add(SecondaryButton(
-        onPressed: () => logOut(context),
-        child: Text(s.app_errorScreen_authError_logOut),
+        onPressed: () => signOut(context),
+        child: Text(s.general_signOut),
       ));
     } else {
-      message = s.app_errorScreen_unknown(error);
+      message = s.app_errorScreen_unknown(exceptionMessage(error));
       actions.add(SecondaryButton(
         onPressed: () => _showStackTrace(context, error, stackTrace),
         child: Text(s.app_errorScreen_unknown_showStackTrace),

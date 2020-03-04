@@ -1,39 +1,16 @@
 import 'package:time_machine/time_machine.dart';
 import 'package:time_machine/time_machine_text_patterns.dart';
 
-extension IntApiInstantParser on int {
-  Instant parseApiInstant() =>
-      Instant.fromEpochMilliseconds(this).serverTimeToActual();
+extension IntInstantParser on int {
+  Instant parseInstant() => Instant.fromEpochMilliseconds(this);
 }
 
-extension StringApiInstantParser on String {
-  Instant parseApiInstant() {
+extension StringInstantParser on String {
+  Instant parseInstant() => InstantPattern.extendedIso.parse(this).value;
+
+  Instant tryParseInstant() {
     final result = InstantPattern.extendedIso.parse(this);
-    return result.value.serverTimeToActual();
-  }
-
-  Instant tryParseApiInstant() {
-    final result = InstantPattern.extendedIso.parse(this);
-    return result.success ? result.value.serverTimeToActual() : null;
-  }
-}
-
-extension ApiCorrection on Instant {
-  // analyzer doesn't notice we use this field in serverTimeToActual()
-  // ignore: unused_field
-  static final _serverDateTimeZone = DateTimeZoneProviders.defaultProvider
-      .getDateTimeZoneSync('Europe/Berlin');
-
-  Instant serverTimeToActual() {
-    // The Schul-Cloud API uses tricky obfuscation: Times are said to be in UTC,
-    // whereas they actually use the local time zone.
-    // Hence: We interpret the returned time as UTC time, use the calculated
-    // date and time in calendar terms, interpret them in our local time zone,
-    // and finally store the Instant representing that point in time.
-    return inUtc()
-        .localDateTime
-        .inZoneLeniently(_serverDateTimeZone)
-        .toInstant();
+    return result.success ? result.value : null;
   }
 }
 
@@ -59,4 +36,8 @@ extension UserLocalDateFormatting on LocalDate {
       LocalDatePattern.createWithCurrentCulture('d').format(this);
   String get longString =>
       LocalDatePattern.createWithCurrentCulture('D').format(this);
+}
+
+extension TimeMachineInterop on DateTime {
+  LocalDate get asLocalDate => LocalDate.dateTime(this);
 }

@@ -1,27 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:logger_flutter/logger_flutter.dart';
 import 'package:schulcloud/app/app.dart';
-import 'package:webview_flutter/webview_flutter.dart';
 
 import 'form.dart';
 import 'slanted_section.dart';
 
-class LoginScreen extends StatefulWidget {
-  @override
-  _LoginScreenState createState() => _LoginScreenState();
-}
-
-class _LoginScreenState extends State<LoginScreen> {
-  WebViewController controller;
-
+class SignInScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: CustomScrollView(
-        slivers: <Widget>[
-          SliverList(
-            delegate: SliverChildListDelegate(_buildContent(context)),
-          ),
-        ],
+    return LogConsoleOnShake(
+      child: Scaffold(
+        body: CustomScrollView(
+          slivers: <Widget>[
+            SliverList(
+              delegate: SliverChildListDelegate(_buildContent(context)),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -32,7 +27,16 @@ class _LoginScreenState extends State<LoginScreen> {
     final s = context.s;
 
     return [
-      LoginForm(),
+      SizedBox(height: mediaQuery.padding.top),
+      ConstrainedBox(
+        constraints: BoxConstraints(
+          minHeight: mediaQuery.size.height -
+              100 -
+              mediaQuery.padding.bottom -
+              mediaQuery.padding.top,
+        ),
+        child: SignInForm(),
+      ),
       SlantedSection(
         color: theme.primaryColor,
         slantBottom: 0,
@@ -40,7 +44,7 @@ class _LoginScreenState extends State<LoginScreen> {
           height: 50,
           padding: EdgeInsets.only(bottom: mediaQuery.padding.bottom),
           alignment: Alignment.center,
-          child: Text(s.login_loginScreen_moreInformation),
+          child: Text(s.signIn_signInScreen_moreInformation),
         ),
       ),
       SlantedSection(
@@ -49,7 +53,7 @@ class _LoginScreenState extends State<LoginScreen> {
         child: Padding(
           padding: EdgeInsets.all(16),
           child: Text(
-            s.login_loginScreen_about,
+            s.signIn_signInScreen_about,
             textAlign: TextAlign.justify,
           ),
         ),
@@ -57,7 +61,7 @@ class _LoginScreenState extends State<LoginScreen> {
       Container(
         padding: EdgeInsets.all(16),
         alignment: Alignment.center,
-        child: Text(s.login_loginScreen_placeholder),
+        child: Text(s.signIn_signInScreen_placeholder),
       ),
     ];
   }

@@ -26,9 +26,9 @@ class Article implements Entity {
           id: Id<Article>(data['_id']),
           title: data['title'],
           author: Id<User>(data['creatorId']),
-          publishedAt: (data['displayAt'] as String).parseApiInstant(),
+          publishedAt: (data['displayAt'] as String).parseInstant(),
           imageUrl: null,
-          content: removeHtmlTags(data['content']),
+          content: (data['content'] as String).withoutHtmlTags,
         );
 
   // used before: 4, 5
