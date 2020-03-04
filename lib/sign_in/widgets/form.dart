@@ -79,39 +79,40 @@ class _SignInFormState extends State<SignInForm> {
                 javascriptMode: JavascriptMode.unrestricted,
                 onWebViewCreated: (controller) => this.controller = controller,
                 onPageFinished: (url) async {
-                  if (url ==
-                      'https://${services.get<AppConfig>().domain}/login') {
-                    // The JavaScript is meant to isolate the login section
-                    // Hopefully there will be an option to only get that
-                    // in a non-hacky way in the future.
-                    await controller.evaluateJavascript('''
+              javascriptMode: JavascriptMode.unrestricted,
+              onWebViewCreated: (controller) => this.controller = controller,
+              onPageFinished: (url) async {
+                final firstPathSegment = Uri.parse(url).pathSegments.first;
+                if (firstPathSegment == 'login') {
+                  // The JavaScript is meant to isolate the login section.
+                  // Hopefully there will be an option to only get that in a
+                  // non-hacky way in the future.
+                  await controller.evaluateJavascript('''
                   var node = document.getElementById('loginarea');
                   var html = document.getElementsByTagName('html')[0];
                   html.removeChild(html.childNodes[2]);
                   html.appendChild(node);
                   document.getElementsByTagName('h2')[0].innerHTML = ''
                   ''');
-                  } else if (url ==
-                      'https://${services.get<AppConfig>().domain}/dashboard') {
-                    var cookies =
-                        await controller.evaluateJavascript('document.cookie');
-                    // Yes, this is not elegant. You may complain about it
-                    // when there is a nice way to get a single cookie via JavaScript.
-                    var jwt = cookies
-                        .split('; ')
-                        .firstWhere((element) => element.startsWith('"jwt='))
-                        .replaceAll('"', '')
-                        .substring(4);
+                } else if (firstPathSegment == 'dashboard') {
+                  final cookies =
+                      await controller.evaluateJavascript('document.cookie');
+                  // Yes, this is not elegant. You may complain about it when
+                  // there is a nice way to get a single cookie via JavaScript.
+                  final jwt = cookies
+                      .split('; ')
+                      .firstWhere((element) => element.startsWith('"jwt='))
+                      .replaceAll('"', '')
+                      .substring(4);
 
-                    final storage = services.get<StorageService>();
-                    await storage.token.setValue(jwt);
+                  await services.storage.token.setValue(jwt);
 
-                    unawaited(context.navigator.pushReplacement(
-                        TopLevelPageRoute(builder: (_) => SignedInScreen())));
-                  }
-                },
-                initialUrl:
-                    'https://${services.get<AppConfig>().domain}/login'),
+                  unawaited(context.navigator.pushReplacement(
+                      TopLevelPageRoute(builder: (_) => SignedInScreen())));
+                }
+              },
+              initialUrl: services.get<AppConfig>().webUrl('login'),
+            ),
           ),
           SizedBox(height: 32),
           Wrap(
