@@ -7,8 +7,6 @@ import 'package:http/http.dart' as http;
 import 'package:meta/meta.dart';
 import 'package:schulcloud/app/app.dart';
 
-import 'storage.dart';
-
 @immutable
 class ErrorBody {
   const ErrorBody({
