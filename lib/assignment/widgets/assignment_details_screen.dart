@@ -32,7 +32,7 @@ class _AssignmentDetailsScreenState extends State<AssignmentDetailsScreen>
     final s = context.s;
 
     return CachedRawBuilder<User>(
-      controller: services.storage.currentUserId.controller,
+      controller: services.storage.userId.controller,
       builder: (context, update) {
         final user = update.data;
         final showSubmissionTab =
@@ -50,9 +50,8 @@ class _AssignmentDetailsScreenState extends State<AssignmentDetailsScreen>
                   tooltip: assignment.isArchived
                       ? s.assignment_assignmentDetails_unarchive
                       : s.assignment_assignmentDetails_archive,
-                  onPressed: () {
-                    assignment.update(isArchived: !assignment.isArchived);
-                  },
+                  onPressed: () =>
+                      assignment.update(isArchived: !assignment.isArchived),
                 )
             ],
             bottom: TabBar(
@@ -231,7 +230,7 @@ class _SubmissionTab extends StatelessWidget {
     final s = context.s;
 
     return CachedRawBuilder<User>(
-      controller: services.storage.currentUserId.controller,
+      controller: services.storage.userId.controller,
       builder: (context, update) {
         if (update.hasError) {
           return ErrorScreen(update.error, update.stackTrace);

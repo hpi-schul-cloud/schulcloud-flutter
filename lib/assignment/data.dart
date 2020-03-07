@@ -8,9 +8,8 @@ import 'package:time_machine/time_machine.dart';
 
 part 'data.g.dart';
 
-@immutable
-@HiveType(typeId: TypeId.typeAssignment)
-class Assignment implements Entity<Assignment>, Comparable<Assignment> {
+@HiveType(typeId: TypeId.assignment)
+class Assignment implements Entity<Assignment> {
   const Assignment({
     @required this.id,
     @required this.name,
@@ -41,9 +40,9 @@ class Assignment implements Entity<Assignment>, Comparable<Assignment> {
 
   Assignment.fromJson(Map<String, dynamic> data)
       : this(
-          id: Id(data['_id']),
+          id: Id<Assignment>(data['_id']),
           schoolId: data['schoolId'],
-          teacherId: data['teacherId'],
+          teacherId: Id<User>(data['teacherId']),
           name: data['name'],
           description: data['description'],
           createdAt: (data['createdAt'] as String).parseInstant(),
@@ -56,7 +55,7 @@ class Assignment implements Entity<Assignment>, Comparable<Assignment> {
                   ? data['courseId']
                   : data['courseId']['_id'])
               : null,
-          lessonId: Id(data['lessonId'] ?? ''),
+          lessonId: Id<Lesson>.orNull(data['lessonId']),
           isPrivate: data['private'] ?? false,
           hasPublicSubmissions: data['publicSubmissions'] ?? false,
           archivedBy: (data['archived'] as List<dynamic> ?? []).castIds<User>(),
@@ -93,7 +92,7 @@ class Assignment implements Entity<Assignment>, Comparable<Assignment> {
   final String description;
 
   @HiveField(8)
-  final String teacherId;
+  final Id<User> teacherId;
 
   @HiveField(9)
   final Id<Course> courseId;
@@ -118,13 +117,8 @@ class Assignment implements Entity<Assignment>, Comparable<Assignment> {
   @HiveField(18)
   final List<Id<File>> fileIds;
 
-  String get webUrl => scWebUrl('homework/${id.value}');
+  String get webUrl => scWebUrl('homework/$id');
   String get submissionWebUrl => '$webUrl#activetabid=submission';
-
-  @override
-  int compareTo(Assignment other) {
-    return other.id.value.compareTo(id.value);
-  }
 
   Future<Assignment> update({bool isArchived}) async {
     final userId = services.storage.userId;
@@ -158,8 +152,7 @@ class Assignment implements Entity<Assignment>, Comparable<Assignment> {
   }
 }
 
-@immutable
-@HiveType(typeId: TypeId.typeSubmission)
+@HiveType(typeId: TypeId.submission)
 class Submission implements Entity<Submission> {
   const Submission({
     @required this.id,

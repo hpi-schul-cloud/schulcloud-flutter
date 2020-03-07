@@ -120,7 +120,7 @@ class _ArticleViewState extends State<ArticleView> {
 
   Widget _buildAuthorView(BuildContext context) {
     return CachedRawBuilder(
-      controller: widget.article.author.controller,
+      controller: widget.article.authorId.controller,
       builder: (_, update) {
         if (!update.hasData) {
           return Center(

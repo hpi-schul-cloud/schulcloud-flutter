@@ -11,8 +11,7 @@ import 'package:schulcloud/news/news.dart';
 
 part 'data.g.dart';
 
-@immutable
-@HiveType(typeId: TypeId.typeUser)
+@HiveType(typeId: TypeId.user)
 class User implements Entity<User> {
   User({
     @required this.id,
@@ -24,7 +23,7 @@ class User implements Entity<User> {
     @required this.avatarInitials,
     @required this.avatarBackgroundColor,
     @required this.permissions,
-    @required this.roles,
+    @required this.roleIds,
   })  : assert(id != null),
         assert(firstName != null),
         assert(lastName != null),
@@ -34,10 +33,10 @@ class User implements Entity<User> {
         assert(avatarInitials != null),
         assert(avatarBackgroundColor != null),
         assert(permissions != null),
-        assert(roles != null),
+        assert(roleIds != null),
         files = LazyIds<File>(
           collectionId: 'files of $id',
-          fetcher: () => File.fetchByOwner(id),
+          fetcher: () => File.fetchList(id),
         );
 
   User.fromJson(Map<String, dynamic> data)
@@ -52,7 +51,7 @@ class User implements Entity<User> {
           avatarBackgroundColor:
               (data['avatarBackgroundColor'] as String).hexToColor,
           permissions: (data['permissions'] as List<dynamic>).cast<String>(),
-          roles: (data['roles'] as List<dynamic>).castIds<Role>(),
+          roleIds: (data['roles'] as List<dynamic>).castIds<Role>(),
         );
 
   static Future<User> fetch(Id<User> id) async =>
@@ -90,25 +89,22 @@ class User implements Entity<User> {
   bool hasPermission(String permission) => permissions.contains(permission);
 
   @HiveField(9)
-  final List<Id<Role>> roles;
+  final List<Id<Role>> roleIds;
   bool get isTeacher => hasRole(Role.teacherName);
   bool hasRole(String name) {
-    // TODO(marcelgarus): Remove the hard-coded mapping and use runtime lookup
-    // when upgrading flutter_cached and flattening is supported.
+    // TODO(marcelgarus): Remove the hard-coded mapping and use runtime lookup when upgrading flutter_cached and flattening is supported.
     final id = {
       Role.teacherName: '0000d186816abba584714c98',
     }[name];
-    return id != null && roles.contains(Id<Role>(id));
+    return id != null && roleIds.contains(Id<Role>(id));
   }
 
   final LazyIds<File> files;
 }
 
-@immutable
-@HiveType(typeId: TypeId.typeRoot)
 class Root implements Entity<Root> {
   @override
-  Id<Root> get id => Id<Root>('root');
+  final id = Id<Root>('root');
 
   final courses = LazyIds<Course>(
     collectionId: 'courses',
@@ -136,7 +132,7 @@ class Root implements Entity<Root> {
     fetcher: () async {
       final jsonResponse = await fetchJsonListFrom(
         'calendar',
-        wrappedInData: false,
+        isServicePaginated: false,
         parameters: {
           // We have to set this query parameter because otherwise—you guessed
           // it—no events are being returned at all 😂
@@ -155,25 +151,24 @@ class Root implements Entity<Root> {
   );
 }
 
-@immutable
-@HiveType(typeId: TypeId.typeRole)
+@HiveType(typeId: TypeId.role)
 class Role implements Entity<Role> {
   const Role({
     @required this.id,
     @required this.name,
     @required this.displayName,
-    @required this.roles,
+    @required this.roleIds,
   })  : assert(id != null),
         assert(name != null),
         assert(displayName != null),
-        assert(roles != null);
+        assert(roleIds != null);
 
   Role.fromJson(Map<String, dynamic> data)
       : this(
           id: Id<Role>(data['_id']),
           name: data['name'],
           displayName: data['displayName'],
-          roles: (data['roles'] as List<dynamic>).castIds<Role>(),
+          roleIds: (data['roles'] as List<dynamic>).castIds<Role>(),
         );
 
   static const teacherName = 'teacher';
@@ -189,7 +184,7 @@ class Role implements Entity<Role> {
   final String displayName;
 
   @HiveField(3)
-  final List<Id<Role>> roles;
+  final List<Id<Role>> roleIds;
 }
 
 @immutable

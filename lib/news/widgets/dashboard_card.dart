@@ -23,11 +23,9 @@ class NewsDashboardCard extends StatelessWidget {
         controller: services.storage.root.news.controller,
         builder: (context, update) {
           if (!update.hasData) {
-            return Center(
-              child: update.hasError
-                  ? ErrorBanner(update.error, update.stackTrace)
-                  : CircularProgressIndicator(),
-            );
+            return update.hasError
+                ? ErrorBanner(update.error, update.stackTrace)
+                : Center(child: CircularProgressIndicator());
           }
 
           Iterable<Article> articles = update.data;

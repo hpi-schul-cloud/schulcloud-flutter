@@ -84,7 +84,7 @@ class _UserFiles extends StatelessWidget {
       title: context.s.file_files_my,
       omitHorizontalPadding: true,
       child: CachedRawBuilder(
-        controller: services.storage.currentUserId.controller,
+        controller: services.storage.userId.controller,
         builder: (context, update) {
           return update.hasData
               ? FileBrowser(owner: update.data, isEmbedded: true)

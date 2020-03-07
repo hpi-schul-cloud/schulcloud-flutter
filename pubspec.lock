@@ -302,13 +302,13 @@ packages:
       name: hive_flutter
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.3.0+1"
+    version: "0.3.0+2"
   hive_generator:
     dependency: "direct dev"
     description:
-      name: hive_generator
-      url: "https://pub.dartlang.org"
-    source: hosted
+      path: "..\\hive_forked\\hive_generator"
+      relative: true
+    source: path
     version: "0.7.0+2"
   html:
     dependency: "direct main"

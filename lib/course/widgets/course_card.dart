@@ -39,7 +39,7 @@ class CourseCard extends StatelessWidget {
                 style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
               subtitle: CachedRawBuilder(
-                controller: course.teachers.controller,
+                controller: course.teacherIds.controller,
                 builder: (_, update) {
                   final teachers = update.data;
                   return Text((teachers ?? [])

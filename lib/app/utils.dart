@@ -29,11 +29,11 @@ extension FancyContext on BuildContext {
 }
 
 extension ResponseToJson on Response {
-  Map<String, dynamic> get json => jsonDecode(body);
+  dynamic get json => jsonDecode(body);
 }
 
 extension FutureResponseToJson on Future<Response> {
-  Future<Map<String, dynamic>> get json async => (await this).json;
+  Future<dynamic> get json async => (await this).json;
 }
 
 /// Gets some json from the server.
@@ -45,12 +45,11 @@ Future<List<Map<String, dynamic>>> fetchJsonListFrom(
   String path, {
   // Surprise: The Calendar API's response is different from all others! Would
   // be too easy otherwise ;)
-  bool wrappedInData = true,
+  bool isServicePaginated = true,
   Map<String, String> parameters = const {},
 }) async {
-  var jsonData = jsonDecode(
-      (await services.network.get(path, parameters: parameters)).body);
-  if (wrappedInData) {
+  var jsonData = await services.network.get(path, parameters: parameters).json;
+  if (isServicePaginated) {
     jsonData = jsonData['data'];
   }
   return (jsonData as List).cast<Map<String, dynamic>>();

@@ -54,7 +54,7 @@ class ArticlePreview extends StatelessWidget {
             _buildImage(),
             SizedBox(height: 8),
             CachedRawBuilder<User>(
-              controller: article.author.controller,
+              controller: article.authorId.controller,
               builder: (_, update) {
                 final author = update.data;
                 final authorName = author?.displayName ??
