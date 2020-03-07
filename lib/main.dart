@@ -4,7 +4,7 @@ import 'package:flutter_native_timezone/flutter_native_timezone.dart';
 import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/calendar/calendar.dart';
 import 'package:schulcloud/file/file.dart';
-import 'package:schulcloud/login/login.dart';
+import 'package:schulcloud/sign_in/sign_in.dart';
 import 'package:time_machine/time_machine.dart';
 
 const _schulCloudRed = MaterialColor(0xffb10438, {
@@ -71,7 +71,7 @@ Future<void> main({AppConfig appConfig = schulCloudAppConfig}) async {
     ..registerSingleton(NetworkService(apiUrl: appConfig.baseApiUrl))
     ..registerSingleton(CalendarBloc())
     ..registerSingleton(FileBloc())
-    ..registerSingleton(LoginBloc());
+    ..registerSingleton(SignInBloc());
 
   runApp(
     FutureBuilder<void>(

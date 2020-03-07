@@ -15,16 +15,15 @@ class CalendarDashboardCard extends StatelessWidget {
     return DashboardCard(
       title: s.calendar_dashboardCard,
       omitHorizontalPadding: false,
-      color: context.theme.primaryColor.withOpacity(0.12),
+      color: context.theme.primaryColor
+          .withOpacity(context.theme.isDark ? 0.5 : 0.12),
       child: CachedRawBuilder<List<Event>>(
         controller: services.get<CalendarBloc>().fetchTodaysEvents(),
         builder: (context, update) {
           if (!update.hasData) {
-            return Center(
-              child: update.hasError
-                  ? ErrorBanner(update.error, update.stackTrace)
-                  : CircularProgressIndicator(),
-            );
+            return update.hasError
+                ? ErrorBanner(update.error, update.stackTrace)
+                : Center(child: CircularProgressIndicator());
           }
 
           final now = Instant.now();
