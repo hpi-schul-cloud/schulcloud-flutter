@@ -167,20 +167,17 @@ class FileBloc {
       'fileType': mimeType,
       if (parent != null) 'parent': parent,
     });
-    print(signedUrlResponse.body);
     final signedInfo = json.decode(signedUrlResponse.body);
 
     // Upload the file to the storage server.
-    print('Uploading the file.');
-    print(await network.put(
+    await network.put(
       signedInfo['url'],
       headers: (signedInfo['header'] as Map).cast<String, String>(),
       body: fileBuffer,
-    ));
+    );
 
     // Notify the api backend.
-    print('Notifying the backend.');
-    print(await api.post('fileStorage', body: {
+    await api.post('fileStorage', body: {
       'name': fileName,
       if (owner is! Id<User>) ...{
         'owner': owner.id,
@@ -191,6 +188,6 @@ class FileBloc {
       'size': fileBuffer.length,
       'storageFileName': signedInfo['header']['x-amz-meta-flat-name'],
       'thumbnail': signedInfo['header']['x-amz-meta-thumbnail'],
-    }));
+    });
   }
 }

@@ -145,9 +145,6 @@ class NetworkService {
     Map<String, String> headers,
     Map<String, dynamic> body,
   }) {
-    print('Making call to url $url.');
-    print('Headers: $headers');
-    print('Body: ${json.encode(body)}');
     return _makeCall(
         () => http.post(url, headers: headers, body: json.encode(body)));
   }
