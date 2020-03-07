@@ -306,9 +306,9 @@ packages:
   hive_generator:
     dependency: "direct dev"
     description:
-      path: "..\\hive_forked\\hive_generator"
-      relative: true
-    source: path
+      name: hive_generator
+      url: "https://pub.dartlang.org"
+    source: hosted
     version: "0.7.0+2"
   html:
     dependency: "direct main"

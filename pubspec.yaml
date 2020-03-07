@@ -58,9 +58,7 @@ dependencies:
 dev_dependencies:
   build_resolvers: ^1.1.1
   build_runner: ^1.0.0
-  # hive_generator: ^0.7.0+2
-  hive_generator:
-    path: ../hive_forked/hive_generator
+  hive_generator: ^0.7.0+2
   intl_utils: ^1.0.2
 
 flutter:
