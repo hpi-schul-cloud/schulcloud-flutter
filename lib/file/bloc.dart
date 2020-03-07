@@ -1,11 +1,14 @@
 import 'dart:convert';
+import 'dart:io' as io;
 
 import 'package:dartx/dartx_io.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_cached/flutter_cached.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:meta/meta.dart';
+import 'package:mime/mime.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/course/course.dart';
@@ -100,17 +103,63 @@ class FileBloc {
     }
   }
 
-  Future<void> uploadFile(
-      {@required Id<dynamic> owner, Id<File> parent}) async {
+  Future<void> uploadFile({
+    @required BuildContext context,
+    @required Id<dynamic> owner,
+    Id<File> parent,
+  }) async {
+    assert(context != null);
+    assert(owner != null);
+
+    // Let the user pick files.
+    final files = await FilePicker.getMultiFile();
+
+    for (var i = 0; i < files.length; i++) {
+      final file = files[i];
+
+      final snackbar = Scaffold.of(context).showSnackBar(SnackBar(
+        duration: Duration(days: 1),
+        content: Row(
+          children: <Widget>[
+            Transform.scale(
+              scale: 0.5,
+              child: CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation(Colors.white),
+              ),
+            ),
+            SizedBox(width: 8),
+            Expanded(
+              child: Text(
+                files.length == 1
+                    ? 'Uploading ${file.name}'
+                    : 'Uploading ${file.name} (${i + 1} / ${files.length})',
+              ),
+            ),
+          ],
+        ),
+      ));
+
+      await _uploadSingleFile(file: file, owner: owner, parent: parent);
+
+      snackbar.close();
+    }
+  }
+
+  Future<void> _uploadSingleFile({
+    @required io.File file,
+    @required Id<dynamic> owner,
+    Id<File> parent,
+  }) async {
+    if (file == null || !file.existsSync()) {
+      return;
+    }
+
     final network = services.get<NetworkService>();
     final api = services.get<ApiNetworkService>();
 
-    // final file = await FilePicker.getFile();
-    // file.name;
-
-    const fileName = 'test.txt';
-    const mimeType = 'text/plain';
-    final fileBuffer = utf8.encode('Dies ist eine Testdatei.');
+    final fileName = file.name;
+    final fileBuffer = await file.readAsBytes();
+    final mimeType = lookupMimeType(fileName, headerBytes: fileBuffer);
 
     // Request a signed url.
     final signedUrlResponse = await api.post('fileStorage/signedUrl', body: {
@@ -118,11 +167,11 @@ class FileBloc {
       'fileType': mimeType,
       if (parent != null) 'parent': parent,
     });
-    print(signedUrlResponse);
     print(signedUrlResponse.body);
     final signedInfo = json.decode(signedUrlResponse.body);
 
     // Upload the file to the storage server.
+    print('Uploading the file.');
     print(await network.put(
       signedInfo['url'],
       headers: (signedInfo['header'] as Map).cast<String, String>(),
@@ -130,30 +179,18 @@ class FileBloc {
     ));
 
     // Notify the api backend.
+    print('Notifying the backend.');
     print(await api.post('fileStorage', body: {
       'name': fileName,
-      'owner': owner.id,
-      'refOwnerModel': owner is Id<User> ? 'user' : 'course',
+      if (owner is! Id<User>) ...{
+        'owner': owner.id,
+        // TODO(marcelgarus): For now, we only support user and course owner, but there's also team.
+        'refOwnerModel': 'course',
+      },
       'type': mimeType,
       'size': fileBuffer.length,
       'storageFileName': signedInfo['header']['x-amz-meta-flat-name'],
       'thumbnail': signedInfo['header']['x-amz-meta-thumbnail'],
     }));
   }
-
-  /*
-  var parentId = file.parent || getCurrentParent();
-  var params = {
-      name: file.name,
-      owner: getOwnerId(),
-      type: file.type,
-      size: file.size,
-      storageFileName: file.signedUrl.header['x-amz-meta-flat-name'],
-      thumbnail: file.signedUrl.header['x-amz-meta-thumbnail']
-  };
-
-  $.post('/files/fileModel', params);
-  this.removeFile(file);
-  */
-
 }
