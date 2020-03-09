@@ -143,6 +143,16 @@
     "type": "text",
     "description": ""
   },
+  "assignment_assignmentDetails_submissions": "Submissions",
+  "@assignment_assignmentDetails_submissions": {
+    "type": "text",
+    "description": ""
+  },
+  "assignment_assignmentDetails_submissions_placeholder": "You will soon be able to see submissions of all students in this tab.",
+  "@assignment_assignmentDetails_submissions_placeholder": {
+    "type": "text",
+    "description": ""
+  },
   "assignment_assignmentDetails_unarchive": "Unarchive",
   "@assignment_assignmentDetails_unarchive": {
     "type": "text",

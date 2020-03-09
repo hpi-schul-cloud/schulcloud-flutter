@@ -143,6 +143,16 @@
     "type": "text",
     "description": ""
   },
+  "assignment_assignmentDetails_submissions": "Abgaben",
+  "@assignment_assignmentDetails_submissions": {
+    "type": "text",
+    "description": ""
+  },
+  "assignment_assignmentDetails_submissions_placeholder": "In diesem Tab siehst du bald die Abgaben von allen Schülern.",
+  "@assignment_assignmentDetails_submissions_placeholder": {
+    "type": "text",
+    "description": ""
+  },
   "assignment_assignmentDetails_unarchive": "Wiederherstellen",
   "@assignment_assignmentDetails_unarchive": {
     "type": "text",

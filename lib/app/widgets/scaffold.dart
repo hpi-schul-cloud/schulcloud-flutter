@@ -109,14 +109,14 @@ class TabContent extends StatelessWidget {
   const TabContent({
     Key key,
     this.pageStorageKey,
-    @required this.child,
+    @required this.sliver,
     this.omitHorizontalPadding = false,
-  })  : assert(child != null),
+  })  : assert(sliver != null),
         assert(omitHorizontalPadding != null),
         super(key: key);
 
   final PageStorageKey<dynamic> pageStorageKey;
-  final Widget child;
+  final Widget sliver;
   final bool omitHorizontalPadding;
 
   @override
@@ -134,7 +134,7 @@ class TabContent extends StatelessWidget {
             removeLeft: true,
             removeRight: true,
             context: context,
-            child: child,
+            child: sliver,
           ),
         ),
       ],
