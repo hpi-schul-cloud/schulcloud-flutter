@@ -43,6 +43,24 @@ class _AssignmentDetailsScreenState extends State<AssignmentDetailsScreen>
         return FancyTabbedScaffold(
           appBarBuilder: (innerBoxIsScrolled) => FancyAppBar(
             title: Text(assignment.name),
+            subtitle: assignment.courseId == null
+                ? null
+                : CachedRawBuilder<Course>(
+                    controller: services
+                        .get<CourseBloc>()
+                        .fetchCourse(assignment.courseId),
+                    builder: (context, update) {
+                      return Row(children: <Widget>[
+                        CourseColorDot(update.data),
+                        SizedBox(width: 8),
+                        Text(
+                          update.data?.name ??
+                              update.error?.toString() ??
+                              s.general_loading,
+                        ),
+                      ]);
+                    },
+                  ),
             actions: <Widget>[
               if (user?.hasPermission(Permission.assignmentEdit) == true)
                 IconButton(
@@ -137,16 +155,6 @@ class _DetailsTab extends StatelessWidget {
     final s = context.s;
 
     return <Widget>[
-      if (assignment.courseId != null)
-        CachedRawBuilder<Course>(
-          controller:
-              services.get<CourseBloc>().fetchCourse(assignment.courseId),
-          builder: (_, update) {
-            final course = update.data;
-
-            return CourseChip(course);
-          },
-        ),
       if (assignment.isOverdue)
         ActionChip(
           avatar: Icon(
