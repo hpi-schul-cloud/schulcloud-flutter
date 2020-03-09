@@ -75,6 +75,7 @@ class _EditSubmissionScreenState extends State<EditSubmissionScreen> {
         ],
       ),
       omitHorizontalPadding: true,
+      omitTopPadding: true,
       floatingActionButton: Builder(
         builder: (context) {
           return FancyFab.extended(
@@ -136,6 +137,7 @@ class _EditSubmissionScreenState extends State<EditSubmissionScreen> {
   List<Widget> _buildFormContent(BuildContext context) {
     return [
       ..._buildFormattingOverwriteWarning(context),
+      SizedBox(height: 8),
       if (assignment.teamSubmissions)
         ListTile(
           leading: Icon(Icons.people),
@@ -165,8 +167,7 @@ class _EditSubmissionScreenState extends State<EditSubmissionScreen> {
 
     return [
       MaterialBanner(
-        backgroundColor: context.theme.accentColor,
-        leading: Icon(Icons.warning),
+        leading: Icon(Icons.info_outline),
         // To align content with the ListTile below
         leadingPadding: EdgeInsets.only(right: 32),
         content: Text(s.assignment_editSubmission_overwriteFormatting),
@@ -178,7 +179,6 @@ class _EditSubmissionScreenState extends State<EditSubmissionScreen> {
           ),
         ],
       ),
-      SizedBox(height: 8),
     ];
   }
 
