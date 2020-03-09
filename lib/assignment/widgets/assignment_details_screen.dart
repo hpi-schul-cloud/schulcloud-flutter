@@ -69,10 +69,24 @@ class _AssignmentDetailsScreenState extends State<AssignmentDetailsScreen>
                   tooltip: assignment.isArchived
                       ? s.assignment_assignmentDetails_unarchive
                       : s.assignment_assignmentDetails_archive,
-                  onPressed: () {
-                    services
+                  onPressed: () async {
+                    await services
                         .get<AssignmentBloc>()
                         .update(assignment, isArchived: !assignment.isArchived);
+                    context.scaffold.showSnackBar(SnackBar(
+                      content: Text(
+                        assignment.isArchived
+                            ? s.assignment_assignmentDetails_unarchived
+                            : s.assignment_assignmentDetails_archived,
+                      ),
+                      action: SnackBarAction(
+                        label: s.general_undo,
+                        onPressed: () {
+                          services.get<AssignmentBloc>().update(assignment,
+                              isArchived: assignment.isArchived);
+                        },
+                      ),
+                    ));
                   },
                 )
             ],

@@ -23,7 +23,9 @@ class AssignmentBloc {
   }) async {
     final userId = services.storage.userId;
     final request = {
-      if (isArchived != null && isArchived != oldAssignment.isArchived)
+      // TODO(JonasWanke): Find a cleaner way of handling (un-)archival undo and factor in network failures…
+      // if (isArchived != null && isArchived != oldAssignment.isArchived)
+      if (isArchived != null)
         'archived': isArchived
             ? oldAssignment.archived + [userId]
             : oldAssignment.archived.where((id) => id != userId).toList(),
