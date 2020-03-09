@@ -125,12 +125,19 @@ class _DetailsTab extends StatelessWidget {
         delegate: SliverChildListDelegate.fixed([
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 16),
+            child: ChipGroup(
+              children: _buildChips(context),
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16),
             child: Text(
               datesText,
               style: textTheme.body1,
               textAlign: TextAlign.end,
             ),
           ),
+          SizedBox(height: 4),
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 16),
             child: Html(
@@ -139,13 +146,6 @@ class _DetailsTab extends StatelessWidget {
             ),
           ),
           ..._buildFileSection(context, assignment.fileIds, assignment.id),
-          SizedBox(height: 8),
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16),
-            child: ChipGroup(
-              children: _buildChips(context),
-            ),
-          ),
         ]),
       ),
     );
