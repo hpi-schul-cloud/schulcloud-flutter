@@ -80,7 +80,7 @@ class _EditSubmissionScreenState extends State<EditSubmissionScreen> {
           return FancyFab.extended(
             isEnabled: _isValid,
             onPressed: () => _save(context),
-            icon: Icon(Icons.save),
+            icon: Icon(Icons.check),
             label: Text(s.general_save),
             isLoading: _isSaving,
             loadingLabel: Text(s.general_saving),
