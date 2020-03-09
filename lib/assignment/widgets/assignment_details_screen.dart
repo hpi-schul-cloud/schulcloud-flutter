@@ -41,7 +41,7 @@ class _AssignmentDetailsScreenState extends State<AssignmentDetailsScreen>
         final showFeedbackTab = assignment.isPublic && user?.isTeacher == false;
 
         return FancyTabbedScaffold(
-          appBarBuilder: (innerBoxIsScrolled) => FancyAppBar(
+          appBarBuilder: (_) => FancyAppBar(
             title: Text(assignment.name),
             subtitle: assignment.courseId == null
                 ? null
@@ -85,7 +85,8 @@ class _AssignmentDetailsScreenState extends State<AssignmentDetailsScreen>
                   Tab(text: s.assignment_assignmentDetails_feedback),
               ],
             ),
-            forceElevated: innerBoxIsScrolled,
+            // We want a permanent elevation so tabs are more noticeable.
+            forceElevated: true,
           ),
           tabs: [
             _DetailsTab(assignment: assignment),
