@@ -63,6 +63,16 @@
   "@app_navigation_userDataEmpty": {
     "type": "text"
   },
+  "app_notFound": "Seite nicht gefunden",
+  "@app_notFound": {
+    "type": "text",
+    "description": ""
+  },
+  "app_notFound_message": "404 – Wir konnten die von dir aufgerufene Seite nicht finden:\n{uri}",
+  "@app_notFound_message": {
+    "type": "text",
+    "description": ""
+  },
   "app_signOut_content": "Du musst dich danach erneut anmelden, um die App zu benutzen.",
   "@app_signOut_content": {
     "type": "text",
@@ -80,6 +90,11 @@
   },
   "assignment_assignmentDetails_archive": "Archivieren",
   "@assignment_assignmentDetails_archive": {
+    "type": "text",
+    "description": ""
+  },
+  "assignment_assignmentDetails_archived": "Archiviert",
+  "@assignment_assignmentDetails_archived": {
     "type": "text",
     "description": ""
   },
@@ -138,8 +153,23 @@
     "type": "text",
     "description": ""
   },
+  "assignment_assignmentDetails_submissions": "Abgaben",
+  "@assignment_assignmentDetails_submissions": {
+    "type": "text",
+    "description": ""
+  },
+  "assignment_assignmentDetails_submissions_placeholder": "In diesem Tab siehst du bald die Abgaben von allen Schülern.",
+  "@assignment_assignmentDetails_submissions_placeholder": {
+    "type": "text",
+    "description": ""
+  },
   "assignment_assignmentDetails_unarchive": "Wiederherstellen",
   "@assignment_assignmentDetails_unarchive": {
+    "type": "text",
+    "description": ""
+  },
+  "assignment_assignmentDetails_unarchived": "Wiederhergestellt",
+  "@assignment_assignmentDetails_unarchived": {
     "type": "text",
     "description": ""
   },
@@ -190,6 +220,11 @@
   },
   "assignment_assignment_property_more": "Mehr",
   "@assignment_assignment_property_more": {
+    "type": "text",
+    "description": ""
+  },
+  "assignment_assignment_property_updatedAt": "Letzte Aktualisierung",
+  "@assignment_assignment_property_updatedAt": {
     "type": "text",
     "description": ""
   },
@@ -344,6 +379,16 @@
     "type": "text",
     "description": ""
   },
+  "file_uploadCompletedSnackBar": "Fertig hochgeladen \uD83D\uDE0A",
+  "@file_uploadCompletedSnackBar": {
+    "type": "text",
+    "description": ""
+  },
+  "file_uploadProgressSnackBarContent": "{total, plural, one{{fileName} wird hochgeladen…} other{{fileName} wird hochgeladen… ({current} / {total})}}",
+  "@file_uploadProgressSnackBarContent": {
+    "type": "text",
+    "description": ""
+  },
   "general_cancel": "Abbrechen",
   "@general_cancel": {
     "type": "text",
@@ -379,6 +424,11 @@
   },
   "general_signOut": "Abmelden",
   "@general_signOut": {
+    "type": "text",
+    "description": ""
+  },
+  "general_undo": "Rückgängig machen",
+  "@general_undo": {
     "type": "text",
     "description": ""
   },

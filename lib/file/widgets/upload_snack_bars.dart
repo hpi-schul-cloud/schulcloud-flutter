@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:schulcloud/app/app.dart';
 
 class UploadProgressUpdate {
   UploadProgressUpdate({
@@ -39,10 +40,8 @@ class UploadProgressSnackBarContent extends StatelessWidget {
               }
               final info = snapshot.data;
               return Text(
-                info.isSingleFile
-                    ? 'Uploading ${info.currentFileName}'
-                    : 'Uploading ${info.currentFileName} '
-                        '(${info.index + 1} / ${info.totalNumberOfFiles})',
+                context.s.file_uploadProgressSnackBarContent(
+                    info.totalNumberOfFiles, info.currentFileName, info.index),
               );
             },
           ),
@@ -54,5 +53,6 @@ class UploadProgressSnackBarContent extends StatelessWidget {
 
 class UploadCompletedSnackBarContent extends StatelessWidget {
   @override
-  Widget build(BuildContext context) => Text('Upload completed 😊');
+  Widget build(BuildContext context) =>
+      Text(context.s.file_uploadCompletedSnackBar);
 }

@@ -63,6 +63,16 @@
   "@app_navigation_userDataEmpty": {
     "type": "text"
   },
+  "app_notFound": "Page not found",
+  "@app_notFound": {
+    "type": "text",
+    "description": ""
+  },
+  "app_notFound_message": "404 – We couldn't find the page you were looking for:\n{uri}",
+  "@app_notFound_message": {
+    "type": "text",
+    "description": ""
+  },
   "app_signOut_content": "You will need to provide your login credentials to use the app again.",
   "@app_signOut_content": {
     "type": "text",
@@ -80,6 +90,11 @@
   },
   "assignment_assignmentDetails_archive": "Archive",
   "@assignment_assignmentDetails_archive": {
+    "type": "text",
+    "description": ""
+  },
+  "assignment_assignmentDetails_archived": "Archived",
+  "@assignment_assignmentDetails_archived": {
     "type": "text",
     "description": ""
   },
@@ -138,8 +153,23 @@
     "type": "text",
     "description": ""
   },
+  "assignment_assignmentDetails_submissions": "Submissions",
+  "@assignment_assignmentDetails_submissions": {
+    "type": "text",
+    "description": ""
+  },
+  "assignment_assignmentDetails_submissions_placeholder": "You will soon be able to see submissions of all students in this tab.",
+  "@assignment_assignmentDetails_submissions_placeholder": {
+    "type": "text",
+    "description": ""
+  },
   "assignment_assignmentDetails_unarchive": "Unarchive",
   "@assignment_assignmentDetails_unarchive": {
+    "type": "text",
+    "description": ""
+  },
+  "assignment_assignmentDetails_unarchived": "Unarchived",
+  "@assignment_assignmentDetails_unarchived": {
     "type": "text",
     "description": ""
   },
@@ -190,6 +220,11 @@
   },
   "assignment_assignment_property_more": "More",
   "@assignment_assignment_property_more": {
+    "type": "text",
+    "description": ""
+  },
+  "assignment_assignment_property_updatedAt": "Last update",
+  "@assignment_assignment_property_updatedAt": {
     "type": "text",
     "description": ""
   },
@@ -344,6 +379,16 @@
     "type": "text",
     "description": ""
   },
+  "file_uploadCompletedSnackBar": "Upload completed \uD83D\uDE0A",
+  "@file_uploadCompletedSnackBar": {
+    "type": "text",
+    "description": ""
+  },
+  "file_uploadProgressSnackBarContent": "{total, plural, one{Uploading {fileName}…} other{Uploading {fileName}… ({current} / {total})}}",
+  "@file_uploadProgressSnackBarContent": {
+    "type": "text",
+    "description": ""
+  },
   "general_cancel": "Cancel",
   "@general_cancel": {
     "type": "text",
@@ -379,6 +424,11 @@
   },
   "general_signOut": "Sign out",
   "@general_signOut": {
+    "type": "text",
+    "description": ""
+  },
+  "general_undo": "Undo",
+  "@general_undo": {
     "type": "text",
     "description": ""
   },
