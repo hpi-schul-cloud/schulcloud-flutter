@@ -1,7 +1,6 @@
 **Fixes: #Issue**
 <!-- Please enter the corresponding issue ID in the placeholder above. -->
 
-
 **Changes**
 <!-- Please summarize your changes -->
 
