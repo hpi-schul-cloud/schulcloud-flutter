@@ -156,7 +156,7 @@ jobs:
       - name: Install screenshots package
         run: flutter pub global activate screenshots
       - name: Take screenshots
-        run: screenshots -v -f sc
+        run: ~/.pub-cache/bin/screenshots -v -f sc
       - name: Upload screenshots as artifact
         uses: actions/upload-artifact@v1
         with:
