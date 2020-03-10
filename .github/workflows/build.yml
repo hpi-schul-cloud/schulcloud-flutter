@@ -144,7 +144,7 @@ jobs:
           path: .
 
       - name: Create virtual device
-        run: ~/android-sdk/tools/bin/avdmanager --verbose create avd --force -n test -k "system-images;android-28;default;x86"
+        run: ~/Library/Android/sdk/tools/bin/avdmanager --verbose create avd --force -n test -k "system-images;android-28;default;x86"
       - name: Install screenshots package
         run: pub global activate screenshots
       - name: Take screenshots
