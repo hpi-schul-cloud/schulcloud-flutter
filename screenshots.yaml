@@ -1,0 +1,15 @@
+tests:
+  - test_driver/screenshots.dart
+
+staging: /tmp/screenshots
+recording: /tmp/screenshots_record
+
+locales:
+  - en
+  - de
+
+devices:
+  android:
+    Pixel 3 XL API 29: {}
+
+frame: false

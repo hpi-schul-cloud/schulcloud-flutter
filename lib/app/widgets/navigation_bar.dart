@@ -55,27 +55,27 @@ class _MyNavigationBarState extends State<MyNavigationBar> {
       items: [
         BottomNavigationBarItem(
           icon: Icon(Icons.dashboard),
-          title: Text(s.dashboard),
+          title: Text(s.dashboard, key: ValueKey('navigation-dashboard')),
           backgroundColor: theme.bottomAppBarColor,
         ),
         BottomNavigationBarItem(
           icon: Icon(Icons.new_releases),
-          title: Text(s.news),
+          title: Text(s.news, key: ValueKey('navigation-news')),
           backgroundColor: theme.bottomAppBarColor,
         ),
         BottomNavigationBarItem(
           icon: Icon(Icons.school),
-          title: Text(s.course),
+          title: Text(s.course, key: ValueKey('navigation-course')),
           backgroundColor: theme.bottomAppBarColor,
         ),
         BottomNavigationBarItem(
           icon: Icon(Icons.playlist_add_check),
-          title: Text(s.assignment),
+          title: Text(s.assignment, key: ValueKey('navigation-assignment')),
           backgroundColor: theme.bottomAppBarColor,
         ),
         BottomNavigationBarItem(
           icon: Icon(Icons.folder),
-          title: Text(s.file),
+          title: Text(s.file, key: ValueKey('navigation-file')),
           backgroundColor: theme.bottomAppBarColor,
         ),
       ],

@@ -121,6 +121,7 @@ class _LoginFormState extends State<LoginForm> {
               ),
               SizedBox(width: 8),
               SecondaryButton(
+                key: ValueKey('signIn-demoTeacher'),
                 onPressed: _loginAsDemoTeacher,
                 child: Text(s.login_form_demo_teacher),
               ),
