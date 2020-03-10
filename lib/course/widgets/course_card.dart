@@ -21,22 +21,28 @@ class CourseCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return FancyCard(
       onTap: () => _openDetailsScreen(context),
-      child: ListTile(
-        leading: Container(color: course.color, height: 50, width: 16),
-        title: Text(
-          course.name,
-          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-        ),
-        subtitle: CachedRawBuilder(
-          controllerBuilder: () =>
-              services.get<CourseBloc>().fetchTeachersOfCourse(course),
-          builder: (_, update) {
-            final teachers = update.data;
-            return Text((teachers ?? [])
-                .map((teacher) => teacher.shortName)
-                .join(', '));
-          },
-        ),
+      color: course.color.withOpacity(0.12),
+      child: Row(
+        children: <Widget>[
+          Text(course.name),
+          Expanded(
+            child: CachedRawBuilder(
+              controllerBuilder: () =>
+                  services.get<CourseBloc>().fetchTeachersOfCourse(course),
+              builder: (_, update) {
+                final teachers = update.data;
+                return Text(
+                  (teachers ?? [])
+                      .map((teacher) => teacher.shortName)
+                      .join(', '),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                );
+              },
+            ),
+          ),
+        ],
+        // leading: Container(color: course.color, width: 16),
       ),
     );
   }
