@@ -10,6 +10,6 @@ locales:
 
 devices:
   android:
-    Pixel 3 XL API 29: {}
+    Nexus 6P: {}
 
-frame: false
+frame: true
