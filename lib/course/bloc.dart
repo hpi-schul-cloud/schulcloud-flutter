@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_cached/flutter_cached.dart';
 import 'package:meta/meta.dart';
@@ -52,7 +50,6 @@ class CourseBloc {
             unawaited(userController.fetch());
             final firstUpdate = await userController.updates
                 .firstWhere((update) => update.hasData, orElse: () => null);
-            // debugger(when: firstUpdate.hasData || firstUpdate.hasError);
             return firstUpdate.data;
           }(),
       ]),
