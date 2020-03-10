@@ -118,3 +118,39 @@ jobs:
         with:
           name: apk-${{ matrix.flavor }}
           path: build/app/outputs/apk/${{ matrix.flavor }}/release
+
+  deploy-internal:
+    name: Deploy internal
+    needs: install
+    # We have to use macOS for hardware acceleration on Android emulators
+    runs-on: macos-10.15
+    strategy:
+      matrix:
+        flavor: ["sc"]
+      fail-fast: false
+    steps:
+      - name: Install Java
+        uses: actions/setup-java@v1
+        with:
+          java-version: "12.x"
+      - name: Install Flutter (stable)
+        uses: subosito/flutter-action@v1
+        with:
+          channel: "stable"
+      - name: Checkout source
+        uses: actions/download-artifact@v1
+        with:
+          name: source
+          path: .
+
+      - name: Create virtual device
+        run: avdmanager --verbose create avd --force -n test -k "system-images;android-28;default;x86"
+      - name: Install screenshots package
+        run: pub global activate screenshots
+      - name: Take screenshots
+        run: screenshots -v -f sc
+      - name: Upload screenshots as artifact
+        uses: actions/upload-artifact@v1
+        with:
+          name: screenshots-${{ matrix.flavor }}
+          path: example/android/fastlane/metadata/android
