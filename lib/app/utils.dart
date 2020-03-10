@@ -48,11 +48,13 @@ String formatFileSize(int bytes) {
   return '${(bytes / power).toStringAsFixed(index == 0 ? 0 : 1)} ${units[index]}';
 }
 
-extension PowerfulString on String {
+extension LegenWaitForItDaryString on String {
+  String get withoutLinebreaks => replaceAll(RegExp('[\r\n]'), '');
+
   /// Removes html tags from a string.
   String get withoutHtmlTags => parse(this).documentElement.text;
 
-  /// Removes HTML tags trying to preserve line breaks;
+  /// Removes HTML tags trying to preserve line breaks.
   String get simpleHtmlToPlain {
     return replaceAllMapped(RegExp('</p>(.*?)<p>'), (m) => '\n\n${m[1]}')
         .replaceAll(RegExp('</?p>'), '')
@@ -61,7 +63,7 @@ extension PowerfulString on String {
   }
 
   /// Converts this to a simple HTML subset so line breaks are properly
-  /// displayed on the web
+  /// displayed on the web.
   String get plainToSimpleHtml {
     // Because the server is doing … stuff, we need to double encode‽
     return HtmlEscape(HtmlEscapeMode.unknown)

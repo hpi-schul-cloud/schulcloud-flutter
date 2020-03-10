@@ -6,7 +6,7 @@ import 'package:schulcloud/assignment/assignment.dart';
 import 'package:schulcloud/calendar/calendar.dart';
 import 'package:schulcloud/course/course.dart';
 import 'package:schulcloud/file/file.dart';
-import 'package:schulcloud/login/login.dart';
+import 'package:schulcloud/sign_in/sign_in.dart';
 import 'package:schulcloud/news/news.dart';
 import 'package:time_machine/time_machine.dart';
 
@@ -78,8 +78,8 @@ Future<void> main({AppConfig appConfig = schulCloudAppConfig}) async {
     ..registerSingleton(CalendarBloc())
     ..registerSingleton(CourseBloc())
     ..registerSingleton(FileBloc())
-    ..registerSingleton(LoginBloc())
     ..registerSingleton(NewsBloc())
+    ..registerSingleton(SignInBloc())
     ..registerSingleton(SubmissionBloc());
 
   runApp(

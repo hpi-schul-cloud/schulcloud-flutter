@@ -2,10 +2,13 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/widgets.dart';
-import 'package:get_it/get_it.dart';
 import 'package:http/http.dart' as http;
 import 'package:meta/meta.dart';
+import 'package:get_it/get_it.dart';
 import 'package:schulcloud/app/app.dart';
+
+import '../logger.dart';
+import '../utils.dart';
 
 @immutable
 class ErrorBody {
@@ -89,7 +92,7 @@ class NetworkService {
     try {
       response = await call();
     } on SocketException catch (e) {
-      // logger.w('No server connection', e);
+      logger.w('No server connection', e);
       throw NoConnectionToServerError();
     }
 
@@ -99,6 +102,7 @@ class NetworkService {
     }
 
     final body = ErrorBody.fromJson(json.decode(response.body));
+    logger.w('Network ${response.statusCode}: $method $url', body);
 
     if (response.statusCode == 401) {
       throw AuthenticationError(body);
