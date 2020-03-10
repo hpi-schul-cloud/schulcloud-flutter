@@ -26,13 +26,12 @@ class CoursesScreen extends StatelessWidget {
               SliverPadding(
                 padding: EdgeInsets.fromLTRB(16, 8, 16, 16),
                 sliver: SliverList(
-                  delegate: SliverChildListDelegate([
-                    for (var course in courses)
-                      Padding(
-                        padding: EdgeInsets.only(bottom: 16),
-                        child: CourseCard(course: course),
-                      )
-                  ]),
+                  delegate: SliverChildBuilderDelegate((_, i) {
+                    return Padding(
+                      padding: EdgeInsets.only(bottom: 16),
+                      child: CourseCard(course: courses[i]),
+                    );
+                  }, childCount: courses.length),
                 ),
               ),
             ],
