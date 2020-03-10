@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:schulcloud/app/app.dart';
 
 class UploadButton extends StatelessWidget {
-  const UploadButton({@required this.onPressed});
+  const UploadButton({@required this.onPressed}) : assert(onPressed != null);
 
   final VoidCallback onPressed;
 

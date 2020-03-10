@@ -10,8 +10,10 @@ import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:meta/meta.dart';
 import 'package:mime/mime.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:rxdart/rxdart.dart';
 import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/course/course.dart';
+import 'package:schulcloud/file/widgets/upload_snack_bars.dart';
 
 import 'data.dart';
 
@@ -114,35 +116,31 @@ class FileBloc {
     // Let the user pick files.
     final files = await FilePicker.getMultiFile();
 
+    final progressUpdates = BehaviorSubject<UploadProgressUpdate>();
+    final snackBar = Scaffold.of(context).showSnackBar(SnackBar(
+      duration: Duration(days: 1),
+      content: UploadProgressSnackBarContent(updates: progressUpdates.stream),
+    ));
+
     for (var i = 0; i < files.length; i++) {
       final file = files[i];
 
-      final snackbar = Scaffold.of(context).showSnackBar(SnackBar(
-        duration: Duration(days: 1),
-        content: Row(
-          children: <Widget>[
-            Transform.scale(
-              scale: 0.5,
-              child: CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation(Colors.white),
-              ),
-            ),
-            SizedBox(width: 8),
-            Expanded(
-              child: Text(
-                files.length == 1
-                    ? 'Uploading ${file.name}'
-                    : 'Uploading ${file.name} (${i + 1} / ${files.length})',
-              ),
-            ),
-          ],
-        ),
+      progressUpdates.add(UploadProgressUpdate(
+        currentFileName: file.name,
+        index: i,
+        totalNumberOfFiles: files.length,
       ));
 
       await _uploadSingleFile(file: file, owner: owner, parent: parent);
-
-      snackbar.close();
     }
+
+    snackBar.close();
+    await progressUpdates.close();
+
+    Scaffold.of(context).showSnackBar(SnackBar(
+      duration: Duration(seconds: 2),
+      content: UploadCompletedSnackBarContent(),
+    ));
   }
 
   Future<void> _uploadSingleFile({
@@ -150,19 +148,19 @@ class FileBloc {
     @required Id<dynamic> owner,
     Id<File> parent,
   }) async {
-    if (file == null || !file.existsSync()) {
+    assert(file != null);
+
+    if (!file.existsSync()) {
       return;
     }
-
-    final network = services.get<NetworkService>();
-    final api = services.get<ApiNetworkService>();
 
     final fileName = file.name;
     final fileBuffer = await file.readAsBytes();
     final mimeType = lookupMimeType(fileName, headerBytes: fileBuffer);
 
     // Request a signed url.
-    final signedUrlResponse = await api.post('fileStorage/signedUrl', body: {
+    final signedUrlResponse =
+        await services.api.post('fileStorage/signedUrl', body: {
       'filename': fileName,
       'fileType': mimeType,
       if (parent != null) 'parent': parent,
@@ -170,14 +168,14 @@ class FileBloc {
     final signedInfo = json.decode(signedUrlResponse.body);
 
     // Upload the file to the storage server.
-    await network.put(
+    await services.network.put(
       signedInfo['url'],
       headers: (signedInfo['header'] as Map).cast<String, String>(),
       body: fileBuffer,
     );
 
     // Notify the api backend.
-    await api.post('fileStorage', body: {
+    await services.api.post('fileStorage', body: {
       'name': fileName,
       if (owner is! Id<User>) ...{
         'owner': owner.id,
