@@ -89,7 +89,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        flavor: ["sc", "brb", "n21", "thr"]
+        flavor: ["sc", "brb", "n21", "open", "thr"]
       fail-fast: false
     steps:
       - name: Install Java
@@ -109,7 +109,7 @@ jobs:
 
       # The default (sc) flavor doesn't have a special main.dart-suffix
       - if: matrix.flavor == 'sc'
-        run: flutter build apk
+        run: flutter build apk --flavor=sc
       - if: matrix.flavor != 'sc'
         run: flutter build apk --target=lib/main_${{ matrix.flavor }}.dart --flavor=${{ matrix.flavor }}
 
