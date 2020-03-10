@@ -203,10 +203,7 @@ class _Section extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
-          Text(
-            title,
-            style: context.textTheme.overline,
-          ),
+          Text(title, style: context.textTheme.overline),
           SizedBox(height: 4),
           child,
         ],

@@ -14,7 +14,7 @@ class CalendarDashboardCard extends StatelessWidget {
 
     return DashboardCard(
       title: s.calendar_dashboardCard,
-      omitHorizontalPadding: false,
+      omitHorizontalPadding: true,
       color: context.theme.primaryColor
           .withOpacity(context.theme.isDark ? 0.5 : 0.12),
       child: StreamBuilder<CacheUpdate<List<Event>>>(

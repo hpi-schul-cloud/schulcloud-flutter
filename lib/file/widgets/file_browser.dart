@@ -46,9 +46,7 @@ class FileBrowser extends StatelessWidget {
           context.s.file_fileBrowser_downloading(file.name));
     } on PermissionNotGranted {
       context.scaffold.showSnackBar(SnackBar(
-        content: Text(
-          context.s.file_fileBrowser_download_storageAccess,
-        ),
+        content: Text(context.s.file_fileBrowser_download_storageAccess),
         action: SnackBarAction(
           label: context.s.file_fileBrowser_download_storageAccess_allow,
           onPressed: services.get<FileBloc>().ensureStoragePermissionGranted,
