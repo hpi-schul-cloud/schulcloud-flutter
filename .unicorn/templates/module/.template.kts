@@ -7,4 +7,5 @@ variables["module"] = module
 
 variables["entity"] = prompt("Main entity class")
 
-copyDir("module", modulePath)
+copy("module.dart", "$modulePath/$module.dart")
+copy("data.dart.ftl", "$modulePath/data.dart")
