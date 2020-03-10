@@ -1,19 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:logger_flutter/logger_flutter.dart';
 import 'package:schulcloud/app/app.dart';
 
 import 'form.dart';
 import 'slanted_section.dart';
 
-class LoginScreen extends StatelessWidget {
+class SignInScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: CustomScrollView(
-        slivers: <Widget>[
-          SliverList(
-            delegate: SliverChildListDelegate(_buildContent(context)),
-          ),
-        ],
+    return LogConsoleOnShake(
+      child: Scaffold(
+        body: CustomScrollView(
+          slivers: <Widget>[
+            SliverList(
+              delegate: SliverChildListDelegate(_buildContent(context)),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -32,7 +35,7 @@ class LoginScreen extends StatelessWidget {
               mediaQuery.padding.bottom -
               mediaQuery.padding.top,
         ),
-        child: LoginForm(),
+        child: SignInForm(),
       ),
       SlantedSection(
         color: theme.primaryColor,

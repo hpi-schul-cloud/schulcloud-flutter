@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class LoginInput extends StatelessWidget {
-  const LoginInput({
+class SignInInput extends StatelessWidget {
+  const SignInInput({
     @required this.controller,
     @required this.label,
     this.error,

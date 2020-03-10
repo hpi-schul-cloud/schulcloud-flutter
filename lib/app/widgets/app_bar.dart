@@ -10,13 +10,18 @@ class FancyAppBar extends StatelessWidget {
     @required this.title,
     this.subtitle,
     this.actions = const [],
+    this.bottom,
+    this.forceElevated = false,
   })  : assert(title != null),
         assert(actions != null),
+        assert(forceElevated != null),
         super(key: key);
 
   final Widget title;
   final Widget subtitle;
   final List<Widget> actions;
+  final PreferredSizeWidget bottom;
+  final bool forceElevated;
 
   @override
   Widget build(BuildContext context) {
@@ -36,6 +41,8 @@ class FancyAppBar extends StatelessWidget {
         AccountButton(),
         SizedBox(width: 8),
       ],
+      bottom: bottom,
+      forceElevated: forceElevated,
     );
   }
 

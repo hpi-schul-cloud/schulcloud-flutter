@@ -24,10 +24,10 @@ class _MyNavigationBarState extends State<MyNavigationBar> {
 
   static const screens = [
     Screen.dashboard,
-    Screen.news,
     Screen.courses,
     Screen.assignments,
     Screen.files,
+    Screen.news,
   ];
 
   @override
@@ -59,11 +59,6 @@ class _MyNavigationBarState extends State<MyNavigationBar> {
           backgroundColor: theme.bottomAppBarColor,
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.new_releases),
-          title: Text(s.news),
-          backgroundColor: theme.bottomAppBarColor,
-        ),
-        BottomNavigationBarItem(
           icon: Icon(Icons.school),
           title: Text(s.course),
           backgroundColor: theme.bottomAppBarColor,
@@ -76,6 +71,11 @@ class _MyNavigationBarState extends State<MyNavigationBar> {
         BottomNavigationBarItem(
           icon: Icon(Icons.folder),
           title: Text(s.file),
+          backgroundColor: theme.bottomAppBarColor,
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.new_releases),
+          title: Text(s.news),
           backgroundColor: theme.bottomAppBarColor,
         ),
       ],

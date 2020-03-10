@@ -9,18 +9,22 @@ class AccountAvatar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CircleAvatar(
-      backgroundColor: context.theme.primaryColor,
-      maxRadius: 16,
-      child: CachedRawBuilder<User>(
-        controller: services.get<UserFetcherService>().fetchCurrentUser(),
-        builder: (context, update) {
-          final user = update.data;
-          final initials =
-              user == null ? '…' : '${user.firstName[0]}${user.lastName[0]}';
-          return Text(initials);
-        },
-      ),
+    return CachedRawBuilder<User>(
+      controller: services.get<UserFetcherService>().fetchCurrentUser(),
+      builder: (context, update) {
+        final user = update.data;
+
+        final backgroundColor =
+            user?.avatarBackgroundColor ?? context.theme.primaryColor;
+        return CircleAvatar(
+          backgroundColor: backgroundColor,
+          maxRadius: 16,
+          child: Text(
+            user?.avatarInitials ?? '…',
+            style: TextStyle(color: backgroundColor.highEmphasisColor),
+          ),
+        );
+      },
     );
   }
 }
@@ -31,7 +35,7 @@ class AccountButton extends StatelessWidget {
     return InkWell(
       customBorder: CircleBorder(),
       onTap: () {
-        showDialog(context: context, builder: (context) => AccountDialog());
+        showDialog(context: context, builder: (_) => AccountDialog());
       },
       child: Padding(
         padding: EdgeInsets.all(8),

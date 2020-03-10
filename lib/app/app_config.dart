@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:schulcloud/app/app.dart';
 
+import 'theming_utils.dart';
+
 @immutable
-class AppConfigData {
-  const AppConfigData({
+class AppConfig {
+  const AppConfig({
     @required this.name,
     @required this.domain,
     @required this.title,
@@ -26,39 +28,85 @@ class AppConfigData {
 
   final String name;
   final String domain;
-  String get host => 'https://$domain';
-  String get apiUrl => 'https://api.$domain';
+  String get baseWebUrl => 'https://$domain';
+  String webUrl(String path) => '$baseWebUrl/$path';
+  String get baseApiUrl => 'https://api.$domain';
 
   final String title;
   final MaterialColor primaryColor;
   final MaterialColor secondaryColor;
   final MaterialColor accentColor;
 
-  ThemeData createThemeData() {
-    return ThemeData(
+  ThemeData createThemeData(Brightness brightness) {
+    final isDark = brightness == Brightness.dark;
+    var theme = ThemeData(
+      brightness: brightness,
       primarySwatch: primaryColor,
+      // By default, the [primaryColor] is set to a dark grey in dark mode
+      primaryColor: primaryColor,
+      primaryColorLight: isDark ? primaryColor[500] : primaryColor[300],
+      primaryColorDark: isDark ? primaryColor[800] : primaryColor[700],
       accentColor: accentColor,
       errorColor: errorColor,
-      scaffoldBackgroundColor: Colors.white,
+      scaffoldBackgroundColor:
+          brightness == Brightness.light ? Colors.white : null,
       fontFamily: 'PT Sans',
-      textTheme: _createTextTheme(Brightness.light),
+      textTheme: _createTextTheme(brightness),
+      dialogTheme: DialogTheme(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
+      ),
+      inputDecorationTheme: InputDecorationTheme(
+        border: OutlineInputBorder(),
+      ),
+      snackBarTheme: SnackBarThemeData(
+        behavior: SnackBarBehavior.floating,
+      ),
+    );
+    if (brightness == Brightness.dark) {
+      theme = theme.copyWith(
+        chipTheme: theme.chipTheme.copyWith(
+          shape: StadiumBorder(
+            side: BorderSide(color: theme.dividerColor),
+          ),
+        ),
+      );
+    }
+    return theme.copyWith(
+      // TabBar assumes a primary colored background
+      tabBarTheme: theme.tabBarTheme.copyWith(
+        labelColor: theme.accentColor,
+        unselectedLabelColor: theme.mediumEmphasisColor,
+      ),
     );
   }
 
-  ThemeData createDarkThemeData() {
-    final theme = ThemeData(
-      brightness: Brightness.dark,
-      primarySwatch: primaryColor,
-      accentColor: accentColor,
-      errorColor: errorColor,
-      fontFamily: 'PT Sans',
-      textTheme: _createTextTheme(Brightness.dark),
-    );
-    return theme.copyWith(
-      chipTheme: theme.chipTheme.copyWith(
-        shape: StadiumBorder(
-          side: BorderSide(color: theme.dividerColor),
-        ),
+  TextTheme _createTextTheme(Brightness brightness) {
+    return TextTheme(
+      title: TextStyle(fontWeight: FontWeight.bold),
+      body1: TextStyle(fontSize: 16),
+      body2: TextStyle(fontSize: 16),
+      button: TextStyle(
+        color: Color(0xff373a3c),
+        fontFamily: 'PT Sans Narrow',
+        fontWeight: FontWeight.w700,
+        fontSize: 16,
+        height: 1.25,
+      ),
+      display1: TextStyle(
+        fontWeight: FontWeight.bold,
+        fontSize: 28,
+        color: brightness.contrastColor,
+      ),
+      display2: TextStyle(
+        fontWeight: FontWeight.bold,
+        fontSize: 32,
+        color: brightness.contrastColor,
+      ),
+      overline: TextStyle(
+        fontWeight: FontWeight.bold,
+        fontSize: 12,
       ),
     );
   }
@@ -82,73 +130,4 @@ class AppConfigData {
   }
 }
 
-TextTheme _createTextTheme(Brightness brightness) {
-  return TextTheme(
-    title: TextStyle(fontWeight: FontWeight.bold),
-    body1: TextStyle(fontSize: 16),
-    body2: TextStyle(fontSize: 16),
-    button: TextStyle(
-      color: Color(0xff373a3c),
-      fontFamily: 'PT Sans Narrow',
-      fontWeight: FontWeight.w700,
-      fontSize: 16,
-      height: 1.25,
-    ),
-    display1: TextStyle(
-      fontWeight: FontWeight.bold,
-      fontSize: 28,
-      color: brightness.contrastColor,
-    ),
-    display2: TextStyle(
-      fontWeight: FontWeight.bold,
-      fontSize: 32,
-      color: brightness.contrastColor,
-    ),
-    overline: TextStyle(
-      fontWeight: FontWeight.bold,
-      fontSize: 12,
-    ),
-  );
-}
-
-class AppConfig extends StatelessWidget {
-  const AppConfig({
-    Key key,
-    @required this.data,
-    @required this.child,
-  })  : assert(child != null),
-        assert(data != null),
-        super(key: key);
-
-  final AppConfigData data;
-  final Widget child;
-
-  static AppConfigData of(BuildContext context) {
-    final widget =
-        context.dependOnInheritedWidgetOfExactType<_InheritedAppConfig>();
-    return widget.appConfig.data;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return _InheritedAppConfig(
-      appConfig: this,
-      child: child,
-    );
-  }
-}
-
-class _InheritedAppConfig extends InheritedWidget {
-  const _InheritedAppConfig({
-    Key key,
-    @required this.appConfig,
-    @required Widget child,
-  })  : assert(appConfig != null),
-        super(key: key, child: child);
-
-  final AppConfig appConfig;
-
-  @override
-  bool updateShouldNotify(_InheritedAppConfig old) =>
-      appConfig.data != old.appConfig.data;
-}
+String scWebUrl(String path) => services.get<AppConfig>().webUrl(path);
