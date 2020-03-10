@@ -68,8 +68,7 @@ class TooManyRequestsError extends ServerError {
   final Duration timeToWait;
 }
 
-/// A service that offers networking POST and GET requests to arbitrary
-/// servers.
+/// A service that offers making network request to arbitrary servers.
 @immutable
 class NetworkService {
   const NetworkService();
@@ -77,11 +76,20 @@ class NetworkService {
   /// Calls the given function and turns various status codes and socket
   /// exceptions into custom error types like [AuthenticationError] or
   /// [NoConnectionToServerError].
-  Future<http.Response> _makeCall(Future<http.Response> Function() call) async {
+  Future<http.Response> _makeCall({
+    @required String method,
+    @required String url,
+    @required Future<http.Response> Function() call,
+  }) async {
+    assert(method != null);
+    assert(url != null);
+    assert(call != null);
+
     http.Response response;
     try {
       response = await call();
-    } on SocketException catch (_) {
+    } on SocketException catch (e) {
+      // logger.w('No server connection', e);
       throw NoConnectionToServerError();
     }
 
@@ -118,7 +126,7 @@ class NetworkService {
         'Response body: ${response.body}');
   }
 
-  /// Makes an http get request.
+  /// Makes an HTTP GET request.
   Future<http.Response> get(
     String url, {
     Map<String, String> parameters = const {},
@@ -136,40 +144,59 @@ class NetworkService {
       // ignore: parameter_assignments
       url += '?$params';
     }
-    return _makeCall(() => http.get(url, headers: headers));
+    return _makeCall(
+      method: 'GET',
+      url: url,
+      call: () => http.get(url, headers: headers),
+    );
   }
 
-  /// Makes an http post request.
+  /// Makes an HTTP POST request.
   Future<http.Response> post(
     String url, {
     Map<String, String> headers,
     Map<String, dynamic> body,
   }) {
     return _makeCall(
-        () => http.post(url, headers: headers, body: json.encode(body)));
+      method: 'POST',
+      url: url,
+      call: () => http.post(url, headers: headers, body: json.encode(body)),
+    );
   }
 
-  /// Makes an http put request.
+  /// Makes an HTTP PUT request.
   Future<http.Response> put(
     String url, {
     Map<String, String> headers,
     dynamic body,
   }) {
-    return _makeCall(() => http.put(url, headers: headers, body: body));
+    return _makeCall(
+      method: 'PUT',
+      url: url,
+      call: () => http.put(url, headers: headers, body: body),
+    );
   }
 
-  /// Makes an http patch request.
+  /// Makes an HTTP PATCH request.
   Future<http.Response> patch(
     String url, {
     Map<String, String> headers,
     Map<String, dynamic> body,
   }) {
-    return _makeCall(() => http.patch(url, headers: headers, body: body));
+    return _makeCall(
+      method: 'PATCH',
+      url: url,
+      call: () => http.patch(url, headers: headers, body: body),
+    );
   }
 
-  // Makes an http delete request.
+  // Makes an HTTP DELETE request.
   Future<http.Response> delete(String url) {
-    return _makeCall(() => http.delete(url));
+    return _makeCall(
+      method: 'DELETE',
+      url: url,
+      call: () => http.delete(url),
+    );
   }
 }
 
