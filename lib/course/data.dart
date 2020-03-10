@@ -40,7 +40,7 @@ class Course implements Entity {
   @HiveField(2)
   final String description;
 
-  // For now, we don't use a [List<Id<User>>] here, because you can't cast a
+  // TODO(marcelgarus): For now, we don't use a [List<Id<User>>] here, because you can't cast a
   // [List<Id>] to a [List<Id<User>>] without knowing about the [Id]'s [cast]
   // method, which causes Hive to not be able to serialize generic types.
   @HiveField(3)

@@ -25,24 +25,26 @@ class CourseCard extends StatelessWidget {
       child: Row(
         children: <Widget>[
           Text(course.name),
+          SizedBox(width: 16),
           Expanded(
-            child: CachedRawBuilder(
+            child: CachedRawBuilder<List<User>>(
               controllerBuilder: () =>
                   services.get<CourseBloc>().fetchTeachersOfCourse(course),
               builder: (_, update) {
                 final teachers = update.data;
                 return Text(
                   (teachers ?? [])
+                      .where((teacher) => teacher != null)
                       .map((teacher) => teacher.shortName)
                       .join(', '),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
+                  style: TextStyle(color: context.theme.disabledColor),
                 );
               },
             ),
           ),
         ],
-        // leading: Container(color: course.color, width: 16),
       ),
     );
   }
