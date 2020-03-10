@@ -155,6 +155,11 @@ jobs:
           JDK_JAVA_OPTIONS: "--add-modules java.xml.bind"
       - name: Install screenshots package
         run: flutter pub global activate screenshots
+      - run: |
+          ls ~/
+          ls ~/Library
+          ls ~/.pub-cache/bin/
+          ls ~/Library/.pub-cache/bin/
       - name: Take screenshots
         run: ~/.pub-cache/bin/screenshots -v -f sc
       - name: Upload screenshots as artifact
