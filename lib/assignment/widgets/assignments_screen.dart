@@ -186,10 +186,9 @@ class AssignmentCard extends StatelessWidget {
       textBaseline: TextBaseline.alphabetic,
       children: <Widget>[
         Expanded(
-          child: Text(
+          child: FancyText(
             assignment.name,
-            style: context.theme.textTheme.subhead,
-            overflow: TextOverflow.ellipsis,
+            style: context.textTheme.subhead,
             maxLines: 2,
           ),
         ),

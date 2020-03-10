@@ -79,13 +79,9 @@ class NewsDashboardCard extends StatelessWidget {
               ],
             ),
             SizedBox(height: 4),
-            Text(
-              article.content.withoutLinebreaks,
+            FancyText.preview(
+              article.content,
               maxLines: 3,
-              overflow: TextOverflow.ellipsis,
-              style: context.textTheme.body1.copyWith(
-                color: context.theme.mediumEmphasisColor,
-              ),
             ),
           ],
         ),

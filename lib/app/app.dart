@@ -24,3 +24,4 @@ export 'widgets/page_route.dart' show TopLevelPageRoute;
 export 'widgets/placeholder_text.dart';
 export 'widgets/scaffold.dart';
 export 'widgets/schulcloud_app.dart' show SchulCloudApp, SignedInScreen;
+export 'widgets/text.dart';
