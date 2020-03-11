@@ -94,11 +94,8 @@ class FileBrowser extends StatelessWidget {
         ),
       ),
       floatingActionButton: UploadButton(
-        onPressed: () => services.get<FileBloc>().uploadFile(
-              context: context,
-              owner: owner.id,
-              parent: parent.id,
-            ),
+        ownerId: owner.id,
+        parentId: parent.id,
       ),
       body: CachedBuilder<List<File>>(
         controller: services.get<FileBloc>().fetchFiles(owner.id, parent),

@@ -10,12 +10,24 @@ import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:meta/meta.dart';
 import 'package:mime/mime.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:rxdart/rxdart.dart';
 import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/course/course.dart';
-import 'package:schulcloud/file/widgets/upload_snack_bars.dart';
 
 import 'data.dart';
+
+@immutable
+class UploadProgressUpdate {
+  const UploadProgressUpdate({
+    @required this.currentFileName,
+    @required this.index,
+    @required this.totalNumberOfFiles,
+  });
+
+  final String currentFileName;
+  final int index;
+  final int totalNumberOfFiles;
+  bool get isSingleFile => totalNumberOfFiles == 1;
+}
 
 @immutable
 class FileBloc {
@@ -105,42 +117,26 @@ class FileBloc {
     }
   }
 
-  Future<void> uploadFile({
-    @required BuildContext context,
+  Stream<UploadProgressUpdate> uploadFile({
     @required Id<dynamic> owner,
     Id<File> parent,
-  }) async {
-    assert(context != null);
+  }) async* {
     assert(owner != null);
 
     // Let the user pick files.
     final files = await FilePicker.getMultiFile();
 
-    final progressUpdates = BehaviorSubject<UploadProgressUpdate>();
-    final snackBar = Scaffold.of(context).showSnackBar(SnackBar(
-      duration: Duration(days: 1),
-      content: UploadProgressSnackBarContent(updates: progressUpdates.stream),
-    ));
-
     for (var i = 0; i < files.length; i++) {
       final file = files[i];
 
-      progressUpdates.add(UploadProgressUpdate(
+      yield UploadProgressUpdate(
         currentFileName: file.name,
         index: i,
         totalNumberOfFiles: files.length,
-      ));
+      );
 
       await _uploadSingleFile(file: file, owner: owner, parent: parent);
     }
-
-    snackBar.close();
-    await progressUpdates.close();
-
-    Scaffold.of(context).showSnackBar(SnackBar(
-      duration: Duration(seconds: 2),
-      content: UploadCompletedSnackBarContent(),
-    ));
   }
 
   Future<void> _uploadSingleFile({

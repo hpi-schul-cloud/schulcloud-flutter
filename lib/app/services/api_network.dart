@@ -13,6 +13,11 @@ import 'storage.dart';
 class ApiNetworkService {
   const ApiNetworkService();
 
+  String _url(String path) {
+    assert(path != null);
+    return '${services.get<AppConfig>().baseApiUrl}/$path';
+  }
+
   NetworkService get _network => services.network;
 
   Map<String, String> _getHeaders() {
@@ -30,7 +35,7 @@ class ApiNetworkService {
     Map<String, String> parameters = const {},
   }) {
     return _network.get(
-      scWebUrl(path),
+      _url(path),
       parameters: parameters,
       headers: _getHeaders(),
     );
@@ -39,7 +44,7 @@ class ApiNetworkService {
   /// Makes an HTTP POST request to the api.
   Future<http.Response> post(String path, {Map<String, dynamic> body}) {
     return _network.post(
-      scWebUrl(path),
+      _url(path),
       headers: _getHeaders(),
       body: body,
     );
@@ -48,7 +53,7 @@ class ApiNetworkService {
   /// Makes an http patch request to the api.
   Future<http.Response> patch(String path, {Map<String, dynamic> body}) {
     return _network.patch(
-      scWebUrl(path),
+      _url(path),
       headers: _getHeaders(),
       body: body,
     );
@@ -56,7 +61,7 @@ class ApiNetworkService {
 
   /// Makes an http delete request to the api.
   Future<http.Response> delete(String path) {
-    return _network.delete(scWebUrl(path));
+    return _network.delete(_url(path));
   }
 }
 

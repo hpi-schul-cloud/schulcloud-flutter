@@ -14,12 +14,7 @@ class FilesScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return FancyScaffold(
       appBar: FancyAppBar(title: Text(context.s.file)),
-      floatingActionButton: UploadButton(
-        onPressed: () => services.get<FileBloc>().uploadFile(
-              context: context,
-              owner: services.storage.userId,
-            ),
-      ),
+      floatingActionButton: UploadButton(ownerId: services.storage.userId),
       sliver: SliverList(
         delegate: SliverChildListDelegate([
           _CoursesList(),
