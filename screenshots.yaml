@@ -10,6 +10,7 @@ locales:
 
 devices:
   android:
-    Nexus 6P: {}
+    Nexus 9:
+      orientation: Portrait
 
 frame: true
