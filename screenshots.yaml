@@ -10,7 +10,9 @@ locales:
 
 devices:
   android:
-    Nexus 9:
-      orientation: Portrait
+    Nexus 6P:
+      orientation:
+        - LandscapeRight
+        - Portrait
 
 frame: true
