@@ -150,7 +150,7 @@ jobs:
       - name: Create virtual device
         run: |
           ~/Library/Android/sdk/tools/bin/sdkmanager "system-images;android-28;default;x86"
-          echo no | ~/Library/Android/sdk/tools/bin/avdmanager --verbose create avd --force -n test -package "system-images;android-28;default;x86" --device "Nexus 6P"
+          echo no | ~/Library/Android/sdk/tools/bin/avdmanager --verbose create avd --force -n test --package "system-images;android-28;default;x86" --device "Nexus 6P"
         env:
           JDK_JAVA_OPTIONS: "--add-modules java.xml.bind"
       - name: Install screenshots package
