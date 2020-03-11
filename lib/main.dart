@@ -64,9 +64,11 @@ Future<void> main({AppConfigData appConfig = schulCloudAppConfig}) async {
       // We need to initialize TimeMachine before launching the app, and using
       // get_it to keep track of initialization statuses is the simplest way.
       // Hence we just ignore the return value.
+      final timeZone = await FlutterNativeTimezone.getLocalTimezone();
+      print(timeZone);
       await TimeMachine.initialize({
         'rootBundle': rootBundle,
-        'timeZone': await FlutterNativeTimezone.getLocalTimezone(),
+        'timeZone': timeZone,
       });
     }, instanceName: 'ignored')
     ..registerSingletonAsync((_) => StorageService.create())
