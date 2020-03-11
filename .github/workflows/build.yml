@@ -163,4 +163,4 @@ jobs:
         uses: actions/upload-artifact@v1
         with:
           name: screenshots-${{ matrix.flavor }}
-          path: example/android/fastlane/metadata/android
+          path: android/fastlane/metadata/android
