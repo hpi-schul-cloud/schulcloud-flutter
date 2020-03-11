@@ -10,6 +10,7 @@ import '../data.dart';
 import 'app_bar.dart';
 import 'file_tile.dart';
 import 'page_route.dart';
+import 'upload_button.dart';
 
 class FileBrowser extends StatelessWidget {
   FileBrowser({
@@ -91,6 +92,10 @@ class FileBrowser extends StatelessWidget {
           backgroundColor: ownerAsCourse?.color,
           title: parent?.name ?? ownerAsCourse?.name ?? context.s.file_files_my,
         ),
+      ),
+      floatingActionButton: UploadButton(
+        ownerId: owner.id,
+        parentId: parent.id,
       ),
       body: CachedBuilder<List<File>>(
         controller: services.get<FileBloc>().fetchFiles(owner.id, parent),

@@ -13,7 +13,7 @@ class AssignmentBloc {
   const AssignmentBloc();
 
   CacheController<List<Assignment>> fetchAssignments() => fetchList(
-        makeNetworkCall: () => services.network.get('homework'),
+        makeNetworkCall: () => services.api.get('homework'),
         parser: (data) => Assignment.fromJson(data),
       );
 
@@ -23,7 +23,9 @@ class AssignmentBloc {
   }) async {
     final userId = services.storage.userId;
     final request = {
-      if (isArchived != null && isArchived != oldAssignment.isArchived)
+      // TODO(JonasWanke): Find a cleaner way of handling (un-)archival undo and factor in network failures…
+      // if (isArchived != null && isArchived != oldAssignment.isArchived)
+      if (isArchived != null)
         'archived': isArchived
             ? oldAssignment.archived + [userId]
             : oldAssignment.archived.where((id) => id != userId).toList(),
@@ -32,7 +34,7 @@ class AssignmentBloc {
       return oldAssignment;
     }
 
-    final response = await services.network.patch(
+    final response = await services.api.patch(
       'homework/${oldAssignment.id}',
       body: request,
     );
@@ -55,7 +57,7 @@ class SubmissionBloc {
     assert(assignment != null);
 
     return fetchSingleOfList(
-      makeNetworkCall: () => services.network.get(
+      makeNetworkCall: () => services.api.get(
         'submissions',
         parameters: {
           'homeworkId': assignment.id.id,
@@ -78,7 +80,7 @@ class SubmissionBloc {
       'comment': comment,
     };
 
-    final response = await services.network.post(
+    final response = await services.api.post(
       'submissions',
       body: request,
     );
@@ -97,7 +99,7 @@ class SubmissionBloc {
       return oldSubmission;
     }
 
-    final response = await services.network.patch(
+    final response = await services.api.patch(
       'submissions/${oldSubmission.id}',
       body: request,
     );
@@ -113,7 +115,7 @@ class SubmissionBloc {
   }
 
   Future<void> delete(Id<Submission> id) async {
-    await services.network.delete('submissions/${id.id}');
+    await services.api.delete('submissions/${id.id}');
     await services.storage.cache.delete(id);
   }
 }

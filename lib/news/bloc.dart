@@ -10,7 +10,7 @@ class NewsBloc {
   const NewsBloc();
 
   CacheController<List<Article>> fetchArticles() => fetchList(
-        makeNetworkCall: () => services.network.get('news'),
+        makeNetworkCall: () => services.api.get('news'),
         parser: (data) => Article.fromJson(data),
       );
 }
