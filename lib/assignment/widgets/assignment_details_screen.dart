@@ -115,10 +115,7 @@ class _DetailsTab extends StatelessWidget {
           ),
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 16),
-            child: Html(
-              data: assignment.description,
-              onLinkTap: tryLaunchingUrl,
-            ),
+            child: FancyText.rich(assignment.description),
           ),
           ..._buildFileSection(context, assignment.fileIds, assignment.id),
           SizedBox(height: 8),
@@ -210,10 +207,7 @@ class _SubmissionTab extends StatelessWidget {
   Widget _buildContent(BuildContext context, Submission submission) {
     Widget child = submission == null
         ? Text(context.s.assignment_assignmentDetails_submission_empty)
-        : Html(
-            data: submission.comment,
-            onLinkTap: tryLaunchingUrl,
-          );
+        : FancyText.rich(submission.comment);
     return SliverList(
       delegate: SliverChildListDelegate([
         Padding(
@@ -312,10 +306,7 @@ class _FeedbackTab extends StatelessWidget {
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 16),
                 child: submission?.gradeComment != null
-                    ? Html(
-                        data: submission.gradeComment,
-                        onLinkTap: tryLaunchingUrl,
-                      )
+                    ? FancyText.rich(submission.gradeComment)
                     : Text(s.assignment_assignmentDetails_feedback_textEmpty),
               ),
             ]),

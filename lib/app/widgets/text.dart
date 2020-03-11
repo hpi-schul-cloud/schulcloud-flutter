@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_html/flutter_html.dart';
 import 'package:schulcloud/app/app.dart';
+import 'package:shimmer/shimmer.dart';
 
 import '../theming_utils.dart';
 import '../utils.dart';
@@ -10,11 +12,33 @@ class FancyText extends StatelessWidget {
     Key key,
     this.maxLines,
     this.textType = TextType.plain,
+    this.showRichText = false,
     this.style,
     this.emphasis,
     this.textAlign,
   })  : assert(maxLines == null || maxLines >= 1),
+        assert(textType != null),
+        assert(showRichText != null),
+        assert(!showRichText || maxLines == null,
+            "maxLines isn't supported in combination with showRichText."),
+        assert(!showRichText || textAlign == null,
+            "textAlign isn't supported in combination with showRichText."),
         super(key: key);
+
+  const FancyText.rich(
+    String data, {
+    Key key,
+    TextType textType = TextType.html,
+    TextStyle style,
+    TextEmphasis emphasis,
+  }) : this(
+          data,
+          key: key,
+          textType: textType,
+          showRichText: true,
+          style: style,
+          emphasis: emphasis,
+        );
 
   const FancyText.preview(
     String data, {
@@ -27,6 +51,7 @@ class FancyText extends StatelessWidget {
           key: key,
           maxLines: maxLines,
           textType: textType,
+          showRichText: false,
           style: style,
           emphasis: TextEmphasis.medium,
         );
@@ -34,6 +59,7 @@ class FancyText extends StatelessWidget {
   final String data;
   final int maxLines;
   final TextType textType;
+  final bool showRichText;
   final TextStyle style;
   final TextEmphasis emphasis;
   final TextAlign textAlign;
@@ -51,13 +77,29 @@ class FancyText extends StatelessWidget {
       } else if (emphasis == TextEmphasis.disabled) {
         color = theme.disabledColor;
       } else {
-        assert(false, 'Unhandled emphasis: $emphasis');
+        assert(false, 'Unknown emphasis: $emphasis.');
       }
       style = style.copyWith(color: color);
     }
 
+    return showRichText ? _buildRichText(style) : _buildPlainText(style);
+  }
+
+  Widget _buildPlainText(TextStyle style) {
+    var data = this.data;
+    // 1. Convert data to plain text.
+    if (textType == TextType.html) {
+      data = data.withoutHtmlTags;
+    }
+
+    // 2. Collapse whitespace.
+    data = data
+        .replaceAll(RegExp('[\r\n\t]+'), ' ')
+        // Collapes simple and non-breaking spaces
+        .replaceAll(RegExp('[ \u00A0]+'), ' ');
+
     return Text(
-      _prepareData(),
+      data,
       maxLines: maxLines,
       overflow: maxLines == null ? null : TextOverflow.ellipsis,
       style: style,
@@ -65,19 +107,20 @@ class FancyText extends StatelessWidget {
     );
   }
 
-  String _prepareData() {
-    var data = this.data;
-    if (textType == TextType.html) {
-      data = data.withoutHtmlTags;
+  Widget _buildRichText(TextStyle style) {
+    if (textType == TextType.plain) {
+      return Text(
+        data,
+        style: style,
+      );
     }
 
-    if (!showRichText) {
-      data = data
-          .replaceAll(RegExp('[\r\n\t]+'), ' ')
-          // Collapes simple and non-breaking spaces
-          .replaceAll(RegExp('[ \u00A0]+'), ' ');
-    }
-    return data;
+    assert(textType == TextType.html, 'Unknown TextType: $textType.');
+    return Html(
+      data: data,
+      defaultTextStyle: style,
+      onLinkTap: tryLaunchingUrl,
+    );
   }
 }
 
@@ -91,3 +134,9 @@ enum TextEmphasis {
   medium,
   disabled,
 }
+          key: key,
+          role: TextRole.description,
+          textType: textType,
+          style: style,
+          textAlign: textAlign,
+        ); */
