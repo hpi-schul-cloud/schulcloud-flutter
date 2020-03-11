@@ -15,9 +15,7 @@ class CourseBloc {
         // current user.
         makeNetworkCall: () => services.api.get(
           'users/${services.storage.userId}/courses',
-          parameters: {
-            'filter': 'active',
-          },
+          parameters: {'filter': 'active'},
         ),
         parser: (data) => Course.fromJson(data),
       );
