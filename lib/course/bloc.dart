@@ -12,7 +12,12 @@ class CourseBloc {
   const CourseBloc();
 
   CacheController<List<Course>> fetchCourses() => fetchList(
-        makeNetworkCall: () => services.network.get('courses'),
+        // Apparently this returns all courses that aren't archived by the
+        // current user.
+        makeNetworkCall: () => services.api.get(
+          'users/${services.storage.userId}/courses',
+          parameters: {'filter': 'active'},
+        ),
         parser: (data) => Course.fromJson(data),
       );
 
@@ -20,7 +25,7 @@ class CourseBloc {
     assert(courseId != null);
 
     return fetchSingle(
-      makeNetworkCall: () => services.network.get('courses/$courseId'),
+      makeNetworkCall: () => services.api.get('courses/$courseId'),
       parser: (data) => Course.fromJson(data),
     );
   }
@@ -29,7 +34,7 @@ class CourseBloc {
       fetchList(
         parent: course.id,
         makeNetworkCall: () =>
-            services.network.get('lessons?courseId=${course.id}'),
+            services.api.get('lessons?courseId=${course.id}'),
         parser: (data) => Lesson.fromJson(data),
       );
 
@@ -37,11 +42,9 @@ class CourseBloc {
     final storage = services.storage;
     final userFetcher = services.get<UserFetcherService>();
 
-    return CacheController(
-      saveToCache: (_) {
-        // storage.cache.putChildrenOfType<User>(course.id, teachers),
-        return null;
-      },
+    return SimpleCacheController(
+      saveToCache: (teachers) =>
+          storage.cache.putChildrenOfType<User>(course.id, teachers),
       loadFromCache: () => storage.cache.getChildrenOfType<User>(course.id),
       fetcher: () => Future.wait([
         for (final teacherId in course.teachers)
