@@ -1,10 +1,12 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:schulcloud/app/app.dart';
 
 import '../bloc.dart';
 import '../data.dart';
 
-class UploadButton extends StatelessWidget {
+class UploadButton extends StatefulWidget {
   const UploadButton({@required this.ownerId, this.parentId})
       : assert(ownerId != null);
 
@@ -14,13 +16,20 @@ class UploadButton extends StatelessWidget {
   /// The parent folder of uploaded files.
   final Id<File> parentId;
 
+  @override
+  _UploadButtonState createState() => _UploadButtonState();
+}
+
+class _UploadButtonState extends State<UploadButton> {
+  /// Controller for the [SnackBar].
+  ScaffoldFeatureController<SnackBar, SnackBarClosedReason> snackBar;
+
   void _startUpload(BuildContext context) {
     final updates = services.get<FileBloc>().uploadFile(
-          owner: ownerId,
-          parent: parentId,
+          owner: widget.ownerId,
+          parent: widget.parentId,
         );
 
-    ScaffoldFeatureController<SnackBar, SnackBarClosedReason> snackBar;
     snackBar = Scaffold.of(context).showSnackBar(SnackBar(
       duration: Duration(days: 1),
       content: Row(
@@ -37,11 +46,7 @@ class UploadButton extends StatelessWidget {
               stream: updates,
               builder: (_, snapshot) {
                 if (snapshot.connectionState == ConnectionState.done) {
-                  snackBar.close();
-                  Scaffold.of(context).showSnackBar(SnackBar(
-                    duration: Duration(seconds: 2),
-                    content: Text(context.s.file_uploadCompletedSnackBar),
-                  ));
+                  scheduleMicrotask(_onUpdateComplete);
                 }
                 if (!snapshot.hasData) {
                   return Container();
@@ -49,15 +54,24 @@ class UploadButton extends StatelessWidget {
                 final info = snapshot.data;
                 return Text(
                   context.s.file_uploadProgressSnackBarContent(
-                      info.totalNumberOfFiles,
-                      info.currentFileName,
-                      info.index),
+                    info.totalNumberOfFiles,
+                    info.currentFileName,
+                    info.index,
+                  ),
                 );
               },
             ),
           ),
         ],
       ),
+    ));
+  }
+
+  void _onUpdateComplete() {
+    snackBar.close();
+    Scaffold.of(context).showSnackBar(SnackBar(
+      duration: Duration(seconds: 2),
+      content: Text(context.s.file_uploadCompletedSnackBar),
     ));
   }
 
