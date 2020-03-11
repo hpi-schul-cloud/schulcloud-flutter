@@ -63,6 +63,16 @@
   "@app_navigation_userDataEmpty": {
     "type": "text"
   },
+  "app_notFound": "Page not found",
+  "@app_notFound": {
+    "type": "text",
+    "description": ""
+  },
+  "app_notFound_message": "404 – We couldn't find the page you were looking for:\n{uri}",
+  "@app_notFound_message": {
+    "type": "text",
+    "description": ""
+  },
   "app_signOut_content": "You will need to provide your login credentials to use the app again.",
   "@app_signOut_content": {
     "type": "text",
@@ -210,6 +220,11 @@
   },
   "assignment_assignment_property_more": "More",
   "@assignment_assignment_property_more": {
+    "type": "text",
+    "description": ""
+  },
+  "assignment_assignment_property_updatedAt": "Last update",
+  "@assignment_assignment_property_updatedAt": {
     "type": "text",
     "description": ""
   },
@@ -361,6 +376,16 @@
   },
   "file_fileTile_details_open": "Open",
   "@file_fileTile_details_open": {
+    "type": "text",
+    "description": ""
+  },
+  "file_uploadCompletedSnackBar": "Upload completed \uD83D\uDE0A",
+  "@file_uploadCompletedSnackBar": {
+    "type": "text",
+    "description": ""
+  },
+  "file_uploadProgressSnackBarContent": "{total, plural, one{Uploading {fileName}…} other{Uploading {fileName}… ({current} / {total})}}",
+  "@file_uploadProgressSnackBarContent": {
     "type": "text",
     "description": ""
   },

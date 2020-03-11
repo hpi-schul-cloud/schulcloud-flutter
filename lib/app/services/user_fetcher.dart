@@ -13,7 +13,7 @@ class UserFetcherService {
   CacheController<User> fetchUser(Id<User> id, [Id<dynamic> parent]) =>
       fetchSingle(
         parent: parent,
-        makeNetworkCall: () => services.network.get('users/$id'),
+        makeNetworkCall: () => services.api.get('users/$id'),
         parser: (data) => User.fromJson(data),
       );
 }

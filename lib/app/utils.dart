@@ -164,14 +164,9 @@ CacheController<T> fetchSingle<T extends Entity>({
 }) {
   final storage = services.storage;
 
-  return CacheController<T>(
+  return SimpleCacheController<T>(
     saveToCache: (item) => storage.cache.putChildrenOfType<T>(parent, [item]),
-    loadFromCache: () async {
-      return (await storage.cache.getChildrenOfType<T>(parent)).singleWhere(
-        (_) => true,
-        orElse: () => throw NotInCacheException(),
-      );
-    },
+    loadFromCache: () => throw NotInCacheException(),
     fetcher: () async {
       final response = await makeNetworkCall();
       final data = json.decode(response.body);
@@ -187,7 +182,7 @@ CacheController<T> fetchSingleOfList<T extends Entity>({
 }) {
   final storage = services.storage;
 
-  return CacheController<T>(
+  return SimpleCacheController<T>(
     saveToCache: (item) => storage.cache.putChildrenOfType<T>(parent, [item]),
     loadFromCache: () async {
       return (await storage.cache.getChildrenOfType<T>(parent)).singleWhere(
@@ -220,9 +215,9 @@ CacheController<List<T>> fetchList<T extends Entity>({
 }) {
   final storage = services.storage;
 
-  return CacheController<List<T>>(
+  return SimpleCacheController<List<T>>(
     saveToCache: (items) => storage.cache.putChildrenOfType<T>(parent, items),
-    loadFromCache: () => storage.cache.getChildrenOfType<T>(parent),
+    loadFromCache: () => throw NotInCacheException(),
     fetcher: () async {
       final response = await makeNetworkCall();
       final body = json.decode(response.body);

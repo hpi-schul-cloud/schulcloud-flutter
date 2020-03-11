@@ -19,7 +19,7 @@ class CalendarDashboardCard extends StatelessWidget {
           .withOpacity(context.theme.isDark ? 0.5 : 0.12),
       child: StreamBuilder<CacheUpdate<List<Event>>>(
         stream: services.get<CalendarBloc>().fetchTodaysEvents(),
-        initialData: CacheUpdate(isFetching: false),
+        initialData: CacheUpdate.inital(),
         builder: (context, snapshot) {
           assert(snapshot.hasData);
 

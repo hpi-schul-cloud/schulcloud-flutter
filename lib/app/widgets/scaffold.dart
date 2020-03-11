@@ -7,8 +7,8 @@ class FancyScaffold extends StatelessWidget {
   const FancyScaffold({
     Key key,
     @required this.appBar,
-    @required this.sliver,
     this.floatingActionButton,
+    @required this.sliver,
     this.omitHorizontalPadding = false,
     this.omitTopPadding = false,
   })  : assert(appBar != null),
@@ -18,8 +18,8 @@ class FancyScaffold extends StatelessWidget {
         super(key: key);
 
   final Widget appBar;
-  final Widget sliver;
   final Widget floatingActionButton;
+  final Widget sliver;
   final bool omitHorizontalPadding;
   final bool omitTopPadding;
 
