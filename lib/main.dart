@@ -9,6 +9,7 @@ import 'package:schulcloud/file/file.dart';
 import 'package:schulcloud/sign_in/sign_in.dart';
 import 'package:schulcloud/news/news.dart';
 import 'package:time_machine/time_machine.dart';
+import 'package:flutter_downloader/flutter_downloader.dart';
 
 const _schulCloudRed = MaterialColor(0xffb10438, {
   50: Color(0xfffce2e6),
@@ -58,6 +59,7 @@ const schulCloudAppConfig = AppConfig(
 
 Future<void> main({AppConfig appConfig = schulCloudAppConfig}) async {
   await initializeHive();
+  await FlutterDownloader.initialize();
 
   services
     ..registerSingletonAsync((_) async {
