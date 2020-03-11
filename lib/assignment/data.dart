@@ -137,6 +137,8 @@ class Assignment implements Entity<Assignment> {
       ..saveToCache();
   }
 
+  Future<Assignment> toggleArchived() => update(isArchived: !isArchived);
+
   // TODO(marcelgarus): create some kind of LazyId.
   CacheController<Submission> get mySubmission {
     return SimpleCacheController(
