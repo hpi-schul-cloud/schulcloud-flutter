@@ -11,8 +11,6 @@ locales:
 devices:
   android:
     Nexus 6P:
-      orientation:
-        - LandscapeRight
-        - Portrait
+      orientation: Portrait
 
 frame: true
