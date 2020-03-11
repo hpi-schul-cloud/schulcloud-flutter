@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_cached/flutter_cached.dart';
 import 'package:meta/meta.dart';
+import 'package:pedantic/pedantic.dart';
 import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/course/course.dart';
 
@@ -47,7 +48,13 @@ class CourseBloc {
       loadFromCache: () => storage.cache.getChildrenOfType<User>(course.id),
       fetcher: () => Future.wait([
         for (final teacherId in course.teachers)
-          userFetcher.fetchUser(teacherId, course.id).fetch()
+          () async {
+            final userController = userFetcher.fetchUser(teacherId, course.id);
+            unawaited(userController.fetch());
+            final firstUpdate = await userController.updates
+                .firstWhere((update) => update.hasData, orElse: () => null);
+            return firstUpdate.data;
+          }(),
       ]),
     );
   }

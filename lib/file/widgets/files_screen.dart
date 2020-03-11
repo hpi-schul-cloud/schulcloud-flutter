@@ -38,7 +38,7 @@ class _CoursesList extends StatelessWidget {
             primary: false,
             shrinkWrap: true,
             maxCrossAxisExtent: 300,
-            childAspectRatio: 3.2,
+            childAspectRatio: 2.8,
             mainAxisSpacing: 8,
             crossAxisSpacing: 8,
             children: <Widget>[
