@@ -11,7 +11,14 @@ class CourseBloc {
   const CourseBloc();
 
   CacheController<List<Course>> fetchCourses() => fetchList(
-        makeNetworkCall: () => services.api.get('courses'),
+        // Apparently this returns all courses that aren't archived by the
+        // current user.
+        makeNetworkCall: () => services.api.get(
+          'users/${services.storage.userId}/courses',
+          parameters: {
+            'filter': 'active',
+          },
+        ),
         parser: (data) => Course.fromJson(data),
       );
 
