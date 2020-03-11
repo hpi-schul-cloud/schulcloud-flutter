@@ -13,4 +13,4 @@ devices:
     Nexus 6P:
       orientation: Portrait
 
-frame: true
+frame: false
