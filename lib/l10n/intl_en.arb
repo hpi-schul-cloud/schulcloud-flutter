@@ -83,6 +83,11 @@
     "type": "text",
     "description": ""
   },
+  "assignment_assignmentDetails_archived": "Archived",
+  "@assignment_assignmentDetails_archived": {
+    "type": "text",
+    "description": ""
+  },
   "assignment_assignmentDetails_details": "Details",
   "@assignment_assignmentDetails_details": {
     "type": "text",
@@ -138,8 +143,23 @@
     "type": "text",
     "description": ""
   },
+  "assignment_assignmentDetails_submissions": "Submissions",
+  "@assignment_assignmentDetails_submissions": {
+    "type": "text",
+    "description": ""
+  },
+  "assignment_assignmentDetails_submissions_placeholder": "You will soon be able to see submissions of all students in this tab.",
+  "@assignment_assignmentDetails_submissions_placeholder": {
+    "type": "text",
+    "description": ""
+  },
   "assignment_assignmentDetails_unarchive": "Unarchive",
   "@assignment_assignmentDetails_unarchive": {
+    "type": "text",
+    "description": ""
+  },
+  "assignment_assignmentDetails_unarchived": "Unarchived",
+  "@assignment_assignmentDetails_unarchived": {
     "type": "text",
     "description": ""
   },
@@ -379,6 +399,11 @@
   },
   "general_signOut": "Sign out",
   "@general_signOut": {
+    "type": "text",
+    "description": ""
+  },
+  "general_undo": "Undo",
+  "@general_undo": {
     "type": "text",
     "description": ""
   },

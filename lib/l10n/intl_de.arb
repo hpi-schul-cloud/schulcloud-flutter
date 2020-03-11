@@ -83,6 +83,11 @@
     "type": "text",
     "description": ""
   },
+  "assignment_assignmentDetails_archived": "Archiviert",
+  "@assignment_assignmentDetails_archived": {
+    "type": "text",
+    "description": ""
+  },
   "assignment_assignmentDetails_details": "Details",
   "@assignment_assignmentDetails_details": {
     "type": "text",
@@ -138,8 +143,23 @@
     "type": "text",
     "description": ""
   },
+  "assignment_assignmentDetails_submissions": "Abgaben",
+  "@assignment_assignmentDetails_submissions": {
+    "type": "text",
+    "description": ""
+  },
+  "assignment_assignmentDetails_submissions_placeholder": "In diesem Tab siehst du bald die Abgaben von allen Schülern.",
+  "@assignment_assignmentDetails_submissions_placeholder": {
+    "type": "text",
+    "description": ""
+  },
   "assignment_assignmentDetails_unarchive": "Wiederherstellen",
   "@assignment_assignmentDetails_unarchive": {
+    "type": "text",
+    "description": ""
+  },
+  "assignment_assignmentDetails_unarchived": "Wiederhergestellt",
+  "@assignment_assignmentDetails_unarchived": {
     "type": "text",
     "description": ""
   },
@@ -379,6 +399,11 @@
   },
   "general_signOut": "Abmelden",
   "@general_signOut": {
+    "type": "text",
+    "description": ""
+  },
+  "general_undo": "Rückgängig machen",
+  "@general_undo": {
     "type": "text",
     "description": ""
   },

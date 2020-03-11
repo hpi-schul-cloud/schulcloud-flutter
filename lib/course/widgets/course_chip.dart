@@ -15,13 +15,13 @@ class CourseChip extends StatelessWidget {
   Widget build(BuildContext context) {
     if (onPressed == null && course == null) {
       return Chip(
-        avatar: CourseColorDot(course: course),
+        avatar: CourseColorDot(course),
         label: TextOrPlaceholder(course?.name),
       );
     }
 
     return ActionChip(
-      avatar: CourseColorDot(course: course),
+      avatar: CourseColorDot(course),
       label: TextOrPlaceholder(course?.name),
       onPressed: onPressed ??
           () => context.navigator.push(MaterialPageRoute(
