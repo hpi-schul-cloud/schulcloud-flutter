@@ -18,38 +18,31 @@ class CourseCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
+    return FancyCard(
       onTap: () => _openDetailsScreen(context),
-      child: Card(
-        child: Column(
-          children: <Widget>[
-            Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(4),
-                  topRight: Radius.circular(4),
-                ),
-                color: course.color,
-              ),
-              height: 32,
-            ),
-            ListTile(
-              title: Text(
-                course.name,
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-              ),
-              subtitle: CachedRawBuilder(
-                controller: course.teacherIds.controller,
-                builder: (_, update) {
-                  final teachers = update.data;
-                  return Text((teachers ?? [])
+      color: course.color.withOpacity(0.12),
+      child: Row(
+        children: <Widget>[
+          Text(course.name),
+          SizedBox(width: 16),
+          Expanded(
+            child: CachedRawBuilder<List<User>>(
+              controller: course.teacherIds.controller,
+              builder: (_, update) {
+                final teachers = update.data;
+                return Text(
+                  (teachers ?? [])
+                      .where((teacher) => teacher != null)
                       .map((teacher) => teacher.shortName)
-                      .join(', '));
-                },
-              ),
-            )
-          ],
-        ),
+                      .join(', '),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(color: context.theme.disabledColor),
+                );
+              },
+            ),
+          ),
+        ],
       ),
     );
   }

@@ -3,6 +3,7 @@ export 'data.dart';
 export 'datetime_utils.dart';
 export 'hive.dart';
 export 'logger.dart';
+export 'services/api_network.dart';
 export 'services/network.dart';
 export 'services/storage.dart';
 export 'sort_filter/filtering.dart';

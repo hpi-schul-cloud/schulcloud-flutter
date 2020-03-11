@@ -18,5 +18,13 @@ samples, guidance on mobile development, and a full API reference.
 
 - Run `flutter packages get`
 - Run `flutter packages pub run build_runner build`
-- Run `flutter pub run intl_utils:generate` (or use the [Flutter Intl](https://marketplace.visualstudio.com/items?itemName=localizely.flutter-intl) extension in VS Code)
+- Run `flutter pub run intl_utils:generate` (or use the [Flutter Intl][flutter-intl] extension in VS Code)
 - Run `flutter run --flavor=sc`
+
+
+## L10n (Localization)
+
+We recommend using [L42n](https://github.com/JonasWanke/l42n) for editing localization files, located in `lib/l10n`. Note that you still need to re-generate the dart files after editing these files using [Flutter Intl][flutter-intl].
+
+
+[flutter-intl]: https://marketplace.visualstudio.com/items?itemName=localizely.flutter-intl
