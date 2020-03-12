@@ -1,3 +1,5 @@
+import 'dart:io' as io;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:logger_flutter/logger_flutter.dart';
@@ -9,8 +11,11 @@ import 'package:schulcloud/file/file.dart';
 import 'package:schulcloud/generated/l10n.dart';
 import 'package:schulcloud/sign_in/sign_in.dart';
 import 'package:schulcloud/news/news.dart';
+import 'package:share/receive_share_state.dart';
+import 'package:share/share.dart';
 
 import '../app_config.dart';
+import '../logger.dart';
 import '../services/navigator_observer.dart';
 import '../services/storage.dart';
 import '../utils.dart';
@@ -51,7 +56,7 @@ class SignedInScreen extends StatefulWidget {
   _SignedInScreenState createState() => _SignedInScreenState();
 }
 
-class _SignedInScreenState extends State<SignedInScreen> {
+class _SignedInScreenState extends ReceiveShareState<SignedInScreen> {
   final _navigatorKey = GlobalKey<NavigatorState>();
   NavigatorState get navigator => _navigatorKey.currentState;
 
@@ -64,6 +69,7 @@ class _SignedInScreenState extends State<SignedInScreen> {
   @override
   void initState() {
     super.initState();
+    enableShareReceiving();
     _controller = BehaviorSubject<Screen>();
     _screenStream = _controller.stream;
   }
@@ -72,6 +78,30 @@ class _SignedInScreenState extends State<SignedInScreen> {
   void dispose() {
     _controller?.close();
     super.dispose();
+  }
+
+  @override
+  void receiveShare(Share shared) {
+    logger.i('The user shared $shared into the app.');
+    Future.delayed(Duration(seconds: 1), () async {
+      logger.i('Letting the user choose a destination where to upload '
+          '${shared.path}.');
+      final destination = await context.navigator.push(MaterialPageRoute(
+        builder: (_) => ChooseDestinationScreen(
+          title: Text('Where to upload the file?'),
+          buttonContent: Icon(Icons.file_upload),
+        ),
+      ));
+
+      logger.i('Uploading to $destination.');
+      if (destination != null) {
+        services.files.uploadFile(
+          files: [io.File(shared.path)],
+          owner: destination.ownerId,
+          parent: destination.parentId,
+        );
+      }
+    });
   }
 
   void _navigateTo(Screen screen) {
