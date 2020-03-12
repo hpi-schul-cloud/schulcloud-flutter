@@ -61,7 +61,7 @@ class ApiNetworkService {
 
   /// Makes an http delete request to the api.
   Future<http.Response> delete(String path) {
-    return _network.delete(_url(path));
+    return _network.delete(_url(path), headers: _getHeaders());
   }
 }
 
