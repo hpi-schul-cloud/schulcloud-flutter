@@ -64,6 +64,7 @@ dev_dependencies:
   hive_generator:
     git:
       url: git://github.com/hivedb/hive
+      ref: f8bdb804da56d0863e03316842317b27f47d2bdf
       path: hive_generator
   intl_utils: ^1.0.2
 
