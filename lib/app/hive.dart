@@ -116,7 +116,7 @@ class LazyIds<E extends Entity<E>> {
   LazyIds({@required this.collectionId, @required this.fetcher});
 
   final String collectionId;
-  // Id<IdCollection<E>> get _id => Id<IdCollection<E>>(collectionId);
+  Id<IdCollection<E>> get _id => Id<IdCollection<E>>(collectionId);
 
   final FutureOr<List<E>> Function() fetcher;
 
@@ -124,26 +124,20 @@ class LazyIds<E extends Entity<E>> {
     return SimpleCacheController<List<E>>(
       fetcher: fetcher,
       loadFromCache: () async {
-        // TODO(marcelgarus): Activate the cache.
-        throw NotInCacheException();
-
-        // final ids = HiveCache.get(_id) ?? (throw NotInCacheException());
-        // return [
-        //   for (final itemId in ids.childrenIds)
-        //     HiveCache.get(itemId) ?? (throw NotInCacheException()),
-        // ];
+        final ids = HiveCache.get(_id) ?? (throw NotInCacheException());
+        return [
+          for (final itemId in ids.childrenIds)
+            HiveCache.get(itemId) ?? (throw NotInCacheException()),
+        ];
       },
       saveToCache: (items) {
-        // TODO(marcelgarus): Activate the cache.
-        return;
-
         // TODO(marcelgarus): Use Fetcher._createCollection
-        // final collection = IdCollection<E>(
-        //   id: _id,
-        //   childrenIds: items.map((item) => item.id).toList(),
-        // );
-        // HiveCache.put<IdCollection<E>>(collection);
-        // items.forEach(HiveCache.put);
+        final collection = IdCollection<E>(
+          id: _id,
+          childrenIds: items.map((item) => item.id).toList(),
+        );
+        HiveCache.put<IdCollection<E>>(collection);
+        items.forEach(HiveCache.put);
       },
     );
   }
