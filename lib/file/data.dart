@@ -111,4 +111,38 @@ class File implements Entity<File>, Comparable<File> {
     }
     return name.compareTo(other.name);
   }
+
+  File copyWith({
+    String name,
+    Id<dynamic> owner,
+    Id<File> parent,
+  }) {
+    return File(
+      id: id,
+      name: name ?? this.name,
+      owner: owner ?? this.owner,
+      createdAt: createdAt,
+      updatedAt: updatedAt,
+      parent: parent ?? this.parent,
+      isDirectory: isDirectory,
+      mimeType: mimeType,
+      size: size,
+    );
+  }
+
+  Future<void> rename(String newName) async {
+    await services.network.post('fileStorage/rename', body: {
+      'id': id.value,
+      'newName': newName,
+    });
+    copyWith(name: newName).saveToCache();
+  }
+
+  Future<void> moveTo(Id<File> parentDirectory) async {
+    await services.network.patch('fileStorage/$id', body: {
+      'parent': parentDirectory,
+    });
+  }
+
+  Future<void> delete() => services.network.delete('fileStorage/$id');
 }
