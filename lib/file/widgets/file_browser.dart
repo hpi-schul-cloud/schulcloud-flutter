@@ -1,7 +1,8 @@
-import 'package:flutter_cached/flutter_cached.dart';
+import 'package:black_hole_flutter/black_hole_flutter.dart';
 import 'package:flare_flutter/flare_actor.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_cached/flutter_cached.dart';
 import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/course/course.dart';
 

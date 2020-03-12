@@ -1,3 +1,4 @@
+import 'package:black_hole_flutter/black_hole_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cached/flutter_cached.dart';
 import 'package:schulcloud/app/app.dart';
@@ -26,9 +27,10 @@ class CalendarDashboardCard extends StatelessWidget {
           final update = snapshot.data;
           if (!update.hasData) {
             return Center(
-                child: update.hasError
-                    ? Text(update.error.toString())
-                    : CircularProgressIndicator());
+              child: update.hasError
+                  ? Text(update.error.toString())
+                  : CircularProgressIndicator(),
+            );
           }
 
           final now = Instant.now();

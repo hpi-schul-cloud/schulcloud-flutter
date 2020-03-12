@@ -29,6 +29,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.4.0"
+  black_hole_flutter:
+    dependency: "direct main"
+    description:
+      name: black_hole_flutter
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.0.1"
   build:
     dependency: transitive
     description:

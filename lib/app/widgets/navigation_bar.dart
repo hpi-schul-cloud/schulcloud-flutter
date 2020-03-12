@@ -1,3 +1,4 @@
+import 'package:black_hole_flutter/black_hole_flutter.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:schulcloud/app/app.dart';
@@ -49,7 +50,7 @@ class _MyNavigationBarState extends State<MyNavigationBar> {
 
     return BottomNavigationBar(
       selectedItemColor: theme.accentColor,
-      unselectedItemColor: theme.mediumEmphasisColor,
+      unselectedItemColor: theme.mediumEmphasisOnBackground,
       currentIndex: screens.indexOf(_activeScreen),
       onTap: _onNavigate,
       items: [
