@@ -35,8 +35,8 @@ class FileMenu extends StatelessWidget {
     final s = context.s;
     final subtitle = [
       if (file.isActualFile) file.sizeAsString,
-      s.file_fileTile_details_createdAt(file.createdAt.longDateTimeString),
-      s.file_fileTile_details_modifiedAt(file.updatedAt.longDateTimeString),
+      s.file_fileMenu_createdAt(file.createdAt.longDateTimeString),
+      s.file_fileMenu_modifiedAt(file.updatedAt.longDateTimeString),
     ].join('\n');
 
     return Column(
@@ -49,19 +49,19 @@ class FileMenu extends StatelessWidget {
           leading: FileThumbnail(file: file),
         ),
         ListTile(
-          title: Text('Delete'), // TODO(marcelgarus): put in translation
+          title: Text(s.file_fileMenu_delete),
           onTap: () => _delete(context),
         ),
         ListTile(
-          title: Text('Rename'), // TODO(marcelgarus): put in translation
+          title: Text(s.file_fileMenu_rename),
           onTap: () => _rename(context),
         ),
         ListTile(
-          title: Text('Move'), // TODO(marcelgarus): put in translation
+          title: Text(s.file_fileMenu_move),
           onTap: () {},
         ),
         ListTile(
-          title: Text(s.file_fileTile_details_offline),
+          title: Text(s.file_fileMenu_makeAvailableOffline),
           trailing: Switch.adaptive(
             value: false,
             onChanged: (_) {},
@@ -97,11 +97,18 @@ class _RenameDialogState extends State<RenameDialog> {
       content: TextField(
         controller: _controller,
         autofocus: true,
+        decoration: InputDecoration(
+          hintText: context.s.file_renameDialog_inputHint,
+        ),
       ),
       actions: <Widget>[
         FlatButton(
+          onPressed: () => context.navigator.pop(),
+          child: Text(context.s.general_cancel),
+        ),
+        FlatButton(
           onPressed: () => context.navigator.pop(_controller.text),
-          child: Text('Done'),
+          child: Text(context.s.file_renameDialog_rename),
         ),
       ],
     );
