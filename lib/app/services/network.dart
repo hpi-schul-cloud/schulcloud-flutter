@@ -203,11 +203,11 @@ class NetworkService {
   }
 
   // Makes an HTTP DELETE request.
-  Future<http.Response> delete(String url) {
+  Future<http.Response> delete(String url, {Map<String, String> headers}) {
     return _makeCall(
       method: 'DELETE',
       url: url,
-      call: () => http.delete(url),
+      call: () => http.delete(url, headers: headers),
     );
   }
 }
