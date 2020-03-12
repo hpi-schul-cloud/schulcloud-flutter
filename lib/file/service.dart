@@ -54,26 +54,20 @@ class FileService {
   }
 
   Future<void> ensureStoragePermissionGranted() async {
-    final permissions = await PermissionHandler()
-        .checkPermissionStatus(PermissionGroup.storage);
-    bool isGranted() => permissions.value != 0;
-
-    if (isGranted()) {
-      return;
-    }
-    await PermissionHandler().requestPermissions([PermissionGroup.storage]);
-    if (!isGranted()) {
+    final permissions =
+        await PermissionHandler().requestPermissions([PermissionGroup.storage]);
+    if (permissions[PermissionGroup.storage] != PermissionStatus.granted) {
       throw PermissionNotGranted();
     }
   }
 
-  Stream<UploadProgressUpdate> uploadFile({
+  Stream<UploadProgressUpdate> uploadFiles({
     @required List<io.File> files,
-    @required Id<dynamic> owner,
-    Id<File> parent,
+    @required Id<dynamic> ownerId,
+    Id<File> parentId,
   }) async* {
     assert(files != null);
-    assert(owner != null);
+    assert(ownerId != null);
 
     for (var i = 0; i < files.length; i++) {
       final file = files[i];
@@ -84,7 +78,7 @@ class FileService {
         totalNumberOfFiles: files.length,
       );
 
-      await _uploadSingleFile(file: file, owner: owner, parent: parent);
+      await _uploadSingleFile(file: file, owner: ownerId, parent: parentId);
     }
   }
 
