@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_cached/flutter_cached.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:logger_flutter/logger_flutter.dart';
 import 'package:rxdart/rxdart.dart';
@@ -14,6 +15,7 @@ import '../app_config.dart';
 import '../services/navigator_observer.dart';
 import '../services/storage.dart';
 import '../utils.dart';
+import 'cached_builder.dart';
 import 'navigation_bar.dart';
 import 'page_route.dart';
 
@@ -115,6 +117,24 @@ class _SignedInScreenState extends State<SignedInScreen> {
 
   @override
   Widget build(BuildContext context) {
+    return FancyCachedBuilder(
+      controller: CacheController.fromStreamOfUpdates(
+        fetch: () async {},
+        stream: Stream.value(CacheUpdate<void>.error(
+          Exception('Some generic exception.'),
+          // FancyException(
+          //   isGlobal: true,
+          //   messageBuilder: (_) =>
+          //       'Some error description. Lorem ipsum dolor sit amet.',
+          // ),
+          StackTrace.current,
+        )),
+      ),
+      builder: (context, data, isFetching) {
+        return Container(color: Colors.yellow);
+      },
+    );
+
     return LogConsoleOnShake(
       child: WillPopScope(
         onWillPop: _onWillPop,
