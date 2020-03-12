@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:schulcloud/sign_in/sign_in.dart';
@@ -25,6 +27,64 @@ void _showStackTrace(
       );
     },
   ));
+}
+
+class StripedErrorWidget extends StatelessWidget {
+  const StripedErrorWidget(this.error, this.stackTrace);
+
+  final dynamic error;
+  final StackTrace stackTrace;
+
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(builder: (context, constraints) {
+      final size = constraints.biggest;
+      final diagonal = sqrt(pow(size.width, 2) + pow(size.height, 2));
+      final numSegments = diagonal ~/ 50;
+
+      return Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              for (var i = 0; i < numSegments; i++) ...[
+                Color(0xffe966aa),
+                Color(0xffe966aa),
+                Color(0xffff66aa),
+                Color(0xffff66aa),
+              ],
+            ],
+            stops: [
+              for (var i = 0; i < numSegments; i++) ...[
+                1.0 / numSegments * i,
+                1.0 / numSegments * (i + 0.5),
+                1.0 / numSegments * (i + 0.5),
+                1.0 / numSegments * (i + 1),
+              ],
+            ],
+          ),
+        ),
+        padding: const EdgeInsets.all(8),
+        child: GestureDetector(
+          onLongPress: () => _showStackTrace(context, error, stackTrace),
+          child: SafeArea(
+            child: Text(
+              error.toString(),
+              style: TextStyle(
+                color: Colors.black,
+                fontStyle: FontStyle.normal,
+                fontSize: 16,
+                fontFamily: 'Roboto',
+                fontWeight: FontWeight.bold,
+                decoration: TextDecoration.none,
+              ),
+            ),
+          ),
+        ),
+      );
+    });
+  }
 }
 
 class _MessageAndActions {
