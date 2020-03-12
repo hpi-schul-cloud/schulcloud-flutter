@@ -26,10 +26,10 @@ class _UploadButtonState extends State<UploadButton> {
   ScaffoldFeatureController<SnackBar, SnackBarClosedReason> snackBar;
 
   void _startUpload(BuildContext context) async {
-    final updates = services.files.uploadFile(
+    final updates = services.files.uploadFiles(
       files: await FilePicker.getMultiFile(),
-      owner: widget.ownerId,
-      parent: widget.parentId,
+      ownerId: widget.ownerId,
+      parentId: widget.parentId,
     );
 
     snackBar = Scaffold.of(context).showSnackBar(SnackBar(
