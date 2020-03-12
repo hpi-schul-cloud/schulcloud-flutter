@@ -1,522 +1,123 @@
 {
   "@@locale": "de",
   "app_emptyState_retry": "Nochmal versuchen",
-  "@app_emptyState_retry": {
-    "type": "text"
-  },
   "app_errorScreen_authError": "Sieht aus, als ob die Authentifizierung abgelaufen ist.\nVielleicht hilft es, sich erneut einzuloggen?",
-  "@app_errorScreen_authError": {
-    "type": "text"
-  },
   "app_errorScreen_noConnection": "Es konnte keine Verbindung zum Server aufgebaut werden.\nBist du mit dem Internet verbunden?",
-  "@app_errorScreen_noConnection": {
-    "type": "text"
-  },
   "app_errorScreen_stackTrace": "Stack-Trace",
-  "@app_errorScreen_stackTrace": {
-    "type": "text"
-  },
   "app_errorScreen_unknown": "Oh nein! Ein interner Fehler ist aufgetreten:\n{error}",
-  "@app_errorScreen_unknown": {
-    "type": "text"
-  },
   "app_errorScreen_unknown_showStackTrace": "Stack-Trace anzeigen",
-  "@app_errorScreen_unknown_showStackTrace": {
-    "type": "text"
-  },
   "app_form_confirmDelete": "Löschen?",
-  "@app_form_confirmDelete": {
-    "type": "text",
-    "description": ""
-  },
   "app_form_confirmDelete_delete": "Löschen",
-  "@app_form_confirmDelete_delete": {
-    "type": "text",
-    "description": ""
-  },
   "app_form_confirmDelete_keep": "Behalten",
-  "@app_form_confirmDelete_keep": {
-    "type": "text",
-    "description": ""
-  },
   "app_form_discardChanges": "Änderungen verwerfen?",
-  "@app_form_discardChanges": {
-    "type": "text",
-    "description": ""
-  },
   "app_form_discardChanges_discard": "Verwerfen",
-  "@app_form_discardChanges_discard": {
-    "type": "text",
-    "description": ""
-  },
   "app_form_discardChanges_keepEditing": "Weiter bearbeiten",
-  "@app_form_discardChanges_keepEditing": {
-    "type": "text",
-    "description": ""
-  },
   "app_form_discardChanges_message": "Deine Änderungen wurden noch nicht gespeichert.",
-  "@app_form_discardChanges_message": {
-    "type": "text",
-    "description": ""
-  },
   "app_navigation_userDataEmpty": "—",
-  "@app_navigation_userDataEmpty": {
-    "type": "text"
-  },
+  "app_notFound": "Seite nicht gefunden",
+  "app_notFound_message": "404 – Wir konnten die von dir aufgerufene Seite nicht finden:\n{uri}",
   "app_signOut_content": "Du musst dich danach erneut anmelden, um die App zu benutzen.",
-  "@app_signOut_content": {
-    "type": "text",
-    "description": ""
-  },
   "app_signOut_title": "Abmelden?",
-  "@app_signOut_title": {
-    "type": "text",
-    "description": ""
-  },
   "assignment": "Hausaufgaben",
-  "@assignment": {
-    "type": "text",
-    "description": ""
-  },
-  "assignment_assignmentDetails_archive": "Archivieren",
-  "@assignment_assignmentDetails_archive": {
-    "type": "text",
-    "description": ""
-  },
-  "assignment_assignmentDetails_details": "Details",
-  "@assignment_assignmentDetails_details": {
-    "type": "text",
-    "description": ""
-  },
-  "assignment_assignmentDetails_details_available": "Verfügbar: {availableAt}",
-  "@assignment_assignmentDetails_details_available": {
-    "type": "text",
-    "description": ""
-  },
-  "assignment_assignmentDetails_details_due": "Bis: {dueAt}",
-  "@assignment_assignmentDetails_details_due": {
-    "type": "text",
-    "description": ""
-  },
-  "assignment_assignmentDetails_feedback": "Feedback",
-  "@assignment_assignmentDetails_feedback": {
-    "type": "text",
-    "description": ""
-  },
-  "assignment_assignmentDetails_feedback_grade": "Du hast {grade} % richtig gelöst.",
-  "@assignment_assignmentDetails_feedback_grade": {
-    "type": "text",
-    "description": ""
-  },
-  "assignment_assignmentDetails_feedback_textEmpty": "Kein Bewertungstext vorhanden.",
-  "@assignment_assignmentDetails_feedback_textEmpty": {
-    "type": "text",
-    "description": ""
-  },
-  "assignment_assignmentDetails_filesSection": "Dateien",
-  "@assignment_assignmentDetails_filesSection": {
-    "type": "text",
-    "description": ""
-  },
-  "assignment_assignmentDetails_submission": "Abgabe",
-  "@assignment_assignmentDetails_submission": {
-    "type": "text",
-    "description": ""
-  },
-  "assignment_assignmentDetails_submission_create": "Abgabe erstellen",
-  "@assignment_assignmentDetails_submission_create": {
-    "type": "text",
-    "description": ""
-  },
-  "assignment_assignmentDetails_submission_edit": "Abgabe bearbeiten",
-  "@assignment_assignmentDetails_submission_edit": {
-    "type": "text",
-    "description": ""
-  },
-  "assignment_assignmentDetails_submission_empty": "Du hast noch nichts abgegeben.",
-  "@assignment_assignmentDetails_submission_empty": {
-    "type": "text",
-    "description": ""
-  },
-  "assignment_assignmentDetails_unarchive": "Wiederherstellen",
-  "@assignment_assignmentDetails_unarchive": {
-    "type": "text",
-    "description": ""
-  },
   "assignment_assignment_isArchived": "Archiviert",
-  "@assignment_assignment_isArchived": {
-    "type": "text",
-    "description": ""
-  },
   "assignment_assignment_isPrivate": "Privat",
-  "@assignment_assignment_isPrivate": {
-    "type": "text",
-    "description": ""
-  },
   "assignment_assignment_overdue": "Überfällig",
-  "@assignment_assignment_overdue": {
-    "type": "text",
-    "description": ""
-  },
   "assignment_assignment_property_availableAt": "Verfügbarkeitsdatum",
-  "@assignment_assignment_property_availableAt": {
-    "type": "text",
-    "description": ""
-  },
   "assignment_assignment_property_createdAt": "Erstelldatum",
-  "@assignment_assignment_property_createdAt": {
-    "type": "text",
-    "description": ""
-  },
   "assignment_assignment_property_dueAt": "Abgabedatum",
-  "@assignment_assignment_property_dueAt": {
-    "type": "text",
-    "description": ""
-  },
   "assignment_assignment_property_hasPublicSubmissions": "Öffentliche Abgaben",
-  "@assignment_assignment_property_hasPublicSubmissions": {
-    "type": "text",
-    "description": ""
-  },
   "assignment_assignment_property_isArchived": "Archiviert",
-  "@assignment_assignment_property_isArchived": {
-    "type": "text",
-    "description": ""
-  },
   "assignment_assignment_property_isPrivate": "Private Aufgabe",
-  "@assignment_assignment_property_isPrivate": {
-    "type": "text",
-    "description": ""
-  },
   "assignment_assignment_property_more": "Mehr",
-  "@assignment_assignment_property_more": {
-    "type": "text",
-    "description": ""
-  },
   "assignment_assignment_property_updatedAt": "Letzte Aktualisierung",
-  "@assignment_assignment_property_updatedAt": {
-    "type": "text",
-    "description": ""
-  },
+  "assignment_assignmentDetails_archive": "Archivieren",
+  "assignment_assignmentDetails_archived": "Archiviert",
+  "assignment_assignmentDetails_details": "Details",
+  "assignment_assignmentDetails_details_available": "Verfügbar: {availableAt}",
+  "assignment_assignmentDetails_details_due": "Bis: {dueAt}",
+  "assignment_assignmentDetails_feedback": "Feedback",
+  "assignment_assignmentDetails_feedback_grade": "Du hast {grade} % richtig gelöst.",
+  "assignment_assignmentDetails_feedback_textEmpty": "Kein Bewertungstext vorhanden.",
+  "assignment_assignmentDetails_filesSection": "Dateien",
+  "assignment_assignmentDetails_submission": "Abgabe",
+  "assignment_assignmentDetails_submission_create": "Abgabe erstellen",
+  "assignment_assignmentDetails_submission_edit": "Abgabe bearbeiten",
+  "assignment_assignmentDetails_submission_empty": "Du hast noch nichts abgegeben.",
+  "assignment_assignmentDetails_submissions": "Abgaben",
+  "assignment_assignmentDetails_submissions_placeholder": "In diesem Tab siehst du bald die Abgaben von allen Schülern.",
+  "assignment_assignmentDetails_unarchive": "Wiederherstellen",
+  "assignment_assignmentDetails_unarchived": "Wiederhergestellt",
   "assignment_assignmentsScreen_empty": "Es wurden keine Aufgaben gefunden, die deinen Filtern entsprechen.",
-  "@assignment_assignmentsScreen_empty": {
-    "type": "text",
-    "description": ""
-  },
   "assignment_assignmentsScreen_empty_editFilters": "Filter ändern",
-  "@assignment_assignmentsScreen_empty_editFilters": {
-    "type": "text",
-    "description": ""
-  },
   "assignment_dashboardCard": "Hausaufgaben",
-  "@assignment_dashboardCard": {
-    "type": "text"
-  },
   "assignment_dashboardCard_all": "Alle Hausaufgaben",
-  "@assignment_dashboardCard_all": {
-    "type": "text"
-  },
   "assignment_dashboardCard_header": "{assignmentCount, plural, one{offene Hausaufgabe\nin der nächsten Woche} other{offene Hausaufgaben\nin der nächsten Woche}}",
-  "@assignment_dashboardCard_header": {
-    "type": "text",
-    "description": ""
-  },
   "assignment_dashboardCard_noCourse": "(ohne Kurs)",
-  "@assignment_dashboardCard_noCourse": {
-    "type": "text",
-    "description": ""
-  },
   "assignment_detailsScreen_mySubmission": "Meine Abgabe",
-  "@assignment_detailsScreen_mySubmission": {
-    "type": "text"
-  },
   "assignment_editSubmission_delete_confirm": "Möchtest du diese Abgabe wirklich löschen?",
-  "@assignment_editSubmission_delete_confirm": {
-    "type": "text",
-    "description": ""
-  },
   "assignment_editSubmission_delete_success": "Erfolgreich gelöscht",
-  "@assignment_editSubmission_delete_success": {
-    "type": "text",
-    "description": ""
-  },
   "assignment_editSubmission_overwriteFormatting": "Durch das Bearbeiten dieser Abgabe geht die vorhandene Formatierung verloren.",
-  "@assignment_editSubmission_overwriteFormatting": {
-    "type": "text",
-    "description": ""
-  },
   "assignment_editSubmission_teamSubmissionNotSupported": "Teamabgaben werden in dieser App noch nicht unterstützt.",
-  "@assignment_editSubmission_teamSubmissionNotSupported": {
-    "type": "text",
-    "description": ""
-  },
   "assignment_editSubmission_text": "Textabgabe",
-  "@assignment_editSubmission_text": {
-    "type": "text",
-    "description": ""
-  },
   "assignment_editSubmission_text_errorEmpty": "Deine Abgabe darf nicht leer sein.",
-  "@assignment_editSubmission_text_errorEmpty": {
-    "type": "text",
-    "description": ""
-  },
   "calendar_dashboardCard": "Stundenplan",
-  "@calendar_dashboardCard": {
-    "type": "text",
-    "description": ""
-  },
   "calendar_dashboardCard_empty": "Keine Termine für den Rest des Tages!",
-  "@calendar_dashboardCard_empty": {
-    "type": "text",
-    "description": ""
-  },
   "course": "Kurse",
-  "@course": {
-    "type": "text",
-    "description": ""
-  },
   "course_coursesScreen_empty": "Es wurden keine Kurse gefunden.",
-  "@course_coursesScreen_empty": {
-    "type": "text"
-  },
   "course_detailsScreen_empty": "Dieser Kurs enthält noch keine Themen.",
-  "@course_detailsScreen_empty": {
-    "type": "text"
-  },
   "dashboard": "Übersicht",
-  "@dashboard": {
-    "type": "text",
-    "description": ""
-  },
   "file": "Dateien",
-  "@file": {
-    "type": "text",
-    "description": ""
-  },
-  "file_fileBrowser_downloading": "{fileName} wird heruntergeladen…",
-  "@file_fileBrowser_downloading": {
-    "type": "text"
-  },
-  "file_fileBrowser_download_storageAccess": "Um Dateien herunterzuladen benötigen wir Zugriff auf den Speicher",
-  "@file_fileBrowser_download_storageAccess": {
-    "type": "text"
-  },
   "file_fileBrowser_download_storageAccess_allow": "Erlauben",
-  "@file_fileBrowser_download_storageAccess_allow": {
-    "type": "text"
-  },
+  "file_fileBrowser_download_storageAccess": "Um Dateien herunterzuladen benötigen wir Zugriff auf den Speicher",
+  "file_fileBrowser_downloading": "{fileName} wird heruntergeladen…",
   "file_fileBrowser_empty": "Der Ordner ist leer.",
-  "@file_fileBrowser_empty": {
-    "type": "text"
-  },
   "file_fileBrowser_totalCount": "Insgesamt {count} Dateien/Unterordner",
-  "@file_fileBrowser_totalCount": {
-    "type": "text"
-  },
   "file_files_course": "Kursdateien",
-  "@file_files_course": {
-    "type": "text"
-  },
   "file_files_course_description": "Hier findest du alle Dateien, die in den jeweiligen Kursen im Unterricht verwendet werden. Alle Teilnehmer des Kurses, also Lehrkräfte und SchülerInnen, haben auf diese Dateien Zugriff.",
-  "@file_files_course_description": {
-    "type": "text"
-  },
   "file_files_my": "Meine Dateien",
-  "@file_files_my": {
-    "type": "text"
-  },
   "file_files_my_description": "Hier findest du alle deine persönlichen Dateien.\nAuf diese Dateien hast nur du Zugriff, du kannst sie aber auch mit anderen Nutzern teilen.",
-  "@file_files_my_description": {
-    "type": "text"
-  },
   "file_fileTile_details_createdAt": "Erstellt: {createdAt}",
-  "@file_fileTile_details_createdAt": {
-    "type": "text",
-    "description": ""
-  },
   "file_fileTile_details_modifiedAt": "Zuletzt geändert: {modifiedAt}",
-  "@file_fileTile_details_modifiedAt": {
-    "type": "text",
-    "description": ""
-  },
   "file_fileTile_details_offline": "Offline verfügbar machen",
-  "@file_fileTile_details_offline": {
-    "type": "text",
-    "description": ""
-  },
   "file_fileTile_details_open": "Öffnen",
-  "@file_fileTile_details_open": {
-    "type": "text",
-    "description": ""
-  },
+  "file_uploadCompletedSnackBar": "Fertig hochgeladen 😊",
+  "file_uploadProgressSnackBarContent": "{total, plural, one{{fileName} wird hochgeladen…} other{{fileName} wird hochgeladen… ({current} / {total})}}",
   "general_cancel": "Abbrechen",
-  "@general_cancel": {
-    "type": "text",
-    "description": ""
-  },
   "general_dismiss": "Verstanden",
-  "@general_dismiss": {
-    "type": "text",
-    "description": ""
-  },
   "general_loading": "Lädt…",
-  "@general_loading": {
-    "type": "text"
-  },
   "general_placeholder": "—",
-  "@general_placeholder": {
-    "type": "text"
-  },
   "general_save": "Speichern",
-  "@general_save": {
-    "type": "text",
-    "description": ""
-  },
-  "general_save_success": "Gespeichert \uD83D\uDE0A",
-  "@general_save_success": {
-    "type": "text",
-    "description": ""
-  },
+  "general_save_success": "Gespeichert 😊",
   "general_saving": "Speichert…",
-  "@general_saving": {
-    "type": "text",
-    "description": ""
-  },
   "general_signOut": "Abmelden",
-  "@general_signOut": {
-    "type": "text",
-    "description": ""
-  },
+  "general_undo": "Rückgängig machen",
   "general_user_unknown": "Unbekannt",
-  "@general_user_unknown": {
-    "type": "text"
-  },
   "news": "Neuigkeiten",
-  "@news": {
-    "type": "text",
-    "description": ""
-  },
   "news_articlePreview_subtitle": "Veröffentlicht am {published} von {author}",
-  "@news_articlePreview_subtitle": {
-    "type": "text"
-  },
   "news_authorView": "von {author}",
-  "@news_authorView": {
-    "type": "text"
-  },
-  "news_dashboardCard": "Neuigkeiten",
-  "@news_dashboardCard": {
-    "type": "text"
-  },
   "news_dashboardCard_all": "Alle Artikel",
-  "@news_dashboardCard_all": {
-    "type": "text"
-  },
   "news_dashboardCard_empty": "Keine Artikel vorhanden.",
-  "@news_dashboardCard_empty": {
-    "type": "text",
-    "description": ""
-  },
+  "news_dashboardCard": "Neuigkeiten",
   "settings": "Einstellungen",
-  "@settings": {
-    "type": "text"
-  },
   "settings_contact": "Kontakt",
-  "@settings_contact": {
-    "type": "text"
-  },
   "settings_contributors": "Mitwirkende",
-  "@settings_contributors": {
-    "type": "text"
-  },
   "settings_imprint": "Impressum",
-  "@settings_imprint": {
-    "type": "text"
-  },
   "settings_licenses": "Lizenzen",
-  "@settings_licenses": {
-    "type": "text"
-  },
   "settings_openSource": "Diese App ist Open Source",
-  "@settings_openSource": {
-    "type": "text"
-  },
   "settings_privacyPolicy": "Datenschutzerklärung",
-  "@settings_privacyPolicy": {
-    "type": "text"
-  },
   "settings_version": "Version",
-  "@settings_version": {
-    "type": "text"
-  },
   "signIn_form_demo": "Du hast noch keinen Account? Jetzt testen!",
-  "@signIn_form_demo": {
-    "type": "text",
-    "description": ""
-  },
   "signIn_form_demo_student": "Demo als Schüler",
-  "@signIn_form_demo_student": {
-    "type": "text",
-    "description": ""
-  },
   "signIn_form_demo_teacher": "Demo als Lehrer",
-  "@signIn_form_demo_teacher": {
-    "type": "text",
-    "description": ""
-  },
   "signIn_form_email": "E-Mail",
-  "@signIn_form_email": {
-    "type": "text",
-    "description": ""
-  },
   "signIn_form_email_error": "E-Mail-Adresse",
-  "@signIn_form_email_error": {
-    "type": "text",
-    "description": ""
-  },
   "signIn_form_errorAuth": "E-Mail oder Passwort sind falsch.",
-  "@signIn_form_errorAuth": {
-    "type": "text",
-    "description": ""
-  },
   "signIn_form_errorNoConnection": "Keine Verbindung zum Server",
-  "@signIn_form_errorNoConnection": {
-    "type": "text",
-    "description": ""
-  },
   "signIn_form_errorRateLimit": "Zu viele Versuche. Versuche es erneut in {timeToWait}.",
-  "@signIn_form_errorRateLimit": {
-    "type": "text",
-    "description": ""
-  },
-  "signIn_form_password": "Passwort",
-  "@signIn_form_password": {
-    "type": "text",
-    "description": ""
-  },
   "signIn_form_password_error": "Passwort eingeben",
-  "@signIn_form_password_error": {
-    "type": "text",
-    "description": ""
-  },
+  "signIn_form_password": "Passwort",
   "signIn_form_signIn": "Einloggen",
-  "@signIn_form_signIn": {
-    "type": "text",
-    "description": ""
-  },
   "signIn_signInScreen_about": "Das Hasso-Plattner-Institut für Digital Engineering entwickelt unter der Leitung von Prof. Dr. Christoph Meinel zusammen mit MINT-EC, dem nationalen Excellence-Schulnetzwerk von über 300 Schulen bundesweit und unterstützt vom Bundesministerium für Bildung und Forschung die HPI Schul-Cloud. Sie soll die technische Grundlage schaffen, dass Lehrkräfte und Schüler in jedem Unterrichtsfach auch moderne digitale Lehr- und Lerninhalte nutzen können, und zwar so, wie Apps über Smartphones oder Tablets nutzbar sind.",
-  "@signIn_signInScreen_about": {
-    "type": "text",
-    "description": ""
-  },
   "signIn_signInScreen_moreInformation": "Scrolle herunter für mehr Informationen",
-  "@signIn_signInScreen_moreInformation": {
-    "type": "text",
-    "description": ""
-  },
-  "signIn_signInScreen_placeholder": "Hier könnten noch weitere Informationen stehen.",
-  "@signIn_signInScreen_placeholder": {
-    "type": "text",
-    "description": ""
-  }
+  "signIn_signInScreen_placeholder": "Hier könnten noch weitere Informationen stehen."
 }

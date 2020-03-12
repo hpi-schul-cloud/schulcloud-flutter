@@ -34,10 +34,9 @@ class PrimaryButton extends StatelessWidget {
 class SecondaryButton extends StatelessWidget {
   const SecondaryButton({
     Key key,
-    @required this.child,
     @required this.onPressed,
+    @required this.child,
   })  : assert(child != null),
-        assert(onPressed != null),
         super(key: key);
 
   final VoidCallback onPressed;

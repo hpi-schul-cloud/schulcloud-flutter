@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:pedantic/pedantic.dart';
 import 'package:schulcloud/app/app.dart';
 
-import 'login.dart';
+import 'widgets/sign_in_screen.dart';
 
-Future<bool> logOut(BuildContext context) async {
-  logger.i('Logging out…');
+Future<bool> signOut(BuildContext context) async {
+  logger.i('Signing out…');
 
   final s = context.s;
   final confirmed = await showDialog(
@@ -37,10 +37,10 @@ Future<bool> logOut(BuildContext context) async {
 
     final navigator = context.rootNavigator..popUntil((route) => route.isFirst);
     unawaited(navigator.pushReplacement(TopLevelPageRoute(
-      builder: (_) => LoginScreen(),
+      builder: (_) => SignInScreen(),
     )));
   }
 
-  logger.i('Logged out!');
+  logger.i('Signed out!');
   return confirmed;
 }

@@ -7,28 +7,26 @@ import 'package:schulcloud/file/file.dart';
 
 part 'data.g.dart';
 
-@immutable
-@HiveType(typeId: TypeId.typeCourse)
+@HiveType(typeId: TypeId.course)
 class Course implements Entity<Course> {
   Course({
     @required this.id,
     @required this.name,
     @required this.description,
-    @required this.teachers,
+    @required this.teacherIds,
     @required this.color,
   })  : assert(id != null),
         assert(name != null),
         assert(description != null),
-        assert(teachers != null),
+        assert(teacherIds != null),
         assert(color != null),
         lessons = LazyIds<Lesson>(
           collectionId: 'lessons of course $id',
-          fetcher: () async => (await fetchJsonListFrom('lessons?courseId=$id'))
-              .map((data) => Lesson.fromJson(data)),
+          fetcher: () async => Lesson.fetchMultiple(courseId: id),
         ),
         files = LazyIds<File>(
           collectionId: 'files of $id',
-          fetcher: () => File.fetchByOwner(id),
+          fetcher: () => File.fetchList(id),
         );
 
   Course.fromJson(Map<String, dynamic> data)
@@ -36,12 +34,12 @@ class Course implements Entity<Course> {
           id: Id<Course>(data['_id']),
           name: data['name'],
           description: data['description'],
-          teachers: (data['teacherIds'] as List<dynamic>).castIds<User>(),
+          teacherIds: (data['teacherIds'] as List<dynamic>).castIds<User>(),
           color: (data['color'] as String).hexToColor,
         );
 
   static Future<Course> fetch(Id<Course> id) async =>
-      Course.fromJson(await fetchJsonFrom('courses/$id'));
+      Course.fromJson(await services.api.get('courses/$id').json);
 
   @override
   @HiveField(0)
@@ -53,8 +51,9 @@ class Course implements Entity<Course> {
   @HiveField(2)
   final String description;
 
+  // TODO(marcelgarus): For now, we don't use a [List<Id<User>>] here, because you can't cast a [List<Id>] to a [List<Id<User>>] without knowing about the [Id]'s [cast] method, which causes Hive to not be able to serialize generic types.
   @HiveField(3)
-  final List<Id<User>> teachers;
+  final List<Id<User>> teacherIds;
 
   @HiveField(4)
   final Color color;
@@ -64,7 +63,7 @@ class Course implements Entity<Course> {
   final LazyIds<File> files;
 }
 
-@HiveType(typeId: TypeId.typeLesson)
+@HiveType(typeId: TypeId.lesson)
 class Lesson implements Entity<Lesson> {
   const Lesson({
     @required this.id,
@@ -85,7 +84,14 @@ class Lesson implements Entity<Lesson> {
         );
 
   static Future<Lesson> fetch(Id<Lesson> id) async =>
-      Lesson.fromJson(await fetchJsonFrom('lessons/$id'));
+      Lesson.fromJson(await services.api.get('lessons/$id').json);
+
+  static Future<List<Lesson>> fetchMultiple({Id<Course> courseId}) async {
+    final jsonList = await services.api.get('lessons', parameters: {
+      if (courseId != null) 'courseId': courseId.value,
+    }).parsedJsonList();
+    return jsonList.map((data) => Lesson.fromJson(data)).toList();
+  }
 
   @override
   @HiveField(0)
@@ -98,7 +104,7 @@ class Lesson implements Entity<Lesson> {
   final List<Content> contents;
 }
 
-@HiveType(typeId: TypeId.typeContentType)
+@HiveType(typeId: TypeId.contentType)
 enum ContentType {
   @HiveField(0)
   text,
@@ -110,8 +116,7 @@ enum ContentType {
   nexboad,
 }
 
-@immutable
-@HiveType(typeId: TypeId.typeContent)
+@HiveType(typeId: TypeId.content)
 class Content implements Entity<Content> {
   const Content({
     @required this.id,

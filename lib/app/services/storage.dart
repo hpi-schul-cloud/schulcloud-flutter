@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:get_it/get_it.dart';
 import 'package:meta/meta.dart';
 import 'package:streaming_shared_preferences/streaming_shared_preferences.dart';
@@ -16,16 +14,6 @@ class StorageService {
     @required this.token,
     @required this.root,
   }) : _prefs = prefs;
-
-  // The token is a JWT token. JWT tokens consist of a header, body and claim
-  // (signature), all separated by dots and encoded in base64. For now, we
-  // don't verify the claim, but just decode the body.
-  Id<User> get currentUserId {
-    final token = this.token.getValue();
-    final encodedBody = token.split('.')[1];
-    final body = String.fromCharCodes(base64.decode(encodedBody));
-    return Id<User>(json.decode(body)['userId']);
-  }
 
   static Future<StorageService> create() async {
     StreamingSharedPreferences prefs;

@@ -12,26 +12,18 @@ import 'data.dart';
 class CalendarBloc {
   const CalendarBloc();
 
-  Stream<CacheUpdate<List<Event>>> fetchTodaysEvents() {
+  CacheController<List<Event>> fetchTodaysEvents() {
     // The great, thoughtfully designed Calendar API presents us with daily
     // challenges, such as: How do I get today's events?
     // And the simple but ingenious answer to that is:
     // 1. Download all events (every time). (≈ 50 kb using the demo account)
     // 2. Implement your own logic to filter them. Have fun 😊
-    final allEvents = services.storage.root.events.controller;
-    return allEvents.updates.map((u) {
-      if (!u.hasData) {
-        return u;
-      }
-
-      return CacheUpdate.raw(
-        isFetching: u.isFetching,
-        data: u.data
-            .map(_getTodaysInstanceOrNull)
-            .where((e) => e != null)
-            .toList()
-              ..sort((e1, e2) => e1.start.compareTo(e2.start)),
-      );
+    return services.storage.root.events.controller.map((events) {
+      return events
+          .map(_getTodaysInstanceOrNull)
+          .where((e) => e != null)
+          .toList()
+            ..sort((e1, e2) => e1.start.compareTo(e2.start));
     });
   }
 

@@ -4,7 +4,7 @@ import 'package:schulcloud/app/app.dart';
 import '../data.dart';
 
 class CourseColorDot extends StatelessWidget {
-  const CourseColorDot({this.course});
+  const CourseColorDot(this.course);
 
   final Course course;
 

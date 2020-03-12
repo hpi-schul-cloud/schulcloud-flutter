@@ -7,7 +7,7 @@ import 'package:schulcloud/course/course.dart';
 import 'package:schulcloud/dashboard/dashboard.dart';
 import 'package:schulcloud/file/file.dart';
 import 'package:schulcloud/generated/l10n.dart';
-import 'package:schulcloud/login/login.dart';
+import 'package:schulcloud/sign_in/sign_in.dart';
 import 'package:schulcloud/news/news.dart';
 
 import '../app_config.dart';
@@ -26,7 +26,7 @@ class SchulCloudApp extends StatelessWidget {
       title: appConfig.title,
       theme: appConfig.createThemeData(Brightness.light),
       darkTheme: appConfig.createThemeData(Brightness.dark),
-      home: services.storage.hasToken ? LoggedInScreen() : LoginScreen(),
+      home: services.storage.hasToken ? SignedInScreen() : SignInScreen(),
       localizationsDelegates: [
         S.delegate,
         GlobalMaterialLocalizations.delegate,
@@ -46,12 +46,12 @@ enum Screen {
   assignments,
 }
 
-class LoggedInScreen extends StatefulWidget {
+class SignedInScreen extends StatefulWidget {
   @override
-  _LoggedInScreenState createState() => _LoggedInScreenState();
+  _SignedInScreenState createState() => _SignedInScreenState();
 }
 
-class _LoggedInScreenState extends State<LoggedInScreen> {
+class _SignedInScreenState extends State<SignedInScreen> {
   final _navigatorKey = GlobalKey<NavigatorState>();
   NavigatorState get navigator => _navigatorKey.currentState;
 

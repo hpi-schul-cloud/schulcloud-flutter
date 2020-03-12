@@ -6,12 +6,14 @@ import 'package:schulcloud/course/course.dart';
 
 import 'file_browser.dart';
 import 'page_route.dart';
+import 'upload_button.dart';
 
 class FilesScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FancyScaffold(
       appBar: FancyAppBar(title: Text(context.s.file)),
+      floatingActionButton: UploadButton(ownerId: services.storage.userId),
       sliver: SliverList(
         delegate: SliverChildListDelegate([
           _CoursesList(),
@@ -35,7 +37,7 @@ class _CoursesList extends StatelessWidget {
             primary: false,
             shrinkWrap: true,
             maxCrossAxisExtent: 300,
-            childAspectRatio: 3.2,
+            childAspectRatio: 2.8,
             mainAxisSpacing: 8,
             crossAxisSpacing: 8,
             children: <Widget>[
@@ -84,7 +86,7 @@ class _UserFiles extends StatelessWidget {
       title: context.s.file_files_my,
       omitHorizontalPadding: true,
       child: CachedRawBuilder(
-        controller: services.storage.currentUserId.controller,
+        controller: services.storage.userId.controller,
         builder: (context, update) {
           return update.hasData
               ? FileBrowser(owner: update.data, isEmbedded: true)

@@ -6,63 +6,58 @@ import 'package:time_machine/time_machine.dart';
 
 part 'data.g.dart';
 
-@HiveType(typeId: TypeId.typeFile)
+@HiveType(typeId: TypeId.file)
 class File implements Entity<File>, Comparable<File> {
   File({
     @required this.id,
     @required this.name,
-    @required this.owner,
+    @required this.ownerId,
     @required this.createdAt,
     @required this.updatedAt,
-    @required this.parent,
+    @required this.parentId,
     @required this.isDirectory,
     @required this.mimeType,
     @required this.size,
   })  : assert(id != null),
         assert(name != null),
-        assert(owner != null),
-        assert(owner is Id<User> || owner is Id<Course>),
+        assert(ownerId != null),
+        assert(ownerId is Id<User> || ownerId is Id<Course>),
+        assert(createdAt != null),
+        assert(updatedAt != null),
+        assert(isDirectory != null),
         files = LazyIds<File>(
           collectionId: 'files in directory $id',
-          fetcher: () async {
-            final jsonData = await fetchJsonListFrom(
-              'fileStorage',
-              wrappedInData: false,
-              parameters: {
-                'owner': owner.value,
-                'parent': id.toString(),
-              },
-            );
-            return File.fromJsonList(jsonData);
-          },
+          fetcher: () => File.fetchList(ownerId, parentId: id),
         );
 
   File.fromJson(Map<String, dynamic> data)
       : this(
           id: Id<File>(data['_id']),
           name: data['name'],
-          mimeType: data['mimeType'],
-          owner: {
+          mimeType: data['type'],
+          ownerId: {
             'user': Id<User>(data['owner']),
             'course': Id<Course>(data['owner']),
           }[data['refOwnerModel']],
           createdAt: (data['createdAt'] as String).parseInstant(),
           updatedAt: (data['updatedAt'] as String).parseInstant(),
           isDirectory: data['isDirectory'],
-          parent: data['parent'] == null ? null : Id<File>(data['parent']),
+          parentId: data['parent'] == null ? null : Id<File>(data['parent']),
           size: data['size'],
         );
 
-  static List<File> fromJsonList(List<Map<String, dynamic>> data) =>
-      data.map((data) => File.fromJson(data)).toList();
-
-  static Future<List<File>> fetchByOwner(Id<dynamic> owner) async {
-    final files = await fetchJsonListFrom(
+  static Future<List<File>> fetchList(
+    Id<dynamic> ownerId, {
+    Id<File> parentId,
+  }) async {
+    final files = await services.api.get(
       'fileStorage',
-      wrappedInData: false,
-      parameters: {'owner': owner.toString()},
-    );
-    return File.fromJsonList(files);
+      parameters: {
+        'owner': ownerId.value,
+        if (parentId != null) 'parent': parentId.value,
+      },
+    ).parsedJsonList(isServicePaginated: false);
+    return files.map((data) => File.fromJson(data)).toList();
   }
 
   // used before: 7, 8
@@ -76,7 +71,7 @@ class File implements Entity<File>, Comparable<File> {
 
   /// An [Id] for either a [User] or [Course].
   @HiveField(3)
-  final Id<dynamic> owner;
+  final Id<dynamic> ownerId;
 
   @HiveField(10)
   final Instant createdAt;
@@ -86,7 +81,7 @@ class File implements Entity<File>, Comparable<File> {
 
   /// The parent directory.
   @HiveField(5)
-  final Id<File> parent;
+  final Id<File> parentId;
 
   final bool isDirectory;
   bool get isActualFile => !isDirectory;

@@ -8,8 +8,7 @@ import 'package:time_machine/time_machine_text_patterns.dart';
 
 part 'data.g.dart';
 
-@immutable
-@HiveType(typeId: TypeId.typeEvent)
+@HiveType(typeId: TypeId.event)
 class Event implements Entity<Event> {
   const Event({
     @required this.id,
@@ -20,8 +19,7 @@ class Event implements Entity<Event> {
     @required this.end,
     @required this.allDay,
     this.recurrence = const [],
-  })  : assert(id != null),
-        assert(title != null),
+  })  : assert(title != null),
         assert(start != null),
         assert(end != null),
         assert(allDay != null),
@@ -42,7 +40,7 @@ class Event implements Entity<Event> {
   // Yup, you're really seeing this. There is no way we currently know of for
   // fetching single events.
   static Future<Event> fetch(Id<Event> id) async =>
-      (await fetchJsonListFrom('calendar?all=true'))
+      (await services.api.get('calendar?all=true').parsedJsonList())
           .map((data) => Event.fromJson(data))
           .singleWhere((event) => event.id == id);
 

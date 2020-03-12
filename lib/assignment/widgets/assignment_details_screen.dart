@@ -32,28 +32,22 @@ class _AssignmentDetailsScreenState extends State<AssignmentDetailsScreen>
     final s = context.s;
 
     return CachedRawBuilder<User>(
-      controller: services.storage.currentUserId.controller,
+      controller: services.storage.userId.controller,
       builder: (context, update) {
         final user = update.data;
         final showSubmissionTab =
             assignment.isPrivate || user?.isTeacher == false;
         final showFeedbackTab = assignment.isPublic && user?.isTeacher == false;
+        final showSubmissionsTab = assignment.isPublic &&
+            (user?.isTeacher == true || assignment.hasPublicSubmissions);
 
         return FancyTabbedScaffold(
-          appBarBuilder: (innerBoxIsScrolled) => FancyAppBar(
+          appBarBuilder: (_) => FancyAppBar(
             title: Text(assignment.name),
+            subtitle: _buildSubtitle(context, assignment.courseId),
             actions: <Widget>[
               if (user?.hasPermission(Permission.assignmentEdit) == true)
-                IconButton(
-                  icon: Icon(
-                      assignment.isArchived ? Icons.unarchive : Icons.archive),
-                  tooltip: assignment.isArchived
-                      ? s.assignment_assignmentDetails_unarchive
-                      : s.assignment_assignmentDetails_archive,
-                  onPressed: () {
-                    assignment.update(isArchived: !assignment.isArchived);
-                  },
-                )
+                _buildArchiveAction(context),
             ],
             bottom: TabBar(
               tabs: [
@@ -62,16 +56,66 @@ class _AssignmentDetailsScreenState extends State<AssignmentDetailsScreen>
                   Tab(text: s.assignment_assignmentDetails_submission),
                 if (showFeedbackTab)
                   Tab(text: s.assignment_assignmentDetails_feedback),
+                if (showSubmissionsTab)
+                  Tab(text: s.assignment_assignmentDetails_submissions),
               ],
             ),
-            forceElevated: innerBoxIsScrolled,
+            // We want a permanent elevation so tabs are more noticeable.
+            forceElevated: true,
           ),
           tabs: [
             _DetailsTab(assignment: assignment),
             if (showSubmissionTab) _SubmissionTab(assignment: assignment),
             if (showFeedbackTab) _FeedbackTab(assignment: assignment),
+            if (showSubmissionsTab) _SubmissionsTab(),
           ],
         );
+      },
+    );
+  }
+
+  Widget _buildSubtitle(BuildContext context, Id<Course> courseId) {
+    if (courseId == null) {
+      return null;
+    }
+
+    return CachedRawBuilder<Course>(
+      controller: assignment.courseId.controller,
+      builder: (context, update) {
+        return Row(children: <Widget>[
+          CourseColorDot(update.data),
+          SizedBox(width: 8),
+          Text(
+            update.data?.name ??
+                update.error?.toString() ??
+                context.s.general_loading,
+          ),
+        ]);
+      },
+    );
+  }
+
+  Widget _buildArchiveAction(BuildContext context) {
+    final s = context.s;
+
+    return IconButton(
+      icon: Icon(assignment.isArchived ? Icons.unarchive : Icons.archive),
+      tooltip: assignment.isArchived
+          ? s.assignment_assignmentDetails_unarchive
+          : s.assignment_assignmentDetails_archive,
+      onPressed: () async {
+        await assignment.toggleArchived();
+        context.scaffold.showSnackBar(SnackBar(
+          content: Text(
+            assignment.isArchived
+                ? s.assignment_assignmentDetails_unarchived
+                : s.assignment_assignmentDetails_archived,
+          ),
+          action: SnackBarAction(
+            label: s.general_undo,
+            onPressed: assignment.toggleArchived,
+          ),
+        ));
       },
     );
   }
@@ -100,8 +144,14 @@ class _DetailsTab extends StatelessWidget {
     return TabContent(
       pageStorageKey: PageStorageKey<String>('details'),
       omitHorizontalPadding: true,
-      child: SliverList(
+      sliver: SliverList(
         delegate: SliverChildListDelegate.fixed([
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16),
+            child: ChipGroup(
+              children: _buildChips(context),
+            ),
+          ),
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 16),
             child: Text(
@@ -110,6 +160,7 @@ class _DetailsTab extends StatelessWidget {
               textAlign: TextAlign.end,
             ),
           ),
+          SizedBox(height: 4),
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 16),
             child: Html(
@@ -118,13 +169,6 @@ class _DetailsTab extends StatelessWidget {
             ),
           ),
           ..._buildFileSection(context, assignment.fileIds, assignment.id),
-          SizedBox(height: 8),
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16),
-            child: ChipGroup(
-              children: _buildChips(context),
-            ),
-          ),
         ]),
       ),
     );
@@ -134,15 +178,6 @@ class _DetailsTab extends StatelessWidget {
     final s = context.s;
 
     return <Widget>[
-      if (assignment.courseId != null)
-        CachedRawBuilder<Course>(
-          controller: assignment.courseId.controller,
-          builder: (_, update) {
-            final course = update.data;
-
-            return CourseChip(course);
-          },
-        ),
       if (assignment.isOverdue)
         ActionChip(
           avatar: Icon(
@@ -194,7 +229,7 @@ class _SubmissionTab extends StatelessWidget {
             TabContent(
               pageStorageKey: PageStorageKey<String>('submission'),
               omitHorizontalPadding: true,
-              child: _buildContent(context, submission),
+              sliver: _buildContent(context, submission),
             ),
             _buildOverlay(context, submission),
           ],
@@ -231,7 +266,7 @@ class _SubmissionTab extends StatelessWidget {
     final s = context.s;
 
     return CachedRawBuilder<User>(
-      controller: services.storage.currentUserId.controller,
+      controller: services.storage.userId.controller,
       builder: (context, update) {
         if (update.hasError) {
           return ErrorScreen(update.error, update.stackTrace);
@@ -295,7 +330,7 @@ class _FeedbackTab extends StatelessWidget {
         return TabContent(
           pageStorageKey: PageStorageKey<String>('feedback'),
           omitHorizontalPadding: true,
-          child: SliverList(
+          sliver: SliverList(
             delegate: SliverChildListDelegate.fixed([
               if (submission?.grade != null) ...[
                 ListTile(
@@ -318,6 +353,25 @@ class _FeedbackTab extends StatelessWidget {
           ),
         );
       },
+    );
+  }
+}
+
+class _SubmissionsTab extends StatelessWidget {
+  const _SubmissionsTab({Key key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return TabContent(
+      pageStorageKey: PageStorageKey<String>('submissions'),
+      sliver: SliverFillRemaining(
+        child: Center(
+          child: Text(
+            context.s.assignment_assignmentDetails_submissions_placeholder,
+            textAlign: TextAlign.center,
+          ),
+        ),
+      ),
     );
   }
 }

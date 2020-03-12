@@ -45,9 +45,11 @@ class FancyPrinter extends LogPrinter {
   String stringifyMessage(dynamic message) {
     if (message == null) {
       return null;
-    } else if (message is Map || message is Iterable) {
+    }
+    try {
       return JsonEncoder.withIndent('  ').convert(message);
-    } else {
+      // ignore: avoid_catching_errors
+    } on JsonUnsupportedObjectError {
       return message.toString();
     }
   }

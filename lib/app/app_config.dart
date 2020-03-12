@@ -39,9 +39,14 @@ class AppConfig {
   final MaterialColor accentColor;
 
   ThemeData createThemeData(Brightness brightness) {
+    final isDark = brightness == Brightness.dark;
     var theme = ThemeData(
       brightness: brightness,
       primarySwatch: primaryColor,
+      // By default, the [primaryColor] is set to a dark grey in dark mode
+      primaryColor: primaryColor,
+      primaryColorLight: isDark ? primaryColor[500] : primaryColor[300],
+      primaryColorDark: isDark ? primaryColor[800] : primaryColor[700],
       accentColor: accentColor,
       errorColor: errorColor,
       scaffoldBackgroundColor:
