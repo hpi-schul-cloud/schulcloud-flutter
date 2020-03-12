@@ -83,6 +83,7 @@ class File implements Entity<File>, Comparable<File> {
   @HiveField(5)
   final Id<File> parentId;
 
+  @HiveField(11)
   final bool isDirectory;
   bool get isActualFile => !isDirectory;
 
@@ -109,16 +110,16 @@ class File implements Entity<File>, Comparable<File> {
 
   File copyWith({
     String name,
-    Id<dynamic> owner,
-    Id<File> parent,
+    Id<dynamic> ownerId,
+    Id<File> parentId,
   }) {
     return File(
       id: id,
       name: name ?? this.name,
-      owner: owner ?? this.owner,
+      ownerId: ownerId ?? this.ownerId,
       createdAt: createdAt,
       updatedAt: updatedAt,
-      parent: parent ?? this.parent,
+      parentId: parentId ?? this.parentId,
       isDirectory: isDirectory,
       mimeType: mimeType,
       size: size,
@@ -126,7 +127,7 @@ class File implements Entity<File>, Comparable<File> {
   }
 
   Future<void> rename(String newName) async {
-    await services.network.post('fileStorage/rename', body: {
+    await services.api.post('fileStorage/rename', body: {
       'id': id.value,
       'newName': newName,
     });
@@ -134,10 +135,10 @@ class File implements Entity<File>, Comparable<File> {
   }
 
   Future<void> moveTo(Id<File> parentDirectory) async {
-    await services.network.patch('fileStorage/$id', body: {
+    await services.api.patch('fileStorage/$id', body: {
       'parent': parentDirectory,
     });
   }
 
-  Future<void> delete() => services.network.delete('fileStorage/$id');
+  Future<void> delete() => services.api.delete('fileStorage/$id');
 }
