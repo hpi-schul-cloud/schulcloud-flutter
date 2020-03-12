@@ -55,7 +55,7 @@ class User implements Entity<User> {
         );
 
   static Future<User> fetch(Id<User> id) async =>
-      User.fromJson(await fetchJsonFrom('users/$id'));
+      User.fromJson(await services.api.get('users/$id').json);
 
   @override
   @HiveField(0)
@@ -108,44 +108,42 @@ class Root implements Entity<Root> {
 
   final courses = LazyIds<Course>(
     collectionId: 'courses',
-    fetcher: () async => (await fetchJsonListFrom('courses'))
+    fetcher: () async => (await services.api.get('courses').parsedJsonList())
         .map((data) => Course.fromJson(data))
         .toList(),
   );
 
   final assignments = LazyIds<Assignment>(
     collectionId: 'assignments',
-    fetcher: () async => (await fetchJsonListFrom('homework'))
+    fetcher: () async => (await services.api.get('homework').parsedJsonList())
         .map((data) => Assignment.fromJson(data))
         .toList(),
   );
 
   final submissions = LazyIds<Submission>(
     collectionId: 'submissions',
-    fetcher: () async => (await fetchJsonListFrom('submissions'))
-        .map((data) => Submission.fromJson(data))
-        .toList(),
+    fetcher: () async =>
+        (await services.api.get('submissions').parsedJsonList())
+            .map((data) => Submission.fromJson(data))
+            .toList(),
   );
 
   final events = LazyIds<Event>(
     collectionId: 'events',
     fetcher: () async {
-      final jsonResponse = await fetchJsonListFrom(
+      // We have to set the "all" query parameter because otherwise — you
+      // guessed it — no events are being returned at all 😂
+      final jsonResponse = await services.api.get(
         'calendar',
-        isServicePaginated: false,
-        parameters: {
-          // We have to set this query parameter because otherwise—you guessed
-          // it—no events are being returned at all 😂
-          'all': 'true',
-        },
-      );
+        parameters: {'all': 'true'},
+      ).parsedJsonList(isServicePaginated: false);
       return jsonResponse.map((data) => Event.fromJson(data)).toList();
     },
   );
 
   final news = LazyIds<Article>(
     collectionId: 'articles',
-    fetcher: () async => (await fetchJsonListFrom('news'))
+    fetcher: () async => (await services.api.get('news').parsedJsonList())
         .map((data) => Article.fromJson(data))
         .toList(),
   );

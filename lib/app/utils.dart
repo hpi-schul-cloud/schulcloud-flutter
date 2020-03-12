@@ -34,25 +34,15 @@ extension ResponseToJson on Response {
 
 extension FutureResponseToJson on Future<Response> {
   Future<dynamic> get json async => (await this).json;
-}
-
-/// Gets some json from the server.
-Future<Map<String, dynamic>> fetchJsonFrom(String path) =>
-    services.network.get(path).json;
-
-/// Gets a json list from the server.
-Future<List<Map<String, dynamic>>> fetchJsonListFrom(
-  String path, {
-  // Surprise: The Calendar API's response is different from all others! Would
-  // be too easy otherwise ;)
-  bool isServicePaginated = true,
-  Map<String, String> parameters = const {},
-}) async {
-  var jsonData = await services.network.get(path, parameters: parameters).json;
-  if (isServicePaginated) {
-    jsonData = jsonData['data'];
+  Future<List<Map<String, dynamic>>> parsedJsonList({
+    bool isServicePaginated = true,
+  }) async {
+    var jsonData = (await this).json;
+    if (isServicePaginated) {
+      jsonData = jsonData['data'];
+    }
+    return (jsonData as List).cast<Map<String, dynamic>>();
   }
-  return (jsonData as List).cast<Map<String, dynamic>>();
 }
 
 /// Limits a string to a certain amount of characters.

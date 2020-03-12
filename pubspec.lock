@@ -313,9 +313,11 @@ packages:
   hive_generator:
     dependency: "direct dev"
     description:
-      name: hive_generator
-      url: "https://pub.dartlang.org"
-    source: hosted
+      path: hive_generator
+      ref: HEAD
+      resolved-ref: a536cf1190bf18c0e213a31e7ba160c9c760b5f0
+      url: "git://github.com/hivedb/hive"
+    source: git
     version: "0.7.0+2"
   html:
     dependency: "direct main"

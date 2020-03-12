@@ -64,7 +64,7 @@ class Assignment implements Entity<Assignment> {
         );
 
   static Future<Assignment> fetch(Id<Assignment> id) async =>
-      Assignment.fromJson(await fetchJsonFrom('homework/$id'));
+      Assignment.fromJson(await services.api.get('homework/$id').json);
 
   // used before: 3, 4
 
@@ -143,10 +143,10 @@ class Assignment implements Entity<Assignment> {
   CacheController<Submission> get mySubmission {
     return SimpleCacheController(
       fetcher: () async => Submission.fromJson(
-          (await fetchJsonListFrom('submissions', parameters: {
+          (await services.api.get('submissions', parameters: {
         'homeworkId': id.value,
         'studentId': services.storage.userIdString.getValue(),
-      }))
+      }).parsedJsonList())
               .singleWhere((_) => true, orElse: () => null)),
       saveToCache: HiveCache.put,
       loadFromCache: () => throw NotInCacheException(),
@@ -185,7 +185,7 @@ class Submission implements Entity<Submission> {
         );
 
   static Future<Submission> fetch(Id<Submission> id) async =>
-      Submission.fromJson(await fetchJsonFrom('submissions/$id'));
+      Submission.fromJson(await services.api.get('submissions/$id').json);
 
   @override
   @HiveField(0)

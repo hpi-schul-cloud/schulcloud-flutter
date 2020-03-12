@@ -40,7 +40,7 @@ class Event implements Entity<Event> {
   // Yup, you're really seeing this. There is no way we currently know of for
   // fetching single events.
   static Future<Event> fetch(Id<Event> id) async =>
-      (await fetchJsonListFrom('calendar?all=true'))
+      (await services.api.get('calendar?all=true').parsedJsonList())
           .map((data) => Event.fromJson(data))
           .singleWhere((event) => event.id == id);
 

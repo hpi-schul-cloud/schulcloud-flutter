@@ -39,7 +39,7 @@ class Course implements Entity<Course> {
         );
 
   static Future<Course> fetch(Id<Course> id) async =>
-      Course.fromJson(await fetchJsonFrom('courses/$id'));
+      Course.fromJson(await services.api.get('courses/$id').json);
 
   @override
   @HiveField(0)
@@ -84,12 +84,12 @@ class Lesson implements Entity<Lesson> {
         );
 
   static Future<Lesson> fetch(Id<Lesson> id) async =>
-      Lesson.fromJson(await fetchJsonFrom('lessons/$id'));
+      Lesson.fromJson(await services.api.get('lessons/$id').json);
 
   static Future<List<Lesson>> fetchMultiple({Id<Course> courseId}) async {
-    final jsonList = await fetchJsonListFrom('lessons', parameters: {
+    final jsonList = await services.api.get('lessons', parameters: {
       if (courseId != null) 'courseId': courseId.value,
-    });
+    }).parsedJsonList();
     return jsonList.map((data) => Lesson.fromJson(data)).toList();
   }
 

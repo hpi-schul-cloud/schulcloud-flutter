@@ -30,7 +30,7 @@ class Article implements Entity<Article> {
         );
 
   static Future<Article> fetch(Id<Article> id) async =>
-      Article.fromJson(await fetchJsonFrom('news/$id'));
+      Article.fromJson(await services.api.get('news/$id').json);
 
   // used before: 4, 5
 

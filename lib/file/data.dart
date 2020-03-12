@@ -50,14 +50,13 @@ class File implements Entity<File>, Comparable<File> {
     Id<dynamic> ownerId, {
     Id<File> parentId,
   }) async {
-    final files = await fetchJsonListFrom(
+    final files = await services.api.get(
       'fileStorage',
-      isServicePaginated: false,
       parameters: {
         'owner': ownerId.value,
         if (parentId != null) 'parent': parentId.value,
       },
-    );
+    ).parsedJsonList(isServicePaginated: false);
     return files.map((data) => File.fromJson(data)).toList();
   }
 
