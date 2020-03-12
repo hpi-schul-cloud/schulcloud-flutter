@@ -1,6 +1,7 @@
 import 'dart:io' as io;
 
 import 'package:flutter/material.dart';
+import 'package:flutter_absolute_path/flutter_absolute_path.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:logger_flutter/logger_flutter.dart';
 import 'package:rxdart/rxdart.dart';
@@ -96,10 +97,12 @@ class _SignedInScreenState extends ReceiveShareState<SignedInScreen> {
       logger.i('Uploading to $destination.');
       if (destination != null) {
         services.files.uploadFile(
-          files: [io.File(shared.path)],
+          files: [
+            io.File(await FlutterAbsolutePath.getAbsolutePath(shared.path)),
+          ],
           owner: destination.ownerId,
           parent: destination.parentId,
-        );
+        ).forEach(print);
       }
     });
   }
