@@ -161,7 +161,7 @@ class NetworkService {
     return _makeCall(
       method: 'GET',
       url: url,
-      call: () => http.get(url, headers: headers),
+      call: () => http.get(url, headers: _getHeaders(headers)),
     );
   }
 
@@ -174,7 +174,8 @@ class NetworkService {
     return _makeCall(
       method: 'POST',
       url: url,
-      call: () => http.post(url, headers: headers, body: json.encode(body)),
+      call: () => http.post(url,
+          headers: _getHeaders(headers), body: json.encode(body)),
     );
   }
 
@@ -187,7 +188,8 @@ class NetworkService {
     return _makeCall(
       method: 'PUT',
       url: url,
-      call: () => http.put(url, headers: headers, body: body),
+      call: () =>
+          http.put(url, headers: _getHeaders(headers), body: json.encode(body)),
     );
   }
 
@@ -200,7 +202,8 @@ class NetworkService {
     return _makeCall(
       method: 'PATCH',
       url: url,
-      call: () => http.patch(url, headers: headers, body: body),
+      call: () => http.patch(url,
+          headers: _getHeaders(headers), body: json.encode(body)),
     );
   }
 
@@ -211,6 +214,13 @@ class NetworkService {
       url: url,
       call: () => http.delete(url),
     );
+  }
+
+  Map<String, String> _getHeaders(Map<String, String> headers) {
+    return {
+      'Content-Type': 'application/json',
+      ...headers,
+    };
   }
 }
 
