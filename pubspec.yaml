@@ -44,6 +44,9 @@ dependencies:
   permission_handler: ^3.3.0
   provider: ^4.0.0
   rxdart: ^0.22.3
+  share:
+    git:
+      url: https://github.com/d-silveira/flutter-share.git
   sprintf: ^4.0.2
   streaming_shared_preferences: ^1.0.1
   time_machine: ^0.9.12

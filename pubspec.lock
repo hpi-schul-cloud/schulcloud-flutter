@@ -613,6 +613,15 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.4.1+8"
+  share:
+    dependency: "direct main"
+    description:
+      path: "."
+      ref: HEAD
+      resolved-ref: "1f8b139ca0bd35b643ef4f5ccce3a1b09931f16a"
+      url: "https://github.com/d-silveira/flutter-share.git"
+    source: git
+    version: "0.6.0"
   shared_preferences:
     dependency: transitive
     description:
