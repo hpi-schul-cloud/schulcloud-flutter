@@ -1,10 +1,11 @@
 import 'dart:async';
 
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:schulcloud/app/app.dart';
 
-import '../bloc.dart';
 import '../data.dart';
+import '../service.dart';
 
 class UploadButton extends StatefulWidget {
   const UploadButton({@required this.ownerId, this.parentId})
@@ -24,11 +25,12 @@ class _UploadButtonState extends State<UploadButton> {
   /// Controller for the [SnackBar].
   ScaffoldFeatureController<SnackBar, SnackBarClosedReason> snackBar;
 
-  void _startUpload(BuildContext context) {
-    final updates = services.get<FileBloc>().uploadFile(
-          owner: widget.ownerId,
-          parent: widget.parentId,
-        );
+  void _startUpload(BuildContext context) async {
+    final updates = services.files.uploadFile(
+      files: await FilePicker.getMultiFile(),
+      owner: widget.ownerId,
+      parent: widget.parentId,
+    );
 
     snackBar = Scaffold.of(context).showSnackBar(SnackBar(
       duration: Duration(days: 1),

@@ -1,12 +1,12 @@
-import 'package:flutter_cached/flutter_cached.dart';
 import 'package:flare_flutter/flare_actor.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_cached/flutter_cached.dart';
 import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/course/course.dart';
 
-import '../bloc.dart';
 import '../data.dart';
+import '../service.dart';
 import 'app_bar.dart';
 import 'file_tile.dart';
 import 'page_route.dart';
@@ -48,7 +48,7 @@ class FileBrowser extends StatelessWidget {
     assert(file.isActualFile);
 
     try {
-      await services.get<FileBloc>().downloadFile(file);
+      await services.files.downloadFile(file);
       context.showSimpleSnackBar(
           context.s.file_fileBrowser_downloading(file.name));
     } on PermissionNotGranted {
@@ -58,7 +58,7 @@ class FileBrowser extends StatelessWidget {
         ),
         action: SnackBarAction(
           label: context.s.file_fileBrowser_download_storageAccess_allow,
-          onPressed: services.get<FileBloc>().ensureStoragePermissionGranted,
+          onPressed: services.files.ensureStoragePermissionGranted,
         ),
       ));
     }

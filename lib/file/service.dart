@@ -2,16 +2,16 @@ import 'dart:convert';
 import 'dart:io' as io;
 
 import 'package:dartx/dartx_io.dart';
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
+import 'package:get_it/get_it.dart';
+import 'package:logger/logger.dart';
 import 'package:meta/meta.dart';
 import 'package:mime/mime.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:schulcloud/app/app.dart';
-
-import 'data.dart';
+import 'package:schulcloud/file/file.dart';
 
 @immutable
 class UploadProgressUpdate {
@@ -28,8 +28,8 @@ class UploadProgressUpdate {
 }
 
 @immutable
-class FileBloc {
-  const FileBloc();
+class FileService {
+  const FileService();
 
   Future<void> downloadFile(File file) async {
     assert(file != null);
@@ -68,13 +68,12 @@ class FileBloc {
   }
 
   Stream<UploadProgressUpdate> uploadFile({
+    @required List<io.File> files,
     @required Id<dynamic> owner,
     Id<File> parent,
   }) async* {
+    assert(files != null);
     assert(owner != null);
-
-    // Let the user pick files.
-    final files = await FilePicker.getMultiFile();
 
     for (var i = 0; i < files.length; i++) {
       final file = files[i];
@@ -95,8 +94,10 @@ class FileBloc {
     Id<File> parent,
   }) async {
     assert(file != null);
+    logger.i('Uploading file $file');
 
     if (!file.existsSync()) {
+      logger.e("File $file doesn't exist.");
       return;
     }
 
@@ -105,6 +106,7 @@ class FileBloc {
     final mimeType = lookupMimeType(fileName, headerBytes: fileBuffer);
 
     // Request a signed url.
+    logger.i('Requesting a signed url.');
     final signedUrlResponse =
         await services.api.post('fileStorage/signedUrl', body: {
       'filename': fileName,
@@ -114,6 +116,9 @@ class FileBloc {
     final signedInfo = json.decode(signedUrlResponse.body);
 
     // Upload the file to the storage server.
+    logger
+      ..i('Received signed info $signedInfo.')
+      ..i('Now uploading the actual file to ${signedInfo['url']}.');
     await services.network.put(
       signedInfo['url'],
       headers: (signedInfo['header'] as Map).cast<String, String>(),
@@ -121,6 +126,7 @@ class FileBloc {
     );
 
     // Notify the api backend.
+    logger.i('Notifying the file backend.');
     await services.api.post('fileStorage', body: {
       'name': fileName,
       if (owner is! Id<User>) ...{
@@ -133,5 +139,10 @@ class FileBloc {
       'storageFileName': signedInfo['header']['x-amz-meta-flat-name'],
       'thumbnail': signedInfo['header']['x-amz-meta-thumbnail'],
     });
+    logger.i('Done uploading the file.');
   }
+}
+
+extension FileServiceGetIt on GetIt {
+  FileService get files => get<FileService>();
 }

@@ -409,7 +409,7 @@ List<Widget> _buildFileSection(
           final file = update.data;
           return FileTile(
             file: file,
-            onOpen: (file) => services.get<FileBloc>().downloadFile(file),
+            onOpen: (file) => services.files.downloadFile(file),
           );
         },
       ),
