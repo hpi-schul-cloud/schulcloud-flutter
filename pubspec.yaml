@@ -18,6 +18,7 @@ dependencies:
   datetime_picker_formfield: ^1.0.0
   file_picker: ^1.4.3+2
   flare_flutter: ^1.5.8
+  flutter_absolute_path: ^1.0.6
   flutter_cached: ^4.2.4
   # The current version of flutter_downloader, 1.2.1, causes the build to fail. Until this is fixed, we rely on an older version.
   flutter_downloader: 1.1.9
