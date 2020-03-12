@@ -38,8 +38,16 @@ class FileTile extends StatelessWidget {
             onTap: () => onOpen(file),
           ),
           ListTile(
+            title: Text('Delete'), // TODO(marcelgarus): put in translation
+            onTap: file.delete,
+          ),
+          ListTile(
+            title: Text('Rename'), // TODO(marcelgarus): put in translation
+            onTap: file.delete,
+          ),
+          ListTile(
             title: Text('Move'), // TODO(marcelgarus): put in translation
-            onTap: () => onOpen(file),
+            onTap: () {},
           ),
           ListTile(
             title: Text(s.file_fileTile_details_offline),
