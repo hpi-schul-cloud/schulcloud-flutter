@@ -5,9 +5,14 @@ import 'package:flutter/widgets.dart';
 import 'package:http/http.dart' as http;
 import 'package:get_it/get_it.dart';
 
+import '../exception.dart';
 import '../logger.dart';
 import '../utils.dart';
 
+/// The api server returns error data as json when an error occurs. We parse
+/// this data because its helpful for debugging (there's a message, a code
+/// which may be different from the actual http status code, and several more
+/// fields), we parse them.
 @immutable
 class ErrorBody {
   const ErrorBody({
@@ -54,27 +59,45 @@ class ErrorBody {
 }
 
 @immutable
-class NoConnectionToServerError implements Exception {}
+class NoConnectionToServerError extends FancyException {
+  NoConnectionToServerError()
+      : super(
+          isGlobal: true,
+          messageBuilder: (context) => context.s.app_errorScreen_noConnection,
+        );
+}
 
 @immutable
-class ServerError implements Exception {
-  const ServerError(this.body) : assert(body != null);
+class ServerError extends FancyException {
+  ServerError(
+    this.body,
+    ErrorMessageBuilder messageBuilder, {
+    bool isGlobal = false,
+  })  : assert(body != null),
+        super(isGlobal: isGlobal, messageBuilder: messageBuilder);
 
   final ErrorBody body;
 }
 
 class ConflictError extends ServerError {
-  const ConflictError(ErrorBody body) : super(body);
+  // TODO(marcelgarus): Localize!
+  ConflictError(ErrorBody body) : super(body, (_) => 'A conflict occurred.');
 }
 
 class AuthenticationError extends ServerError {
-  const AuthenticationError(ErrorBody body) : super(body);
+  AuthenticationError(ErrorBody body)
+      : super(
+          body,
+          (context) => context.s.app_errorScreen_authError,
+          isGlobal: true,
+        );
 }
 
 class TooManyRequestsError extends ServerError {
-  const TooManyRequestsError(ErrorBody body, {@required this.timeToWait})
+  // TODO(marcelgarus): Localize!
+  TooManyRequestsError(ErrorBody body, {@required this.timeToWait})
       : assert(timeToWait != null),
-        super(body);
+        super(body, (context) => 'Too many requests. Wait $timeToWait.');
 
   final Duration timeToWait;
 }

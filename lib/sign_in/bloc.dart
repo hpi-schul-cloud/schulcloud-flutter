@@ -5,8 +5,23 @@ import 'package:schulcloud/app/app.dart';
 
 import 'data.dart';
 
-class InvalidSignInSyntaxError implements Exception {
-  InvalidSignInSyntaxError({this.isEmailValid, this.isPasswordValid});
+class InvalidSignInSyntaxError extends FancyException {
+  InvalidSignInSyntaxError({this.isEmailValid, this.isPasswordValid})
+      : assert(!isEmailValid || !isPasswordValid),
+        super(
+          isGlobal: false,
+          messageBuilder: (_) {
+            // TODO(marcelgarus): Localize!
+            if (!isEmailValid) {
+              return "The email isn't valid.";
+            } else if (!isPasswordValid) {
+              return "The password isn't valid.";
+            }
+            throw StateError('Email or password needs to be invalid for an '
+                'InvalidSignInSyntaxError to be thrown.');
+          },
+        );
+
   final bool isEmailValid;
   final bool isPasswordValid;
 }
@@ -39,8 +54,7 @@ class SignInBloc {
       body: SignInRequest(email: email, password: password).toJson(),
     );
 
-    final storage = services.get<StorageService>();
-    await storage.email.setValue(email);
+    await services.storage.email.setValue(email);
 
     final response = SignInResponse.fromJson(json.decode(rawResponse.body));
     await services.storage.setUserInfo(

@@ -9,6 +9,7 @@ import 'package:http/http.dart';
 import 'package:schulcloud/generated/l10n.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import 'exception.dart';
 import 'services/network.dart';
 
 final services = GetIt.instance;
@@ -127,9 +128,13 @@ extension ImmutableMap<K, V> on Map<K, V> {
 }
 
 /// An error indicating that a permission wasn't granted by the user.
-class PermissionNotGranted<T> implements Exception {
-  @override
-  String toString() => "A permission wasn't granted by the user.";
+class PermissionNotGranted<T> extends FancyException {
+  PermissionNotGranted()
+      : super(
+          isGlobal: false,
+          // TODO(marcelgarus): Localize!
+          messageBuilder: (_) => "A permission wasn't granted by the user.",
+        );
 }
 
 class LazyMap<K, V> {
