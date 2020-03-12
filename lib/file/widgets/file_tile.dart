@@ -38,6 +38,10 @@ class FileTile extends StatelessWidget {
             onTap: () => onOpen(file),
           ),
           ListTile(
+            title: Text('Move'), // TODO(marcelgarus): put in translation
+            onTap: () => onOpen(file),
+          ),
+          ListTile(
             title: Text(s.file_fileTile_details_offline),
             trailing: Switch.adaptive(
               value: false,
