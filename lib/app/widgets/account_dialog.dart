@@ -35,6 +35,7 @@ class AccountDialog extends StatelessWidget {
                   Theme.of(context).dialogBackgroundColor,
               elevation: dialogTheme.elevation ?? 24,
               shape: dialogTheme.shape,
+              clipBehavior: Clip.antiAlias,
               type: MaterialType.card,
               child: _buildContent(context),
             ),
@@ -85,6 +86,7 @@ class AccountDialog extends StatelessWidget {
           title: Text(s.general_signOut),
           onTap: () => signOut(context),
         ),
+        SizedBox(height: 8),
       ],
     );
   }
