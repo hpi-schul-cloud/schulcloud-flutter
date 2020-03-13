@@ -5,13 +5,11 @@ import 'package:dartx/dartx_io.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_cached/flutter_cached.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:meta/meta.dart';
 import 'package:mime/mime.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:schulcloud/app/app.dart';
-import 'package:schulcloud/course/course.dart';
 
 import 'data.dart';
 
@@ -32,54 +30,6 @@ class UploadProgressUpdate {
 @immutable
 class FileBloc {
   const FileBloc();
-
-  // We don't use [fetchList] here, because of these two reasons why we need
-  // more control:
-  // * Unlike every other api endpoint, the files endpoint doesn't provide a
-  //   json blob that has a 'body' field. Instead, the json returned is a list
-  //   right away.
-  // * We want to filter the files because there are a lot with no names that
-  //   shouldn't be displayed.
-  CacheController<List<File>> fetchFiles(Id<dynamic> owner, File parent) {
-    final storage = services.storage;
-
-    return SimpleCacheController<List<File>>(
-      saveToCache: (files) =>
-          storage.cache.putChildrenOfType<File>(parent?.id ?? owner, files),
-      loadFromCache: () =>
-          storage.cache.getChildrenOfType<File>(parent?.id ?? owner),
-      fetcher: () async {
-        final queries = <String, String>{
-          'owner': owner.id,
-          if (parent != null) 'parent': parent.id.id,
-        };
-        final response =
-            await services.api.get('fileStorage', parameters: queries);
-        final body = json.decode(response.body);
-        return (body as List<dynamic>)
-            .where((data) => data['name'] != null)
-            .map((data) => File.fromJson(data))
-            .toList();
-      },
-    );
-  }
-
-  CacheController<File> fetchFile(Id<File> id, [Id<dynamic> parent]) =>
-      fetchSingle(
-        parent: parent,
-        makeNetworkCall: () => services.api.get('files/$id'),
-        parser: (data) => File.fromJson(data),
-      );
-
-  CacheController<Course> fetchCourseOwnerOfFiles() => fetchSingle(
-        makeNetworkCall: () => services.api.get('courses'),
-        parser: (data) => Course.fromJson(data),
-      );
-
-  CacheController<List<Course>> fetchCourses() => fetchList(
-        makeNetworkCall: () => services.api.get('courses'),
-        parser: (data) => Course.fromJson(data),
-      );
 
   Future<void> downloadFile(File file) async {
     assert(file != null);
@@ -174,7 +124,7 @@ class FileBloc {
     await services.api.post('fileStorage', body: {
       'name': fileName,
       if (owner is! Id<User>) ...{
-        'owner': owner.id,
+        'owner': owner.value,
         // TODO(marcelgarus): For now, we only support user and course owner, but there's also team.
         'refOwnerModel': 'course',
       },

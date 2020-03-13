@@ -118,7 +118,7 @@ class _LessonScreenState extends State<LessonScreen> {
       contentTextFormat,
       [
         html,
-        services.get<AppConfig>().baseWebUrl,
+        services.config.baseWebUrl,
         cssColor(theme.contrastColor),
         cssColor(theme.accentColor),
       ],

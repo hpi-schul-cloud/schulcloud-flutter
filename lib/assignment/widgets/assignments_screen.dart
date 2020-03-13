@@ -5,7 +5,6 @@ import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/course/course.dart';
 import 'package:time_machine/time_machine.dart';
 
-import '../bloc.dart';
 import '../data.dart';
 import 'assignment_details_screen.dart';
 
@@ -81,7 +80,7 @@ class _AssignmentsScreenState extends State<AssignmentsScreen> {
 
     return Scaffold(
       body: CachedBuilder<List<Assignment>>(
-        controller: services.get<AssignmentBloc>().fetchAssignments(),
+        controller: services.storage.root.assignments.controller,
         errorBannerBuilder: (_, error, st) => ErrorBanner(error, st),
         errorScreenBuilder: (_, error, st) => ErrorScreen(error, st),
         builder: (context, allAssignments) {
@@ -208,8 +207,7 @@ class AssignmentCard extends StatelessWidget {
     return <Widget>[
       if (assignment.courseId != null)
         CachedRawBuilder<Course>(
-          controller:
-              services.get<CourseBloc>().fetchCourse(assignment.courseId),
+          controller: assignment.courseId.controller,
           builder: (_, update) {
             return CourseChip(
               update.data,

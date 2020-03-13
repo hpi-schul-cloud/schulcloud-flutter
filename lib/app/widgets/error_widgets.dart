@@ -1,9 +1,9 @@
 import 'package:black_hole_flutter/black_hole_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/sign_in/sign_in.dart';
 
+import '../app.dart';
 import '../services/network.dart';
 import '../utils.dart';
 import 'buttons.dart';

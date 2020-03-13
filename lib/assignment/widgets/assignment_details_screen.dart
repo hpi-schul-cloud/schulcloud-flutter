@@ -7,7 +7,6 @@ import 'package:schulcloud/course/course.dart';
 import 'package:schulcloud/file/file.dart';
 import 'package:schulcloud/file/widgets/file_tile.dart';
 
-import '../bloc.dart';
 import '../data.dart';
 import 'edit_submittion_screen.dart';
 import 'grade_indicator.dart';
@@ -33,7 +32,7 @@ class _AssignmentDetailsScreenState extends State<AssignmentDetailsScreen>
     final s = context.s;
 
     return CachedRawBuilder<User>(
-      controller: services.get<UserFetcherService>().fetchCurrentUser(),
+      controller: services.storage.userId.controller,
       builder: (context, update) {
         final user = update.data;
         final showSubmissionTab =
@@ -81,7 +80,7 @@ class _AssignmentDetailsScreenState extends State<AssignmentDetailsScreen>
     }
 
     return CachedRawBuilder<Course>(
-      controller: services.get<CourseBloc>().fetchCourse(assignment.courseId),
+      controller: assignment.courseId.controller,
       builder: (context, update) {
         return Row(children: <Widget>[
           CourseColorDot(update.data),
@@ -105,9 +104,7 @@ class _AssignmentDetailsScreenState extends State<AssignmentDetailsScreen>
           ? s.assignment_assignmentDetails_unarchive
           : s.assignment_assignmentDetails_archive,
       onPressed: () async {
-        await services
-            .get<AssignmentBloc>()
-            .update(assignment, isArchived: !assignment.isArchived);
+        await assignment.toggleArchived();
         context.scaffold.showSnackBar(SnackBar(
           content: Text(
             assignment.isArchived
@@ -116,11 +113,7 @@ class _AssignmentDetailsScreenState extends State<AssignmentDetailsScreen>
           ),
           action: SnackBarAction(
             label: s.general_undo,
-            onPressed: () {
-              services
-                  .get<AssignmentBloc>()
-                  .update(assignment, isArchived: assignment.isArchived);
-            },
+            onPressed: assignment.toggleArchived,
           ),
         ));
       },
@@ -221,7 +214,7 @@ class _SubmissionTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CachedRawBuilder<Submission>(
-      controller: services.get<SubmissionBloc>().fetchMySubmission(assignment),
+      controller: assignment.mySubmission,
       builder: (_, update) {
         if (update.hasError) {
           return ErrorScreen(update.error, update.stackTrace);
@@ -271,7 +264,7 @@ class _SubmissionTab extends StatelessWidget {
     final s = context.s;
 
     return CachedRawBuilder<User>(
-      controller: services.get<UserFetcherService>().fetchCurrentUser(),
+      controller: services.storage.userId.controller,
       builder: (context, update) {
         if (update.hasError) {
           return ErrorScreen(update.error, update.stackTrace);
@@ -325,7 +318,7 @@ class _FeedbackTab extends StatelessWidget {
     final s = context.s;
 
     return CachedRawBuilder<Submission>(
-      controller: services.get<SubmissionBloc>().fetchMySubmission(assignment),
+      controller: assignment.mySubmission,
       builder: (_, update) {
         if (update.hasError) {
           return ErrorScreen(update.error, update.stackTrace);
@@ -399,21 +392,22 @@ List<Widget> _buildFileSection(
     ],
     for (final fileId in fileIds)
       CachedRawBuilder<File>(
-        controller: services.get<FileBloc>().fetchFile(fileId, parentId),
+        controller: fileId.controller,
         builder: (context, update) {
           if (!update.hasData) {
             return ListTile(
               leading:
                   update.hasError == null ? CircularProgressIndicator() : null,
-              title:
-                  Text(update.error?.toString() ?? context.s.general_loading),
+              title: Text(
+                update.error?.toString() ?? context.s.general_loading,
+              ),
             );
           }
 
           final file = update.data;
           return FileTile(
             file: file,
-            onOpen: (file) => FileBrowser.downloadFile(context, file),
+            onOpen: (file) => services.get<FileBloc>().downloadFile(file),
           );
         },
       ),

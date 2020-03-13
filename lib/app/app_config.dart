@@ -1,6 +1,8 @@
 import 'package:black_hole_flutter/black_hole_flutter.dart';
 import 'package:flutter/material.dart';
-import 'package:schulcloud/app/app.dart';
+import 'package:get_it/get_it.dart';
+
+import 'utils.dart';
 
 @immutable
 class AppConfig {
@@ -137,4 +139,8 @@ class AppConfig {
   }
 }
 
-String scWebUrl(String path) => services.get<AppConfig>().webUrl(path);
+extension AppConfigGetIt on GetIt {
+  AppConfig get config => get<AppConfig>();
+}
+
+String scWebUrl(String path) => services.config.webUrl(path);

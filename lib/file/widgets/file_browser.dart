@@ -31,6 +31,12 @@ class FileBrowser extends StatelessWidget {
   /// show an app bar.
   final bool isEmbedded;
 
+  CacheController<List<File>> get _filesController {
+    // The owner is either a [User] or a [Course]. Either way, the [owner] is
+    // guaranteed to have a [files] field.
+    return parent?.files?.controller ?? (owner as dynamic).files.controller;
+  }
+
   void _openDirectory(BuildContext context, File file) {
     assert(file.isDirectory);
 
@@ -39,8 +45,8 @@ class FileBrowser extends StatelessWidget {
     ));
   }
 
-  static Future<void> downloadFile(BuildContext context, File file) async {
-    assert(file.isNotDirectory);
+  Future<void> _downloadFile(BuildContext context, File file) async {
+    assert(file.isActualFile);
 
     try {
       await services.get<FileBloc>().downloadFile(file);
@@ -66,7 +72,7 @@ class FileBrowser extends StatelessWidget {
 
   Widget _buildEmbedded(BuildContext context) {
     return CachedRawBuilder<List<File>>(
-      controller: services.get<FileBloc>().fetchFiles(owner.id, parent),
+      controller: _filesController,
       builder: (context, update) {
         if (update.hasError) {
           return ErrorScreen(update.error, update.stackTrace);
@@ -79,7 +85,7 @@ class FileBrowser extends StatelessWidget {
           files: files,
           primary: false,
           onOpenDirectory: (directory) => _openDirectory(context, directory),
-          onDownloadFile: (file) => downloadFile(context, file),
+          onDownloadFile: (file) => _downloadFile(context, file),
         );
       },
     );
@@ -99,7 +105,7 @@ class FileBrowser extends StatelessWidget {
         parentId: parent?.id,
       ),
       body: CachedBuilder<List<File>>(
-        controller: services.get<FileBloc>().fetchFiles(owner.id, parent),
+        controller: _filesController,
         errorBannerBuilder: (_, error, st) => ErrorBanner(error, st),
         errorScreenBuilder: (_, error, st) => ErrorScreen(error, st),
         builder: (context, files) {
@@ -109,7 +115,7 @@ class FileBrowser extends StatelessWidget {
           return FileList(
             files: files,
             onOpenDirectory: (directory) => _openDirectory(context, directory),
-            onDownloadFile: (file) => downloadFile(context, file),
+            onDownloadFile: (file) => _downloadFile(context, file),
           );
         },
       ),
