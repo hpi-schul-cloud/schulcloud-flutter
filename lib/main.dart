@@ -57,8 +57,12 @@ const schulCloudAppConfig = AppConfig(
 );
 
 Future<void> main({AppConfig appConfig = schulCloudAppConfig}) async {
+  logger
+    ..i('Starting…')
+    ..d('Initializing hive…');
   await initializeHive();
 
+  logger.d('Initializing services…');
   services
     ..registerSingletonAsync((_) async {
       // We need to initialize TimeMachine before launching the app, and using
@@ -81,6 +85,7 @@ Future<void> main({AppConfig appConfig = schulCloudAppConfig}) async {
     ..registerSingleton(NewsBloc())
     ..registerSingleton(SubmissionBloc());
 
+  logger.d('Running…');
   runApp(
     FutureBuilder<void>(
       future: services.allReady(),
