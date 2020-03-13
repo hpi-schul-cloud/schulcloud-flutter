@@ -56,7 +56,7 @@ class File implements Entity<File>, Comparable<File> {
         'owner': ownerId.value,
         if (parentId != null) 'parent': parentId.value,
       },
-    ).parsedJsonList(isServicePaginated: false);
+    ).parseJsonList(isServicePaginated: false);
     return files.map((data) => File.fromJson(data)).toList();
   }
 

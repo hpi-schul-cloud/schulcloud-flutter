@@ -22,7 +22,7 @@ class Course implements Entity<Course> {
         assert(color != null),
         lessons = LazyIds<Lesson>(
           collectionId: 'lessons of course $id',
-          fetcher: () async => Lesson.fetchMultiple(courseId: id),
+          fetcher: () async => Lesson.fetchList(courseId: id),
         ),
         files = LazyIds<File>(
           collectionId: 'files of $id',
@@ -51,7 +51,6 @@ class Course implements Entity<Course> {
   @HiveField(2)
   final String description;
 
-  // TODO(marcelgarus): For now, we don't use a [List<Id<User>>] here, because you can't cast a [List<Id>] to a [List<Id<User>>] without knowing about the [Id]'s [cast] method, which causes Hive to not be able to serialize generic types.
   @HiveField(3)
   final List<Id<User>> teacherIds;
 
@@ -86,10 +85,10 @@ class Lesson implements Entity<Lesson> {
   static Future<Lesson> fetch(Id<Lesson> id) async =>
       Lesson.fromJson(await services.api.get('lessons/$id').json);
 
-  static Future<List<Lesson>> fetchMultiple({Id<Course> courseId}) async {
+  static Future<List<Lesson>> fetchList({Id<Course> courseId}) async {
     final jsonList = await services.api.get('lessons', parameters: {
       if (courseId != null) 'courseId': courseId.value,
-    }).parsedJsonList();
+    }).parseJsonList();
     return jsonList.map((data) => Lesson.fromJson(data)).toList();
   }
 

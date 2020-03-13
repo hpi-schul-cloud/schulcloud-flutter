@@ -34,7 +34,7 @@ extension ResponseToJson on Response {
 
 extension FutureResponseToJson on Future<Response> {
   Future<dynamic> get json async => (await this).json;
-  Future<List<Map<String, dynamic>>> parsedJsonList({
+  Future<List<Map<String, dynamic>>> parseJsonList({
     bool isServicePaginated = true,
   }) async {
     var jsonData = (await this).json;
