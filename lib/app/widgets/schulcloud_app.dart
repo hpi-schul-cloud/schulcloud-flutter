@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:logger_flutter/logger_flutter.dart';
 import 'package:schulcloud/generated/l10n.dart';
 
 import '../app_config.dart';
@@ -45,39 +44,47 @@ class LoggedInScreen extends StatefulWidget {
   LoggedInScreenState createState() => LoggedInScreenState();
 }
 
-class LoggedInScreenState extends State<LoggedInScreen> {
+class LoggedInScreenState extends State<LoggedInScreen>
+    with TickerProviderStateMixin {
   static final _navigatorKeys =
       List.generate(_BottomTab.count, (_) => GlobalKey<NavigatorState>());
+  List<AnimationController> _faders;
 
-  static var selectedTabIndex = 0;
+  static var _selectedTabIndex = 0;
   static NavigatorState get currentNavigator =>
-      _navigatorKeys[selectedTabIndex].currentState;
+      _navigatorKeys[_selectedTabIndex].currentState;
 
   void selectTab(int index, {bool popIfAlreadySelected = false}) {
     assert(0 <= index && index <= _BottomTab.count);
 
-    final pop = popIfAlreadySelected && selectedTabIndex == index;
+    final pop = popIfAlreadySelected && _selectedTabIndex == index;
     setState(() {
-      selectedTabIndex = index;
+      _selectedTabIndex = index;
       if (pop) {
         currentNavigator.popUntil((route) => route.isFirst);
       }
     });
   }
 
-  /// When the user tries to pop, we first try to pop with the inner navigator.
-  /// If that's not possible (we are at a top-level location), we go to the
-  /// dashboard. Only if we were already there, we pop (aka close the app).
-  Future<bool> _onWillPop() async {
-    if (currentNavigator.canPop()) {
-      currentNavigator.pop();
-      return false;
-    } else if (selectedTabIndex != 0) {
-      selectTab(0);
-      return false;
-    } else {
-      return true;
+  @override
+  void initState() {
+    super.initState();
+
+    _faders = List.generate(
+      _BottomTab.count,
+      (_) =>
+          AnimationController(vsync: this, duration: kThemeAnimationDuration),
+    );
+    _faders[_selectedTabIndex].value = 1;
+  }
+
+  @override
+  void dispose() {
+    for (final fader in _faders) {
+      fader.dispose();
     }
+
+    super.dispose();
   }
 
   @override
@@ -89,25 +96,16 @@ class LoggedInScreenState extends State<LoggedInScreen> {
     return WillPopScope(
       onWillPop: _onWillPop,
       child: Scaffold(
-        body: IndexedStack(
-          index: selectedTabIndex,
+        body: Stack(
+          fit: StackFit.expand,
           children: <Widget>[
-            for (var i = 0; i < _BottomTab.count; i++)
-              Navigator(
-                key: _navigatorKeys[i],
-                initialRoute: _BottomTab.values[i].initialRoute,
-                onGenerateRoute: router.onGenerateRoute,
-                observers: [
-                  LoggingNavigatorObserver(),
-                  HeroController(),
-                ],
-              ),
+            for (var i = 0; i < _BottomTab.count; i++) _buildChild(i),
           ],
         ),
         bottomNavigationBar: BottomNavigationBar(
           selectedItemColor: theme.accentColor,
           unselectedItemColor: theme.mediumEmphasisColor,
-          currentIndex: selectedTabIndex,
+          currentIndex: _selectedTabIndex,
           onTap: (index) => selectTab(index, popIfAlreadySelected: true),
           items: [
             for (final tab in _BottomTab.values)
@@ -120,6 +118,48 @@ class LoggedInScreenState extends State<LoggedInScreen> {
         ),
       ),
     );
+  }
+
+  Widget _buildChild(int index) {
+    final fader = _faders[index];
+    final child = FadeTransition(
+      opacity: fader.drive(CurveTween(curve: Curves.fastOutSlowIn)),
+      child: Navigator(
+        key: _navigatorKeys[index],
+        initialRoute: _BottomTab.values[index].initialRoute,
+        onGenerateRoute: router.onGenerateRoute,
+        observers: [
+          LoggingNavigatorObserver(),
+          HeroController(),
+        ],
+      ),
+    );
+
+    if (index == _selectedTabIndex) {
+      fader.forward();
+      return child;
+    }
+
+    fader.reverse();
+    if (fader.isAnimating) {
+      return IgnorePointer(child: child);
+    }
+    return Offstage(child: child);
+  }
+
+  /// When the user tries to pop, we first try to pop with the inner navigator.
+  /// If that's not possible (we are at a top-level location), we go to the
+  /// dashboard. Only if we were already there, we pop (aka close the app).
+  Future<bool> _onWillPop() async {
+    if (currentNavigator.canPop()) {
+      currentNavigator.pop();
+      return false;
+    } else if (_selectedTabIndex != 0) {
+      selectTab(0);
+      return false;
+    } else {
+      return true;
+    }
   }
 }
 
