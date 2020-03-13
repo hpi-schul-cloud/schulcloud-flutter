@@ -5,6 +5,7 @@ import 'package:logger_flutter/logger_flutter.dart';
 import 'package:schulcloud/login/login.dart';
 import 'package:uni_links/uni_links.dart';
 
+import '../logger.dart';
 import '../services/storage.dart';
 import '../utils.dart';
 import 'schulcloud_app.dart';
@@ -19,13 +20,21 @@ class TopLevelScreenWrapper extends StatefulWidget {
 }
 
 class _TopLevelScreenWrapperState extends State<TopLevelScreenWrapper> {
+  StreamSubscription _deepLinksSubscription;
   Uri _uriToVisit;
 
   @override
   void initState() {
     super.initState();
 
-    getUriLinksStream().listen((uri) => setState(() => _uriToVisit = uri));
+    // Not the prettiest solution, but it works 😇
+    _deepLinksSubscription = _subscribe().listen((_) => setState(() {}));
+  }
+
+  @override
+  void dispose() {
+    _deepLinksSubscription.cancel();
+    super.dispose();
   }
 
   @override
@@ -41,11 +50,21 @@ class _TopLevelScreenWrapperState extends State<TopLevelScreenWrapper> {
     );
   }
 
+  Stream<void> _subscribe() async* {
+    // ignore: literal_only_boolean_expressions
+    while (true) {
+      _uriToVisit = await incomingDeepLinks.next;
+      yield null;
+    }
+  }
+
   void _handleUri(BuildContext context) {
     if (_uriToVisit == null) {
       return;
     }
+    logger.d('Handling URI $_uriToVisit');
     assert(SchulCloudApp.navigator != null);
+
     final uri = _uriToVisit;
     _uriToVisit = null;
 

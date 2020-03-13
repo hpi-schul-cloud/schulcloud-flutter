@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_native_timezone/flutter_native_timezone.dart';
+import 'package:pedantic/pedantic.dart';
+import 'package:rxdart/rxdart.dart';
 import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/assignment/assignment.dart';
 import 'package:schulcloud/calendar/calendar.dart';
@@ -9,6 +11,7 @@ import 'package:schulcloud/file/file.dart';
 import 'package:schulcloud/login/login.dart';
 import 'package:schulcloud/news/news.dart';
 import 'package:time_machine/time_machine.dart';
+import 'package:uni_links/uni_links.dart';
 
 const _schulCloudRed = MaterialColor(0xffb10438, {
   50: Color(0xfffce2e6),
@@ -84,6 +87,16 @@ Future<void> main({AppConfig appConfig = schulCloudAppConfig}) async {
     ..registerSingleton(LoginBloc())
     ..registerSingleton(NewsBloc())
     ..registerSingleton(SubmissionBloc());
+
+  logger.d('Retrieving initial URI…');
+  final initialUri = await getInitialUri();
+  if (initialUri != null) {
+    logger.i('Initial URI: $initialUri');
+    incomingDeepLinksSink.add(initialUri);
+  }
+  unawaited(Observable(getUriLinksStream())
+      .doOnData((uri) => logger.i('Received deep link: $uri'))
+      .pipe(incomingDeepLinksSink));
 
   logger.d('Running…');
   runApp(

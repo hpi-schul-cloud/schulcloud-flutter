@@ -1,12 +1,14 @@
 import 'dart:convert';
 import 'dart:ui';
 
+import 'package:async/async.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cached/flutter_cached.dart';
 import 'package:get_it/get_it.dart';
 import 'package:html/parser.dart';
 import 'package:http/http.dart';
 import 'package:meta/meta.dart';
+import 'package:rxdart/rxdart.dart';
 import 'package:schulcloud/generated/l10n.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -29,6 +31,9 @@ extension FancyContext on BuildContext {
 }
 
 final services = GetIt.instance;
+
+final incomingDeepLinksSink = BehaviorSubject<Uri>();
+final incomingDeepLinks = StreamQueue<Uri>(incomingDeepLinksSink);
 
 /// Limits a string to a certain amount of characters.
 String limitString(String string, int maxLength) =>
