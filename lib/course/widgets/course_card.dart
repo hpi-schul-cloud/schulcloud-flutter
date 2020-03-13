@@ -1,3 +1,4 @@
+import 'package:black_hole_flutter/black_hole_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cached/flutter_cached.dart';
 import 'package:schulcloud/app/app.dart';
@@ -12,42 +13,32 @@ class CourseCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
+    return FancyCard(
       onTap: () => context.navigator.pushNamed('/courses/${course.id}'),
-      child: Card(
-        child: Column(
-          children: <Widget>[
-            Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(4),
-                  topRight: Radius.circular(4),
-                ),
-                color: course.color,
-              ),
-              height: 32,
-            ),
-            ListTile(
-              title: Text(
-                course.name,
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              subtitle: CachedRawBuilder(
-                controllerBuilder: () =>
-                    services.get<CourseBloc>().fetchTeachersOfCourse(course),
-                builder: (_, update) {
-                  final teachers = update.data;
-                  return Text((teachers ?? [])
+      color: course.color.withOpacity(0.12),
+      child: Row(
+        children: <Widget>[
+          Text(course.name),
+          SizedBox(width: 16),
+          Expanded(
+            child: CachedRawBuilder<List<User>>(
+              controller:
+                  services.get<CourseBloc>().fetchTeachersOfCourse(course),
+              builder: (_, update) {
+                final teachers = update.data;
+                return Text(
+                  (teachers ?? [])
+                      .where((teacher) => teacher != null)
                       .map((teacher) => teacher.shortName)
-                      .join(', '));
-                },
-              ),
-            )
-          ],
-        ),
+                      .join(', '),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(color: context.theme.disabledColor),
+                );
+              },
+            ),
+          ),
+        ],
       ),
     );
   }

@@ -1,14 +1,33 @@
 import 'dart:convert';
+import 'dart:io' as io;
 
+import 'package:dartx/dartx_io.dart';
+import 'package:file_picker/file_picker.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_cached/flutter_cached.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:meta/meta.dart';
+import 'package:mime/mime.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/course/course.dart';
 
 import 'data.dart';
+
+@immutable
+class UploadProgressUpdate {
+  const UploadProgressUpdate({
+    @required this.currentFileName,
+    @required this.index,
+    @required this.totalNumberOfFiles,
+  });
+
+  final String currentFileName;
+  final int index;
+  final int totalNumberOfFiles;
+  bool get isSingleFile => totalNumberOfFiles == 1;
+}
 
 @immutable
 class FileBloc {
@@ -27,19 +46,18 @@ class FileBloc {
   ]) {
     final storage = services.storage;
 
-    return CacheController<List<File>>(
+    return SimpleCacheController<List<File>>(
       saveToCache: (files) =>
           storage.cache.putChildrenOfType<File>(parentId ?? ownerId, files),
       loadFromCache: () =>
           storage.cache.getChildrenOfType<File>(parentId ?? ownerId),
       fetcher: () async {
-        final response = await services.network.get(
-          'fileStorage',
-          parameters: {
-            'owner': ownerId.id,
-            if (parentId != null) 'parent': parentId.id,
-          },
-        );
+        final queries = <String, String>{
+          'owner': ownerId.id,
+          if (parentId != null) 'parent': parentId.id,
+        };
+        final response =
+            await services.api.get('fileStorage', parameters: queries);
         final body = json.decode(response.body);
         return (body as List<dynamic>)
             .where((data) => data['name'] != null)
@@ -52,17 +70,17 @@ class FileBloc {
   CacheController<File> fetchFile(Id<File> id, [Id<dynamic> parent]) =>
       fetchSingle(
         parent: parent,
-        makeNetworkCall: () => services.network.get('files/$id'),
+        makeNetworkCall: () => services.api.get('files/$id'),
         parser: (data) => File.fromJson(data),
       );
 
   CacheController<Course> fetchCourseOwnerOfFiles() => fetchSingle(
-        makeNetworkCall: () => services.network.get('courses'),
+        makeNetworkCall: () => services.api.get('courses'),
         parser: (data) => Course.fromJson(data),
       );
 
   CacheController<List<Course>> fetchCourses() => fetchList(
-        makeNetworkCall: () => services.network.get('courses'),
+        makeNetworkCall: () => services.api.get('courses'),
         parser: (data) => Course.fromJson(data),
       );
 
@@ -73,7 +91,7 @@ class FileBloc {
 
     /// The signed URL is the URL used to actually download a file instead of
     /// just viewing its JSON representation.
-    final response = await services.network.get(
+    final response = await services.api.get(
       'fileStorage/signedUrl',
       parameters: {'download': null, 'file': file.id.toString()},
     );
@@ -100,5 +118,73 @@ class FileBloc {
     if (!isGranted()) {
       throw PermissionNotGranted();
     }
+  }
+
+  Stream<UploadProgressUpdate> uploadFile({
+    @required Id<dynamic> owner,
+    Id<File> parent,
+  }) async* {
+    assert(owner != null);
+
+    // Let the user pick files.
+    final files = await FilePicker.getMultiFile();
+
+    for (var i = 0; i < files.length; i++) {
+      final file = files[i];
+
+      yield UploadProgressUpdate(
+        currentFileName: file.name,
+        index: i,
+        totalNumberOfFiles: files.length,
+      );
+
+      await _uploadSingleFile(file: file, owner: owner, parent: parent);
+    }
+  }
+
+  Future<void> _uploadSingleFile({
+    @required io.File file,
+    @required Id<dynamic> owner,
+    Id<File> parent,
+  }) async {
+    assert(file != null);
+
+    if (!file.existsSync()) {
+      return;
+    }
+
+    final fileName = file.name;
+    final fileBuffer = await file.readAsBytes();
+    final mimeType = lookupMimeType(fileName, headerBytes: fileBuffer);
+
+    // Request a signed url.
+    final signedUrlResponse =
+        await services.api.post('fileStorage/signedUrl', body: {
+      'filename': fileName,
+      'fileType': mimeType,
+      if (parent != null) 'parent': parent,
+    });
+    final signedInfo = json.decode(signedUrlResponse.body);
+
+    // Upload the file to the storage server.
+    await services.network.put(
+      signedInfo['url'],
+      headers: (signedInfo['header'] as Map).cast<String, String>(),
+      body: fileBuffer,
+    );
+
+    // Notify the api backend.
+    await services.api.post('fileStorage', body: {
+      'name': fileName,
+      if (owner is! Id<User>) ...{
+        'owner': owner.id,
+        // TODO(marcelgarus): For now, we only support user and course owner, but there's also team.
+        'refOwnerModel': 'course',
+      },
+      'type': mimeType,
+      'size': fileBuffer.length,
+      'storageFileName': signedInfo['header']['x-amz-meta-flat-name'],
+      'thumbnail': signedInfo['header']['x-amz-meta-thumbnail'],
+    });
   }
 }

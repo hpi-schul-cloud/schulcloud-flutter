@@ -1,7 +1,6 @@
+import 'package:black_hole_flutter/black_hole_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:schulcloud/app/app.dart';
-
-import 'theming_utils.dart';
 
 @immutable
 class AppConfig {
@@ -38,9 +37,14 @@ class AppConfig {
   final MaterialColor accentColor;
 
   ThemeData createThemeData(Brightness brightness) {
+    final isDark = brightness == Brightness.dark;
     var theme = ThemeData(
       brightness: brightness,
       primarySwatch: primaryColor,
+      // By default, the [primaryColor] is set to a dark grey in dark mode
+      primaryColor: primaryColor,
+      primaryColorLight: isDark ? primaryColor[500] : primaryColor[300],
+      primaryColorDark: isDark ? primaryColor[800] : primaryColor[700],
       accentColor: accentColor,
       errorColor: errorColor,
       scaffoldBackgroundColor:
@@ -58,6 +62,14 @@ class AppConfig {
       snackBarTheme: SnackBarThemeData(
         behavior: SnackBarBehavior.floating,
       ),
+      bottomSheetTheme: BottomSheetThemeData(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(32),
+            topRight: Radius.circular(32),
+          ),
+        ),
+      ),
     );
     if (brightness == Brightness.dark) {
       theme = theme.copyWith(
@@ -72,7 +84,7 @@ class AppConfig {
       // TabBar assumes a primary colored background
       tabBarTheme: theme.tabBarTheme.copyWith(
         labelColor: theme.accentColor,
-        unselectedLabelColor: theme.mediumEmphasisColor,
+        unselectedLabelColor: theme.mediumEmphasisOnBackground,
       ),
     );
   }

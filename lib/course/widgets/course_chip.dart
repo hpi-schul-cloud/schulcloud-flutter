@@ -1,3 +1,4 @@
+import 'package:black_hole_flutter/black_hole_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:schulcloud/app/app.dart';
 
@@ -14,13 +15,13 @@ class CourseChip extends StatelessWidget {
   Widget build(BuildContext context) {
     if (onPressed == null && course == null) {
       return Chip(
-        avatar: CourseColorDot(course: course),
+        avatar: CourseColorDot(course),
         label: TextOrPlaceholder(course?.name),
       );
     }
 
     return ActionChip(
-      avatar: CourseColorDot(course: course),
+      avatar: CourseColorDot(course),
       label: TextOrPlaceholder(course?.name),
       onPressed: onPressed ??
           () => context.navigator.pushNamed('/courses/${course.id}'),

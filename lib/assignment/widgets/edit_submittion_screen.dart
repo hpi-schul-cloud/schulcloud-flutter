@@ -1,3 +1,4 @@
+import 'package:black_hole_flutter/black_hole_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cached/flutter_cached.dart';
 import 'package:schulcloud/app/app.dart';
@@ -115,12 +116,13 @@ class _EditSubmissionFormState extends State<EditSubmissionForm> {
         ],
       ),
       omitHorizontalPadding: true,
+      omitTopPadding: true,
       floatingActionButton: Builder(
         builder: (context) {
           return FancyFab.extended(
             isEnabled: _isValid,
             onPressed: () => _save(context),
-            icon: Icon(Icons.save),
+            icon: Icon(Icons.check),
             label: Text(s.general_save),
             isLoading: _isSaving,
             loadingLabel: Text(s.general_saving),
@@ -176,6 +178,7 @@ class _EditSubmissionFormState extends State<EditSubmissionForm> {
   List<Widget> _buildFormContent(BuildContext context) {
     return [
       ..._buildFormattingOverwriteWarning(context),
+      SizedBox(height: 8),
       if (assignment.teamSubmissions)
         ListTile(
           leading: Icon(Icons.people),
@@ -205,20 +208,18 @@ class _EditSubmissionFormState extends State<EditSubmissionForm> {
 
     return [
       MaterialBanner(
-        backgroundColor: context.theme.accentColor,
-        leading: Icon(Icons.warning),
+        leading: Icon(Icons.info_outline),
         // To align content with the ListTile below
         leadingPadding: EdgeInsets.only(right: 32),
         content: Text(s.assignment_editSubmission_overwriteFormatting),
         actions: <Widget>[
           FlatButton(
             onPressed: () => setState(() => _ignoreFormattingOverwrite = true),
-            textColor: context.theme.highEmphasisColor,
+            textColor: context.theme.highEmphasisOnBackground,
             child: Text(s.general_dismiss),
           ),
         ],
       ),
-      SizedBox(height: 8),
     ];
   }
 

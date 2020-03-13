@@ -9,7 +9,6 @@ import 'package:schulcloud/app/app.dart';
 
 import '../logger.dart';
 import '../utils.dart';
-import 'storage.dart';
 
 @immutable
 class ErrorBody {
@@ -82,130 +81,145 @@ class TooManyRequestsError extends ServerError {
   final Duration timeToWait;
 }
 
-/// A service that offers networking HTTP requests to the backend servers.
-///
-/// It depends on the authentication storage, so if the user's token
-/// is stored there, the requests' headers are automatically enriched with the
-/// access token.
+/// A service that offers making network request to arbitrary servers.
 @immutable
 class NetworkService {
-  const NetworkService({@required this.apiUrl}) : assert(apiUrl != null);
+  const NetworkService();
 
-  final String apiUrl;
+  /// Calls the given function and turns various status codes and socket
+  /// exceptions into custom error types like [AuthenticationError] or
+  /// [NoConnectionToServerError].
+  Future<http.Response> _makeCall({
+    @required String method,
+    @required String url,
+    @required Future<http.Response> Function() call,
+  }) async {
+    assert(method != null);
+    assert(url != null);
+    assert(call != null);
 
-  /// Makes an HTTP GET request to the API.
+    http.Response response;
+    try {
+      response = await call();
+    } on SocketException catch (e) {
+      logger.w('No server connection', e);
+      throw NoConnectionToServerError();
+    }
+
+    // Succeed if its a 2xx status code.
+    if (response.statusCode ~/ 100 == 2) {
+      return response;
+    }
+
+    final body = ErrorBody.fromJson(json.decode(response.body));
+    logger.w('Network ${response.statusCode}: $method $url', body);
+
+    if (response.statusCode == 401) {
+      throw AuthenticationError(body);
+    }
+
+    if (response.statusCode == 409 && body.className == 'conflict') {
+      throw ConflictError(body);
+    }
+
+    if (response.statusCode == 429) {
+      final timeToWait = () {
+        try {
+          return Duration(
+            seconds: body.data['timeToWait'],
+          );
+        } catch (_) {
+          return Duration(seconds: 10);
+        }
+      }();
+      throw TooManyRequestsError(body, timeToWait: timeToWait);
+    }
+
+    throw UnimplementedError(
+        'We should handle status code ${response.statusCode}. '
+        'Response body: ${response.body}');
+  }
+
+  /// Makes an HTTP GET request.
   Future<http.Response> get(
-    String path, {
+    String url, {
     Map<String, String> parameters = const {},
+    Map<String, String> headers,
   }) {
+    assert(url != null);
     assert(parameters != null);
 
-    // Add the parameters to the path.
+    // Add the parameters to the url.
     if (parameters.isNotEmpty) {
       final params = parameters.entries
           .map((e) =>
               '${e.key.uriComponentEncoded}=${e.value.uriComponentEncoded}')
           .join('&');
       // ignore: parameter_assignments
-      path += '?$params';
+      url += '?$params';
     }
     return _makeCall(
-      'GET',
-      path,
-      (url) async => http.get(url, headers: _getHeaders()),
+      method: 'GET',
+      url: url,
+      call: () => http.get(url, headers: _getHeaders(headers)),
     );
   }
 
-  /// Makes an HTTP POST request to the API.
-  Future<http.Response> post(String path, {dynamic body}) {
+  /// Makes an HTTP POST request.
+  Future<http.Response> post(
+    String url, {
+    Map<String, String> headers,
+    Map<String, dynamic> body,
+  }) {
     return _makeCall(
-      'POST',
-      path,
-      (url) async =>
-          http.post(url, headers: _getHeaders(), body: json.encode(body)),
+      method: 'POST',
+      url: url,
+      call: () => http.post(url,
+          headers: _getHeaders(headers), body: json.encode(body)),
     );
   }
 
-  /// Makes an HTTP PATCH request to the API.
-  Future<http.Response> patch(String path, {dynamic body}) {
+  /// Makes an HTTP PUT request.
+  Future<http.Response> put(
+    String url, {
+    Map<String, String> headers,
+    dynamic body,
+  }) {
     return _makeCall(
-      'PATCH',
-      path,
-      (url) async =>
-          http.patch(url, headers: _getHeaders(), body: json.encode(body)),
+      method: 'PUT',
+      url: url,
+      call: () =>
+          http.put(url, headers: _getHeaders(headers), body: json.encode(body)),
     );
   }
 
-  /// Makes an HTTP DELETE request to the API.
-  Future<http.Response> delete(String path) {
+  /// Makes an HTTP PATCH request.
+  Future<http.Response> patch(
+    String url, {
+    Map<String, String> headers,
+    Map<String, dynamic> body,
+  }) {
     return _makeCall(
-      'DELETE',
-      path,
-      (url) async => http.delete(url, headers: _getHeaders()),
+      method: 'PATCH',
+      url: url,
+      call: () => http.patch(url,
+          headers: _getHeaders(headers), body: json.encode(body)),
     );
   }
 
-  Future<void> _ensureConnectionExists() =>
-      InternetAddress.lookup(apiUrl.substring(apiUrl.lastIndexOf('/') + 1));
-
-  Future<http.Response> _makeCall(
-    String method,
-    String path,
-    Future<http.Response> Function(String url) call,
-  ) async {
-    assert(method != null);
-    assert(path != null);
-
-    try {
-      await _ensureConnectionExists();
-      final url = '$apiUrl/$path';
-      final response = await call(url);
-
-      // Succeed if its a 2xx status code.
-      if (response.statusCode ~/ 100 == 2) {
-        return response;
-      }
-
-      final body = ErrorBody.fromJson(json.decode(response.body));
-      logger.w('Network ${response.statusCode}: $method $path', body);
-
-      if (response.statusCode == 401) {
-        throw AuthenticationError(body);
-      }
-
-      if (response.statusCode == 409 && body.className == 'conflict') {
-        throw ConflictError(body);
-      }
-
-      if (response.statusCode == 429) {
-        final timeToWait = () {
-          try {
-            return Duration(
-              seconds: body.data['timeToWait'],
-            );
-          } catch (_) {
-            return Duration(seconds: 10);
-          }
-        }();
-        throw TooManyRequestsError(body, timeToWait: timeToWait);
-      }
-
-      logger.e('Unhandled status code ${response.statusCode}. See above '
-          'warning for more information');
-      throw UnimplementedError(
-          'We should handle status code ${response.statusCode}.');
-    } on SocketException catch (e) {
-      logger.w('No server connection', e);
-      throw NoConnectionToServerError();
-    }
+  // Makes an HTTP DELETE request.
+  Future<http.Response> delete(String url) {
+    return _makeCall(
+      method: 'DELETE',
+      url: url,
+      call: () => http.delete(url),
+    );
   }
 
-  Map<String, String> _getHeaders() {
-    final storage = services.storage;
+  Map<String, String> _getHeaders(Map<String, String> headers) {
     return {
       'Content-Type': 'application/json',
-      if (storage.hasToken)
-        'Authorization': 'Bearer ${storage.token.getValue()}',
+      ...headers,
     };
   }
 }

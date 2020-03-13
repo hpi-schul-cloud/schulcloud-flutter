@@ -1,6 +1,6 @@
+import 'package:black_hole_flutter/black_hole_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cached/flutter_cached.dart';
-import 'package:flutter_html/flutter_html.dart';
 import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/dashboard/dashboard.dart';
 
@@ -9,6 +9,8 @@ import '../data.dart';
 import '../news.dart';
 
 class NewsDashboardCard extends StatelessWidget {
+  static const articleCount = 3;
+
   @override
   Widget build(BuildContext context) {
     final s = context.s;
@@ -28,19 +30,62 @@ class NewsDashboardCard extends StatelessWidget {
             );
           }
 
+          Iterable<Article> articles = update.data;
+          if (articles.isEmpty) {
+            return Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16),
+              child: Text(s.news_dashboardCard_empty),
+            );
+          }
+
+          articles = update.data
+            ..sort((a1, a2) => -a1.publishedAt.compareTo(a2.publishedAt));
+          articles = articles.take(articleCount);
+
           return Column(
             children: <Widget>[
-              for (final article in update.data)
-                ListTile(
-                  title: Text(article.title),
-                  subtitle: Html(data: limitString(article.content, 100)),
-                  trailing: Text(article.publishedAt.shortDateString),
-                  onTap: () =>
-                      context.navigator.pushNamed('/news/${article.id}'),
-                ),
+              for (final article in articles)
+                _buildArticlePreview(context, article),
             ],
           );
         },
+      ),
+    );
+  }
+
+  Widget _buildArticlePreview(BuildContext context, Article article) {
+    return InkWell(
+      onTap: () => context.navigator.pushNamed('/news/${article.id}'),
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.baseline,
+              textBaseline: TextBaseline.alphabetic,
+              children: <Widget>[
+                Expanded(
+                  child: Text(article.title, style: context.textTheme.subhead),
+                ),
+                SizedBox(width: 8),
+                Text(
+                  article.publishedAt.shortDateString,
+                  style: context.textTheme.caption,
+                ),
+              ],
+            ),
+            SizedBox(height: 4),
+            Text(
+              article.content.withoutLinebreaks,
+              maxLines: 3,
+              overflow: TextOverflow.ellipsis,
+              style: context.textTheme.body1.copyWith(
+                color: context.theme.mediumEmphasisOnBackground,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

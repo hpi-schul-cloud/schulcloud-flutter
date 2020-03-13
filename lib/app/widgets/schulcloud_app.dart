@@ -1,3 +1,4 @@
+import 'package:black_hole_flutter/black_hole_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:schulcloud/generated/l10n.dart';
@@ -6,7 +7,6 @@ import '../app_config.dart';
 import '../routing.dart';
 import '../services/navigator_observer.dart';
 import '../services/storage.dart';
-import '../theming_utils.dart';
 import '../utils.dart';
 
 class SchulCloudApp extends StatelessWidget {
@@ -39,12 +39,12 @@ class SchulCloudApp extends StatelessWidget {
   }
 }
 
-class LoggedInScreen extends StatefulWidget {
+class SignedInScreen extends StatefulWidget {
   @override
-  LoggedInScreenState createState() => LoggedInScreenState();
+  SignedInScreenState createState() => SignedInScreenState();
 }
 
-class LoggedInScreenState extends State<LoggedInScreen>
+class SignedInScreenState extends State<SignedInScreen>
     with TickerProviderStateMixin {
   static final _navigatorKeys =
       List.generate(_BottomTab.count, (_) => GlobalKey<NavigatorState>());
@@ -104,7 +104,7 @@ class LoggedInScreenState extends State<LoggedInScreen>
         ),
         bottomNavigationBar: BottomNavigationBar(
           selectedItemColor: theme.accentColor,
-          unselectedItemColor: theme.mediumEmphasisColor,
+          unselectedItemColor: theme.mediumEmphasisOnBackground,
           currentIndex: _selectedTabIndex,
           onTap: (index) => selectTab(index, popIfAlreadySelected: true),
           items: [

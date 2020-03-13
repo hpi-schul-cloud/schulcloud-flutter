@@ -1,3 +1,4 @@
+import 'package:black_hole_flutter/black_hole_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cached/flutter_cached.dart';
 import 'package:schulcloud/app/app.dart';
@@ -21,7 +22,7 @@ class AccountAvatar extends StatelessWidget {
           maxRadius: 16,
           child: Text(
             user?.avatarInitials ?? '…',
-            style: TextStyle(color: backgroundColor.highEmphasisColor),
+            style: TextStyle(color: backgroundColor.highEmphasisOnColor),
           ),
         );
       },
@@ -35,7 +36,7 @@ class AccountButton extends StatelessWidget {
     return InkWell(
       customBorder: CircleBorder(),
       onTap: () {
-        showDialog(context: context, builder: (context) => AccountDialog());
+        showDialog(context: context, builder: (_) => AccountDialog());
       },
       child: Padding(
         padding: EdgeInsets.all(8),

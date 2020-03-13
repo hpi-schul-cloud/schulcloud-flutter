@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:ui';
 
 import 'package:async/async.dart';
+import 'package:black_hole_flutter/black_hole_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cached/flutter_cached.dart';
 import 'package:get_it/get_it.dart';
@@ -16,11 +17,6 @@ import 'services/network.dart';
 import 'services/storage.dart';
 
 extension FancyContext on BuildContext {
-  MediaQueryData get mediaQuery => MediaQuery.of(this);
-  ThemeData get theme => Theme.of(this);
-  NavigatorState get navigator => Navigator.of(this);
-  NavigatorState get rootNavigator => Navigator.of(this, rootNavigator: true);
-  ScaffoldState get scaffold => Scaffold.of(this);
   S get s => S.of(this);
 
   void showSimpleSnackBar(String message) {
@@ -55,11 +51,13 @@ String formatFileSize(int bytes) {
 
 typedef L10nStringGetter = String Function(S);
 
-extension PowerfulString on String {
+extension LegenWaitForItDaryString on String {
+  String get withoutLinebreaks => replaceAll(RegExp('[\r\n]'), '');
+
   /// Removes html tags from a string.
   String get withoutHtmlTags => parse(this).documentElement.text;
 
-  /// Removes HTML tags trying to preserve line breaks;
+  /// Removes HTML tags trying to preserve line breaks.
   String get simpleHtmlToPlain {
     return replaceAllMapped(RegExp('</p>(.*?)<p>'), (m) => '\n\n${m[1]}')
         .replaceAll(RegExp('</?p>'), '')
@@ -68,7 +66,7 @@ extension PowerfulString on String {
   }
 
   /// Converts this to a simple HTML subset so line breaks are properly
-  /// displayed on the web
+  /// displayed on the web.
   String get plainToSimpleHtml {
     // Because the server is doing … stuff, we need to double encode‽
     return HtmlEscape(HtmlEscapeMode.unknown)
@@ -169,14 +167,9 @@ CacheController<T> fetchSingle<T extends Entity>({
 }) {
   final storage = services.storage;
 
-  return CacheController<T>(
+  return SimpleCacheController<T>(
     saveToCache: (item) => storage.cache.putChildrenOfType<T>(parent, [item]),
-    loadFromCache: () async {
-      return (await storage.cache.getChildrenOfType<T>(parent)).singleWhere(
-        (_) => true,
-        orElse: () => throw NotInCacheException(),
-      );
-    },
+    loadFromCache: () => throw NotInCacheException(),
     fetcher: () async {
       final response = await makeNetworkCall();
       final data = json.decode(response.body);
@@ -192,7 +185,7 @@ CacheController<T> fetchSingleOfList<T extends Entity>({
 }) {
   final storage = services.storage;
 
-  return CacheController<T>(
+  return SimpleCacheController<T>(
     saveToCache: (item) => storage.cache.putChildrenOfType<T>(parent, [item]),
     loadFromCache: () async {
       return (await storage.cache.getChildrenOfType<T>(parent)).singleWhere(
@@ -225,9 +218,9 @@ CacheController<List<T>> fetchList<T extends Entity>({
 }) {
   final storage = services.storage;
 
-  return CacheController<List<T>>(
+  return SimpleCacheController<List<T>>(
     saveToCache: (items) => storage.cache.putChildrenOfType<T>(parent, items),
-    loadFromCache: () => storage.cache.getChildrenOfType<T>(parent),
+    loadFromCache: () => throw NotInCacheException(),
     fetcher: () async {
       final response = await makeNetworkCall();
       final body = json.decode(response.body);

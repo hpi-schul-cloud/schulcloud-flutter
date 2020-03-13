@@ -1,11 +1,8 @@
+import 'package:black_hole_flutter/black_hole_flutter.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:schulcloud/app/app.dart';
-import 'package:schulcloud/app/chip.dart';
 
-import '../theming_utils.dart';
 import '../utils.dart';
-import '../widgets/bottom_sheet.dart';
 import 'filtering.dart';
 import 'sorting.dart';
 
@@ -159,7 +156,8 @@ class SortFilterSelection<T> {
     assert(callback != null);
 
     var currentSelection = this;
-    context.showFancyBottomSheet(
+    context.showFancyModalBottomSheet(
+      useRootNavigator: true,
       builder: (_) => Padding(
         padding: EdgeInsets.symmetric(horizontal: 16),
         child: StatefulBuilder(

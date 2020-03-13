@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_cached/flutter_cached.dart';
 import 'package:meta/meta.dart';
+import 'package:pedantic/pedantic.dart';
 import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/course/course.dart';
 
@@ -11,7 +12,12 @@ class CourseBloc {
   const CourseBloc();
 
   CacheController<List<Course>> fetchCourses() => fetchList(
-        makeNetworkCall: () => services.network.get('courses'),
+        // Apparently this returns all courses that aren't archived by the
+        // current user.
+        makeNetworkCall: () => services.api.get(
+          'users/${services.storage.userId}/courses',
+          parameters: {'filter': 'active'},
+        ),
         parser: (data) => Course.fromJson(data),
       );
 
@@ -19,7 +25,7 @@ class CourseBloc {
     assert(courseId != null);
 
     return fetchSingle(
-      makeNetworkCall: () => services.network.get('courses/$courseId'),
+      makeNetworkCall: () => services.api.get('courses/$courseId'),
       parser: (data) => Course.fromJson(data),
     );
   }
@@ -27,7 +33,7 @@ class CourseBloc {
   CacheController<List<Lesson>> fetchLessonsOfCourse(Id<Course> courseId) =>
       fetchList(
         parent: courseId,
-        makeNetworkCall: () => services.network.get(
+        makeNetworkCall: () => services.api.get(
           'lessons',
           parameters: {'courseId': courseId.id},
         ),
@@ -42,13 +48,19 @@ class CourseBloc {
     final storage = services.storage;
     final userFetcher = services.get<UserFetcherService>();
 
-    return CacheController(
+    return SimpleCacheController(
       saveToCache: (teachers) =>
           storage.cache.putChildrenOfType<User>(course.id, teachers),
       loadFromCache: () => storage.cache.getChildrenOfType<User>(course.id),
       fetcher: () => Future.wait([
         for (final teacherId in course.teachers)
-          userFetcher.fetchUser(teacherId, course.id).fetch()
+          () async {
+            final userController = userFetcher.fetchUser(teacherId, course.id);
+            unawaited(userController.fetch());
+            final firstUpdate = await userController.updates
+                .firstWhere((update) => update.hasData, orElse: () => null);
+            return firstUpdate.data;
+          }(),
       ]),
     );
   }

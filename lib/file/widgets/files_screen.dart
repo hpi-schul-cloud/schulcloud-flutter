@@ -1,3 +1,4 @@
+import 'package:black_hole_flutter/black_hole_flutter.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cached/flutter_cached.dart';
@@ -6,12 +7,14 @@ import 'package:schulcloud/course/course.dart';
 
 import '../bloc.dart';
 import 'file_browser.dart';
+import 'upload_button.dart';
 
 class FilesScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FancyScaffold(
       appBar: FancyAppBar(title: Text(context.s.file)),
+      floatingActionButton: UploadButton(ownerId: services.storage.userId),
       sliver: SliverList(
         delegate: SliverChildListDelegate([
           _CoursesList(),
@@ -35,7 +38,7 @@ class _CoursesList extends StatelessWidget {
             primary: false,
             shrinkWrap: true,
             maxCrossAxisExtent: 300,
-            childAspectRatio: 3.2,
+            childAspectRatio: 2.8,
             mainAxisSpacing: 8,
             crossAxisSpacing: 8,
             children: <Widget>[

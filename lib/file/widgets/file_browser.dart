@@ -1,3 +1,4 @@
+import 'package:black_hole_flutter/black_hole_flutter.dart';
 import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -9,6 +10,7 @@ import '../bloc.dart';
 import '../data.dart';
 import 'app_bar.dart';
 import 'file_tile.dart';
+import 'upload_button.dart';
 
 class FileBrowser extends StatelessWidget {
   const FileBrowser(
@@ -155,6 +157,10 @@ class FileBrowser extends StatelessWidget {
       appBar: PreferredSize(
         preferredSize: AppBar().preferredSize,
         child: appBar,
+      ),
+      floatingActionButton: UploadButton(
+        ownerId: ownerId,
+        parentId: parentId,
       ),
       body: CachedBuilder<List<File>>(
         controller: services.get<FileBloc>().fetchFiles(ownerId, parentId),

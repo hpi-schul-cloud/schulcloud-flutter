@@ -1,10 +1,10 @@
+import 'package:black_hole_flutter/black_hole_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:pedantic/pedantic.dart';
 import 'package:schulcloud/app/app.dart';
 
-Future<bool> logOut(BuildContext context) async {
-  logger.i('Logging out…');
-
+Future<bool> signOut(BuildContext context) async {
+  logger.i('Signing out…');
   if (services.storage.isSignedOut) {
     logger.i('Already signed out');
     return true;

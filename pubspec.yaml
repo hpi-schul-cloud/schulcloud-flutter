@@ -14,10 +14,13 @@ dependencies:
 
   analyzer: ^0.39.4
   async: ^2.4.0
+  black_hole_flutter: ^0.1.0
   cupertino_icons: ^0.1.2
+  dartx: ^0.2.0
   datetime_picker_formfield: ^1.0.0
+  file_picker: ^1.4.3+2
   flare_flutter: ^1.5.8
-  flutter_cached: ^3.0.1
+  flutter_cached: ^4.2.4
   flutter_deep_linking: ^0.1.0
   # The current version of flutter_downloader, 1.2.1, causes the build to fail. Until this is fixed, we rely on an older version.
   flutter_downloader: 1.1.9
@@ -25,7 +28,7 @@ dependencies:
   flutter_native_timezone: ^1.0.4
   flutter_svg: ^0.14.2
   flutter_villains: ^1.2.0
-  get_it: ^4.0.0-beta.3
+  get_it: 4.0.0-beta3
   grec_minimal: ^0.0.3
   hive: ^1.2.0
   hive_flutter: ^0.3.0+1
@@ -36,6 +39,7 @@ dependencies:
   logger: ^0.7.0+1
   logger_flutter: ^0.7.1
   meta: ^1.1.8
+  mime: ^0.9.6+3
   package_info: ^0.4.0+3
   pedantic: ^1.8.0+1
   path_provider: ^1.1.0
@@ -70,7 +74,7 @@ flutter:
     - assets/empty_states/default.svg
     - assets/empty_states/broken_pen.svg
     - assets/empty_states/files.flr
-    - assets/icon_logout.svg
+    - assets/icon_signOut.svg
     - assets/file_thumbnails/
     - assets/sloth_error.svg
     - assets/theme/sc/logo/logo_with_text.svg

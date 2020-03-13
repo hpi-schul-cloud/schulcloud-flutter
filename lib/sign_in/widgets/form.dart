@@ -1,3 +1,4 @@
+import 'package:black_hole_flutter/black_hole_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:pedantic/pedantic.dart';
@@ -8,12 +9,12 @@ import '../bloc.dart';
 import 'input.dart';
 import 'morphing_loading_button.dart';
 
-class LoginForm extends StatefulWidget {
+class SignInForm extends StatefulWidget {
   @override
-  _LoginFormState createState() => _LoginFormState();
+  _SignInFormState createState() => _SignInFormState();
 }
 
-class _LoginFormState extends State<LoginForm> {
+class _SignInFormState extends State<SignInForm> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _isEmailValid = true;
@@ -22,17 +23,17 @@ class _LoginFormState extends State<LoginForm> {
   bool _isLoading = false;
   String _ambientError;
 
-  Future<void> _executeLogin(Future<void> Function() login) async {
+  Future<void> _executeSignIn(Future<void> Function() signIn) async {
     setState(() => _isLoading = true);
 
     try {
-      await login();
+      await signIn();
       setState(() => _ambientError = null);
 
       // Logged in.
       unawaited(SchulCloudApp.navigator
           .pushReplacementNamed(appSchemeLink('signedInScreen')));
-    } on InvalidLoginSyntaxError catch (e) {
+    } on InvalidSignInSyntaxError catch (e) {
       // We will display syntax errors on the text fields themselves.
       _ambientError = null;
       _isEmailValid = e.isEmailValid;
@@ -48,19 +49,19 @@ class _LoginFormState extends State<LoginForm> {
     }
   }
 
-  Future<void> _login() async {
-    await _executeLogin(
+  Future<void> _signIn() async {
+    await _executeSignIn(
       () => services
-          .get<LoginBloc>()
-          .login(_emailController.text, _passwordController.text),
+          .get<SignInBloc>()
+          .signIn(_emailController.text, _passwordController.text),
     );
   }
 
-  Future<void> _loginAsDemoStudent() =>
-      _executeLogin(() => services.get<LoginBloc>().loginAsDemoStudent());
+  Future<void> _signInAsDemoStudent() =>
+      _executeSignIn(() => services.get<SignInBloc>().signInAsDemoStudent());
 
-  Future<void> _loginAsDemoTeacher() =>
-      _executeLogin(() => services.get<LoginBloc>().loginAsDemoTeacher());
+  Future<void> _signInAsDemoTeacher() =>
+      _executeSignIn(() => services.get<SignInBloc>().signInAsDemoTeacher());
 
   @override
   Widget build(BuildContext context) {
@@ -83,14 +84,14 @@ class _LoginFormState extends State<LoginForm> {
             ),
           ),
           SizedBox(height: 16),
-          LoginInput(
+          SignInInput(
             controller: _emailController,
             label: s.signIn_form_email,
             error: _isEmailValid ? null : s.signIn_form_email_error,
             onChanged: () => setState(() {}),
           ),
           SizedBox(height: 16),
-          LoginInput(
+          SignInInput(
             controller: _passwordController,
             label: s.signIn_form_password,
             obscureText: true,
@@ -99,7 +100,7 @@ class _LoginFormState extends State<LoginForm> {
           ),
           SizedBox(height: 16),
           MorphingLoadingButton(
-            onPressed: _login,
+            onPressed: _signIn,
             isLoading: _isLoading,
             child: Padding(
               padding: EdgeInsets.all(12),
@@ -118,12 +119,12 @@ class _LoginFormState extends State<LoginForm> {
           Wrap(
             children: <Widget>[
               SecondaryButton(
-                onPressed: _loginAsDemoStudent,
+                onPressed: _signInAsDemoStudent,
                 child: Text(s.signIn_form_demo_student),
               ),
               SizedBox(width: 8),
               SecondaryButton(
-                onPressed: _loginAsDemoTeacher,
+                onPressed: _signInAsDemoTeacher,
                 child: Text(s.signIn_form_demo_teacher),
               ),
             ],

@@ -1,24 +1,27 @@
 import 'dart:math';
 
+import 'package:black_hole_flutter/black_hole_flutter.dart';
 import 'package:flutter/material.dart';
-import 'package:schulcloud/app/app.dart';
 
 class FancyScaffold extends StatelessWidget {
   const FancyScaffold({
     Key key,
     @required this.appBar,
-    @required this.sliver,
     this.floatingActionButton,
+    @required this.sliver,
     this.omitHorizontalPadding = false,
+    this.omitTopPadding = false,
   })  : assert(appBar != null),
         assert(sliver != null),
         assert(omitHorizontalPadding != null),
+        assert(omitTopPadding != null),
         super(key: key);
 
   final Widget appBar;
-  final Widget sliver;
   final Widget floatingActionButton;
+  final Widget sliver;
   final bool omitHorizontalPadding;
+  final bool omitTopPadding;
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +30,8 @@ class FancyScaffold extends StatelessWidget {
         slivers: <Widget>[
           appBar,
           SliverPadding(
-            padding: _paddingForScaffold(context, omitHorizontalPadding),
+            padding: _paddingForScaffold(
+                context, omitHorizontalPadding, omitTopPadding),
             sliver: MediaQuery.removePadding(
               removeLeft: true,
               removeRight: true,
@@ -112,14 +116,14 @@ class TabContent extends StatelessWidget {
   const TabContent({
     Key key,
     this.pageStorageKey,
-    @required this.child,
+    @required this.sliver,
     this.omitHorizontalPadding = false,
-  })  : assert(child != null),
+  })  : assert(sliver != null),
         assert(omitHorizontalPadding != null),
         super(key: key);
 
   final PageStorageKey<dynamic> pageStorageKey;
-  final Widget child;
+  final Widget sliver;
   final bool omitHorizontalPadding;
 
   @override
@@ -132,12 +136,12 @@ class TabContent extends StatelessWidget {
         //   handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context),
         // ),
         SliverPadding(
-          padding: _paddingForScaffold(context, omitHorizontalPadding),
+          padding: _paddingForScaffold(context, omitHorizontalPadding, false),
           sliver: MediaQuery.removePadding(
             removeLeft: true,
             removeRight: true,
             context: context,
-            child: child,
+            child: sliver,
           ),
         ),
       ],
@@ -157,13 +161,14 @@ class FabSpacer extends StatelessWidget {
 EdgeInsets _paddingForScaffold(
   BuildContext context,
   bool omitHorizontalPadding,
+  bool omitTopPadding,
 ) {
   final padding = context.mediaQuery.padding;
   final horizontalPadding = omitHorizontalPadding ? 0.0 : 16.0;
 
   return EdgeInsets.fromLTRB(
     max(horizontalPadding, padding.left),
-    8,
+    omitTopPadding ? 0 : 8,
     max(horizontalPadding, padding.right),
     16,
   );
