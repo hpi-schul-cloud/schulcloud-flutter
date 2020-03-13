@@ -20,7 +20,7 @@ class _SignOutScreenState extends State<SignOutScreen> {
       unawaited(services.get<StorageService>().clear());
 
       unawaited(SchulCloudApp.navigator.pushReplacementNamed('/login'));
-      logger.i('Logged out!');
+      logger.i('Signed out!');
     });
   }
 
@@ -31,12 +31,12 @@ class _SignOutScreenState extends State<SignOutScreen> {
         padding: EdgeInsets.symmetric(horizontal: 16, vertical: 64),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             CircularProgressIndicator(),
             SizedBox(height: 8),
             Text(
-              'Signing out…',
+              context.s.signIn_signOutScreen_message,
               textAlign: TextAlign.center,
             ),
           ],

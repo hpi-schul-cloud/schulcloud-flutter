@@ -533,5 +533,10 @@
   "@signIn_signInScreen_placeholder": {
     "type": "text",
     "description": ""
+  },
+  "signIn_signOutScreen_message": "Abmelden…",
+  "@signIn_signOutScreen_message": {
+    "type": "text",
+    "description": ""
   }
 }
