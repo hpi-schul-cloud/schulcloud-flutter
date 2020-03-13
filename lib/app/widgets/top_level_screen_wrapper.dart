@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:logger_flutter/logger_flutter.dart';
 import 'package:schulcloud/sign_in/sign_in.dart';
-import 'package:uni_links/uni_links.dart';
 
 import '../logger.dart';
 import '../services/storage.dart';

@@ -9,7 +9,6 @@ import 'package:schulcloud/file/widgets/file_tile.dart';
 
 import '../bloc.dart';
 import '../data.dart';
-import 'edit_submittion_screen.dart';
 import 'grade_indicator.dart';
 
 class AssignmentDetailsScreen extends StatefulWidget {
