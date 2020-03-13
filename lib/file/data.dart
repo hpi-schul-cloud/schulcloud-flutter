@@ -83,6 +83,7 @@ class File implements Entity<File>, Comparable<File> {
   @HiveField(5)
   final Id<File> parentId;
 
+  @HiveField(999)
   final bool isDirectory;
   bool get isActualFile => !isDirectory;
 
