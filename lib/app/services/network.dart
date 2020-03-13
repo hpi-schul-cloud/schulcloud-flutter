@@ -60,10 +60,11 @@ class ErrorBody {
 
 @immutable
 class NoConnectionToServerError extends FancyException {
-  NoConnectionToServerError()
+  NoConnectionToServerError(StackTrace stackTrace)
       : super(
           isGlobal: true,
           messageBuilder: (context) => context.s.app_errorScreen_noConnection,
+          stackTrace: stackTrace,
         );
 }
 
@@ -73,8 +74,13 @@ class ServerError extends FancyException {
     this.body,
     ErrorMessageBuilder messageBuilder, {
     bool isGlobal = false,
+    StackTrace stackTrace,
   })  : assert(body != null),
-        super(isGlobal: isGlobal, messageBuilder: messageBuilder);
+        super(
+          isGlobal: isGlobal,
+          messageBuilder: messageBuilder,
+          stackTrace: stackTrace,
+        );
 
   final ErrorBody body;
 }
@@ -122,9 +128,9 @@ class NetworkService {
     http.Response response;
     try {
       response = await call();
-    } on SocketException catch (e) {
+    } on SocketException catch (e, st) {
       logger.w('No server connection', e);
-      throw NoConnectionToServerError();
+      throw NoConnectionToServerError(st);
     }
 
     // Succeed if its a 2xx status code.
