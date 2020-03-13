@@ -83,6 +83,11 @@
     "type": "text",
     "description": ""
   },
+  "app_topLevelScreenWrapper_signInFirst": "Please sign in first and then open the link",
+  "@app_topLevelScreenWrapper_signInFirst": {
+    "type": "text",
+    "description": ""
+  },
   "assignment": "Assignments",
   "@assignment": {
     "type": "text",

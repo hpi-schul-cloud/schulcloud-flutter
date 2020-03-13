@@ -5,7 +5,6 @@ import 'package:logger_flutter/logger_flutter.dart';
 import 'package:schulcloud/login/login.dart';
 import 'package:uni_links/uni_links.dart';
 
-import '../app_config.dart';
 import '../services/storage.dart';
 import '../utils.dart';
 import 'schulcloud_app.dart';
@@ -31,10 +30,14 @@ class _TopLevelScreenWrapperState extends State<TopLevelScreenWrapper> {
 
   @override
   Widget build(BuildContext context) {
-    scheduleMicrotask(() => _handleUri(context));
-
     return LogConsoleOnShake(
-      child: widget.child,
+      child: Scaffold(
+        body: Builder(builder: (context) {
+          scheduleMicrotask(() => _handleUri(context));
+
+          return widget.child;
+        }),
+      ),
     );
   }
 
@@ -43,29 +46,30 @@ class _TopLevelScreenWrapperState extends State<TopLevelScreenWrapper> {
       return;
     }
     assert(SchulCloudApp.navigator != null);
+    final uri = _uriToVisit;
+    _uriToVisit = null;
 
-    final isSignedIn = services.storage.isSignedIn;
-    final firstSegment = _uriToVisit.pathSegments[0];
+    final isSignedOut = services.storage.isSignedOut;
+    final firstSegment = uri.pathSegments[0];
 
-    if (!isSignedIn && (firstSegment == 'login' || firstSegment == 'logout')) {
+    if (isSignedOut && (firstSegment == 'login' || firstSegment == 'logout')) {
       // We're already signed out and should see the login screen
-      _uriToVisit = null;
       return;
     }
 
     if (firstSegment == 'login' || firstSegment == 'logout') {
-      _uriToVisit = null;
       logOut(context);
       return;
     }
 
-    if (!isSignedIn) {
+    if (isSignedOut) {
       // We're still at the sign in screen. Wait for the user to sign in and
       // then continue to our destination.
+      context
+          .showSimpleSnackBar(context.s.app_topLevelScreenWrapper_signInFirst);
       return;
     }
 
-    LoggedInScreenState.currentNavigator.pushNamed(_uriToVisit.toString());
-    _uriToVisit = null;
+    LoggedInScreenState.currentNavigator.pushNamed(uri.toString());
   }
 }
