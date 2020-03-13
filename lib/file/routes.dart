@@ -16,7 +16,7 @@ Route _buildSubdirRoute(Id<Entity> Function(RouteResult result) ownerGetter) {
 
 final fileRoutes = Route(
   matcher: Matcher.path('files'),
-  materialPageRouteBuilder: (_, __) => FilesScreen(),
+  materialBuilder: (_, __) => FilesScreen(),
   routes: [
     Route(
       matcher: Matcher.path('my'),
@@ -30,7 +30,7 @@ final fileRoutes = Route(
     ),
     Route(
       matcher: Matcher.path('courses'),
-      materialPageRouteBuilder: (_, __) => FilesScreen(),
+      materialBuilder: (_, __) => FilesScreen(),
       routes: [
         Route(
           matcher: Matcher.path('{courseId}'),

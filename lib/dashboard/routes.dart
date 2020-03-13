@@ -4,5 +4,5 @@ import 'widgets/dashboard_screen.dart';
 
 final dashboardRoutes = Route(
   matcher: Matcher.path('dashboard'),
-  materialPageRouteBuilder: (_, __) => DashboardScreen(),
+  materialBuilder: (_, __) => DashboardScreen(),
 );

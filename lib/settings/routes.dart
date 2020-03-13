@@ -3,5 +3,5 @@ import 'package:schulcloud/settings/settings.dart';
 
 final settingsRoutes = Route(
   matcher: Matcher.path('settings'),
-  materialPageRouteBuilder: (_, __) => SettingsScreen(),
+  materialBuilder: (_, __) => SettingsScreen(),
 );

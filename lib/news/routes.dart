@@ -7,11 +7,11 @@ import 'widgets/news_screen.dart';
 
 final newsRoutes = Route(
   matcher: Matcher.path('news'),
-  materialPageRouteBuilder: (_, __) => NewsScreen(),
+  materialBuilder: (_, __) => NewsScreen(),
   routes: [
     Route(
       matcher: Matcher.path('{newsId}'),
-      materialPageRouteBuilder: (_, result) =>
+      materialBuilder: (_, result) =>
           ArticleScreen(Id<Article>(result['newsId'])),
     ),
   ],

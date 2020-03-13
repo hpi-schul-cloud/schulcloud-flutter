@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart' hide Route;
 import 'package:flutter_deep_linking/flutter_deep_linking.dart';
 import 'package:schulcloud/assignment/assignment.dart';
 import 'package:schulcloud/course/course.dart';
@@ -49,9 +48,6 @@ final router = Router(
         ),
       ],
     ),
-    Route(
-      matcher: Matcher.any(),
-      materialPageRouteBuilder: (_, result) => NotFoundScreen(result.uri),
-    ),
+    Route(materialBuilder: (_, result) => NotFoundScreen(result.uri)),
   ],
 );
