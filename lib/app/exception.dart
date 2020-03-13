@@ -8,9 +8,11 @@ class FancyException implements Exception {
   FancyException({
     @required this.isGlobal,
     @required this.messageBuilder,
+    this.originalException,
     this.stackTrace,
   })  : assert(isGlobal != null),
-        assert(messageBuilder != null);
+        assert(messageBuilder != null),
+        assert((originalException == null) == (stackTrace == null));
 
   /// Whether the error applies to the whole app. Certain errors indicate that
   /// the whole app is in a certain exceptional state, for example when there's
@@ -23,10 +25,10 @@ class FancyException implements Exception {
   String buildMessage(context) => messageBuilder(context);
 
   /// Some [FancyException] are thrown because other, non-fancy [Exception]s
-  /// got thrown before and got caught. This is the place to put the
-  /// [StackTrace] of the original exception to make debugging easier.
+  /// got thrown before and got caught.
+  final dynamic originalException;
   final StackTrace stackTrace;
-  bool get hasStackTrace => stackTrace != null;
+  bool get hasOriginalException => originalException != null;
 
   @Deprecated('To display FancyExceptions, use the messageBuilder instead of '
       'toString(). It takes a context and returns a localized error message.')
