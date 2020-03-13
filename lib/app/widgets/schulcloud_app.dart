@@ -12,6 +12,7 @@ import 'package:schulcloud/sign_in/sign_in.dart';
 import 'package:schulcloud/news/news.dart';
 
 import '../app_config.dart';
+import '../exception.dart';
 import '../services/navigator_observer.dart';
 import '../services/storage.dart';
 import '../utils.dart';
@@ -117,22 +118,24 @@ class _SignedInScreenState extends State<SignedInScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return FancyCachedBuilder(
-      controller: CacheController.fromStreamOfUpdates(
-        fetch: () async {},
-        stream: Stream.value(CacheUpdate<void>.error(
-          Exception('Some generic exception.'),
-          // FancyException(
-          //   isGlobal: true,
-          //   messageBuilder: (_) =>
-          //       'Some error description. Lorem ipsum dolor sit amet.',
-          // ),
-          StackTrace.current,
-        )),
+    return Scaffold(
+      body: FancyCachedBuilder(
+        controller: CacheController.fromStreamOfUpdates(
+          fetch: () async {},
+          stream: Stream.value(CacheUpdate<void>.error(
+            // Exception('Some generic exception.'),
+            FancyException(
+              isGlobal: true,
+              messageBuilder: (_) =>
+                  'Some error description. Lorem ipsum dolor sit amet.',
+            ),
+            StackTrace.current,
+          )),
+        ),
+        builder: (context, data, isFetching) {
+          return Container(color: Colors.yellow);
+        },
       ),
-      builder: (context, data, isFetching) {
-        return Container(color: Colors.yellow);
-      },
     );
 
     return LogConsoleOnShake(

@@ -29,8 +29,8 @@ void _showStackTrace(
   ));
 }
 
-class StripedErrorWidget extends StatelessWidget {
-  const StripedErrorWidget(this.error, this.stackTrace);
+class PinkStripedErrorWidget extends StatelessWidget {
+  const PinkStripedErrorWidget(this.error, this.stackTrace);
 
   final dynamic error;
   final StackTrace stackTrace;
@@ -69,15 +69,18 @@ class StripedErrorWidget extends StatelessWidget {
         child: GestureDetector(
           onLongPress: () => _showStackTrace(context, error, stackTrace),
           child: SafeArea(
-            child: Text(
-              error.toString(),
-              style: TextStyle(
-                color: Colors.black,
-                fontStyle: FontStyle.normal,
-                fontSize: 16,
-                fontFamily: 'Roboto',
-                fontWeight: FontWeight.bold,
-                decoration: TextDecoration.none,
+            child: Center(
+              child: Text(
+                '$error\nLong-tap to view stack trace.',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: Colors.black,
+                  fontStyle: FontStyle.normal,
+                  fontSize: 16,
+                  fontFamily: 'Roboto',
+                  fontWeight: FontWeight.bold,
+                  decoration: TextDecoration.none,
+                ),
               ),
             ),
           ),
@@ -87,55 +90,26 @@ class StripedErrorWidget extends StatelessWidget {
   }
 }
 
-class _MessageAndActions {
-  _MessageAndActions(this.message, this.actions);
-
-  factory _MessageAndActions.of(
-      BuildContext context, dynamic error, StackTrace stackTrace) {
-    String message;
-    final actions = <Widget>[];
-    final s = context.s;
-
-    if (error is NoConnectionToServerError) {
-      message = s.app_errorScreen_noConnection;
-    } else if (error is AuthenticationError) {
-      message = s.app_errorScreen_authError;
-      actions.add(SecondaryButton(
-        onPressed: () => signOut(context),
-        child: Text(s.general_signOut),
-      ));
-    } else {
-      message = s.app_errorScreen_unknown(exceptionMessage(error));
-      actions.add(SecondaryButton(
-        onPressed: () => _showStackTrace(context, error, stackTrace),
-        child: Text(s.app_errorScreen_unknown_showStackTrace),
-      ));
-    }
-
-    return _MessageAndActions(message, actions);
-  }
-
-  final String message;
-  final List<Widget> actions;
-}
-
 /// A screen that displays an [error].
 class ErrorScreen extends StatelessWidget {
   const ErrorScreen(this.error, this.stackTrace, {this.onRetry})
       : assert(error != null),
         assert(stackTrace != null);
 
-  final dynamic error;
+  final FancyException error;
   final StackTrace stackTrace;
   final VoidCallback onRetry;
 
   @override
   Widget build(BuildContext context) {
-    final messageAndActions = _MessageAndActions.of(context, error, stackTrace);
-
     return EmptyStateScreen(
-      text: messageAndActions.message,
-      actions: messageAndActions.actions,
+      text: error.buildMessage(context),
+      actions: [
+        SecondaryButton(
+          onPressed: () => _showStackTrace(context, error, stackTrace),
+          child: Text('Show stack trace'), // TODO(marcelgarus): Localize!
+        ),
+      ],
       onRetry: onRetry,
       child: Padding(
         padding: EdgeInsets.only(bottom: 16),
@@ -154,14 +128,12 @@ class ErrorBanner extends StatelessWidget {
       : assert(error != null),
         assert(stackTrace != null);
 
-  final dynamic error;
+  final FancyException error;
   final StackTrace stackTrace;
   final VoidCallback onRetry;
 
   @override
   Widget build(BuildContext context) {
-    final messageAndActions = _MessageAndActions.of(context, error, stackTrace);
-
     return Material(
       elevation: 4,
       child: SafeArea(
@@ -169,8 +141,11 @@ class ErrorBanner extends StatelessWidget {
           padding: EdgeInsets.all(8),
           child: Row(
             children: <Widget>[
-              Expanded(child: Text(messageAndActions.message)),
-              for (final action in messageAndActions.actions) action,
+              Expanded(child: Text(error.buildMessage(context))),
+              SecondaryButton(
+                onPressed: () => _showStackTrace(context, error, stackTrace),
+                child: Text('Show stack trace'), // TODO(marcelgarus): Localize!
+              ),
             ],
           ),
         ),

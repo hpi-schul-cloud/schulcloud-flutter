@@ -27,8 +27,15 @@ class FancyCachedBuilder<T> extends StatelessWidget {
         // children of this widget. If they can't handle them, they should
         // catch them nevertheless and then throw [FancyException]s instead.
         if (update.error is! FancyException) {
-          logger.e(update.error);
-          return StripedErrorWidget(update.error, update.stackTrace);
+          logger
+            ..e('The following exception occurred. If you want to display an '
+                'exception to the user, instead create a custom exception by '
+                'extending FancyException. This will be caught and display a '
+                'beautiful error screen.')
+            ..e(update.error)
+            ..e('To view the full stack trace, long-tap the pink striped '
+                'area.');
+          return PinkStripedErrorWidget(update.error, update.stackTrace);
         }
 
         final error = update.error as FancyException;
@@ -49,7 +56,7 @@ class FancyCachedBuilder<T> extends StatelessWidget {
         }
 
         // TODO(marcelgarus): Display both the error and the cached content.
-        return StripedErrorWidget(update.error, update.stackTrace);
+        return PinkStripedErrorWidget(update.error, update.stackTrace);
       },
     );
   }

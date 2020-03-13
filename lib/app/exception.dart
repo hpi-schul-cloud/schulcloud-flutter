@@ -7,6 +7,7 @@ typedef ErrorMessageBuilder = String Function(BuildContext context);
 class FancyException implements Exception {
   FancyException({
     @required this.isGlobal,
+    @required this.stackTrace,
     @required this.messageBuilder,
   })  : assert(isGlobal != null),
         assert(messageBuilder != null);
@@ -16,8 +17,12 @@ class FancyException implements Exception {
   /// no connection to the server or the user's authentication token expired.
   final bool isGlobal;
 
+  final StackTrace stackTrace;
+
   /// Creates a localized message describing this error.
   final ErrorMessageBuilder messageBuilder;
+
+  String buildMessage(context) => messageBuilder(context);
 
   @Deprecated('To display FancyExceptions, use the messageBuilder instead of '
       'toString(). It takes a context and returns a localized error message.')
