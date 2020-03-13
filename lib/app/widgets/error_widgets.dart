@@ -100,9 +100,13 @@ class ErrorScreen extends StatelessWidget {
     return EmptyStateScreen(
       text: error.buildMessage(context),
       actions: [
-        if (error.hasStackTrace)
+        if (error.hasOriginalException)
           SecondaryButton(
-            onPressed: () => _showStackTrace(context, error, error.stackTrace),
+            onPressed: () => _showStackTrace(
+              context,
+              error.originalException,
+              error.stackTrace,
+            ),
             child: Text('Show stack trace'), // TODO(marcelgarus): Localize!
           ),
       ],
@@ -135,10 +139,13 @@ class ErrorBanner extends StatelessWidget {
           child: Row(
             children: <Widget>[
               Expanded(child: Text(error.buildMessage(context))),
-              if (error.hasStackTrace)
+              if (error.hasOriginalException)
                 SecondaryButton(
-                  onPressed: () =>
-                      _showStackTrace(context, error, error.stackTrace),
+                  onPressed: () => _showStackTrace(
+                    context,
+                    error.originalException,
+                    error.stackTrace,
+                  ),
                   child:
                       Text('Show stack trace'), // TODO(marcelgarus): Localize!
                 ),
