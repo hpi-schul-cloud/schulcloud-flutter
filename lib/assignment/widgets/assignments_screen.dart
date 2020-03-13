@@ -79,11 +79,10 @@ class _AssignmentsScreenState extends State<AssignmentsScreen> {
     final s = context.s;
 
     return Scaffold(
-      body: CachedBuilder<List<Assignment>>(
+      // TODO(marcelgarus): Allow pull-to-refresh.
+      body: FancyCachedBuilder<List<Assignment>>.handleLoading(
         controller: services.storage.root.assignments.controller,
-        errorBannerBuilder: (_, error, st) => ErrorBanner(error, st),
-        errorScreenBuilder: (_, error, st) => ErrorScreen(error, st),
-        builder: (context, allAssignments) {
+        builder: (context, allAssignments, isFetching) {
           final assignments = _sortFilter.apply(allAssignments);
 
           return CustomScrollView(

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_cached/flutter_cached.dart';
 import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/dashboard/widgets/dashboard_card.dart';
 import 'package:time_machine/time_machine.dart';
@@ -17,17 +16,11 @@ class CalendarDashboardCard extends StatelessWidget {
       omitHorizontalPadding: false,
       color: context.theme.primaryColor
           .withOpacity(context.theme.isDark ? 0.5 : 0.12),
-      child: CachedRawBuilder<List<Event>>(
+      child: FancyCachedBuilder<List<Event>>.handleLoading(
         controller: services.get<CalendarBloc>().fetchTodaysEvents(),
-        builder: (context, update) {
-          if (!update.hasData) {
-            return update.hasError
-                ? ErrorBanner(update.error, update.stackTrace)
-                : Center(child: CircularProgressIndicator());
-          }
-
+        builder: (context, events, isFetching) {
           final now = Instant.now();
-          final events = update.data.where((e) => e.end > now);
+          events = events.where((e) => e.end > now).toList();
           if (events.isEmpty) {
             return Text(
               s.calendar_dashboardCard_empty,

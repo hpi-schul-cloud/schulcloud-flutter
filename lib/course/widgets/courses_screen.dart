@@ -1,4 +1,3 @@
-import 'package:flutter_cached/flutter_cached.dart';
 import 'package:flutter/material.dart';
 import 'package:schulcloud/app/app.dart';
 
@@ -9,11 +8,10 @@ class CoursesScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: CachedBuilder<List<Course>>(
+      // TODO(marcelgarus): Allow pull-to-refresh.
+      body: FancyCachedBuilder<List<Course>>.handleLoading(
         controller: services.storage.root.courses.controller,
-        errorBannerBuilder: (_, error, st) => ErrorBanner(error, st),
-        errorScreenBuilder: (_, error, st) => ErrorScreen(error, st),
-        builder: (context, courses) {
+        builder: (context, courses, isFetching) {
           if (courses.isEmpty) {
             return EmptyStateScreen(
               text: context.s.course_coursesScreen_empty,

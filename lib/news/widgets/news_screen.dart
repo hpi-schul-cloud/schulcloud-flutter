@@ -1,4 +1,3 @@
-import 'package:flutter_cached/flutter_cached.dart';
 import 'package:flutter/material.dart';
 import 'package:schulcloud/app/app.dart';
 
@@ -10,11 +9,10 @@ class NewsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: CachedBuilder<List<Article>>(
+      // TODO(marcelgarus): Allow pull-to-refresh.
+      body: FancyCachedBuilder<List<Article>>.handleLoading(
         controller: services.storage.root.news.controller,
-        errorBannerBuilder: (_, error, st) => ErrorBanner(error, st),
-        errorScreenBuilder: (_, error, st) => ErrorScreen(error, st),
-        builder: (_, articles) {
+        builder: (context, articles, isFetching) {
           articles.sort((a1, a2) => a2.publishedAt.compareTo(a1.publishedAt));
 
           return CustomScrollView(

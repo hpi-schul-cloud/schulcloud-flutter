@@ -2,10 +2,8 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:schulcloud/sign_in/sign_in.dart';
 
 import '../app.dart';
-import '../services/network.dart';
 import '../utils.dart';
 import 'buttons.dart';
 import 'empty_state.dart';
@@ -92,12 +90,9 @@ class PinkStripedErrorWidget extends StatelessWidget {
 
 /// A screen that displays an [error].
 class ErrorScreen extends StatelessWidget {
-  const ErrorScreen(this.error, this.stackTrace, {this.onRetry})
-      : assert(error != null),
-        assert(stackTrace != null);
+  const ErrorScreen(this.error, {this.onRetry}) : assert(error != null);
 
   final FancyException error;
-  final StackTrace stackTrace;
   final VoidCallback onRetry;
 
   @override
@@ -105,10 +100,11 @@ class ErrorScreen extends StatelessWidget {
     return EmptyStateScreen(
       text: error.buildMessage(context),
       actions: [
-        SecondaryButton(
-          onPressed: () => _showStackTrace(context, error, stackTrace),
-          child: Text('Show stack trace'), // TODO(marcelgarus): Localize!
-        ),
+        if (error.hasStackTrace)
+          SecondaryButton(
+            onPressed: () => _showStackTrace(context, error, error.stackTrace),
+            child: Text('Show stack trace'), // TODO(marcelgarus): Localize!
+          ),
       ],
       onRetry: onRetry,
       child: Padding(
@@ -124,12 +120,9 @@ class ErrorScreen extends StatelessWidget {
 
 /// A screen that displays an [error].
 class ErrorBanner extends StatelessWidget {
-  const ErrorBanner(this.error, this.stackTrace, {this.onRetry})
-      : assert(error != null),
-        assert(stackTrace != null);
+  const ErrorBanner(this.error, {this.onRetry}) : assert(error != null);
 
   final FancyException error;
-  final StackTrace stackTrace;
   final VoidCallback onRetry;
 
   @override
@@ -142,10 +135,13 @@ class ErrorBanner extends StatelessWidget {
           child: Row(
             children: <Widget>[
               Expanded(child: Text(error.buildMessage(context))),
-              SecondaryButton(
-                onPressed: () => _showStackTrace(context, error, stackTrace),
-                child: Text('Show stack trace'), // TODO(marcelgarus): Localize!
-              ),
+              if (error.hasStackTrace)
+                SecondaryButton(
+                  onPressed: () =>
+                      _showStackTrace(context, error, error.stackTrace),
+                  child:
+                      Text('Show stack trace'), // TODO(marcelgarus): Localize!
+                ),
             ],
           ),
         ),

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_cached/flutter_cached.dart';
 import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/dashboard/dashboard.dart';
 
@@ -19,16 +18,9 @@ class NewsDashboardCard extends StatelessWidget {
       footerButtonText: s.news_dashboardCard_all,
       onFooterButtonPressed: () => context.navigator
           .push(MaterialPageRoute(builder: (context) => NewsScreen())),
-      child: CachedRawBuilder<List<Article>>(
+      child: FancyCachedBuilder<List<Article>>.handleLoading(
         controller: services.storage.root.news.controller,
-        builder: (context, update) {
-          if (!update.hasData) {
-            return update.hasError
-                ? ErrorBanner(update.error, update.stackTrace)
-                : Center(child: CircularProgressIndicator());
-          }
-
-          Iterable<Article> articles = update.data;
+        builder: (context, articles, isFetching) {
           if (articles.isEmpty) {
             return Padding(
               padding: EdgeInsets.symmetric(horizontal: 16),
@@ -36,9 +28,8 @@ class NewsDashboardCard extends StatelessWidget {
             );
           }
 
-          articles = update.data
-            ..sort((a1, a2) => -a1.publishedAt.compareTo(a2.publishedAt));
-          articles = articles.take(articleCount);
+          articles.sort((a1, a2) => -a1.publishedAt.compareTo(a2.publishedAt));
+          articles = articles.take(articleCount).toList();
 
           return Column(
             children: <Widget>[

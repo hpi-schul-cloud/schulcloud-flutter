@@ -70,13 +70,9 @@ class FileBrowser extends StatelessWidget {
   }
 
   Widget _buildEmbedded(BuildContext context) {
-    return CachedRawBuilder<List<File>>(
+    return FancyCachedBuilder<List<File>>(
       controller: _filesController,
-      builder: (context, update) {
-        if (update.hasError) {
-          return ErrorScreen(update.error, update.stackTrace);
-        }
-        final files = update.data;
+      builder: (context, files, isFetching) {
         if (files?.isEmpty ?? true) {
           return _buildEmptyState(context);
         }
@@ -103,11 +99,10 @@ class FileBrowser extends StatelessWidget {
         ownerId: owner.id,
         parentId: parent.id,
       ),
-      body: CachedBuilder<List<File>>(
+      // TODO(marcelgarus): Allow pull-to-refresh.
+      body: FancyCachedBuilder<List<File>>.handleLoading(
         controller: _filesController,
-        errorBannerBuilder: (_, error, st) => ErrorBanner(error, st),
-        errorScreenBuilder: (_, error, st) => ErrorScreen(error, st),
-        builder: (context, files) {
+        builder: (context, files, isFetching) {
           if (files.isEmpty) {
             return _buildEmptyState(context);
           }

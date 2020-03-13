@@ -215,15 +215,10 @@ class _SubmissionTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CachedRawBuilder<Submission>(
+    return FancyCachedBuilder<Submission>(
       controller: assignment.mySubmission,
-      builder: (_, update) {
-        if (update.hasError) {
-          return ErrorScreen(update.error, update.stackTrace);
-        }
-
-        // TODO(marcelgarus): use Maybe<Submission> to differentiate between loading and no submission when updating flutter_cached
-        final submission = update.data;
+      builder: (context, submission, isFetching) {
+        // TODO(JonasWanke): differentiate between loading and no submission
         return Stack(
           children: <Widget>[
             TabContent(
@@ -265,17 +260,9 @@ class _SubmissionTab extends StatelessWidget {
 
     final s = context.s;
 
-    return CachedRawBuilder<User>(
+    return FancyCachedBuilder<User>(
       controller: services.storage.userId.controller,
-      builder: (context, update) {
-        if (update.hasError) {
-          return ErrorScreen(update.error, update.stackTrace);
-        }
-        if (update.data == null) {
-          return SizedBox.shrink();
-        }
-        final user = update.data;
-
+      builder: (context, user, isFetching) {
         String labelText;
         if (submission == null &&
             user.hasPermission(Permission.submissionsCreate)) {
@@ -319,14 +306,9 @@ class _FeedbackTab extends StatelessWidget {
   Widget build(BuildContext context) {
     final s = context.s;
 
-    return CachedRawBuilder<Submission>(
+    return FancyCachedBuilder<Submission>(
       controller: assignment.mySubmission,
-      builder: (_, update) {
-        if (update.hasError) {
-          return ErrorScreen(update.error, update.stackTrace);
-        }
-
-        final submission = update.data;
+      builder: (_, submission, isFetching) {
         return TabContent(
           pageStorageKey: PageStorageKey<String>('feedback'),
           omitHorizontalPadding: true,

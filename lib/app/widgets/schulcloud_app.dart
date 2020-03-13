@@ -118,25 +118,25 @@ class _SignedInScreenState extends State<SignedInScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: FancyCachedBuilder(
-        controller: CacheController.fromStreamOfUpdates(
-          fetch: () async {},
-          stream: Stream.value(CacheUpdate<void>.error(
-            // Exception('Some generic exception.'),
-            FancyException(
-              isGlobal: true,
-              messageBuilder: (_) =>
-                  'Some error description. Lorem ipsum dolor sit amet.',
-            ),
-            StackTrace.current,
-          )),
-        ),
-        builder: (context, data, isFetching) {
-          return Container(color: Colors.yellow);
-        },
-      ),
-    );
+    // return Scaffold(
+    //   body: FancyCachedBuilder(
+    //     controller: CacheController.fromStreamOfUpdates(
+    //       fetch: () async {},
+    //       stream: Stream.value(CacheUpdate<void>.error(
+    //         // Exception('Some generic exception.'),
+    //         FancyException(
+    //           isGlobal: true,
+    //           messageBuilder: (_) =>
+    //               'Some error description. Lorem ipsum dolor sit amet.',
+    //         ),
+    //         StackTrace.current,
+    //       )),
+    //     ),
+    //     builder: (context, data, isFetching) {
+    //       return Container(color: Colors.yellow);
+    //     },
+    //   ),
+    // );
 
     return LogConsoleOnShake(
       child: WillPopScope(

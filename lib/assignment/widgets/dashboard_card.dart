@@ -18,21 +18,13 @@ class AssignmentDashboardCard extends StatelessWidget {
       footerButtonText: s.assignment_dashboardCard_all,
       onFooterButtonPressed: () => context.navigator
           .push(MaterialPageRoute(builder: (context) => AssignmentsScreen())),
-      child: CachedRawBuilder<List<Assignment>>(
+      child: FancyCachedBuilder<List<Assignment>>.handleLoading(
         controller: services.storage.root.assignments.controller,
-        builder: (context, update) {
-          if (!update.hasData) {
-            return Center(
-              child: update.hasError
-                  ? ErrorBanner(update.error, update.stackTrace)
-                  : CircularProgressIndicator(),
-            );
-          }
-
+        builder: (context, assignments, isFetching) {
           // Only show open assignments that are due in the next week
           final start = LocalDate.today();
           final end = start.addDays(7);
-          final openAssignments = update.data.where((h) {
+          final openAssignments = assignments.where((h) {
             final dueAt = h.dueAt?.inLocalZone()?.localDateTime?.calendarDate;
             return dueAt == null || (start <= dueAt && dueAt <= end);
           });
