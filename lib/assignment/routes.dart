@@ -2,7 +2,7 @@ import 'package:flutter_deep_linking/flutter_deep_linking.dart';
 import 'package:schulcloud/app/app.dart';
 
 import 'data.dart';
-import 'widgets/assignment_details_screen.dart';
+import 'widgets/assignment_detail_screen.dart';
 import 'widgets/assignments_screen.dart';
 import 'widgets/edit_submittion_screen.dart';
 
@@ -26,7 +26,7 @@ final assignmentRoutes = Route(
             ? tab.substring(_activeTabPrefix.length)
             : null;
 
-        return AssignmentDetailsScreen(
+        return AssignmentDetailScreen(
           Id<Assignment>(result['assignmentId']),
           initialTab: tab,
         );

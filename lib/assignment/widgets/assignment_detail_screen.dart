@@ -11,19 +11,18 @@ import '../bloc.dart';
 import '../data.dart';
 import 'grade_indicator.dart';
 
-class AssignmentDetailsScreen extends StatefulWidget {
-  const AssignmentDetailsScreen(this.assignmentId, {this.initialTab})
+class AssignmentDetailScreen extends StatefulWidget {
+  const AssignmentDetailScreen(this.assignmentId, {this.initialTab})
       : assert(assignmentId != null);
 
   final Id<Assignment> assignmentId;
   final String initialTab;
 
   @override
-  _AssignmentDetailsScreenState createState() =>
-      _AssignmentDetailsScreenState();
+  _AssignmentDetailScreenState createState() => _AssignmentDetailScreenState();
 }
 
-class _AssignmentDetailsScreenState extends State<AssignmentDetailsScreen>
+class _AssignmentDetailScreenState extends State<AssignmentDetailScreen>
     with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
