@@ -1,6 +1,6 @@
+import 'package:black_hole_flutter/black_hole_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:schulcloud/app/app.dart';
 
 class FileBrowserAppBar extends StatefulWidget {
   const FileBrowserAppBar({this.backgroundColor, this.title});
@@ -15,8 +15,8 @@ class FileBrowserAppBar extends StatefulWidget {
 class _FileBrowserAppBarState extends State<FileBrowserAppBar> {
   @override
   Widget build(BuildContext context) {
-    final textColor = widget.backgroundColor?.highEmphasisColor ??
-        context.theme.highEmphasisColor;
+    final textColor = widget.backgroundColor?.highEmphasisOnColor ??
+        context.theme.highEmphasisOnBackground;
 
     return Hero(
       tag: context.navigator,
