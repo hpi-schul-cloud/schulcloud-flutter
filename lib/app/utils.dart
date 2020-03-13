@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:ui';
 
+import 'package:black_hole_flutter/black_hole_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cached/flutter_cached.dart';
 import 'package:get_it/get_it.dart';
@@ -14,11 +15,6 @@ import 'services/network.dart';
 import 'services/storage.dart';
 
 extension FancyContext on BuildContext {
-  MediaQueryData get mediaQuery => MediaQuery.of(this);
-  ThemeData get theme => Theme.of(this);
-  NavigatorState get navigator => Navigator.of(this);
-  NavigatorState get rootNavigator => Navigator.of(this, rootNavigator: true);
-  ScaffoldState get scaffold => Scaffold.of(this);
   S get s => S.of(this);
 
   void showSimpleSnackBar(String message) {

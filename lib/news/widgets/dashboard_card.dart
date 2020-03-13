@@ -1,3 +1,4 @@
+import 'package:black_hole_flutter/black_hole_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cached/flutter_cached.dart';
 import 'package:schulcloud/app/app.dart';
@@ -84,7 +85,7 @@ class NewsDashboardCard extends StatelessWidget {
               maxLines: 3,
               overflow: TextOverflow.ellipsis,
               style: context.textTheme.body1.copyWith(
-                color: context.theme.mediumEmphasisColor,
+                color: context.theme.mediumEmphasisOnBackground,
               ),
             ),
           ],

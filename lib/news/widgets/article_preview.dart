@@ -1,3 +1,4 @@
+import 'package:black_hole_flutter/black_hole_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cached/flutter_cached.dart';
 import 'package:provider/provider.dart';
@@ -70,7 +71,7 @@ class ArticlePreview extends StatelessWidget {
                       : context.s.news_articlePreview_subtitle(
                           article.publishedAt.shortDateString, authorName),
                   style: TextStyle(
-                    color: theme.cardColor.mediumEmphasisColor,
+                    color: theme.cardColor.mediumEmphasisOnColor,
                   ),
                 );
               },
