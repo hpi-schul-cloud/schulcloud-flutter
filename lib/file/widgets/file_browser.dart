@@ -40,9 +40,8 @@ class FileBrowser extends StatelessWidget {
     } else if (isOwnerMe) {
       context.navigator.pushNamed('/files/my/${file.id}');
     } else {
-      // TODO(JonasWanke): Use logger
-      print(
-          'Unknown owner: $ownerId (type: ${ownerId.runtimeType}) while trying to open directory $file');
+      logger.e(
+          'Unknown owner: $ownerId (type: ${ownerId.runtimeType}) while trying to open directory ${file.id}');
     }
   }
 
