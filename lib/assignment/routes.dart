@@ -1,10 +1,10 @@
 import 'package:flutter_deep_linking/flutter_deep_linking.dart';
 import 'package:schulcloud/app/app.dart';
-import 'package:schulcloud/assignment/widgets/edit_submittion_screen.dart';
 
 import 'data.dart';
 import 'widgets/assignment_details_screen.dart';
 import 'widgets/assignments_screen.dart';
+import 'widgets/edit_submittion_screen.dart';
 
 const _activeTabPrefix = 'activetabid=';
 final assignmentRoutes = Route(

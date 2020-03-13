@@ -116,7 +116,7 @@ class _LessonScreenState extends State<LessonScreen> {
   }
 
   void _showLessonContentMenu(BuildContext context, Lesson lesson) {
-    context.showFancyBottomSheet(
+    context.showFancyModalBottomSheet(
       builder: (context) => Column(
         mainAxisSize: MainAxisSize.min,
         children: [

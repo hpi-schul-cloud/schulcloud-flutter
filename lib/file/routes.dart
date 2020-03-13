@@ -1,7 +1,11 @@
 import 'package:flutter_deep_linking/flutter_deep_linking.dart';
 import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/course/course.dart';
-import 'package:schulcloud/file/file.dart';
+
+import 'data.dart';
+import 'widgets/file_browser.dart';
+import 'widgets/files_screen.dart';
+import 'widgets/page_route.dart';
 
 Route _buildSubdirRoute(Id<Entity> Function(RouteResult result) ownerGetter) {
   return Route(

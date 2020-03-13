@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:logger_flutter/logger_flutter.dart';
-import 'package:schulcloud/login/login.dart';
+import 'package:schulcloud/sign_in/sign_in.dart';
 import 'package:uni_links/uni_links.dart';
 
 import '../logger.dart';
@@ -77,7 +77,7 @@ class _TopLevelScreenWrapperState extends State<TopLevelScreenWrapper> {
     }
 
     if (firstSegment == 'login' || firstSegment == 'logout') {
-      logOut(context);
+      signOut(context);
       return;
     }
 
@@ -89,6 +89,6 @@ class _TopLevelScreenWrapperState extends State<TopLevelScreenWrapper> {
       return;
     }
 
-    LoggedInScreenState.currentNavigator.pushNamed(uri.toString());
+    SignedInScreenState.currentNavigator.pushNamed(uri.toString());
   }
 }

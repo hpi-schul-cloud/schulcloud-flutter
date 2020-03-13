@@ -1,8 +1,8 @@
 import 'package:flutter_deep_linking/flutter_deep_linking.dart';
 import 'package:schulcloud/app/app.dart';
-import 'package:schulcloud/news/widgets/article_screen.dart';
 
 import 'data.dart';
+import 'widgets/article_screen.dart';
 import 'widgets/news_screen.dart';
 
 final newsRoutes = Route(

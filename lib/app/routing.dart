@@ -3,9 +3,9 @@ import 'package:schulcloud/assignment/assignment.dart';
 import 'package:schulcloud/course/course.dart';
 import 'package:schulcloud/dashboard/dashboard.dart';
 import 'package:schulcloud/file/file.dart';
-import 'package:schulcloud/login/login.dart';
 import 'package:schulcloud/news/news.dart';
 import 'package:schulcloud/settings/settings.dart';
+import 'package:schulcloud/sign_in/sign_in.dart';
 
 import 'app_config.dart';
 import 'utils.dart';
@@ -26,7 +26,7 @@ final router = Router(
         Route(
           matcher: Matcher.path('signedInScreen'),
           builder: (result) => TopLevelPageRoute(
-            builder: (_) => LoggedInScreen(),
+            builder: (_) => SignedInScreen(),
             settings: result.settings,
           ),
         ),
@@ -41,7 +41,7 @@ final router = Router(
             courseRoutes,
             dashboardRoutes,
             fileRoutes,
-            loginRoutes,
+            signInRoutes,
             newsRoutes,
             settingsRoutes,
           ],
