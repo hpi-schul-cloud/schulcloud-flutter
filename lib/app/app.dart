@@ -6,7 +6,6 @@ export 'logger.dart';
 export 'services/api_network.dart';
 export 'services/network.dart';
 export 'services/storage.dart';
-export 'services/user_fetcher.dart';
 export 'sort_filter/filtering.dart';
 export 'sort_filter/sort_filter.dart';
 export 'sort_filter/sorting.dart';

@@ -3,9 +3,7 @@ import 'dart:io';
 
 import 'package:flutter/widgets.dart';
 import 'package:http/http.dart' as http;
-import 'package:meta/meta.dart';
 import 'package:get_it/get_it.dart';
-import 'package:schulcloud/app/app.dart';
 
 import '../logger.dart';
 import '../utils.dart';

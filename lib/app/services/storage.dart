@@ -1,9 +1,5 @@
 import 'package:get_it/get_it.dart';
 import 'package:meta/meta.dart';
-import 'package:schulcloud/assignment/assignment.dart';
-import 'package:schulcloud/course/course.dart';
-import 'package:schulcloud/file/file.dart';
-import 'package:schulcloud/news/news.dart';
 import 'package:streaming_shared_preferences/streaming_shared_preferences.dart';
 
 import '../app.dart';
@@ -11,40 +7,38 @@ import '../hive.dart';
 
 /// A service that offers storage of app-wide data.
 class StorageService {
-  StorageService._(
-    this._prefs,
-    this.userIdString,
-    this.email,
-    this.token,
-    this.cache,
-  );
+  StorageService._({
+    StreamingSharedPreferences prefs,
+    @required this.userIdString,
+    @required this.email,
+    @required this.token,
+    @required this.root,
+  }) : _prefs = prefs;
 
   static Future<StorageService> create() async {
     StreamingSharedPreferences prefs;
-    Preference<String> userId;
+    Preference<String> userIdString;
     Preference<String> email;
     Preference<String> token;
-    HiveCache cache;
 
     await Future.wait([
       () async {
         prefs = await StreamingSharedPreferences.instance;
-        userId = prefs.getString('userId', defaultValue: '');
+        userIdString = prefs.getString('userId', defaultValue: '');
         email = prefs.getString('email', defaultValue: '');
         token = prefs.getString('token', defaultValue: '');
       }(),
-      () async {
-        cache = await HiveCache.create(types: {
-          Assignment,
-          Course,
-          File,
-          Article,
-          User,
-        });
-      }(),
     ]);
 
-    return StorageService._(prefs, userId, email, token, cache);
+    final root = Root();
+
+    return StorageService._(
+      prefs: prefs,
+      userIdString: userIdString,
+      email: email,
+      token: token,
+      root: root,
+    );
   }
 
   final StreamingSharedPreferences _prefs;
@@ -59,7 +53,7 @@ class StorageService {
   bool get isSignedIn => hasToken;
   bool get isSignedOut => !isSignedIn;
 
-  final HiveCache cache;
+  final Root root;
 
   Future<void> setUserInfo({
     @required String email,
@@ -73,7 +67,8 @@ class StorageService {
     ]);
   }
 
-  Future<void> clear() => Future.wait([_prefs.clear(), cache.clear()]);
+  // TODO(marcelgarus): clear the HiveCache
+  Future<void> clear() => Future.wait([_prefs.clear()]);
 }
 
 extension StorageServiceGetIt on GetIt {

@@ -50,9 +50,7 @@ class ArticlePreview extends StatelessWidget {
             _buildImage(),
             SizedBox(height: 8),
             CachedRawBuilder<User>(
-              controller: services
-                  .get<UserFetcherService>()
-                  .fetchUser(article.author, article.id),
+              controller: article.authorId.controller,
               builder: (_, update) {
                 final author = update.data;
                 final authorName = author?.displayName ??
@@ -76,6 +74,7 @@ class ArticlePreview extends StatelessWidget {
               style: theme.textTheme.display2,
             ),
             TextOrPlaceholder(
+              // ignore: deprecated_member_use_from_same_package
               _isPlaceholder ? null : limitString(article.content, 200),
               style: theme.textTheme.body2,
             ),

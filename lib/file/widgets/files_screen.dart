@@ -5,7 +5,6 @@ import 'package:flutter_cached/flutter_cached.dart';
 import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/course/course.dart';
 
-import '../bloc.dart';
 import 'file_browser.dart';
 import 'upload_button.dart';
 
@@ -32,7 +31,7 @@ class _CoursesList extends StatelessWidget {
     return FancyCard(
       title: context.s.file_files_course,
       child: CachedRawBuilder(
-        controller: services.get<FileBloc>().fetchCourses()..fetch(),
+        controller: services.storage.root.courses.controller,
         builder: (context, update) {
           return GridView.extent(
             primary: false,

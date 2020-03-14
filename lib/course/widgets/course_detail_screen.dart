@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_cached/flutter_cached.dart';
 import 'package:schulcloud/app/app.dart';
 
-import '../bloc.dart';
 import '../data.dart';
 
 class CourseDetailsScreen extends StatelessWidget {
@@ -14,7 +13,7 @@ class CourseDetailsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CachedRawBuilder<Course>(
-      controller: services.get<CourseBloc>().fetchCourse(courseId),
+      controller: courseId.controller,
       builder: (_, update) {
         final course = update.data;
         if (update.hasError) {
@@ -48,7 +47,7 @@ class CourseDetailsScreen extends StatelessWidget {
                 ),
               ),
               // TODO(marcelgarus): use proper slivers when flutter_cached supports them
-              _buildLessonsSliver(context),
+              _buildLessonsSliver(context, course),
             ]),
           ),
         );
@@ -56,9 +55,9 @@ class CourseDetailsScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildLessonsSliver(BuildContext context) {
+  Widget _buildLessonsSliver(BuildContext context, Course course) {
     return CachedRawBuilder<List<Lesson>>(
-      controller: services.get<CourseBloc>().fetchLessonsOfCourse(courseId),
+      controller: course.lessons.controller,
       builder: (context, update) {
         if (update.hasError) {
           return ErrorBanner(update.error, update.stackTrace);

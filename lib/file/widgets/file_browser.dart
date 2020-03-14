@@ -47,8 +47,8 @@ class FileBrowser extends StatelessWidget {
     }
   }
 
-  static Future<void> downloadFile(BuildContext context, File file) async {
-    assert(file.isNotDirectory);
+  Future<void> _downloadFile(BuildContext context, File file) async {
+    assert(file.isActualFile);
 
     try {
       await services.get<FileBloc>().downloadFile(file);
@@ -74,7 +74,9 @@ class FileBrowser extends StatelessWidget {
 
   Widget _buildEmbedded(BuildContext context) {
     return CachedRawBuilder<List<File>>(
-      controller: services.get<FileBloc>().fetchFiles(ownerId, parentId),
+      // The owner is either a [User] or a [Course]. Either way, the [owner] is
+      // guaranteed to have a [files] field.
+      controller: ownerId.files(parentId).controller,
       builder: (context, update) {
         if (update.hasError) {
           return ErrorScreen(update.error, update.stackTrace);
@@ -87,7 +89,7 @@ class FileBrowser extends StatelessWidget {
           files: files,
           primary: false,
           onOpenDirectory: (directory) => _openDirectory(context, directory),
-          onDownloadFile: (file) => downloadFile(context, file),
+          onDownloadFile: (file) => _downloadFile(context, file),
         );
       },
     );
@@ -107,7 +109,7 @@ class FileBrowser extends StatelessWidget {
     Widget appBar;
     if (isOwnerCourse) {
       appBar = CachedRawBuilder<Course>(
-        controller: services.get<CourseBloc>().fetchCourse(ownerId),
+        controller: ownerId.controller,
         builder: (context, update) {
           if (!update.hasData) {
             return buildLoadingErrorAppBar(update.error);
@@ -122,7 +124,7 @@ class FileBrowser extends StatelessWidget {
           }
 
           return CachedRawBuilder<File>(
-            controller: services.get<FileBloc>().fetchFile(parentId),
+            controller: parentId.controller,
             builder: (context, update) {
               if (!update.hasData) {
                 return buildLoadingErrorAppBar(update.error, course.color);
@@ -139,7 +141,7 @@ class FileBrowser extends StatelessWidget {
       );
     } else if (parentId != null) {
       appBar = CachedRawBuilder<File>(
-        controller: services.get<FileBloc>().fetchFile(parentId),
+        controller: parentId.controller,
         builder: (context, update) {
           if (!update.hasData) {
             return buildLoadingErrorAppBar(update.error);
@@ -163,7 +165,7 @@ class FileBrowser extends StatelessWidget {
         parentId: parentId,
       ),
       body: CachedBuilder<List<File>>(
-        controller: services.get<FileBloc>().fetchFiles(ownerId, parentId),
+        controller: ownerId.files(parentId).controller,
         errorBannerBuilder: (_, error, st) => ErrorBanner(error, st),
         errorScreenBuilder: (_, error, st) => ErrorScreen(error, st),
         builder: (context, files) {
@@ -173,7 +175,7 @@ class FileBrowser extends StatelessWidget {
           return FileList(
             files: files,
             onOpenDirectory: (directory) => _openDirectory(context, directory),
-            onDownloadFile: (file) => downloadFile(context, file),
+            onDownloadFile: (file) => _downloadFile(context, file),
           );
         },
       ),

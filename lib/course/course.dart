@@ -1,4 +1,3 @@
-export 'bloc.dart';
 export 'data.dart';
 export 'routes.dart';
 export 'widgets/course_chip.dart';

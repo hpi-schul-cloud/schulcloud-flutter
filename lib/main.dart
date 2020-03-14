@@ -4,12 +4,9 @@ import 'package:flutter_native_timezone/flutter_native_timezone.dart';
 import 'package:pedantic/pedantic.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:schulcloud/app/app.dart';
-import 'package:schulcloud/assignment/assignment.dart';
 import 'package:schulcloud/calendar/calendar.dart';
-import 'package:schulcloud/course/course.dart';
 import 'package:schulcloud/file/file.dart';
 import 'package:schulcloud/sign_in/sign_in.dart';
-import 'package:schulcloud/news/news.dart';
 import 'package:time_machine/time_machine.dart';
 import 'package:uni_links/uni_links.dart';
 
@@ -80,14 +77,9 @@ Future<void> main({AppConfig appConfig = schulCloudAppConfig}) async {
     ..registerSingletonAsync((_) => StorageService.create())
     ..registerSingleton(NetworkService())
     ..registerSingleton(ApiNetworkService())
-    ..registerSingleton(UserFetcherService())
-    ..registerSingleton(AssignmentBloc())
     ..registerSingleton(CalendarBloc())
-    ..registerSingleton(CourseBloc())
     ..registerSingleton(FileBloc())
-    ..registerSingleton(NewsBloc())
-    ..registerSingleton(SignInBloc())
-    ..registerSingleton(SubmissionBloc());
+    ..registerSingleton(SignInBloc());
 
   logger.d('Retrieving initial URI…');
   final initialUri = await getInitialUri();

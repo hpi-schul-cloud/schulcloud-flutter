@@ -4,7 +4,6 @@ import 'package:flutter_cached/flutter_cached.dart';
 import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/dashboard/dashboard.dart';
 
-import '../bloc.dart';
 import '../data.dart';
 import '../news.dart';
 
@@ -20,14 +19,12 @@ class NewsDashboardCard extends StatelessWidget {
       footerButtonText: s.news_dashboardCard_all,
       onFooterButtonPressed: () => context.navigator.pushNamed('/news'),
       child: CachedRawBuilder<List<Article>>(
-        controller: services.get<NewsBloc>().fetchArticles(),
+        controller: services.storage.root.news.controller,
         builder: (context, update) {
           if (!update.hasData) {
-            return Center(
-              child: update.hasError
-                  ? Text(update.error.toString())
-                  : CircularProgressIndicator(),
-            );
+            return update.hasError
+                ? ErrorBanner(update.error, update.stackTrace)
+                : Center(child: CircularProgressIndicator());
           }
 
           Iterable<Article> articles = update.data;

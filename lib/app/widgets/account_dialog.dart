@@ -2,11 +2,12 @@ import 'package:black_hole_flutter/black_hole_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cached/flutter_cached.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/sign_in/sign_in.dart';
 
+import '../app_config.dart';
 import '../data.dart';
-import '../services/user_fetcher.dart';
+import '../services/storage.dart';
+import '../utils.dart';
 import 'account_avatar.dart';
 
 class AccountDialog extends StatelessWidget {
@@ -87,7 +88,7 @@ class AccountDialog extends StatelessWidget {
 
   Widget _buildAccountTile(BuildContext context) {
     return CachedRawBuilder<User>(
-      controller: services.get<UserFetcherService>().fetchCurrentUser(),
+      controller: services.storage.userId.controller,
       builder: (context, update) {
         final user = update.data;
         return ListTile(
