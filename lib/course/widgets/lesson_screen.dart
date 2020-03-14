@@ -7,7 +7,6 @@ import 'package:schulcloud/app/app.dart';
 import 'package:sprintf/sprintf.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
-import '../bloc.dart';
 import '../data.dart';
 
 class LessonScreen extends StatefulWidget {
@@ -75,7 +74,7 @@ class _LessonScreenState extends State<LessonScreen> {
   @override
   Widget build(BuildContext context) {
     return CachedRawBuilder<Lesson>(
-      controller: services.get<CourseBloc>().fetchLesson(widget.lessonId),
+      controller: widget.lessonId.controller,
       builder: (context, update) {
         if (update.hasError) {
           return ErrorScreen(update.error, update.stackTrace);
@@ -89,8 +88,7 @@ class _LessonScreenState extends State<LessonScreen> {
           appBar: FancyAppBar(
             title: Text(lesson.name),
             subtitle: CachedRawBuilder<Course>(
-              controller:
-                  services.get<CourseBloc>().fetchCourse(widget.courseId),
+              controller: widget.courseId.controller,
               builder: (_, update) {
                 final course = update.data;
                 return Text(course?.name ?? context.s.general_loading);

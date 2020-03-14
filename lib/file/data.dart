@@ -107,3 +107,10 @@ class File implements Entity<File>, Comparable<File> {
     return name.compareTo(other.name);
   }
 }
+
+extension FileLoading on Id<dynamic> {
+  LazyIds<File> files([Id<File> parentId]) => LazyIds<File>(
+        collectionId: 'files of $this in directory $parentId',
+        fetcher: () => File.fetchList(this, parentId: parentId),
+      );
+}

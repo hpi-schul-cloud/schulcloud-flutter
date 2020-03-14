@@ -13,12 +13,11 @@ class EditSubmissionScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CachedRawBuilder<Assignment>(
-      controller: services.get<AssignmentBloc>().fetchAssignment(assignmentId),
+      controller: assignmentId.controller,
       builder: (_, assignmentUpdate) {
         final assignment = assignmentUpdate.data;
         return CachedRawBuilder<Submission>(
-          controller:
-              services.get<SubmissionBloc>().fetchMySubmission(assignmentId),
+          controller: assignment.mySubmission,
           builder: (_, update) {
             final submission = update.data;
 

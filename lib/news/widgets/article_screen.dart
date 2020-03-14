@@ -3,7 +3,6 @@ import 'package:flutter_cached/flutter_cached.dart';
 import 'package:provider/provider.dart';
 import 'package:schulcloud/app/app.dart';
 
-import '../bloc.dart';
 import '../data.dart';
 import 'article_image.dart';
 import 'author.dart';
@@ -23,7 +22,7 @@ class ArticleScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CachedRawBuilder<Article>(
-      controller: services.get<NewsBloc>().fetchArticle(articleId),
+      controller: articleId.controller,
       builder: (context, update) {
         if (!update.hasData) {
           return Center(
