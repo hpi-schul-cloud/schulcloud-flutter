@@ -123,7 +123,7 @@
   "file_fileMenu_rename": "Umbenennen",
   "file_fileMenu_open": "Öffnen",
   "file_fileMenu_move": "Verschieben",
-  "file_renameDialog_title": "Rename file",
-  "file_renameDialog_inputHint": "New file name",
-  "file_renameDialog_rename": "Rename"
+  "file_renameDialog_title": "Datei umbenennen",
+  "file_renameDialog_inputHint": "Neuer Dateiname",
+  "file_renameDialog_rename": "Umbenennen"
 }
