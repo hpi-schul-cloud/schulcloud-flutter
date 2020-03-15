@@ -1,7 +1,5 @@
+import 'package:black_hole_flutter/black_hole_flutter.dart';
 import 'package:flutter/material.dart';
-
-import '../theming_utils.dart';
-import '../utils.dart';
 
 class FancyCard extends StatelessWidget {
   const FancyCard({

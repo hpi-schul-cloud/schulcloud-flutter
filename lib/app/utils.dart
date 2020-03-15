@@ -1,9 +1,9 @@
 import 'dart:convert';
 import 'dart:ui';
 
-import 'package:flutter/widgets.dart';
-import 'package:get_it/get_it.dart';
+import 'package:black_hole_flutter/black_hole_flutter.dart';
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 import 'package:html/parser.dart';
 import 'package:http/http.dart';
 import 'package:schulcloud/generated/l10n.dart';
@@ -14,11 +14,6 @@ import 'services/network.dart';
 final services = GetIt.instance;
 
 extension FancyContext on BuildContext {
-  MediaQueryData get mediaQuery => MediaQuery.of(this);
-  ThemeData get theme => Theme.of(this);
-  NavigatorState get navigator => Navigator.of(this);
-  NavigatorState get rootNavigator => Navigator.of(this, rootNavigator: true);
-  ScaffoldState get scaffold => Scaffold.of(this);
   S get s => S.of(this);
 
   void showSimpleSnackBar(String message) {
@@ -34,7 +29,7 @@ extension ResponseToJson on Response {
 
 extension FutureResponseToJson on Future<Response> {
   Future<dynamic> get json async => (await this).json;
-  Future<List<Map<String, dynamic>>> parsedJsonList({
+  Future<List<Map<String, dynamic>>> parseJsonList({
     bool isServicePaginated = true,
   }) async {
     var jsonData = (await this).json;

@@ -1,3 +1,4 @@
+import 'package:black_hole_flutter/black_hole_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:schulcloud/app/app.dart';
 
@@ -172,7 +173,7 @@ class _EditSubmissionScreenState extends State<EditSubmissionScreen> {
         actions: <Widget>[
           FlatButton(
             onPressed: () => setState(() => _ignoreFormattingOverwrite = true),
-            textColor: context.theme.highEmphasisColor,
+            textColor: context.theme.highEmphasisOnBackground,
             child: Text(s.general_dismiss),
           ),
         ],

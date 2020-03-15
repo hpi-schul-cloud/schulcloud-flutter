@@ -131,7 +131,6 @@ class LazyIds<E extends Entity<E>> {
         ];
       },
       saveToCache: (items) {
-        // TODO(marcelgarus): Use Fetcher._createCollection
         final collection = IdCollection<E>(
           id: _id,
           childrenIds: items.map((item) => item.id).toList(),

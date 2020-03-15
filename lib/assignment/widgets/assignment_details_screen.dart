@@ -1,8 +1,8 @@
+import 'package:black_hole_flutter/black_hole_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cached/flutter_cached.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:schulcloud/app/app.dart';
-import 'package:schulcloud/app/chip.dart';
 import 'package:schulcloud/course/course.dart';
 import 'package:schulcloud/file/file.dart';
 import 'package:schulcloud/file/widgets/file_tile.dart';
@@ -148,9 +148,7 @@ class _DetailsTab extends StatelessWidget {
         delegate: SliverChildListDelegate.fixed([
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 16),
-            child: ChipGroup(
-              children: _buildChips(context),
-            ),
+            child: ChipGroup(children: _buildChips(context)),
           ),
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 16),

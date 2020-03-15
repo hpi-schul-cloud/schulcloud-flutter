@@ -23,7 +23,6 @@ class ApiNetworkService {
   Map<String, String> _getHeaders() {
     final storage = services.storage;
     return {
-      'Content-Type': 'application/json',
       if (storage.hasToken)
         'Authorization': 'Bearer ${storage.token.getValue()}',
     };
