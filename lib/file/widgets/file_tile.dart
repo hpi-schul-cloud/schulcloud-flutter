@@ -18,7 +18,7 @@ class FileTile extends StatelessWidget {
     showModalBottomSheet(
       context: context,
       useRootNavigator: true,
-      builder: (context) => FileMenu(file: file),
+      builder: (context) => FileMenu(file),
     );
   }
 

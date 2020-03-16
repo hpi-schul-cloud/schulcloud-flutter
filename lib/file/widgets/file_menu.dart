@@ -7,7 +7,7 @@ import '../data.dart';
 import 'file_thumbnail.dart';
 
 class FileMenu extends StatelessWidget {
-  const FileMenu({this.file});
+  const FileMenu(this.file) : assert(file != null);
 
   final File file;
 
