@@ -21,11 +21,6 @@ class FileMenu extends StatelessWidget {
     );
   }
 
-  Future<void> _delete(BuildContext context) async {
-    unawaited(file.delete());
-    context.rootNavigator.pop();
-  }
-
   Future<void> _rename(BuildContext context) async {
     final newName = await showDialog<String>(
       context: context,
@@ -39,6 +34,13 @@ class FileMenu extends StatelessWidget {
 
     unawaited(file.rename(newName));
     context.navigator.pop();
+  }
+
+  Future<void> _move(BuildContext context) async {}
+
+  Future<void> _delete(BuildContext context) async {
+    unawaited(file.delete());
+    context.rootNavigator.pop();
   }
 
   @override
@@ -72,7 +74,7 @@ class FileMenu extends StatelessWidget {
         ListTile(
           leading: Icon(Icons.forward),
           title: Text(s.file_fileMenu_move),
-          onTap: () {},
+          onTap: () => _move(context),
         ),
         ListTile(
           leading: Icon(Icons.delete),
