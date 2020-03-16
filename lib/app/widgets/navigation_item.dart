@@ -1,6 +1,8 @@
 import 'package:black_hole_flutter/black_hole_flutter.dart';
 import 'package:flutter/material.dart';
 
+import 'text.dart';
+
 class NavigationItem extends StatelessWidget {
   const NavigationItem({
     @required this.icon,
@@ -27,7 +29,7 @@ class NavigationItem extends StatelessWidget {
           padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           child: Row(
             children: <Widget>[
-              Icon(icon, color: theme.mediumEmphasisColor),
+              Icon(icon, color: theme.mediumEmphasisOnBackground),
               SizedBox(width: 16),
               Expanded(
                 child: FancyText(

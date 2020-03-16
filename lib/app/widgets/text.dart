@@ -1,11 +1,11 @@
 import 'dart:math';
 import 'dart:ui';
 
+import 'package:black_hole_flutter/black_hole_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:schulcloud/app/app.dart';
 
-import '../theming_utils.dart';
 import '../utils.dart';
 
 class FancyText extends StatefulWidget {
@@ -97,9 +97,9 @@ class _FancyTextState extends State<FancyText> {
       final theme = context.theme;
       Color color;
       if (widget.emphasis == TextEmphasis.high) {
-        color = theme.highEmphasisColor;
+        color = theme.highEmphasisOnBackground;
       } else if (widget.emphasis == TextEmphasis.medium) {
-        color = theme.mediumEmphasisColor;
+        color = theme.mediumEmphasisOnBackground;
       } else if (widget.emphasis == TextEmphasis.disabled) {
         color = theme.disabledColor;
       } else {

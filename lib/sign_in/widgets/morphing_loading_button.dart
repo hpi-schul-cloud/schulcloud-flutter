@@ -47,7 +47,7 @@ class _MorphingLoadingButtonState<T> extends State<MorphingLoadingButton> {
         height: _isLoading ? 52 : null,
         child: DefaultTextStyle(
           style: context.textTheme.button
-              .copyWith(color: theme.primaryColor.highEmphasisColor),
+              .copyWith(color: theme.primaryColor.highEmphasisOnColor),
           child: _isLoading ? _buildLoadingContent(theme) : widget.child,
         ),
       ),
