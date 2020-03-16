@@ -1,4 +1,5 @@
 import 'package:black_hole_flutter/black_hole_flutter.dart';
+import 'package:dartx/dartx.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
@@ -61,11 +62,9 @@ class SortFilter<T> {
   String _tryParseWebQuerySorter(Map<String, String> query) {
     final key = query['sort'];
     return sorters.entries
-        .firstWhere(
-          (option) => key == (option.value.webQueryKey ?? option.key),
-          orElse: () => MapEntry(defaultSorter, null),
-        )
-        .key;
+        .firstOrNullWhere(
+            (option) => key == (option.value.webQueryKey ?? option.key))
+        ?.key;
   }
 }
 

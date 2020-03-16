@@ -78,7 +78,7 @@ class _LessonScreenState extends State<LessonScreen> {
       builder: (context, update) {
         if (update.hasError) {
           return ErrorScreen(update.error, update.stackTrace);
-        } else if (!update.hasData) {
+        } else if (update.hasNoData) {
           return Center(child: CircularProgressIndicator());
         }
 

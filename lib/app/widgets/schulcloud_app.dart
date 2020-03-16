@@ -56,7 +56,7 @@ class SignedInScreenState extends State<SignedInScreen>
       _navigatorKeys[_selectedTabIndex].currentState;
 
   void selectTab(int index, {bool popIfAlreadySelected = false}) {
-    assert(0 <= index && index <= _BottomTab.count);
+    assert(0 <= index && index < _BottomTab.count);
 
     final pop = popIfAlreadySelected && _selectedTabIndex == index;
     setState(() {
