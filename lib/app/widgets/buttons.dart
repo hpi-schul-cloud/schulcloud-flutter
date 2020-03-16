@@ -1,3 +1,4 @@
+import 'package:black_hole_flutter/black_hole_flutter.dart';
 import 'package:flutter/material.dart';
 
 class PrimaryButton extends StatelessWidget {
@@ -15,6 +16,7 @@ class PrimaryButton extends StatelessWidget {
       focusElevation: 4,
       hoverElevation: 2,
       highlightElevation: 4,
+      color: context.theme.primaryColor,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
       child: DefaultTextStyle(
         style: TextStyle(
