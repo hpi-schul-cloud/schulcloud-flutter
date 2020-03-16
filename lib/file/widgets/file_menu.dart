@@ -15,8 +15,7 @@ class FileMenu extends StatelessWidget {
     assert(context != null);
     assert(file != null);
 
-    return showModalBottomSheet(
-      context: context,
+    return context.showFancyModalBottomSheet(
       useRootNavigator: true,
       builder: (context) => FileMenu(file),
     );
