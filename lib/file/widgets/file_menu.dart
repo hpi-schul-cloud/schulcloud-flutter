@@ -95,7 +95,7 @@ class _RenameDialogState extends State<RenameDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text('Rename file'),
+      title: Text(context.s.file_renameDialog),
       content: TextField(
         controller: _controller,
         autofocus: true,
