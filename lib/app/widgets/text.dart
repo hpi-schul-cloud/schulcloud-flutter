@@ -108,11 +108,27 @@ class _FancyTextState extends State<FancyText> {
       style = style.copyWith(color: color);
     }
 
+    Widget child;
     if (widget.data == null) {
-      return _buildLoading(context, style);
+      child = _buildLoading(context, style);
+    } else {
+      child =
+          widget.showRichText ? _buildRichText(style) : _buildPlainText(style);
     }
 
-    return widget.showRichText ? _buildRichText(style) : _buildPlainText(style);
+    return AnimatedSwitcher(
+      duration: Duration(milliseconds: 200),
+      layoutBuilder: (current, previous) {
+        return Stack(
+          alignment: Alignment.centerLeft,
+          children: <Widget>[
+            ...previous,
+            if (current != null) current,
+          ],
+        );
+      },
+      child: child,
+    );
   }
 
   Widget _buildLoading(BuildContext context, TextStyle style) {
