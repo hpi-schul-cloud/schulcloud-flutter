@@ -1,3 +1,4 @@
+import 'package:black_hole_flutter/black_hole_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cached/flutter_cached.dart';
 import 'package:provider/provider.dart';
@@ -57,9 +58,7 @@ class ArticlePreview extends StatelessWidget {
               style: theme.textTheme.display2,
             ),
             CachedRawBuilder<User>(
-              controller: services
-                  .get<UserFetcherService>()
-                  .fetchUser(article.author, article.id),
+              controller: article.authorId.controller,
               builder: (_, update) {
                 final author = update.data;
                 final authorName = author?.displayName ??

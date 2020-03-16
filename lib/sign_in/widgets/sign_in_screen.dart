@@ -1,3 +1,4 @@
+import 'package:black_hole_flutter/black_hole_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:logger_flutter/logger_flutter.dart';
 import 'package:schulcloud/app/app.dart';

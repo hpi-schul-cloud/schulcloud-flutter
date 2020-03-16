@@ -1,11 +1,10 @@
+import 'package:black_hole_flutter/black_hole_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cached/flutter_cached.dart';
 import 'package:schulcloud/app/app.dart';
-import 'package:schulcloud/app/chip.dart';
 import 'package:schulcloud/course/course.dart';
 import 'package:time_machine/time_machine.dart';
 
-import '../bloc.dart';
 import '../data.dart';
 import 'assignment_details_screen.dart';
 
@@ -81,7 +80,7 @@ class _AssignmentsScreenState extends State<AssignmentsScreen> {
 
     return Scaffold(
       body: CachedBuilder<List<Assignment>>(
-        controller: services.get<AssignmentBloc>().fetchAssignments(),
+        controller: services.storage.root.assignments.controller,
         errorBannerBuilder: (_, error, st) => ErrorBanner(error, st),
         errorScreenBuilder: (_, error, st) => ErrorScreen(error, st),
         builder: (context, allAssignments) {
@@ -172,9 +171,7 @@ class AssignmentCard extends StatelessWidget {
         children: [
           _buildHeader(context),
           SizedBox(height: 4),
-          ChipGroup(
-            children: _buildChips(context),
-          ),
+          ChipGroup(children: _buildChips(context)),
         ],
       ),
     );
@@ -209,8 +206,7 @@ class AssignmentCard extends StatelessWidget {
     return <Widget>[
       if (assignment.courseId != null)
         CachedRawBuilder<Course>(
-          controller:
-              services.get<CourseBloc>().fetchCourse(assignment.courseId),
+          controller: assignment.courseId.controller,
           builder: (_, update) {
             return CourseChip(
               update.data,

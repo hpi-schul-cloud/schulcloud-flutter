@@ -1,8 +1,8 @@
+import 'package:black_hole_flutter/black_hole_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cached/flutter_cached.dart';
 import 'package:schulcloud/app/app.dart';
 
-import '../bloc.dart';
 import '../data.dart';
 import 'course_detail_screen.dart';
 
@@ -19,39 +19,30 @@ class CourseCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
+    return FancyCard(
       onTap: () => _openDetailsScreen(context),
-      child: Card(
-        child: Column(
-          children: <Widget>[
-            Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(4),
-                  topRight: Radius.circular(4),
-                ),
-                color: course.color,
-              ),
-              height: 32,
+      color: course.color.withOpacity(0.12),
+      child: Row(
+        children: <Widget>[
+          Text(course.name),
+          SizedBox(width: 16),
+          Expanded(
+            child: CachedRawBuilder<List<User>>(
+              controller: course.teacherIds.controller,
+              builder: (_, update) {
+                final teachers = update.data;
+                return FancyText(
+                  teachers
+                      ?.where((teacher) => teacher != null)
+                      ?.map((teacher) => teacher.shortName)
+                      ?.join(', '),
+                  maxLines: 1,
+                  emphasis: TextEmphasis.medium,
+                );
+              },
             ),
-            ListTile(
-              title: Text(
-                course.name,
-                style: context.textTheme.headline,
-              ),
-              subtitle: CachedRawBuilder(
-                controllerBuilder: () =>
-                    services.get<CourseBloc>().fetchTeachersOfCourse(course),
-                builder: (_, update) {
-                  final teachers = update.data;
-                  return Text((teachers ?? [])
-                      .map((teacher) => teacher.shortName)
-                      .join(', '));
-                },
-              ),
-            )
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

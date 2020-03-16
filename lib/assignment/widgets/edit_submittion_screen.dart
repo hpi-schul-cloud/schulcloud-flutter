@@ -1,7 +1,7 @@
+import 'package:black_hole_flutter/black_hole_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:schulcloud/app/app.dart';
 
-import '../bloc.dart';
 import '../data.dart';
 
 class EditSubmissionScreen extends StatefulWidget {
@@ -61,7 +61,7 @@ class _EditSubmissionScreenState extends State<EditSubmissionScreen> {
                 final result = await context.showConfirmDeleteDialog(
                     s.assignment_editSubmission_delete_confirm);
                 if (result) {
-                  await services.get<SubmissionBloc>().delete(submission.id);
+                  await submission.delete();
 
                   // Intentionally using a context outside our scaffold. The
                   // current scaffold only exists inside the route and is being
@@ -75,12 +75,13 @@ class _EditSubmissionScreenState extends State<EditSubmissionScreen> {
         ],
       ),
       omitHorizontalPadding: true,
+      omitTopPadding: true,
       floatingActionButton: Builder(
         builder: (context) {
           return FancyFab.extended(
             isEnabled: _isValid,
             onPressed: () => _save(context),
-            icon: Icon(Icons.save),
+            icon: Icon(Icons.check),
             label: Text(s.general_save),
             isLoading: _isSaving,
             loadingLabel: Text(s.general_saving),
@@ -110,11 +111,10 @@ class _EditSubmissionScreenState extends State<EditSubmissionScreen> {
   void _save(BuildContext context) async {
     setState(() => _isSaving = true);
     try {
-      final bloc = services.get<SubmissionBloc>();
       if (isNewSubmission) {
-        await bloc.create(assignment, comment: _comment);
+        await Submission.create(assignment, comment: _comment);
       } else {
-        await bloc.update(submission, comment: _comment);
+        await submission.update(comment: _comment);
       }
 
       // The current scaffold only exists inside the route and is being removed
@@ -136,6 +136,7 @@ class _EditSubmissionScreenState extends State<EditSubmissionScreen> {
   List<Widget> _buildFormContent(BuildContext context) {
     return [
       ..._buildFormattingOverwriteWarning(context),
+      SizedBox(height: 8),
       if (assignment.teamSubmissions)
         ListTile(
           leading: Icon(Icons.people),
@@ -165,20 +166,18 @@ class _EditSubmissionScreenState extends State<EditSubmissionScreen> {
 
     return [
       MaterialBanner(
-        backgroundColor: context.theme.accentColor,
-        leading: Icon(Icons.warning),
+        leading: Icon(Icons.info_outline),
         // To align content with the ListTile below
         leadingPadding: EdgeInsets.only(right: 32),
         content: Text(s.assignment_editSubmission_overwriteFormatting),
         actions: <Widget>[
           FlatButton(
             onPressed: () => setState(() => _ignoreFormattingOverwrite = true),
-            textColor: context.theme.highEmphasisColor,
+            textColor: context.theme.highEmphasisOnBackground,
             child: Text(s.general_dismiss),
           ),
         ],
       ),
-      SizedBox(height: 8),
     ];
   }
 

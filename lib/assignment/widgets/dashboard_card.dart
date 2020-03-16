@@ -1,3 +1,4 @@
+import 'package:black_hole_flutter/black_hole_flutter.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cached/flutter_cached.dart';
@@ -7,7 +8,6 @@ import 'package:schulcloud/dashboard/dashboard.dart';
 import 'package:time_machine/time_machine.dart';
 
 import '../assignment.dart';
-import '../bloc.dart';
 
 class AssignmentDashboardCard extends StatelessWidget {
   @override
@@ -20,12 +20,12 @@ class AssignmentDashboardCard extends StatelessWidget {
       onFooterButtonPressed: () => context.navigator
           .push(MaterialPageRoute(builder: (context) => AssignmentsScreen())),
       child: CachedRawBuilder<List<Assignment>>(
-        controller: services.get<AssignmentBloc>().fetchAssignments(),
+        controller: services.storage.root.assignments.controller,
         builder: (context, update) {
           if (!update.hasData) {
             return Center(
               child: update.hasError
-                  ? Text(update.error.toString())
+                  ? ErrorBanner(update.error, update.stackTrace)
                   : CircularProgressIndicator(),
             );
           }
@@ -93,7 +93,7 @@ class _CourseAssignmentCountTile extends StatelessWidget {
     }
 
     return CachedRawBuilder<Course>(
-      controller: services.get<CourseBloc>().fetchCourse(courseId),
+      controller: courseId.controller,
       builder: (context, update) {
         if (update.hasError) {
           return ListTile(
@@ -112,7 +112,7 @@ class _CourseAssignmentCountTile extends StatelessWidget {
     bool shouldHaveCourse = true,
   }) {
     return ListTile(
-      leading: CourseColorDot(course: course),
+      leading: CourseColorDot(course),
       title: shouldHaveCourse
           ? FancyText(null)
           : Text(context.s.assignment_dashboardCard_noCourse),

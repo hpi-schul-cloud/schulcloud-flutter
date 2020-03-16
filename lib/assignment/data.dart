@@ -1,3 +1,4 @@
+import 'package:flutter_cached/flutter_cached.dart';
 import 'package:hive/hive.dart';
 import 'package:meta/meta.dart';
 import 'package:schulcloud/app/app.dart';
@@ -7,9 +8,8 @@ import 'package:time_machine/time_machine.dart';
 
 part 'data.g.dart';
 
-@immutable
-@HiveType(typeId: typeAssignment)
-class Assignment implements Entity {
+@HiveType(typeId: TypeId.assignment)
+class Assignment implements Entity<Assignment> {
   const Assignment({
     @required this.id,
     @required this.name,
@@ -23,7 +23,7 @@ class Assignment implements Entity {
     this.lessonId,
     @required this.isPrivate,
     @required this.hasPublicSubmissions,
-    this.archived = const [],
+    this.archivedBy = const [],
     @required this.teamSubmissions,
     this.fileIds = const [],
   })  : assert(id != null),
@@ -34,15 +34,15 @@ class Assignment implements Entity {
         assert(teacherId != null),
         assert(isPrivate != null),
         assert(hasPublicSubmissions != null),
-        assert(archived != null),
+        assert(archivedBy != null),
         assert(teamSubmissions != null),
         assert(fileIds != null);
 
   Assignment.fromJson(Map<String, dynamic> data)
       : this(
-          id: Id(data['_id']),
+          id: Id<Assignment>(data['_id']),
           schoolId: data['schoolId'],
-          teacherId: data['teacherId'],
+          teacherId: Id<User>(data['teacherId']),
           name: data['name'],
           description: data['description'],
           createdAt: (data['createdAt'] as String).parseInstant(),
@@ -55,13 +55,16 @@ class Assignment implements Entity {
                   ? data['courseId']
                   : data['courseId']['_id'])
               : null,
-          lessonId: Id(data['lessonId'] ?? ''),
+          lessonId: Id<Lesson>.orNull(data['lessonId']),
           isPrivate: data['private'] ?? false,
           hasPublicSubmissions: data['publicSubmissions'] ?? false,
-          archived: (data['archived'] as List<dynamic> ?? []).castIds<User>(),
+          archivedBy: (data['archived'] as List<dynamic> ?? []).castIds<User>(),
           teamSubmissions: data['teamSubmissions'] ?? false,
           fileIds: (data['fileIds'] as List<dynamic> ?? []).castIds<File>(),
         );
+
+  static Future<Assignment> fetch(Id<Assignment> id) async =>
+      Assignment.fromJson(await services.api.get('homework/$id').json);
 
   // used before: 3, 4
 
@@ -89,7 +92,7 @@ class Assignment implements Entity {
   final String description;
 
   @HiveField(8)
-  final String teacherId;
+  final Id<User> teacherId;
 
   @HiveField(9)
   final Id<Course> courseId;
@@ -105,8 +108,8 @@ class Assignment implements Entity {
   final bool hasPublicSubmissions;
 
   @HiveField(16)
-  final List<Id<User>> archived;
-  bool get isArchived => archived.contains(services.storage.userId);
+  final List<Id<User>> archivedBy;
+  bool get isArchived => archivedBy.contains(services.storage.userId);
 
   @HiveField(17)
   final bool teamSubmissions;
@@ -114,13 +117,45 @@ class Assignment implements Entity {
   @HiveField(18)
   final List<Id<File>> fileIds;
 
-  String get webUrl => scWebUrl('homework/${id.id}');
+  String get webUrl => scWebUrl('homework/$id');
   String get submissionWebUrl => '$webUrl#activetabid=submission';
+
+  Future<Assignment> update({bool isArchived}) async {
+    final userId = services.storage.userId;
+    final request = {
+      if (isArchived != null && isArchived != this.isArchived)
+        'archived': isArchived
+            ? archivedBy + [userId]
+            : archivedBy.where((id) => id != userId).toList(),
+    };
+    if (request.isEmpty) {
+      return this;
+    }
+
+    return Assignment.fromJson(
+        await services.network.patch('homework/$id', body: request).json)
+      ..saveToCache();
+  }
+
+  Future<Assignment> toggleArchived() => update(isArchived: !isArchived);
+
+  // TODO(marcelgarus): create some kind of LazyId.
+  CacheController<Submission> get mySubmission {
+    return SimpleCacheController(
+      fetcher: () async => Submission.fromJson(
+          (await services.api.get('submissions', parameters: {
+        'homeworkId': id.value,
+        'studentId': services.storage.userIdString.getValue(),
+      }).parseJsonList())
+              .singleWhere((_) => true, orElse: () => null)),
+      saveToCache: HiveCache.put,
+      loadFromCache: () => throw NotInCacheException(),
+    );
+  }
 }
 
-@immutable
-@HiveType(typeId: typeSubmission)
-class Submission implements Entity {
+@HiveType(typeId: TypeId.submission)
+class Submission implements Entity<Submission> {
   const Submission({
     @required this.id,
     @required this.schoolId,
@@ -139,7 +174,7 @@ class Submission implements Entity {
 
   Submission.fromJson(Map<String, dynamic> data)
       : this(
-          id: Id(data['_id']),
+          id: Id<Submission>(data['_id']),
           schoolId: data['schoolId'],
           assignmentId: Id(data['homeworkId']),
           studentId: Id(data['studentId']),
@@ -148,6 +183,9 @@ class Submission implements Entity {
           gradeComment: data['gradeComment'],
           fileIds: (data['fileIds'] as List<dynamic> ?? []).castIds<File>(),
         );
+
+  static Future<Submission> fetch(Id<Submission> id) async =>
+      Submission.fromJson(await services.api.get('submissions/$id').json);
 
   @override
   @HiveField(0)
@@ -174,4 +212,35 @@ class Submission implements Entity {
 
   @HiveField(9)
   final List<Id<File>> fileIds;
+
+  static Future<Submission> create(
+    Assignment assignment, {
+    String comment = '',
+  }) async {
+    final request = {
+      'schoolId': assignment.schoolId,
+      'studentId': services.storage.userIdString.getValue(),
+      'homeworkId': assignment.id.value,
+      'comment': comment,
+    };
+
+    return Submission.fromJson(
+        await services.network.post('submissions', body: request).json)
+      ..saveToCache();
+  }
+
+  Future<Submission> update({String comment}) async {
+    final request = {
+      if (comment != null && comment != this.comment) 'comment': comment,
+    };
+    if (request.isEmpty) {
+      return this;
+    }
+
+    return Submission.fromJson(
+        await services.network.patch('submissions/$id', body: request).json)
+      ..saveToCache();
+  }
+
+  Future<void> delete() => services.network.delete('submissions/$id');
 }
