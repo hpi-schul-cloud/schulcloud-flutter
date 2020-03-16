@@ -67,6 +67,7 @@
   "course_detailsScreen_empty": "Dieser Kurs enthält noch keine Themen.",
   "dashboard": "Übersicht",
   "file": "Dateien",
+  "file_deleteDialog_content": "Willst du {fileName} wirklich löschen?",
   "file_fileBrowser_download_storageAccess_allow": "Erlauben",
   "file_fileBrowser_download_storageAccess": "Um Dateien herunterzuladen benötigen wir Zugriff auf den Speicher",
   "file_fileBrowser_downloading": "{fileName} wird heruntergeladen…",

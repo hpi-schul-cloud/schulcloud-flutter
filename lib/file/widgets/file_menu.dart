@@ -39,6 +39,13 @@ class FileMenu extends StatelessWidget {
   Future<void> _move(BuildContext context) async {}
 
   Future<void> _delete(BuildContext context) async {
+    final confirmed = await context.showConfirmDeleteDialog(
+      context.s.file_deleteDialog_content(file.name),
+    );
+    if (!confirmed) {
+      return;
+    }
+
     unawaited(file.delete());
     context.rootNavigator.pop();
   }
