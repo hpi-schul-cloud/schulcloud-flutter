@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:schulcloud/app/app.dart';
 
+import '../app.dart';
 import 'buttons.dart';
 
 /// A screen with no content on it. Instead a placeholder is displayed,

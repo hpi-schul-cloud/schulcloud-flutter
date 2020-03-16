@@ -1,4 +1,3 @@
-export 'bloc.dart';
 export 'data.dart';
 export 'widgets/course_chip.dart';
 export 'widgets/course_color_dot.dart';

@@ -1,3 +1,4 @@
+import 'package:black_hole_flutter/black_hole_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:pedantic/pedantic.dart';
@@ -36,7 +37,7 @@ Future<bool> signOut(BuildContext context) async {
     unawaited(CookieManager().deleteAllCookies());
     // This should probably be awaited, but right now awaiting it
     // leads to the issue that logging out becomes impossible.
-    unawaited(services.get<StorageService>().clear());
+    unawaited(services.storage.clear());
 
     final navigator = context.rootNavigator..popUntil((route) => route.isFirst);
     unawaited(navigator.pushReplacement(TopLevelPageRoute(

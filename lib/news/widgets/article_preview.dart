@@ -1,3 +1,4 @@
+import 'package:black_hole_flutter/black_hole_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cached/flutter_cached.dart';
 import 'package:provider/provider.dart';
@@ -54,9 +55,7 @@ class ArticlePreview extends StatelessWidget {
             _buildImage(),
             SizedBox(height: 8),
             CachedRawBuilder<User>(
-              controller: services
-                  .get<UserFetcherService>()
-                  .fetchUser(article.author, article.id),
+              controller: article.authorId.controller,
               builder: (_, update) {
                 final author = update.data;
                 final authorName = author?.displayName ??
@@ -70,7 +69,7 @@ class ArticlePreview extends StatelessWidget {
                       : context.s.news_articlePreview_subtitle(
                           article.publishedAt.shortDateString, authorName),
                   style: TextStyle(
-                    color: theme.cardColor.mediumEmphasisColor,
+                    color: theme.cardColor.mediumEmphasisOnColor,
                   ),
                 );
               },
@@ -80,6 +79,7 @@ class ArticlePreview extends StatelessWidget {
               style: theme.textTheme.display2,
             ),
             TextOrPlaceholder(
+              // ignore: deprecated_member_use_from_same_package
               _isPlaceholder ? null : limitString(article.content, 200),
               style: theme.textTheme.body2,
             ),

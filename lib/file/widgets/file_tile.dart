@@ -16,7 +16,7 @@ class FileTile extends StatelessWidget {
   void _showDetails(BuildContext context) {
     final s = context.s;
     final subtitle = [
-      if (file.isNotDirectory) file.sizeAsString,
+      if (file.isActualFile) file.sizeAsString,
       s.file_fileTile_details_createdAt(file.createdAt.longDateTimeString),
       s.file_fileTile_details_modifiedAt(file.updatedAt.longDateTimeString),
     ].join('\n');
@@ -52,7 +52,7 @@ class FileTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final subtitle = [
-      if (file.isNotDirectory) file.sizeAsString,
+      if (file.isActualFile) file.sizeAsString,
       if (file.updatedAt != null) file.updatedAt.shortDateTimeString,
     ].join(', ');
 

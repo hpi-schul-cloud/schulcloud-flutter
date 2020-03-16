@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_cached/flutter_cached.dart';
 import 'package:provider/provider.dart';
 import 'package:schulcloud/app/app.dart';
-import 'package:schulcloud/app/services/user_fetcher.dart';
 
 import '../data.dart';
 import 'article_image.dart';
@@ -121,9 +120,7 @@ class _ArticleViewState extends State<ArticleView> {
 
   Widget _buildAuthorView(BuildContext context) {
     return CachedRawBuilder(
-      controller: services
-          .get<UserFetcherService>()
-          .fetchUser(widget.article.author, widget.article.id),
+      controller: widget.article.authorId.controller,
       builder: (_, update) {
         if (!update.hasData) {
           return Center(
