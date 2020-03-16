@@ -114,7 +114,7 @@ class _CourseAssignmentCountTile extends StatelessWidget {
     return ListTile(
       leading: CourseColorDot(course: course),
       title: shouldHaveCourse
-          ? TextOrPlaceholder(course?.name)
+          ? FancyText(null)
           : Text(context.s.assignment_dashboardCard_noCourse),
       trailing: Text(
         assignmentCount.toString(),

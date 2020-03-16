@@ -46,13 +46,16 @@ class ArticlePreview extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Section(
-              child: TextOrPlaceholder(
+              child: Text(
                 'Section',
                 style: TextStyle(color: Colors.white),
               ),
             ),
             _buildImage(),
-            SizedBox(height: 8),
+            FancyText(
+              article?.title,
+              style: theme.textTheme.display2,
+            ),
             CachedRawBuilder<User>(
               controller: services
                   .get<UserFetcherService>()
@@ -64,24 +67,20 @@ class ArticlePreview extends StatelessWidget {
                         ? context.s.general_user_unknown
                         : context.s.general_placeholder);
 
-                return TextOrPlaceholder(
+                return FancyText(
                   _isPlaceholder
                       ? null
                       : context.s.news_articlePreview_subtitle(
                           article.publishedAt.shortDateString, authorName),
-                  style: TextStyle(
-                    color: theme.cardColor.mediumEmphasisColor,
-                  ),
+                  emphasis: TextEmphasis.medium,
+                  style: theme.textTheme.subtitle,
                 );
               },
             ),
-            TextOrPlaceholder(
-              article?.title,
-              style: theme.textTheme.display2,
-            ),
-            TextOrPlaceholder(
-              _isPlaceholder ? null : limitString(article.content, 200),
-              style: theme.textTheme.body2,
+            SizedBox(height: 4),
+            FancyText.preview(
+              article?.content,
+              maxLines: 3,
             ),
           ],
         ),
