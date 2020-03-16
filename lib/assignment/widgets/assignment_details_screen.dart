@@ -4,7 +4,6 @@ import 'package:flutter_cached/flutter_cached.dart';
 import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/course/course.dart';
 import 'package:schulcloud/file/file.dart';
-import 'package:schulcloud/file/widgets/file_tile.dart';
 
 import '../data.dart';
 import 'edit_submittion_screen.dart';
@@ -233,14 +232,13 @@ class _SubmissionTab extends StatelessWidget {
   }
 
   Widget _buildContent(BuildContext context, Submission submission) {
-    Widget child = submission == null
-        ? Text(context.s.assignment_assignmentDetails_submission_empty)
-        : FancyText.rich(submission.comment);
     return SliverList(
       delegate: SliverChildListDelegate([
         Padding(
           padding: EdgeInsets.symmetric(horizontal: 16),
-          child: child,
+          child: submission == null
+              ? Text(context.s.assignment_assignmentDetails_submission_empty)
+              : FancyText.rich(submission.comment),
         ),
         if (submission != null)
           ..._buildFileSection(context, submission.fileIds, submission.id),

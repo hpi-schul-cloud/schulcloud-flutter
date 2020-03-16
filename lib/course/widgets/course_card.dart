@@ -7,7 +7,7 @@ import '../data.dart';
 import 'course_detail_screen.dart';
 
 class CourseCard extends StatelessWidget {
-  const CourseCard({@required this.course}) : assert(course != null);
+  const CourseCard(this.course) : assert(course != null);
 
   final Course course;
 
