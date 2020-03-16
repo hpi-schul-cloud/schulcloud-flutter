@@ -47,7 +47,7 @@ class FileMenu extends StatelessWidget {
     }
 
     unawaited(file.delete());
-    context.rootNavigator.pop();
+    context.navigator.pop();
   }
 
   @override
