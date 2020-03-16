@@ -11,6 +11,17 @@ class FileMenu extends StatelessWidget {
 
   final File file;
 
+  static Future<void> show(BuildContext context, File file) {
+    assert(context != null);
+    assert(file != null);
+
+    return showModalBottomSheet(
+      context: context,
+      useRootNavigator: true,
+      builder: (context) => FileMenu(file),
+    );
+  }
+
   Future<void> _delete(BuildContext context) async {
     unawaited(file.delete());
     context.rootNavigator.pop();

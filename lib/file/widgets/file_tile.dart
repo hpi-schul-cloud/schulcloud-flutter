@@ -14,14 +14,6 @@ class FileTile extends StatelessWidget {
   final File file;
   final void Function(File file) onOpen;
 
-  void _showDetails(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      useRootNavigator: true,
-      builder: (context) => FileMenu(file),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     final subtitle = [
@@ -34,7 +26,7 @@ class FileTile extends StatelessWidget {
       subtitle: Text(subtitle),
       leading: FileThumbnail(file: file),
       onTap: () => onOpen(file),
-      onLongPress: () => _showDetails(context),
+      onLongPress: () => FileMenu.show(context, file),
     );
   }
 }
