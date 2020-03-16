@@ -1,0 +1,20 @@
+import 'package:flutter_inappwebview/flutter_inappwebview.dart';
+
+import '../../app/app.dart';
+
+class SignInBrowser extends InAppBrowser {
+  SignInBrowser({this.signedInCallback});
+
+  Function signedInCallback;
+
+  @override
+  Future onLoadStart(String url) async {
+    final firstPathSegment = Uri.parse(url).pathSegments.first;
+    if (firstPathSegment == 'dashboard') {
+      var jwt = await CookieManager().getCookie(url: url, name: 'jwt');
+      await services.storage.token.setValue(jwt.value);
+      signedInCallback();
+      await close();
+    }
+  }
+}

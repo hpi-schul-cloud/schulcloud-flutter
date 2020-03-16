@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:pedantic/pedantic.dart';
 import 'package:schulcloud/app/app.dart';
-import 'package:webview_flutter/webview_flutter.dart';
 
 import 'widgets/sign_in_screen.dart';
 
@@ -33,7 +33,7 @@ Future<bool> signOut(BuildContext context) async {
     // Actually log out.
 
     await services.get<NetworkService>().delete('authentication');
-    unawaited(CookieManager().clearCookies());
+    unawaited(CookieManager().deleteAllCookies());
     // This should probably be awaited, but right now awaiting it
     // leads to the issue that logging out becomes impossible.
     unawaited(services.get<StorageService>().clear());

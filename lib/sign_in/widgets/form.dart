@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:pedantic/pedantic.dart';
 import 'package:schulcloud/app/app.dart';
+import 'package:schulcloud/sign_in/widgets/signin_browser.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
+import '../../app/app.dart';
 import '../bloc.dart';
 
 class SignInForm extends StatefulWidget {
@@ -13,30 +16,26 @@ class SignInForm extends StatefulWidget {
 
 class _SignInFormState extends State<SignInForm> {
   WebViewController controller;
+  SignInBrowser browser;
 
-  bool _isLoading = false;
-  String _ambientError;
+  @override
+  void initState() {
+    browser = SignInBrowser(signedInCallback: pushSignedInPage);
+    super.initState();
+  }
+
+  void pushSignedInPage() {
+    unawaited(context.navigator
+        .pushReplacement(TopLevelPageRoute(builder: (_) => SignedInScreen())));
+  }
 
   Future<void> _executeLogin(Future<void> Function() login) async {
-    setState(() => _isLoading = true);
+    await login();
 
-    try {
-      await login();
-      setState(() => _ambientError = null);
-
-      // Logged in.
-      unawaited(context.navigator.pushReplacement(TopLevelPageRoute(
-        builder: (_) => SignedInScreen(),
-      )));
-    } on NoConnectionToServerError {
-      _ambientError = context.s.signIn_form_errorNoConnection;
-    } on AuthenticationError {
-      _ambientError = context.s.signIn_form_errorAuth;
-    } on TooManyRequestsError catch (error) {
-      _ambientError = context.s.signIn_form_errorRateLimit(error.timeToWait);
-    } finally {
-      setState(() => _isLoading = false);
-    }
+    // Logged in.
+    unawaited(context.navigator.pushReplacement(TopLevelPageRoute(
+      builder: (_) => SignedInScreen(),
+    )));
   }
 
   Future<void> _loginAsDemoStudent() =>
@@ -69,51 +68,17 @@ class _SignInFormState extends State<SignInForm> {
           ),
           SizedBox(height: 32),
           ConstrainedBox(
-            constraints: BoxConstraints(
-              maxHeight: mediaQuery.size.height -
-                  400 -
-                  mediaQuery.padding.bottom -
-                  mediaQuery.padding.top,
-            ),
-            child: WebView(
-                javascriptMode: JavascriptMode.unrestricted,
-                onWebViewCreated: (controller) => this.controller = controller,
-                onPageFinished: (url) async {
-              javascriptMode: JavascriptMode.unrestricted,
-              onWebViewCreated: (controller) => this.controller = controller,
-              onPageFinished: (url) async {
-                final firstPathSegment = Uri.parse(url).pathSegments.first;
-                if (firstPathSegment == 'login') {
-                  // The JavaScript is meant to isolate the login section.
-                  // Hopefully there will be an option to only get that in a
-                  // non-hacky way in the future.
-                  await controller.evaluateJavascript('''
-                  var node = document.getElementById('loginarea');
-                  var html = document.getElementsByTagName('html')[0];
-                  html.removeChild(html.childNodes[2]);
-                  html.appendChild(node);
-                  document.getElementsByTagName('h2')[0].innerHTML = ''
-                  ''');
-                } else if (firstPathSegment == 'dashboard') {
-                  final cookies =
-                      await controller.evaluateJavascript('document.cookie');
-                  // Yes, this is not elegant. You may complain about it when
-                  // there is a nice way to get a single cookie via JavaScript.
-                  final jwt = cookies
-                      .split('; ')
-                      .firstWhere((element) => element.startsWith('"jwt='))
-                      .replaceAll('"', '')
-                      .substring(4);
-
-                  await services.storage.token.setValue(jwt);
-
-                  unawaited(context.navigator.pushReplacement(
-                      TopLevelPageRoute(builder: (_) => SignedInScreen())));
-                }
-              },
-              initialUrl: services.get<AppConfig>().webUrl('login'),
-            ),
-          ),
+              constraints: BoxConstraints(
+                maxHeight: mediaQuery.size.height -
+                    400 -
+                    mediaQuery.padding.bottom -
+                    mediaQuery.padding.top,
+              ),
+              child: PrimaryButton(
+                  onPressed: () => browser.open(
+                      url: services.get<AppConfig>().webUrl('login'),
+                      options: InAppBrowserClassOptions()),
+                  child: Text(s.signIn_form_signIn))),
           SizedBox(height: 32),
           Wrap(
             children: <Widget>[
