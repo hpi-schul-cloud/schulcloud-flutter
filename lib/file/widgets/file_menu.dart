@@ -104,11 +104,11 @@ class _RenameDialogState extends State<RenameDialog> {
         ),
       ),
       actions: <Widget>[
-        FlatButton(
+        SecondaryButton(
           onPressed: () => context.navigator.pop(),
           child: Text(context.s.general_cancel),
         ),
-        FlatButton(
+        PrimaryButton(
           onPressed: () => context.navigator.pop(_controller.text),
           child: Text(context.s.file_renameDialog_rename),
         ),
