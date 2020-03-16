@@ -45,28 +45,29 @@ class FileMenu extends StatelessWidget {
       children: <Widget>[
         SizedBox(height: 16),
         ListTile(
+          leading: FileThumbnail(file: file),
           title: Text(file.name),
           subtitle: Text(subtitle),
-          leading: FileThumbnail(file: file),
         ),
+        // TODO(marcelgarus): Implement offline access.
+        // ListTile(
+        //   leading: Icon(Icons.offline_pin),
+        //   title: Text(s.file_fileMenu_makeAvailableOffline),
+        // ),
         ListTile(
-          title: Text(s.file_fileMenu_delete),
-          onTap: () => _delete(context),
-        ),
-        ListTile(
+          leading: Icon(Icons.edit),
           title: Text(s.file_fileMenu_rename),
           onTap: () => _rename(context),
         ),
         ListTile(
+          leading: Icon(Icons.forward),
           title: Text(s.file_fileMenu_move),
           onTap: () {},
         ),
         ListTile(
-          title: Text(s.file_fileMenu_makeAvailableOffline),
-          trailing: Switch.adaptive(
-            value: false,
-            onChanged: (_) {},
-          ),
+          leading: Icon(Icons.delete),
+          title: Text(s.file_fileMenu_delete),
+          onTap: () => _delete(context),
         ),
       ],
     );
