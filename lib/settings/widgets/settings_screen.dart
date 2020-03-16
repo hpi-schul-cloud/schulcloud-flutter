@@ -33,12 +33,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
               return ListTile(
                 leading: Icon(Icons.update),
                 title: Text(s.settings_version),
-                subtitle: Text(
+                subtitle: FancyText(
                   snapshot.hasData
                       ? '${snapshot.data.version}+${snapshot.data.buildNumber}'
-                      : snapshot.hasError
-                          ? snapshot.error.toString()
-                          : s.general_loading,
+                      : snapshot.hasError ? snapshot.error.toString() : null,
                 ),
               );
             },
