@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:async/async.dart';
-import 'package:black_hole_flutter/black_hole_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 
