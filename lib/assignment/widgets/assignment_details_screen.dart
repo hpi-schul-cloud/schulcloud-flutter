@@ -1,11 +1,9 @@
 import 'package:black_hole_flutter/black_hole_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cached/flutter_cached.dart';
-import 'package:flutter_html/flutter_html.dart';
 import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/course/course.dart';
 import 'package:schulcloud/file/file.dart';
-import 'package:schulcloud/file/widgets/file_tile.dart';
 
 import '../data.dart';
 import 'edit_submittion_screen.dart';
@@ -161,10 +159,7 @@ class _DetailsTab extends StatelessWidget {
           SizedBox(height: 4),
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 16),
-            child: Html(
-              data: assignment.description,
-              onLinkTap: tryLaunchingUrl,
-            ),
+            child: FancyText.rich(assignment.description),
           ),
           ..._buildFileSection(context, assignment.fileIds, assignment.id),
         ]),
@@ -237,17 +232,13 @@ class _SubmissionTab extends StatelessWidget {
   }
 
   Widget _buildContent(BuildContext context, Submission submission) {
-    Widget child = submission == null
-        ? Text(context.s.assignment_assignmentDetails_submission_empty)
-        : Html(
-            data: submission.comment,
-            onLinkTap: tryLaunchingUrl,
-          );
     return SliverList(
       delegate: SliverChildListDelegate([
         Padding(
           padding: EdgeInsets.symmetric(horizontal: 16),
-          child: child,
+          child: submission == null
+              ? Text(context.s.assignment_assignmentDetails_submission_empty)
+              : FancyText.rich(submission.comment),
         ),
         if (submission != null)
           ..._buildFileSection(context, submission.fileIds, submission.id),
@@ -341,10 +332,7 @@ class _FeedbackTab extends StatelessWidget {
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 16),
                 child: submission?.gradeComment != null
-                    ? Html(
-                        data: submission.gradeComment,
-                        onLinkTap: tryLaunchingUrl,
-                      )
+                    ? FancyText.rich(submission.gradeComment)
                     : Text(s.assignment_assignmentDetails_feedback_textEmpty),
               ),
             ]),
@@ -396,11 +384,8 @@ List<Widget> _buildFileSection(
         builder: (context, update) {
           if (!update.hasData) {
             return ListTile(
-              leading:
-                  update.hasError == null ? CircularProgressIndicator() : null,
-              title: Text(
-                update.error?.toString() ?? context.s.general_loading,
-              ),
+              leading: update.hasNoError ? CircularProgressIndicator() : null,
+              title: FancyText(update.error?.toString()),
             );
           }
 

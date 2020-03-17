@@ -19,10 +19,8 @@ class SettingsScreen extends StatelessWidget {
               return ListTile(
                 leading: Icon(Icons.update),
                 title: Text(s.settings_version),
-                subtitle: Text(
-                  snapshot.data ??
-                      snapshot.error?.toString() ??
-                      s.general_loading,
+                subtitle: FancyText(
+                  snapshot.data ?? snapshot.error?.toString(),
                 ),
               );
             },
