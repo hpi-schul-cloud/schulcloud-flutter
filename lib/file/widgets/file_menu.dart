@@ -1,6 +1,5 @@
 import 'package:black_hole_flutter/black_hole_flutter.dart';
 import 'package:flutter/material.dart';
-import 'package:pedantic/pedantic.dart';
 import 'package:schulcloud/app/app.dart';
 
 import '../data.dart';
@@ -32,8 +31,13 @@ class FileMenu extends StatelessWidget {
       return;
     }
 
-    unawaited(file.rename(newName));
     context.navigator.pop();
+    await services.snackBar.performAction(
+      action: () => file.rename(newName),
+      loadingMessage: 'Renaming ${file.name} to $newName…',
+      successMessage: 'Renamed to $newName 😊',
+      failureMessage: "Couldn't rename to $newName",
+    );
   }
 
   Future<void> _move(BuildContext context) async {}
@@ -46,8 +50,13 @@ class FileMenu extends StatelessWidget {
       return;
     }
 
-    unawaited(file.delete());
     context.navigator.pop();
+    await services.snackBar.performAction(
+      action: file.delete,
+      loadingMessage: 'Deleting ${file.name}…',
+      successMessage: 'Deleted ${file.name} 😊',
+      failureMessage: "Couldn't delete ${file.name}",
+    );
   }
 
   @override
