@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:logger_flutter/logger_flutter.dart';
@@ -12,6 +14,7 @@ import 'package:schulcloud/news/news.dart';
 
 import '../app_config.dart';
 import '../services/navigator_observer.dart';
+import '../services/snack_bar.dart';
 import '../services/storage.dart';
 import '../utils.dart';
 import 'navigation_bar.dart';
@@ -52,6 +55,9 @@ class SignedInScreen extends StatefulWidget {
 }
 
 class _SignedInScreenState extends State<SignedInScreen> {
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
+  ScaffoldState get scaffold => _scaffoldKey.currentState;
+
   final _navigatorKey = GlobalKey<NavigatorState>();
   NavigatorState get navigator => _navigatorKey.currentState;
 
@@ -66,6 +72,7 @@ class _SignedInScreenState extends State<SignedInScreen> {
     super.initState();
     _controller = BehaviorSubject<Screen>();
     _screenStream = _controller.stream;
+    scheduleMicrotask(_showSnackBars);
   }
 
   @override
@@ -113,13 +120,23 @@ class _SignedInScreenState extends State<SignedInScreen> {
     }
   }
 
+  Future<void> _showSnackBars() async {
+    while (mounted) {
+      final request = await services.snackBar.next;
+      final controller = scaffold.showSnackBar(request.snackBar);
+      request.completer.complete(controller);
+      await controller.closed;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return LogConsoleOnShake(
-      child: WillPopScope(
-        onWillPop: _onWillPop,
-        child: Scaffold(
-          body: Navigator(
+      child: Scaffold(
+        key: _scaffoldKey,
+        body: WillPopScope(
+          onWillPop: _onWillPop,
+          child: Navigator(
             key: _navigatorKey,
             onGenerateRoute: (_) =>
                 MaterialPageRoute(builder: (_) => DashboardScreen()),
@@ -128,10 +145,10 @@ class _SignedInScreenState extends State<SignedInScreen> {
               HeroController(),
             ],
           ),
-          bottomNavigationBar: MyNavigationBar(
-            onNavigate: _navigateTo,
-            activeScreenStream: _screenStream,
-          ),
+        ),
+        bottomNavigationBar: MyNavigationBar(
+          onNavigate: _navigateTo,
+          activeScreenStream: _screenStream,
         ),
       ),
     );
