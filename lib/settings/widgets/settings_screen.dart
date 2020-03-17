@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:package_info/package_info.dart';
 import 'package:schulcloud/app/app.dart';
 
+import 'legal_bar.dart';
+
 class SettingsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -41,29 +43,17 @@ class SettingsScreen extends StatelessWidget {
           ListTile(
             leading: Icon(Icons.code),
             title: Text(s.settings_openSource),
+            trailing: Icon(Icons.open_in_new),
             onTap: () => tryLaunchingUrl(
                 'https://github.com/schul-cloud/schulcloud-flutter'),
           ),
           ListTile(
             leading: Icon(Icons.mail_outline),
             title: Text(s.settings_contact),
+            trailing: Icon(Icons.open_in_new),
             onTap: () => tryLaunchingUrl('mailto:info@schul-cloud.org'),
           ),
-          ListTile(
-            leading: Icon(Icons.person_outline),
-            title: Text(s.settings_imprint),
-            onTap: () => tryLaunchingUrl(scWebUrl('impressum')),
-          ),
-          ListTile(
-            leading: Icon(Icons.lightbulb_outline),
-            title: Text(s.settings_privacyPolicy),
-            onTap: () => tryLaunchingUrl(scWebUrl('datenschutz')),
-          ),
-          ListTile(
-            leading: Icon(Icons.info_outline),
-            title: Text(s.settings_licenses),
-            onTap: () => showLicensePage(context: context),
-          ),
+          LegalBar(),
         ],
       ),
     );
