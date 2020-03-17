@@ -7,14 +7,14 @@ import 'package:schulcloud/course/course.dart';
 
 import 'file_browser.dart';
 import 'page_route.dart';
-import 'upload_button.dart';
+import 'upload_fab.dart';
 
 class FilesScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FancyScaffold(
       appBar: FancyAppBar(title: Text(context.s.file)),
-      floatingActionButton: UploadButton(ownerId: services.storage.userId),
+      floatingActionButton: UploadFab(ownerId: services.storage.userId),
       sliver: SliverList(
         delegate: SliverChildListDelegate([
           _CoursesList(),

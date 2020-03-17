@@ -11,7 +11,7 @@ import '../data.dart';
 import 'app_bar.dart';
 import 'file_tile.dart';
 import 'page_route.dart';
-import 'upload_button.dart';
+import 'upload_fab.dart';
 
 class FileBrowser extends StatelessWidget {
   FileBrowser({
@@ -100,7 +100,7 @@ class FileBrowser extends StatelessWidget {
           title: parent?.name ?? ownerAsCourse?.name ?? context.s.file_files_my,
         ),
       ),
-      floatingActionButton: UploadButton(
+      floatingActionButton: UploadFab(
         ownerId: owner.id,
         parentId: parent?.id,
       ),

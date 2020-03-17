@@ -8,8 +8,8 @@ import 'package:schulcloud/app/app.dart';
 import '../bloc.dart';
 import '../data.dart';
 
-class UploadButton extends StatefulWidget {
-  const UploadButton({@required this.ownerId, this.parentId})
+class UploadFab extends StatefulWidget {
+  const UploadFab({@required this.ownerId, this.parentId})
       : assert(ownerId != null);
 
   /// The owner of uploaded files.
@@ -19,10 +19,10 @@ class UploadButton extends StatefulWidget {
   final Id<File> parentId;
 
   @override
-  _UploadButtonState createState() => _UploadButtonState();
+  _UploadFabState createState() => _UploadFabState();
 }
 
-class _UploadButtonState extends State<UploadButton> {
+class _UploadFabState extends State<UploadFab> {
   /// Controller for the [SnackBar].
   ScaffoldFeatureController<SnackBar, SnackBarClosedReason> snackBar;
 
