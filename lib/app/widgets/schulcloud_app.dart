@@ -121,12 +121,18 @@ class _SignedInScreenState extends State<SignedInScreen> {
   }
 
   Future<void> _showSnackBars() async {
-    while (mounted) {
-      final request = await services.snackBar.next;
+    print('Running showSnackBars for scaffold $_scaffoldKey');
+    StreamSubscription subscription;
+    subscription = services.snackBar.requests.listen((request) {
+      final scaffold = this.scaffold;
+      if (scaffold == null) {
+        // This widget is no longer active.
+        subscription.cancel();
+        return;
+      }
       final controller = scaffold.showSnackBar(request.snackBar);
       request.completer.complete(controller);
-      await controller.closed;
-    }
+    });
   }
 
   @override

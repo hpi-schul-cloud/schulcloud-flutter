@@ -3,11 +3,12 @@ import 'dart:async';
 import 'package:async/async.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:rxdart/rxdart.dart';
 
 import '../logger.dart';
 
-class _SnackBarRequest {
-  _SnackBarRequest({@required this.completer, @required this.snackBar})
+class SnackBarRequest {
+  SnackBarRequest({@required this.completer, @required this.snackBar})
       : assert(completer != null),
         assert(snackBar != null);
 
@@ -18,28 +19,22 @@ class _SnackBarRequest {
 
 /// A service that offers displaying app-wide SnackBars at the bottom.
 class SnackBarService {
-  SnackBarService() {
-    _requests = StreamQueue(_controller.stream);
-  }
+  final _controller = StreamController<SnackBarRequest>.broadcast();
+  Stream<SnackBarRequest> get requests => _controller.stream;
 
   void dispose() => _controller.close();
-
-  final _controller = StreamController<_SnackBarRequest>();
-  StreamQueue<_SnackBarRequest> _requests;
 
   Future<ScaffoldFeatureController<SnackBar, SnackBarClosedReason>> show(
     SnackBar snackBar,
   ) {
     final completer =
         Completer<ScaffoldFeatureController<SnackBar, SnackBarClosedReason>>();
-    _controller.add(_SnackBarRequest(
+    _controller.add(SnackBarRequest(
       completer: completer,
       snackBar: snackBar,
     ));
     return completer.future;
   }
-
-  Future<_SnackBarRequest> get next => _requests.next;
 
   Future<ScaffoldFeatureController<SnackBar, SnackBarClosedReason>> showMessage(
     String message,
