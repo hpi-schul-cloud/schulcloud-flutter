@@ -28,7 +28,7 @@ class CoursesScreen extends StatelessWidget {
                   delegate: SliverChildBuilderDelegate((_, i) {
                     return Padding(
                       padding: EdgeInsets.only(bottom: 16),
-                      child: CourseCard(course: courses[i]),
+                      child: CourseCard(courses[i]),
                     );
                   }, childCount: courses.length),
                 ),

@@ -229,7 +229,7 @@ class HiveCacheImpl {
       _getFetcherOfTypeId(typeId)._createCollection(id, children);
 
   void put<E extends Entity<E>>(E entity) {
-    logger.d('Hive: put ${entity.id} ($entity)');
+    logger.v('Hive: put ${entity.id} ($entity)');
 
     _box.put(entity.id.value, entity);
   }

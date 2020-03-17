@@ -20,6 +20,6 @@ export 'widgets/fade_in.dart';
 export 'widgets/form.dart';
 export 'widgets/navigation_item.dart';
 export 'widgets/page_route.dart' show TopLevelPageRoute;
-export 'widgets/placeholder_text.dart';
 export 'widgets/scaffold.dart';
 export 'widgets/schulcloud_app.dart' show SchulCloudApp, SignedInScreen;
+export 'widgets/text.dart';
