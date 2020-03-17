@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:ui';
 
@@ -15,12 +16,6 @@ final services = GetIt.instance;
 
 extension FancyContext on BuildContext {
   S get s => S.of(this);
-
-  void showSimpleSnackBar(String message) {
-    scaffold.showSnackBar(SnackBar(
-      content: Text(message),
-    ));
-  }
 }
 
 extension ResponseToJson on Response {
