@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:package_info/package_info.dart';
 import 'package:schulcloud/app/app.dart';
 
+import '../utils.dart';
 import 'legal_bar.dart';
 
 class SettingsScreen extends StatelessWidget {
@@ -13,18 +13,16 @@ class SettingsScreen extends StatelessWidget {
       appBar: AppBar(title: Text(s.settings)),
       body: ListView(
         children: <Widget>[
-          FutureBuilder<PackageInfo>(
-            future: PackageInfo.fromPlatform(),
+          FutureBuilder<String>(
+            future: appVersion,
             builder: (context, snapshot) {
               return ListTile(
                 leading: Icon(Icons.update),
                 title: Text(s.settings_version),
                 subtitle: Text(
-                  snapshot.hasData
-                      ? '${snapshot.data.version}+${snapshot.data.buildNumber}'
-                      : snapshot.hasError
-                          ? snapshot.error.toString()
-                          : s.general_loading,
+                  snapshot.data ??
+                      snapshot.error?.toString() ??
+                      s.general_loading,
                 ),
               );
             },

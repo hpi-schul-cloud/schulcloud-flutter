@@ -24,7 +24,7 @@ class LegalBar extends StatelessWidget {
         ),
         FlatButton(
           onPressed: () async {
-            final version = await getAppVersion();
+            final version = await appVersion;
             showLicensePage(
               context: context,
               applicationName: services.config.title,
