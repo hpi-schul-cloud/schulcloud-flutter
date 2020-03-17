@@ -31,7 +31,7 @@ class _UploadButtonState extends State<UploadButton> {
           parent: widget.parentId,
         );
 
-    snackBar = Scaffold.of(context).showSnackBar(SnackBar(
+    snackBar = context.scaffold.showSnackBar(SnackBar(
       duration: Duration(days: 1),
       content: Row(
         children: <Widget>[
@@ -70,7 +70,7 @@ class _UploadButtonState extends State<UploadButton> {
 
   void _onUpdateComplete() {
     snackBar.close();
-    Scaffold.of(context).showSnackBar(SnackBar(
+    context.scaffold.showSnackBar(SnackBar(
       duration: Duration(seconds: 2),
       content: Text(context.s.file_uploadCompletedSnackBar),
     ));
@@ -79,9 +79,8 @@ class _UploadButtonState extends State<UploadButton> {
   @override
   Widget build(BuildContext context) {
     return FloatingActionButton(
-      backgroundColor: Colors.white,
       onPressed: () => _startUpload(context),
-      child: Icon(Icons.file_upload, color: context.theme.primaryColor),
+      child: Icon(Icons.file_upload),
     );
   }
 }
