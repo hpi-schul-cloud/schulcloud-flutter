@@ -121,7 +121,6 @@ class _SignedInScreenState extends State<SignedInScreen> {
   }
 
   Future<void> _showSnackBars() async {
-    print('Running showSnackBars for scaffold $_scaffoldKey');
     StreamSubscription subscription;
     subscription = services.snackBar.requests.listen((request) {
       final scaffold = this.scaffold;
