@@ -4,6 +4,9 @@ import 'package:schulcloud/app/app.dart';
 
 typedef CachedBuilderContentBuilder<T> = Widget Function(
     BuildContext, T data, bool isFetching);
+typedef EmptyStateBuilder = Widget Function(BuildContext, bool isFetching);
+
+List<Widget> _emptyHeaderBuilder(BuildContext context, bool isFetching) => [];
 
 class FancyCachedBuilder<T> extends StatelessWidget {
   const FancyCachedBuilder({@required this.controller, @required this.builder})
@@ -11,11 +14,36 @@ class FancyCachedBuilder<T> extends StatelessWidget {
         assert(builder != null);
 
   factory FancyCachedBuilder.handleLoading({
-    CacheController<T> controller,
-    CachedBuilderContentBuilder<T> builder,
+    @required CacheController<T> controller,
+    @required CachedBuilderContentBuilder<T> builder,
   }) =>
       FancyCachedBuilderWithLoading(
         controller: controller,
+        builder: builder,
+      );
+
+  factory FancyCachedBuilder.handlePullToRefresh({
+    @required NestedScrollViewHeaderSliversBuilder headerSliverBuilder,
+    @required CacheController<T> controller,
+    @required CachedBuilderContentBuilder<T> builder,
+  }) =>
+      FancyCachedBuilderWithPullToRefresh(
+        headerSliverBuilder: headerSliverBuilder,
+        controller: controller,
+        builder: builder,
+      );
+
+  static FancyCachedBuilder<List<T>> list<T>({
+    NestedScrollViewHeaderSliversBuilder headerSliverBuilder =
+        _emptyHeaderBuilder,
+    @required CacheController<List<T>> controller,
+    @required EmptyStateBuilder emptyStateBuilder,
+    @required CachedBuilderContentBuilder<List<T>> builder,
+  }) =>
+      FancyCachedListBuilderWithPullToRefresh(
+        headerSliverBuilder: headerSliverBuilder,
+        controller: controller,
+        emptyStateBuilder: emptyStateBuilder,
         builder: builder,
       );
 
@@ -91,11 +119,10 @@ class FancyCachedBuilderWithLoading<T> extends FancyCachedBuilder<T> {
         );
 }
 
-class FancyCachedBuilderWithPullToRefresh<T>
-    extends FancyCachedBuilderWithLoading<T> {
+class FancyCachedBuilderWithPullToRefresh<T> extends FancyCachedBuilder<T> {
   FancyCachedBuilderWithPullToRefresh({
+    @required NestedScrollViewHeaderSliversBuilder headerSliverBuilder,
     @required CacheController<T> controller,
-    @required List<Widget> Function(BuildContext, bool) headerSliverBuilder,
     @required CachedBuilderContentBuilder<T> builder,
   }) : super(
           controller: controller,
@@ -111,6 +138,26 @@ class FancyCachedBuilderWithPullToRefresh<T>
                     : builder(context, data, isFetching),
               ),
             );
+          },
+        );
+}
+
+class FancyCachedListBuilderWithPullToRefresh<T>
+    extends FancyCachedBuilderWithPullToRefresh<List<T>> {
+  FancyCachedListBuilderWithPullToRefresh({
+    @required NestedScrollViewHeaderSliversBuilder headerSliverBuilder,
+    @required CacheController<List<T>> controller,
+    @required EmptyStateBuilder emptyStateBuilder,
+    @required CachedBuilderContentBuilder<List<T>> builder,
+  }) : super(
+          headerSliverBuilder: headerSliverBuilder,
+          controller: controller,
+          builder: (context, data, isFetching) {
+            return data.isEmpty
+                ? SliverFillRemaining(
+                    child: emptyStateBuilder(context, isFetching),
+                  )
+                : builder(context, data, isFetching);
           },
         );
 }
