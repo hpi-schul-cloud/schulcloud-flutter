@@ -88,7 +88,7 @@
   "file_files_my": "My files",
   "file_files_my_description": "These are your personal files.\nBy default, only you can access them, but they may be shared with others.",
   "file_rename_loading": "Renaming {oldName} to {newName}…",
-  "file_rename_success": "Renamed to {newName} 😊",
+  "file_rename_success": "Renamed {oldName} to {newName} 😊",
   "file_rename_failure": "Couldn't rename {oldName} to {newName}",
   "file_renameDialog": "Rename file",
   "file_renameDialog_inputHint": "New file name",

@@ -35,7 +35,7 @@ class FileMenu extends StatelessWidget {
     await services.snackBar.performAction(
       action: () => file.rename(newName),
       loadingMessage: context.s.file_rename_loading(file.name, newName),
-      successMessage: context.s.file_rename_success(file.name),
+      successMessage: context.s.file_rename_success(file.name, newName),
       failureMessage: context.s.file_rename_failure(file.name, newName),
     );
   }
