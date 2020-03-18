@@ -34,9 +34,9 @@ class FileMenu extends StatelessWidget {
     context.navigator.pop();
     await services.snackBar.performAction(
       action: () => file.rename(newName),
-      loadingMessage: 'Renaming ${file.name} to $newName…',
-      successMessage: 'Renamed to $newName 😊',
-      failureMessage: "Couldn't rename to $newName",
+      loadingMessage: context.s.file_rename_loading(file.name, newName),
+      successMessage: context.s.file_rename_success(file.name),
+      failureMessage: context.s.file_rename_failure(file.name, newName),
     );
   }
 
@@ -53,9 +53,9 @@ class FileMenu extends StatelessWidget {
     context.navigator.pop();
     await services.snackBar.performAction(
       action: file.delete,
-      loadingMessage: 'Deleting ${file.name}…',
-      successMessage: 'Deleted ${file.name} 😊',
-      failureMessage: "Couldn't delete ${file.name}",
+      loadingMessage: context.s.file_delete_loading(file.name),
+      successMessage: context.s.file_delete_success(file.name),
+      failureMessage: context.s.file_delete_failure(file.name),
     );
   }
 
