@@ -10,7 +10,7 @@ locales:
 
 devices:
   android:
-    Pixel 3 XL:
+    Pixel XL:
       orientation: Portrait
 
 frame: false
