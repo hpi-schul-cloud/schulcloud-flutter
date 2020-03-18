@@ -9,28 +9,25 @@ class NewsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // TODO(marcelgarus): Allow pull-to-refresh.
-      body: FancyCachedBuilder<List<Article>>.handleLoading(
+      body: FancyCachedBuilder.list<Article>(
+        headerSliverBuilder: (_, __) => [
+          FancyAppBar(title: Text(context.s.news)),
+        ],
         controller: services.storage.root.news.controller,
+        emptyStateBuilder: (_, __) => EmptyStateScreen(
+          text: 'No news.', // TODO(marcelgarus): Localize!
+        ),
         builder: (context, articles, isFetching) {
           articles.sort((a1, a2) => a2.publishedAt.compareTo(a1.publishedAt));
 
-          return CustomScrollView(
-            slivers: <Widget>[
-              FancyAppBar(title: Text(context.s.news)),
-              SliverToBoxAdapter(child: SizedBox(height: 8)),
-              SliverList(
-                delegate: SliverChildBuilderDelegate(
-                  (context, index) {
-                    return Padding(
-                      padding: EdgeInsets.fromLTRB(16, 0, 16, 16),
-                      child: ArticlePreview(article: articles[index]),
-                    );
-                  },
-                  childCount: articles.length,
-                ),
-              ),
-            ],
+          return ListView.builder(
+            itemCount: articles.length,
+            itemBuilder: (context, index) {
+              return Padding(
+                padding: EdgeInsets.fromLTRB(16, 0, 16, 16),
+                child: ArticlePreview(article: articles[index]),
+              );
+            },
           );
         },
       ),
