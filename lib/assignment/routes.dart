@@ -4,7 +4,7 @@ import 'package:schulcloud/app/app.dart';
 import 'data.dart';
 import 'widgets/assignment_detail_screen.dart';
 import 'widgets/assignments_screen.dart';
-import 'widgets/edit_submittion_screen.dart';
+import 'widgets/edit_submission_screen.dart';
 
 const _activeTabPrefix = 'activetabid=';
 final assignmentRoutes = Route(
