@@ -20,14 +20,12 @@ class TopLevelScreenWrapper extends StatefulWidget {
 
 class _TopLevelScreenWrapperState extends State<TopLevelScreenWrapper> {
   StreamSubscription _deepLinksSubscription;
-  Uri _uriToVisit;
 
   @override
   void initState() {
     super.initState();
 
-    // Not the prettiest solution, but it works 😇
-    _deepLinksSubscription = _subscribe().listen((_) => setState(() {}));
+    _deepLinksSubscription = _subscribe().listen(_handleUri);
   }
 
   @override
@@ -39,33 +37,20 @@ class _TopLevelScreenWrapperState extends State<TopLevelScreenWrapper> {
   @override
   Widget build(BuildContext context) {
     return LogConsoleOnShake(
-      child: Scaffold(
-        body: Builder(builder: (context) {
-          scheduleMicrotask(() => _handleUri(context));
-
-          return widget.child;
-        }),
-      ),
+      child: Scaffold(body: widget.child),
     );
   }
 
-  Stream<void> _subscribe() async* {
+  Stream<Uri> _subscribe() async* {
     // ignore: literal_only_boolean_expressions
     while (true) {
-      _uriToVisit = await incomingDeepLinks.next;
-      yield null;
+      yield await incomingDeepLinks.next;
     }
   }
 
-  void _handleUri(BuildContext context) {
-    if (_uriToVisit == null) {
-      return;
-    }
-    logger.d('Handling URI $_uriToVisit');
+  void _handleUri(Uri uri) {
+    logger.d('Handling URI $uri');
     assert(SchulCloudApp.navigator != null);
-
-    final uri = _uriToVisit;
-    _uriToVisit = null;
 
     final isSignedOut = services.storage.isSignedOut;
     final firstSegment = uri.pathSegments[0];
