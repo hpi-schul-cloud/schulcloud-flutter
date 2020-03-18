@@ -3,6 +3,7 @@ import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cached/flutter_cached.dart';
+import 'package:pedantic/pedantic.dart';
 import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/course/course.dart';
 
@@ -50,8 +51,8 @@ class FileBrowser extends StatelessWidget {
 
     try {
       await services.get<FileBloc>().downloadFile(file);
-      context.showSimpleSnackBar(
-          context.s.file_fileBrowser_downloading(file.name));
+      unawaited(services.snackBar
+          .showMessage(context.s.file_fileBrowser_downloading(file.name)));
     } on PermissionNotGranted {
       context.scaffold.showSnackBar(SnackBar(
         content: Text(context.s.file_fileBrowser_download_storageAccess),
