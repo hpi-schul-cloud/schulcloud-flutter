@@ -50,7 +50,7 @@ class FileBrowser extends StatelessWidget {
     assert(file.isActualFile);
 
     try {
-      await services.get<FileBloc>().downloadFile(file);
+      await services.get<FileBloc>().openFile(file);
       unawaited(services.snackBar
           .showMessage(context.s.file_fileBrowser_downloading(file.name)));
     } on PermissionNotGranted {
