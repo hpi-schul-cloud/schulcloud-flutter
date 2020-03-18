@@ -157,13 +157,10 @@ class FileBrowser extends StatelessWidget {
         ownerId: ownerId,
         parentId: parentId,
       ),
-      // TODO(marcelgarus): Allow pull-to-refresh.
-      body: FancyCachedBuilder<List<File>>.handleLoading(
+      body: FancyCachedBuilder.list<File>(
         controller: ownerId.files(parentId).controller,
+        emptyStateBuilder: (context, _) => _buildEmptyState(context),
         builder: (context, files, isFetching) {
-          if (files.isEmpty) {
-            return _buildEmptyState(context);
-          }
           return FileList(
             files: files,
             onOpenDirectory: (directory) => _openDirectory(context, directory),
