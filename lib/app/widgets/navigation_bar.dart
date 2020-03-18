@@ -76,7 +76,7 @@ class _MyNavigationBarState extends State<MyNavigationBar> {
         ),
         BottomNavigationBarItem(
           icon: Icon(Icons.new_releases),
-          title: Text(s.news),
+          title: Text(s.news, key: ValueKey('navigation-news')),
           backgroundColor: theme.bottomAppBarColor,
         ),
       ],

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter_driver/flutter_driver.dart';
 import 'package:screenshots/screenshots.dart';
 import 'package:test/test.dart';
@@ -11,6 +13,9 @@ void main() {
     FlutterDriver driver;
     setUpAll(() async {
       driver = await FlutterDriver.connect();
+
+      // TODO(JonasWanke): remove when flutter driver supports async main functions, https://github.com/flutter/flutter/issues/41029
+      await Future.delayed(Duration(seconds: 10));
     });
     tearDownAll(() async {
       await driver.close();
@@ -39,11 +44,27 @@ void main() {
     group('assignment', () {
       test('AssignmentsScreen', () async {
         await driver.tap(find.byValueKey('navigation-assignment'));
+        await driver.waitUntilNoTransientCallbacks();
         await screenshot(driver, config, 'assignments');
       });
-      test('AssignmentDetailsScreen', () async {
-        await driver.tap(find.text('Würfelspiel - Gruppenarbeit'));
-        await screenshot(driver, config, 'assignment');
+      // TODO(JonasWanke): Add screenshot when better filtering is supported or we mock network calls, https://github.com/flutter/flutter/issues/12810
+      // test('AssignmentDetailsScreen', () async {
+      //   await driver.tap(find.text('Würfelspiel - Gruppenarbeit'));
+      //   await screenshot(driver, config, 'assignment');
+      // });
+    });
+
+    group('file', () {
+      test('FilesScreen', () async {
+        await driver.tap(find.byValueKey('navigation-file'));
+        await screenshot(driver, config, 'file');
+      });
+    });
+
+    group('news', () {
+      test('NewsScreen', () async {
+        await driver.tap(find.byValueKey('navigation-news'));
+        await screenshot(driver, config, 'news');
       });
     });
   });
