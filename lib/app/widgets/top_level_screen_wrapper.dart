@@ -5,6 +5,7 @@ import 'package:logger_flutter/logger_flutter.dart';
 import 'package:schulcloud/sign_in/sign_in.dart';
 
 import '../logger.dart';
+import '../services/snack_bar.dart';
 import '../services/storage.dart';
 import '../utils.dart';
 import 'schulcloud_app.dart';
@@ -68,8 +69,8 @@ class _TopLevelScreenWrapperState extends State<TopLevelScreenWrapper> {
     if (isSignedOut) {
       // We're still at the sign in screen. Wait for the user to sign in and
       // then continue to our destination.
-      context
-          .showSimpleSnackBar(context.s.app_topLevelScreenWrapper_signInFirst);
+      services.snackBar
+          .showMessage(context.s.app_topLevelScreenWrapper_signInFirst);
       return;
     }
 
