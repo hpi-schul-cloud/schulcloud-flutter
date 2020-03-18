@@ -73,17 +73,9 @@ class _LessonScreenState extends State<LessonScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return CachedRawBuilder<Lesson>(
+    return FancyCachedBuilder<Lesson>.handleLoading(
       controller: widget.lessonId.controller,
-      builder: (context, update) {
-        if (update.hasError) {
-          return ErrorScreen(update.error, update.stackTrace);
-        } else if (update.hasNoData) {
-          return Center(child: CircularProgressIndicator());
-        }
-
-        final lesson = update.data;
-        // TODO(marcelgarus): use FancyScaffold when flutter_cached supports slivers
+      builder: (context, lesson, isFetching) {
         return FancyScaffold(
           appBar: FancyAppBar(
             title: Text(lesson.name),
