@@ -1,6 +1,7 @@
 import 'package:black_hole_flutter/black_hole_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cached/flutter_cached.dart';
+import 'package:pedantic/pedantic.dart';
 import 'package:schulcloud/app/app.dart';
 
 import '../data.dart';
@@ -105,8 +106,8 @@ class _EditSubmissionFormState extends State<EditSubmissionForm> {
                   // Intentionally using a context outside our scaffold. The
                   // current scaffold only exists inside the route and is being
                   // removed by Navigator.pop().
-                  context.showSimpleSnackBar(
-                      s.assignment_editSubmission_delete_success);
+                  await services.snackBar
+                      .showMessage(s.assignment_editSubmission_delete_success);
                   context.navigator.pop();
                 }
               },
@@ -156,17 +157,13 @@ class _EditSubmissionFormState extends State<EditSubmissionForm> {
         await submission.update(comment: _comment);
       }
 
-      // The current scaffold only exists inside the route and is being removed
-      // by Navigator.pop(). To still show the snackbar, we access the outer
-      // (global) scaffold.
-      context.scaffold.context
-          .showSimpleSnackBar(context.s.general_save_success);
+      unawaited(services.snackBar.showMessage(context.s.general_save_success));
       context.navigator.pop();
     } on ConflictError catch (e) {
-      context.showSimpleSnackBar(e.body.message);
+      unawaited(services.snackBar.showMessage(e.body.message));
     } catch (e) {
-      context.showSimpleSnackBar(
-          context.s.app_errorScreen_unknown(exceptionMessage(e)));
+      unawaited(services.snackBar
+          .showMessage(context.s.app_errorScreen_unknown(exceptionMessage(e))));
     } finally {
       setState(() => _isSaving = false);
     }

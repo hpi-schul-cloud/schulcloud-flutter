@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:black_hole_flutter/black_hole_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -6,6 +8,7 @@ import 'package:schulcloud/generated/l10n.dart';
 import '../app_config.dart';
 import '../routing.dart';
 import '../services/navigator_observer.dart';
+import '../services/snack_bar.dart';
 import '../services/storage.dart';
 import '../utils.dart';
 
@@ -47,6 +50,9 @@ class SignedInScreen extends StatefulWidget {
 
 class SignedInScreenState extends State<SignedInScreen>
     with TickerProviderStateMixin {
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
+  ScaffoldState get scaffold => _scaffoldKey.currentState;
+
   static final _navigatorKeys =
       List.generate(_BottomTab.count, (_) => GlobalKey<NavigatorState>());
   List<AnimationController> _faders;
@@ -70,6 +76,8 @@ class SignedInScreenState extends State<SignedInScreen>
   @override
   void initState() {
     super.initState();
+
+    scheduleMicrotask(_showSnackBars);
 
     _faders = List.generate(
       _BottomTab.count,
@@ -97,6 +105,7 @@ class SignedInScreenState extends State<SignedInScreen>
     return WillPopScope(
       onWillPop: _onWillPop,
       child: Scaffold(
+        key: _scaffoldKey,
         body: Stack(
           fit: StackFit.expand,
           children: <Widget>[
@@ -114,11 +123,25 @@ class SignedInScreenState extends State<SignedInScreen>
                 icon: Icon(tab.icon),
                 title: Text(tab.title(s)),
                 backgroundColor: barColor,
-              )
+              ),
           ],
         ),
       ),
     );
+  }
+
+  Future<void> _showSnackBars() async {
+    StreamSubscription subscription;
+    subscription = services.snackBar.requests.listen((request) {
+      final scaffold = this.scaffold;
+      if (scaffold == null) {
+        // This widget is no longer active.
+        subscription.cancel();
+        return;
+      }
+      final controller = scaffold.showSnackBar(request.snackBar);
+      request.completer.complete(controller);
+    });
   }
 
   Widget _buildChild(int index) {
