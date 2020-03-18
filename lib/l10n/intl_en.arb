@@ -18,6 +18,7 @@
   "app_notFound_message": "404 – We couldn't find the page you were looking for:\n{uri}",
   "app_signOut_content": "You will need to provide your login credentials to use the app again.",
   "app_signOut_title": "Sign out?",
+  "app_topLevelScreenWrapper_signInFirst": "Please sign in first and then open the link",
   "assignment": "Assignments",
   "assignment_assignment_isArchived": "Archived",
   "assignment_assignment_isPrivate": "Private",
@@ -132,5 +133,6 @@
   "signIn_form_signIn": "Sign in",
   "signIn_signInScreen_about": "Das Hasso-Plattner-Institut für Digital Engineering entwickelt unter der Leitung von Prof. Dr. Christoph Meinel zusammen mit MINT-EC, dem nationalen Excellence-Schulnetzwerk von über 300 Schulen bundesweit und unterstützt vom Bundesministerium für Bildung und Forschung die HPI Schul-Cloud. Sie soll die technische Grundlage schaffen, dass Lehrkräfte und Schüler in jedem Unterrichtsfach auch moderne digitale Lehr- und Lerninhalte nutzen können, und zwar so, wie Apps über Smartphones oder Tablets nutzbar sind.",
   "signIn_signInScreen_moreInformation": "scroll down for more information",
-  "signIn_signInScreen_placeholder": "There could go some other information down here."
+  "signIn_signInScreen_placeholder": "There could go some other information down here.",
+  "signIn_signOutScreen_message": "Signing out…"
 }

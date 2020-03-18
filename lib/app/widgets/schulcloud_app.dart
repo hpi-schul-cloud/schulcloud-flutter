@@ -1,26 +1,21 @@
 import 'dart:async';
 
+import 'package:black_hole_flutter/black_hole_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:logger_flutter/logger_flutter.dart';
-import 'package:rxdart/rxdart.dart';
-import 'package:schulcloud/assignment/assignment.dart';
-import 'package:schulcloud/course/course.dart';
-import 'package:schulcloud/dashboard/dashboard.dart';
-import 'package:schulcloud/file/file.dart';
 import 'package:schulcloud/generated/l10n.dart';
-import 'package:schulcloud/sign_in/sign_in.dart';
-import 'package:schulcloud/news/news.dart';
 
 import '../app_config.dart';
+import '../routing.dart';
 import '../services/navigator_observer.dart';
 import '../services/snack_bar.dart';
 import '../services/storage.dart';
 import '../utils.dart';
-import 'navigation_bar.dart';
-import 'page_route.dart';
 
 class SchulCloudApp extends StatelessWidget {
+  static final navigatorKey = GlobalKey<NavigatorState>();
+  static NavigatorState get navigator => navigatorKey.currentState;
+
   @override
   Widget build(BuildContext context) {
     final appConfig = services.config;
@@ -29,7 +24,15 @@ class SchulCloudApp extends StatelessWidget {
       title: appConfig.title,
       theme: appConfig.createThemeData(Brightness.light),
       darkTheme: appConfig.createThemeData(Brightness.dark),
-      home: services.storage.hasToken ? SignedInScreen() : SignInScreen(),
+      navigatorKey: navigatorKey,
+      initialRoute: services.storage.isSignedIn
+          ? appSchemeLink('signedInScreen')
+          : services.get<AppConfig>().webUrl('login'),
+      onGenerateRoute: router.onGenerateRoute,
+      navigatorObservers: [
+        LoggingNavigatorObserver(),
+        HeroController(),
+      ],
       localizationsDelegates: [
         S.delegate,
         GlobalMaterialLocalizations.delegate,
@@ -40,84 +43,91 @@ class SchulCloudApp extends StatelessWidget {
   }
 }
 
-/// The screens that can be navigated to.
-enum Screen {
-  dashboard,
-  news,
-  courses,
-  files,
-  assignments,
-}
-
 class SignedInScreen extends StatefulWidget {
   @override
-  _SignedInScreenState createState() => _SignedInScreenState();
+  SignedInScreenState createState() => SignedInScreenState();
 }
 
-class _SignedInScreenState extends State<SignedInScreen> {
+class SignedInScreenState extends State<SignedInScreen>
+    with TickerProviderStateMixin {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   ScaffoldState get scaffold => _scaffoldKey.currentState;
 
-  final _navigatorKey = GlobalKey<NavigatorState>();
-  NavigatorState get navigator => _navigatorKey.currentState;
+  static final _navigatorKeys =
+      List.generate(_BottomTab.count, (_) => GlobalKey<NavigatorState>());
+  List<AnimationController> _faders;
 
-  /// When the user navigates (via the menu or pressing the back button), we
-  /// add the new screen to the stream. The menu listens to the stream to
-  /// highlight the appropriate item.
-  BehaviorSubject<Screen> _controller;
-  Stream<Screen> _screenStream;
+  static var _selectedTabIndex = 0;
+  static NavigatorState get currentNavigator =>
+      _navigatorKeys[_selectedTabIndex].currentState;
+
+  void selectTab(int index, {bool popIfAlreadySelected = false}) {
+    assert(0 <= index && index < _BottomTab.count);
+
+    final pop = popIfAlreadySelected && _selectedTabIndex == index;
+    setState(() {
+      _selectedTabIndex = index;
+      if (pop) {
+        currentNavigator.popUntil((route) => route.isFirst);
+      }
+    });
+  }
 
   @override
   void initState() {
     super.initState();
-    _controller = BehaviorSubject<Screen>();
-    _screenStream = _controller.stream;
+
     scheduleMicrotask(_showSnackBars);
+
+    _faders = List.generate(
+      _BottomTab.count,
+      (_) =>
+          AnimationController(vsync: this, duration: kThemeAnimationDuration),
+    );
+    _faders[_selectedTabIndex].value = 1;
   }
 
   @override
   void dispose() {
-    _controller?.close();
+    for (final fader in _faders) {
+      fader.dispose();
+    }
+
     super.dispose();
   }
 
-  void _navigateTo(Screen screen) {
-    // If we are at the root of a screen and try to change to the same screen,
-    // we just stay here.
-    if (!navigator.canPop() && screen == _controller.value) {
-      return;
-    }
+  @override
+  Widget build(BuildContext context) {
+    final s = context.s;
+    final theme = context.theme;
+    final barColor = theme.bottomAppBarColor;
 
-    _controller.add(screen);
-
-    final targetScreenBuilder = {
-      Screen.dashboard: (_) => DashboardScreen(),
-      Screen.news: (_) => NewsScreen(),
-      Screen.files: (_) => FilesScreen(),
-      Screen.courses: (_) => CoursesScreen(),
-      Screen.assignments: (_) => AssignmentsScreen(),
-    }[screen];
-
-    navigator
-      ..popUntil((route) => route.isFirst)
-      ..pushReplacement(TopLevelPageRoute(
-        builder: targetScreenBuilder,
-      ));
-  }
-
-  /// When the user tries to pop, we first try to pop with the inner navigator.
-  /// If that's not possible (we are at a top-level location), we go to the
-  /// dashboard. Only if we were already there, we pop (aka close the app).
-  Future<bool> _onWillPop() async {
-    if (navigator.canPop()) {
-      navigator.pop();
-      return false;
-    } else if (_controller.value != Screen.dashboard) {
-      _navigateTo(Screen.dashboard);
-      return false;
-    } else {
-      return true;
-    }
+    return WillPopScope(
+      onWillPop: _onWillPop,
+      child: Scaffold(
+        key: _scaffoldKey,
+        body: Stack(
+          fit: StackFit.expand,
+          children: <Widget>[
+            for (var i = 0; i < _BottomTab.count; i++) _buildChild(i),
+          ],
+        ),
+        bottomNavigationBar: BottomNavigationBar(
+          selectedItemColor: theme.accentColor,
+          unselectedItemColor: theme.mediumEmphasisOnBackground,
+          currentIndex: _selectedTabIndex,
+          onTap: (index) => selectTab(index, popIfAlreadySelected: true),
+          items: [
+            for (final tab in _BottomTab.values)
+              BottomNavigationBarItem(
+                icon: Icon(tab.icon),
+                title: Text(tab.title(s)),
+                backgroundColor: barColor,
+              ),
+          ],
+        ),
+      ),
+    );
   }
 
   Future<void> _showSnackBars() async {
@@ -134,28 +144,91 @@ class _SignedInScreenState extends State<SignedInScreen> {
     });
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return LogConsoleOnShake(
-      child: Scaffold(
-        key: _scaffoldKey,
-        body: WillPopScope(
-          onWillPop: _onWillPop,
-          child: Navigator(
-            key: _navigatorKey,
-            onGenerateRoute: (_) =>
-                MaterialPageRoute(builder: (_) => DashboardScreen()),
-            observers: [
-              LoggingNavigatorObserver(),
-              HeroController(),
-            ],
-          ),
-        ),
-        bottomNavigationBar: MyNavigationBar(
-          onNavigate: _navigateTo,
-          activeScreenStream: _screenStream,
-        ),
+  Widget _buildChild(int index) {
+    final fader = _faders[index];
+    final child = FadeTransition(
+      opacity: fader.drive(CurveTween(curve: Curves.fastOutSlowIn)),
+      child: Navigator(
+        key: _navigatorKeys[index],
+        initialRoute: _BottomTab.values[index].initialRoute,
+        onGenerateRoute: router.onGenerateRoute,
+        observers: [
+          LoggingNavigatorObserver(),
+          HeroController(),
+        ],
       ),
     );
+
+    if (index == _selectedTabIndex) {
+      fader.forward();
+      return child;
+    }
+
+    fader.reverse();
+    if (fader.isAnimating) {
+      return IgnorePointer(child: child);
+    }
+    return Offstage(child: child);
   }
+
+  /// When the user tries to pop, we first try to pop with the inner navigator.
+  /// If that's not possible (we are at a top-level location), we go to the
+  /// dashboard. Only if we were already there, we pop (aka close the app).
+  Future<bool> _onWillPop() async {
+    if (currentNavigator.canPop()) {
+      currentNavigator.pop();
+      return false;
+    } else if (_selectedTabIndex != 0) {
+      selectTab(0);
+      return false;
+    } else {
+      return true;
+    }
+  }
+}
+
+@immutable
+class _BottomTab {
+  const _BottomTab({
+    @required this.icon,
+    @required this.title,
+    @required this.initialRoute,
+  })  : assert(icon != null),
+        assert(title != null),
+        assert(initialRoute != null);
+
+  final IconData icon;
+  final L10nStringGetter title;
+  final String initialRoute;
+
+  static final values = [dashboard, course, assignment, file, news];
+  static int get count => values.length;
+
+  // We don't use relative URLs as they would start with a '/' and hence the
+  // navigator automatically populates our initial back stack with '/'.
+  static final dashboard = _BottomTab(
+    icon: Icons.dashboard,
+    title: (s) => s.dashboard,
+    initialRoute: services.get<AppConfig>().webUrl('dashboard'),
+  );
+  static final course = _BottomTab(
+    icon: Icons.school,
+    title: (s) => s.course,
+    initialRoute: services.get<AppConfig>().webUrl('courses'),
+  );
+  static final assignment = _BottomTab(
+    icon: Icons.playlist_add_check,
+    title: (s) => s.assignment,
+    initialRoute: services.get<AppConfig>().webUrl('homework'),
+  );
+  static final file = _BottomTab(
+    icon: Icons.folder,
+    title: (s) => s.file,
+    initialRoute: services.get<AppConfig>().webUrl('files'),
+  );
+  static final news = _BottomTab(
+    icon: Icons.new_releases,
+    title: (s) => s.news,
+    initialRoute: services.get<AppConfig>().webUrl('news'),
+  );
 }

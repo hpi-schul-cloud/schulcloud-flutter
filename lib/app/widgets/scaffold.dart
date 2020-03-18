@@ -53,14 +53,20 @@ class FancyTabbedScaffold extends StatelessWidget {
     Key key,
     @required this.appBarBuilder,
     this.controller,
+    this.initialTabIndex,
     @required this.tabs,
     this.omitHorizontalPadding = false,
   })  : assert(appBarBuilder != null),
+        assert(
+            !(controller != null && initialTabIndex != null),
+            '[initialTabIndex] may only be set when a [DefaultTabController] '
+            'is implicitly generated'),
         assert(tabs != null),
         super(key: key);
 
   final AppBarBuilder appBarBuilder;
   final TabController controller;
+  final int initialTabIndex;
   final List<Widget> tabs;
   final bool omitHorizontalPadding;
 
@@ -97,6 +103,7 @@ class FancyTabbedScaffold extends StatelessWidget {
         // [TabController] and hence lengths don't match
         key: ValueKey(tabs.length),
         length: tabs.length,
+        initialIndex: initialTabIndex ?? 0,
         child: child,
       );
     }
