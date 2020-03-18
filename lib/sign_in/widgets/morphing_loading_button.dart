@@ -1,5 +1,5 @@
+import 'package:black_hole_flutter/black_hole_flutter.dart';
 import 'package:flutter/material.dart';
-import 'package:schulcloud/app/app.dart';
 
 /// A button that can morph into a loading spinner.
 ///
@@ -46,7 +46,8 @@ class _MorphingLoadingButtonState<T> extends State<MorphingLoadingButton> {
         width: _isLoading ? 52 : null,
         height: _isLoading ? 52 : null,
         child: DefaultTextStyle(
-          style: context.textTheme.button,
+          style: context.textTheme.button
+              .copyWith(color: theme.primaryColor.highEmphasisOnColor),
           child: _isLoading ? _buildLoadingContent(theme) : widget.child,
         ),
       ),

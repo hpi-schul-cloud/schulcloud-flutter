@@ -22,7 +22,7 @@ class Course implements Entity<Course> {
         assert(color != null),
         lessons = LazyIds<Lesson>(
           collectionId: 'lessons of course $id',
-          fetcher: () async => Lesson.fetchMultiple(courseId: id),
+          fetcher: () async => Lesson.fetchList(courseId: id),
         ),
         files = LazyIds<File>(
           collectionId: 'files of $id',
@@ -85,10 +85,10 @@ class Lesson implements Entity<Lesson> {
   static Future<Lesson> fetch(Id<Lesson> id) async =>
       Lesson.fromJson(await services.api.get('lessons/$id').json);
 
-  static Future<List<Lesson>> fetchMultiple({Id<Course> courseId}) async {
+  static Future<List<Lesson>> fetchList({Id<Course> courseId}) async {
     final jsonList = await services.api.get('lessons', parameters: {
       if (courseId != null) 'courseId': courseId.value,
-    }).parsedJsonList();
+    }).parseJsonList();
     return jsonList.map((data) => Lesson.fromJson(data)).toList();
   }
 

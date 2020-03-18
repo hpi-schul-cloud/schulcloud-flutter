@@ -1,3 +1,4 @@
+import 'package:black_hole_flutter/black_hole_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/dashboard/widgets/dashboard_card.dart';
@@ -13,7 +14,7 @@ class CalendarDashboardCard extends StatelessWidget {
 
     return DashboardCard(
       title: s.calendar_dashboardCard,
-      omitHorizontalPadding: false,
+      omitHorizontalPadding: true,
       color: context.theme.primaryColor
           .withOpacity(context.theme.isDark ? 0.5 : 0.12),
       child: FancyCachedBuilder<List<Event>>.handleLoading(

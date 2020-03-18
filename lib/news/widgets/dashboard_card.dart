@@ -1,10 +1,10 @@
+import 'package:black_hole_flutter/black_hole_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/dashboard/dashboard.dart';
 
 import '../data.dart';
 import '../news.dart';
-import 'article_screen.dart';
 
 class NewsDashboardCard extends StatelessWidget {
   static const articleCount = 3;
@@ -16,8 +16,7 @@ class NewsDashboardCard extends StatelessWidget {
     return DashboardCard(
       title: s.news_dashboardCard,
       footerButtonText: s.news_dashboardCard_all,
-      onFooterButtonPressed: () => context.navigator
-          .push(MaterialPageRoute(builder: (context) => NewsScreen())),
+      onFooterButtonPressed: () => context.navigator.pushNamed('/news'),
       child: FancyCachedBuilder<List<Article>>.handleLoading(
         controller: services.storage.root.news.controller,
         builder: (context, articles, isFetching) {
@@ -44,9 +43,7 @@ class NewsDashboardCard extends StatelessWidget {
 
   Widget _buildArticlePreview(BuildContext context, Article article) {
     return InkWell(
-      onTap: () => context.navigator.push(MaterialPageRoute(
-        builder: (context) => ArticleScreen(article: article),
-      )),
+      onTap: () => context.navigator.pushNamed('/news/${article.id}'),
       child: Padding(
         padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         child: Column(
@@ -67,13 +64,9 @@ class NewsDashboardCard extends StatelessWidget {
               ],
             ),
             SizedBox(height: 4),
-            Text(
-              article.content.withoutLinebreaks,
+            FancyText.preview(
+              article.content,
               maxLines: 3,
-              overflow: TextOverflow.ellipsis,
-              style: context.textTheme.body1.copyWith(
-                color: context.theme.mediumEmphasisColor,
-              ),
             ),
           ],
         ),

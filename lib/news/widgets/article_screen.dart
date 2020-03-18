@@ -15,39 +15,53 @@ import 'theme.dart';
 /// If a landscape image is provided, it's displayed above the headline.
 /// If a portrait image is provided, it's displayed below it.
 class ArticleScreen extends StatelessWidget {
-  const ArticleScreen({@required this.article}) : assert(article != null);
+  const ArticleScreen(this.articleId) : assert(articleId != null);
 
-  final Article article;
+  final Id<Article> articleId;
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: LayoutBuilder(
-        builder: (ctx, constraints) {
-          final width = constraints.maxWidth;
-          final margin = width < 500 ? 0 : width * 0.08;
-          final padding = (width * 0.06).clamp(32.0, 64.0);
-
-          return Provider<ArticleTheme>(
-            create: (_) =>
-                ArticleTheme(darkColor: Colors.purple, padding: padding),
-            child: ListView(
-              padding: MediaQuery.of(context).padding +
-                  EdgeInsets.symmetric(horizontal: margin.toDouble()) +
-                  EdgeInsets.symmetric(vertical: 16),
-              children: <Widget>[
-                ArticleView(article: article),
-              ],
-            ),
+    return CachedRawBuilder<Article>(
+      controller: articleId.controller,
+      builder: (context, update) {
+        if (!update.hasData) {
+          return Center(
+            child: update.hasError
+                ? ErrorScreen(update.error, update.stackTrace)
+                : CircularProgressIndicator(),
           );
-        },
-      ),
+        }
+
+        final article = update.data;
+        return Scaffold(
+          body: LayoutBuilder(
+            builder: (ctx, constraints) {
+              final width = constraints.maxWidth;
+              final margin = width < 500 ? 0 : width * 0.08;
+              final padding = (width * 0.06).clamp(32.0, 64.0);
+
+              return Provider<ArticleTheme>(
+                create: (_) =>
+                    ArticleTheme(darkColor: Colors.purple, padding: padding),
+                child: ListView(
+                  padding: MediaQuery.of(context).padding +
+                      EdgeInsets.symmetric(horizontal: margin.toDouble()) +
+                      EdgeInsets.symmetric(vertical: 16),
+                  children: <Widget>[
+                    ArticleView(article),
+                  ],
+                ),
+              );
+            },
+          ),
+        );
+      },
     );
   }
 }
 
 class ArticleView extends StatefulWidget {
-  const ArticleView({@required this.article}) : assert(article != null);
+  const ArticleView(this.article) : assert(article != null);
 
   final Article article;
 
@@ -139,11 +153,7 @@ class _ArticleViewState extends State<ArticleView> {
 
     return Padding(
       padding: EdgeInsets.fromLTRB(padding, 0, padding, 16),
-      child: Text(
-        widget.article.content,
-        style: TextStyle(fontSize: 20),
-        textAlign: TextAlign.justify,
-      ),
+      child: Text(widget.article.content, textAlign: TextAlign.justify),
     );
   }
 }

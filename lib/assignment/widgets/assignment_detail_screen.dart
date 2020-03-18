@@ -1,74 +1,87 @@
+import 'package:black_hole_flutter/black_hole_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cached/flutter_cached.dart';
-import 'package:flutter_html/flutter_html.dart';
 import 'package:schulcloud/app/app.dart';
-import 'package:schulcloud/app/chip.dart';
 import 'package:schulcloud/course/course.dart';
 import 'package:schulcloud/file/file.dart';
-import 'package:schulcloud/file/widgets/file_tile.dart';
 
 import '../data.dart';
-import 'edit_submittion_screen.dart';
 import 'grade_indicator.dart';
 
-class AssignmentDetailsScreen extends StatefulWidget {
-  const AssignmentDetailsScreen({Key key, @required this.assignment})
-      : assert(assignment != null),
-        super(key: key);
+class AssignmentDetailScreen extends StatefulWidget {
+  const AssignmentDetailScreen(this.assignmentId, {this.initialTab})
+      : assert(assignmentId != null);
 
-  final Assignment assignment;
+  final Id<Assignment> assignmentId;
+  final String initialTab;
 
   @override
-  _AssignmentDetailsScreenState createState() =>
-      _AssignmentDetailsScreenState();
+  _AssignmentDetailScreenState createState() => _AssignmentDetailScreenState();
 }
 
-class _AssignmentDetailsScreenState extends State<AssignmentDetailsScreen>
+class _AssignmentDetailScreenState extends State<AssignmentDetailScreen>
     with TickerProviderStateMixin {
-  Assignment get assignment => widget.assignment;
-
   @override
   Widget build(BuildContext context) {
     final s = context.s;
 
-    return CachedRawBuilder<User>(
-      controller: services.storage.userId.controller,
+    return CachedRawBuilder<Assignment>(
+      controller: widget.assignmentId.controller,
       builder: (context, update) {
-        final user = update.data;
-        final showSubmissionTab =
-            assignment.isPrivate || user?.isTeacher == false;
-        final showFeedbackTab = assignment.isPublic && user?.isTeacher == false;
-        final showSubmissionsTab = assignment.isPublic &&
-            (user?.isTeacher == true || assignment.hasPublicSubmissions);
+        final assignment = update.data;
+        return CachedRawBuilder<User>(
+          controller: services.storage.userId.controller,
+          builder: (context, update) {
+            final user = update.data;
+            final showSubmissionTab =
+                assignment.isPrivate || user?.isTeacher == false;
+            final showFeedbackTab =
+                assignment.isPublic && user?.isTeacher == false;
+            final showSubmissionsTab = assignment.isPublic &&
+                (user?.isTeacher == true || assignment.hasPublicSubmissions);
 
-        return FancyTabbedScaffold(
-          appBarBuilder: (_) => FancyAppBar(
-            title: Text(assignment.name),
-            subtitle: _buildSubtitle(context, assignment.courseId),
-            actions: <Widget>[
-              if (user?.hasPermission(Permission.assignmentEdit) == true)
-                _buildArchiveAction(context),
-            ],
-            bottom: TabBar(
+            final tabs = [
+              'extended',
+              if (showSubmissionTab) 'submission',
+              if (showFeedbackTab) 'feedback',
+              if (showSubmissionsTab) 'submissions',
+            ];
+            var initialTabIndex = tabs.indexOf(widget.initialTab);
+            if (initialTabIndex < 0) {
+              initialTabIndex = null;
+            }
+
+            return FancyTabbedScaffold(
+              initialTabIndex: initialTabIndex,
+              appBarBuilder: (_) => FancyAppBar(
+                title: Text(assignment.name),
+                subtitle: _buildSubtitle(context, assignment.courseId),
+                actions: <Widget>[
+                  if (user?.hasPermission(Permission.assignmentEdit) == true)
+                    _buildArchiveAction(context, assignment),
+                ],
+                bottom: TabBar(
+                  tabs: [
+                    Tab(text: s.assignment_assignmentDetails_details),
+                    if (showSubmissionTab)
+                      Tab(text: s.assignment_assignmentDetails_submission),
+                    if (showFeedbackTab)
+                      Tab(text: s.assignment_assignmentDetails_feedback),
+                    if (showSubmissionsTab)
+                      Tab(text: s.assignment_assignmentDetails_submissions),
+                  ],
+                ),
+                // We want a permanent elevation so tabs are more noticeable.
+                forceElevated: true,
+              ),
               tabs: [
-                Tab(text: s.assignment_assignmentDetails_details),
-                if (showSubmissionTab)
-                  Tab(text: s.assignment_assignmentDetails_submission),
-                if (showFeedbackTab)
-                  Tab(text: s.assignment_assignmentDetails_feedback),
-                if (showSubmissionsTab)
-                  Tab(text: s.assignment_assignmentDetails_submissions),
+                _DetailsTab(assignment: assignment),
+                if (showSubmissionTab) _SubmissionTab(assignment: assignment),
+                if (showFeedbackTab) _FeedbackTab(assignment: assignment),
+                if (showSubmissionsTab) _SubmissionsTab(),
               ],
-            ),
-            // We want a permanent elevation so tabs are more noticeable.
-            forceElevated: true,
-          ),
-          tabs: [
-            _DetailsTab(assignment: assignment),
-            if (showSubmissionTab) _SubmissionTab(assignment: assignment),
-            if (showFeedbackTab) _FeedbackTab(assignment: assignment),
-            if (showSubmissionsTab) _SubmissionsTab(),
-          ],
+            );
+          },
         );
       },
     );
@@ -80,7 +93,7 @@ class _AssignmentDetailsScreenState extends State<AssignmentDetailsScreen>
     }
 
     return CachedRawBuilder<Course>(
-      controller: assignment.courseId.controller,
+      controller: courseId.controller,
       builder: (context, update) {
         return Row(children: <Widget>[
           CourseColorDot(update.data),
@@ -95,7 +108,7 @@ class _AssignmentDetailsScreenState extends State<AssignmentDetailsScreen>
     );
   }
 
-  Widget _buildArchiveAction(BuildContext context) {
+  Widget _buildArchiveAction(BuildContext context, Assignment assignment) {
     final s = context.s;
 
     return IconButton(
@@ -148,9 +161,7 @@ class _DetailsTab extends StatelessWidget {
         delegate: SliverChildListDelegate.fixed([
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 16),
-            child: ChipGroup(
-              children: _buildChips(context),
-            ),
+            child: ChipGroup(children: _buildChips(context)),
           ),
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 16),
@@ -163,10 +174,7 @@ class _DetailsTab extends StatelessWidget {
           SizedBox(height: 4),
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 16),
-            child: Html(
-              data: assignment.description,
-              onLinkTap: tryLaunchingUrl,
-            ),
+            child: FancyText.rich(assignment.description),
           ),
           ..._buildFileSection(context, assignment.fileIds, assignment.id),
         ]),
@@ -234,17 +242,13 @@ class _SubmissionTab extends StatelessWidget {
   }
 
   Widget _buildContent(BuildContext context, Submission submission) {
-    Widget child = submission == null
-        ? Text(context.s.assignment_assignmentDetails_submission_empty)
-        : Html(
-            data: submission.comment,
-            onLinkTap: tryLaunchingUrl,
-          );
     return SliverList(
       delegate: SliverChildListDelegate([
         Padding(
           padding: EdgeInsets.symmetric(horizontal: 16),
-          child: child,
+          child: submission == null
+              ? Text(context.s.assignment_assignmentDetails_submission_empty)
+              : FancyText.rich(submission.comment),
         ),
         if (submission != null)
           ..._buildFileSection(context, submission.fileIds, submission.id),
@@ -279,12 +283,8 @@ class _SubmissionTab extends StatelessWidget {
           backgroundColor: Colors.transparent,
           floatingActionButton: Builder(
             builder: (context) => FloatingActionButton.extended(
-              onPressed: () => context.navigator.push(MaterialPageRoute(
-                builder: (_) => EditSubmissionScreen(
-                  assignment: assignment,
-                  submission: submission,
-                ),
-              )),
+              onPressed: () => context.navigator
+                  .pushNamed('/homework/${assignment.id}/submission'),
               label: Text(labelText),
               icon: Icon(Icons.edit),
             ),
@@ -325,10 +325,7 @@ class _FeedbackTab extends StatelessWidget {
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 16),
                 child: submission?.gradeComment != null
-                    ? Html(
-                        data: submission.gradeComment,
-                        onLinkTap: tryLaunchingUrl,
-                      )
+                    ? FancyText.rich(submission.gradeComment)
                     : Text(s.assignment_assignmentDetails_feedback_textEmpty),
               ),
             ]),
@@ -380,11 +377,8 @@ List<Widget> _buildFileSection(
         builder: (context, update) {
           if (!update.hasData) {
             return ListTile(
-              leading:
-                  update.hasError == null ? CircularProgressIndicator() : null,
-              title: Text(
-                update.error?.toString() ?? context.s.general_loading,
-              ),
+              leading: update.hasNoError ? CircularProgressIndicator() : null,
+              title: FancyText(update.error?.toString()),
             );
           }
 

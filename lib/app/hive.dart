@@ -131,7 +131,6 @@ class LazyIds<E extends Entity<E>> {
         ];
       },
       saveToCache: (items) {
-        // TODO(marcelgarus): Use Fetcher._createCollection
         final collection = IdCollection<E>(
           id: _id,
           childrenIds: items.map((item) => item.id).toList(),
@@ -230,7 +229,7 @@ class HiveCacheImpl {
       _getFetcherOfTypeId(typeId)._createCollection(id, children);
 
   void put<E extends Entity<E>>(E entity) {
-    logger.d('Hive: put ${entity.id} ($entity)');
+    logger.v('Hive: put ${entity.id} ($entity)');
 
     _box.put(entity.id.value, entity);
   }

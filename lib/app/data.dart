@@ -108,24 +108,23 @@ class Root implements Entity<Root> {
 
   final courses = LazyIds<Course>(
     collectionId: 'courses',
-    fetcher: () async => (await services.api.get('courses').parsedJsonList())
+    fetcher: () async => (await services.api.get('courses').parseJsonList())
         .map((data) => Course.fromJson(data))
         .toList(),
   );
 
   final assignments = LazyIds<Assignment>(
     collectionId: 'assignments',
-    fetcher: () async => (await services.api.get('homework').parsedJsonList())
+    fetcher: () async => (await services.api.get('homework').parseJsonList())
         .map((data) => Assignment.fromJson(data))
         .toList(),
   );
 
   final submissions = LazyIds<Submission>(
     collectionId: 'submissions',
-    fetcher: () async =>
-        (await services.api.get('submissions').parsedJsonList())
-            .map((data) => Submission.fromJson(data))
-            .toList(),
+    fetcher: () async => (await services.api.get('submissions').parseJsonList())
+        .map((data) => Submission.fromJson(data))
+        .toList(),
   );
 
   final events = LazyIds<Event>(
@@ -136,14 +135,14 @@ class Root implements Entity<Root> {
       final jsonResponse = await services.api.get(
         'calendar',
         parameters: {'all': 'true'},
-      ).parsedJsonList(isServicePaginated: false);
+      ).parseJsonList(isServicePaginated: false);
       return jsonResponse.map((data) => Event.fromJson(data)).toList();
     },
   );
 
   final news = LazyIds<Article>(
     collectionId: 'articles',
-    fetcher: () async => (await services.api.get('news').parsedJsonList())
+    fetcher: () async => (await services.api.get('news').parseJsonList())
         .map((data) => Article.fromJson(data))
         .toList(),
   );
@@ -190,6 +189,7 @@ class Permission {
   const Permission._();
 
   static const assignmentEdit = 'HOMEWORK_EDIT';
+  static const fileStorageCreate = 'FILESTORAGE_CREATE';
   static const submissionsCreate = 'SUBMISSIONS_CREATE';
   static const submissionsEdit = 'SUBMISSIONS_EDIT';
 }

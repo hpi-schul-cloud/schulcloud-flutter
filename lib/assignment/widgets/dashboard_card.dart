@@ -1,3 +1,4 @@
+import 'package:black_hole_flutter/black_hole_flutter.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cached/flutter_cached.dart';
@@ -18,6 +19,7 @@ class AssignmentDashboardCard extends StatelessWidget {
       footerButtonText: s.assignment_dashboardCard_all,
       onFooterButtonPressed: () => context.navigator
           .push(MaterialPageRoute(builder: (context) => AssignmentsScreen())),
+      onFooterButtonPressed: () => context.navigator.pushNamed('/homework'),
       child: FancyCachedBuilder<List<Assignment>>.handleLoading(
         controller: services.storage.root.assignments.controller,
         builder: (context, assignments, isFetching) {
@@ -105,7 +107,7 @@ class _CourseAssignmentCountTile extends StatelessWidget {
     return ListTile(
       leading: CourseColorDot(course),
       title: shouldHaveCourse
-          ? TextOrPlaceholder(course?.name)
+          ? FancyText(course?.name)
           : Text(context.s.assignment_dashboardCard_noCourse),
       trailing: Text(
         assignmentCount.toString(),

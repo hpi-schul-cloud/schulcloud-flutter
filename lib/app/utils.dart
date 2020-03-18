@@ -1,11 +1,13 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:ui';
 
-import 'package:flutter/widgets.dart';
-import 'package:get_it/get_it.dart';
+import 'package:async/async.dart';
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 import 'package:html/parser.dart';
 import 'package:http/http.dart';
+import 'package:rxdart/rxdart.dart';
 import 'package:schulcloud/generated/l10n.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -15,18 +17,7 @@ import 'services/network.dart';
 final services = GetIt.instance;
 
 extension FancyContext on BuildContext {
-  MediaQueryData get mediaQuery => MediaQuery.of(this);
-  ThemeData get theme => Theme.of(this);
-  NavigatorState get navigator => Navigator.of(this);
-  NavigatorState get rootNavigator => Navigator.of(this, rootNavigator: true);
-  ScaffoldState get scaffold => Scaffold.of(this);
   S get s => S.of(this);
-
-  void showSimpleSnackBar(String message) {
-    scaffold.showSnackBar(SnackBar(
-      content: Text(message),
-    ));
-  }
 }
 
 extension ResponseToJson on Response {
@@ -35,7 +26,7 @@ extension ResponseToJson on Response {
 
 extension FutureResponseToJson on Future<Response> {
   Future<dynamic> get json async => (await this).json;
-  Future<List<Map<String, dynamic>>> parsedJsonList({
+  Future<List<Map<String, dynamic>>> parseJsonList({
     bool isServicePaginated = true,
   }) async {
     var jsonData = (await this).json;
@@ -45,6 +36,9 @@ extension FutureResponseToJson on Future<Response> {
     return (jsonData as List).cast<Map<String, dynamic>>();
   }
 }
+
+final incomingDeepLinksSink = BehaviorSubject<Uri>();
+final incomingDeepLinks = StreamQueue<Uri>(incomingDeepLinksSink);
 
 /// Limits a string to a certain amount of characters.
 @Deprecated('Rather than limiting Strings to a certain amount of characters, '
@@ -65,6 +59,8 @@ String formatFileSize(int bytes) {
 
   return '${(bytes / power).toStringAsFixed(index == 0 ? 0 : 1)} ${units[index]}';
 }
+
+typedef L10nStringGetter = String Function(S);
 
 extension LegenWaitForItDaryString on String {
   String get withoutLinebreaks => replaceAll(RegExp('[\r\n]'), '');

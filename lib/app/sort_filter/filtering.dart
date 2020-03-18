@@ -1,9 +1,10 @@
+import 'package:black_hole_flutter/black_hole_flutter.dart';
 import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:time_machine/time_machine.dart';
+import 'package:time_machine/time_machine_text_patterns.dart';
 
-import '../chip.dart';
 import '../datetime_utils.dart';
 import '../utils.dart';
 import 'sort_filter.dart';
@@ -12,11 +13,13 @@ typedef Test<T, D> = bool Function(T item, D data);
 typedef Selector<T, R> = R Function(T item);
 
 abstract class Filter<T, S> {
-  const Filter(this.title) : assert(title != null);
+  const Filter(this.titleGetter) : assert(titleGetter != null);
 
   S get defaultSelection;
 
-  final String title;
+  final L10nStringGetter titleGetter;
+
+  S tryParseWebQuerySorter(Map<String, String> query, String key);
 
   bool filter(T item, S selection);
   Widget buildWidget(
@@ -35,14 +38,37 @@ abstract class Filter<T, S> {
 
 @immutable
 class DateRangeFilter<T> extends Filter<T, DateRangeFilterSelection> {
-  const DateRangeFilter(String title, {@required this.selector})
-      : assert(selector != null),
-        super(title);
+  const DateRangeFilter(
+    L10nStringGetter titleGetter, {
+    this.defaultSelection = const DateRangeFilterSelection(),
+    this.webQueryKey,
+    @required this.selector,
+  })  : assert(selector != null),
+        assert(defaultSelection != null),
+        super(titleGetter);
 
   @override
-  DateRangeFilterSelection get defaultSelection => DateRangeFilterSelection();
+  final DateRangeFilterSelection defaultSelection;
 
   final Selector<T, LocalDate> selector;
+  final String webQueryKey;
+
+  @override
+  DateRangeFilterSelection tryParseWebQuerySorter(
+      Map<String, String> query, String key) {
+    LocalDate tryParse(String value) {
+      if (value == null) {
+        return null;
+      }
+      return LocalDatePattern.iso.parse(value).TryGetValue(null);
+    }
+
+    final prefix = webQueryKey ?? key;
+    return DateRangeFilterSelection(
+      start: tryParse(query['${prefix}From']),
+      end: tryParse(query['${prefix}To']),
+    );
+  }
 
   @override
   bool filter(T item, DateRangeFilterSelection selection) {
@@ -125,14 +151,28 @@ class DateRangeFilterSelection {
 
 @immutable
 class FlagsFilter<T> extends Filter<T, Map<String, bool>> {
-  const FlagsFilter(String title, {@required this.filters})
+  const FlagsFilter(L10nStringGetter titleGetter, {@required this.filters})
       : assert(filters != null),
-        super(title);
+        super(titleGetter);
 
   @override
-  Map<String, bool> get defaultSelection => {};
+  Map<String, bool> get defaultSelection {
+    return {
+      for (final entry in filters.entries)
+        entry.key: entry.value.defaultSelection,
+    };
+  }
 
   final Map<String, FlagFilter<T>> filters;
+
+  @override
+  Map<String, bool> tryParseWebQuerySorter(
+      Map<String, String> query, String key) {
+    return {
+      for (final entry in filters.entries)
+        entry.key: entry.value.tryParseWebQuerySorter(query, entry.key),
+    };
+  }
 
   @override
   Widget buildWidget(
@@ -155,7 +195,7 @@ class FlagsFilter<T> extends Filter<T, Map<String, bool>> {
 
         return FilterChip(
           avatar: avatar,
-          label: Text(filter.title),
+          label: Text(filter.titleGetter(context.s)),
           onSelected: (value) {
             final newValue = {
               null: true,
@@ -179,12 +219,25 @@ typedef SetFlagFilterCallback<T> = void Function(String key, bool value);
 
 @immutable
 class FlagFilter<T> {
-  const FlagFilter(this.title, {@required this.selector})
-      : assert(title != null),
+  const FlagFilter(
+    this.titleGetter, {
+    this.defaultSelection,
+    this.webQueryKey,
+    @required this.selector,
+  })  : assert(titleGetter != null),
         assert(selector != null);
 
-  final String title;
+  final L10nStringGetter titleGetter;
+  final bool defaultSelection;
+  final String webQueryKey;
   final Selector<T, bool> selector;
+
+  bool tryParseWebQuerySorter(Map<String, String> query, String key) {
+    return {
+      'true': true,
+      'false': false,
+    }[query[webQueryKey ?? key]];
+  }
 
   // ignore: avoid_positional_boolean_parameters
   bool apply(T item, bool selection) {
