@@ -85,55 +85,45 @@ class _AssignmentsScreenState extends State<AssignmentsScreen> {
     final s = context.s;
 
     return Scaffold(
-      // TODO(marcelgarus): Allow pull-to-refresh.
-      body: FancyCachedBuilder<List<Assignment>>.handleLoading(
+      body: FancyCachedBuilder.list<Assignment>(
+        headerSliverBuilder: (_, __) => [
+          FancyAppBar(
+            title: Text(context.s.assignment),
+            actions: <Widget>[
+              IconButton(
+                icon: Icon(Icons.sort),
+                onPressed: () => _showSortFilterSheet(context),
+              ),
+            ],
+          ),
+        ],
         controller: services.storage.root.assignments.controller,
+        emptyStateBuilder: (_, __) => EmptyStateScreen(
+          text: s.assignment_assignmentsScreen_empty,
+          actions: <Widget>[
+            SecondaryButton(
+              onPressed: () => _showSortFilterSheet(context),
+              child: Text(
+                s.assignment_assignmentsScreen_empty_editFilters,
+              ),
+            ),
+          ],
+        ),
         builder: (context, allAssignments, isFetching) {
           final assignments = _sortFilter.apply(allAssignments);
 
-          return CustomScrollView(
-            slivers: <Widget>[
-              FancyAppBar(
-                title: Text(context.s.assignment),
-                actions: <Widget>[
-                  IconButton(
-                    icon: Icon(Icons.sort),
-                    onPressed: () => _showSortFilterSheet(context),
-                  ),
-                ],
+          return ListView.builder(
+            itemCount: assignments.length,
+            itemBuilder: (_, index) => Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              child: AssignmentCard(
+                assignment: assignments[index],
+                setFlagFilterCallback: (key, value) {
+                  setState(() => _sortFilter =
+                      _sortFilter.withFlagsFilterSelection('more', key, value));
+                },
               ),
-              if (assignments.isEmpty)
-                SliverFillRemaining(
-                  child: EmptyStateScreen(
-                    text: s.assignment_assignmentsScreen_empty,
-                    actions: <Widget>[
-                      SecondaryButton(
-                        onPressed: () => _showSortFilterSheet(context),
-                        child: Text(
-                          s.assignment_assignmentsScreen_empty_editFilters,
-                        ),
-                      ),
-                    ],
-                  ),
-                )
-              else
-                SliverList(
-                  delegate: SliverChildBuilderDelegate(
-                    (_, index) => Padding(
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                      child: AssignmentCard(
-                        assignment: assignments[index],
-                        setFlagFilterCallback: (key, value) {
-                          setState(() => _sortFilter = _sortFilter
-                              .withFlagsFilterSelection('more', key, value));
-                        },
-                      ),
-                    ),
-                    childCount: assignments.length,
-                  ),
-                ),
-            ],
+            ),
           );
         },
       ),
