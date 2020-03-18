@@ -8,9 +8,8 @@ import 'package:time_machine/time_machine_text_patterns.dart';
 
 part 'data.g.dart';
 
-@immutable
-@HiveType(typeId: typeEvent)
-class Event implements Entity {
+@HiveType(typeId: TypeId.event)
+class Event implements Entity<Event> {
   const Event({
     @required this.id,
     @required this.title,
@@ -20,8 +19,7 @@ class Event implements Entity {
     @required this.end,
     @required this.allDay,
     this.recurrence = const [],
-  })  : assert(id != null),
-        assert(title != null),
+  })  : assert(title != null),
         assert(start != null),
         assert(end != null),
         assert(allDay != null),
@@ -33,11 +31,18 @@ class Event implements Entity {
           title: data['title'],
           description: data['description'],
           location: data['location'],
-          start: (data['start'] as int).parseApiInstant(),
-          end: (data['end'] as int).parseApiInstant(),
+          start: (data['start'] as int).parseInstant(),
+          end: (data['end'] as int).parseInstant(),
           allDay: data['allDay'],
           recurrence: _parseRecurrence(data),
         );
+
+  // Yup, you're really seeing this. There is no way we currently know of for
+  // fetching single events.
+  static Future<Event> fetch(Id<Event> id) async =>
+      (await services.api.get('calendar?all=true').parseJsonList())
+          .map((data) => Event.fromJson(data))
+          .singleWhere((event) => event.id == id);
 
   @override
   @HiveField(0)
@@ -102,7 +107,6 @@ class Event implements Entity {
           final until = InstantPattern.extendedIso
               .parse(attributes['until'])
               .value
-              .serverTimeToActual()
               .toDateTimeUtc();
 
           // The day of week in the recurrency is incorrectly stored in the

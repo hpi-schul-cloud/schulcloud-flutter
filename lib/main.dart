@@ -1,14 +1,14 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_native_timezone/flutter_native_timezone.dart';
 import 'package:schulcloud/app/app.dart';
-import 'package:schulcloud/assignment/assignment.dart';
 import 'package:schulcloud/calendar/calendar.dart';
-import 'package:schulcloud/course/course.dart';
 import 'package:schulcloud/file/file.dart';
-import 'package:schulcloud/login/login.dart';
-import 'package:schulcloud/news/news.dart';
+import 'package:schulcloud/sign_in/sign_in.dart';
 import 'package:time_machine/time_machine.dart';
+
+import 'settings/settings.dart';
 
 const _schulCloudRed = MaterialColor(0xffb10438, {
   50: Color(0xfffce2e6),
@@ -47,7 +47,7 @@ const _schulCloudYellow = MaterialColor(0xffe2661d, {
   900: Color(0xfff4790d),
 });
 
-const schulCloudAppConfig = AppConfigData(
+const schulCloudAppConfig = AppConfig(
   name: 'sc',
   domain: 'schul-cloud.org',
   title: 'Schul-Cloud',
@@ -56,7 +56,7 @@ const schulCloudAppConfig = AppConfigData(
   accentColor: _schulCloudYellow,
 );
 
-Future<void> main({AppConfigData appConfig = schulCloudAppConfig}) async {
+Future<void> main({AppConfig appConfig = schulCloudAppConfig}) async {
   await initializeHive();
 
   services
@@ -73,33 +73,32 @@ Future<void> main({AppConfigData appConfig = schulCloudAppConfig}) async {
         'timeZone': timeZone,
       });
     }, instanceName: 'ignored')
+    ..registerSingleton(appConfig)
     ..registerSingletonAsync((_) => StorageService.create())
-    ..registerSingleton(NetworkService(apiUrl: appConfig.apiUrl))
-    ..registerSingleton(UserFetcherService())
-    ..registerSingleton(AssignmentBloc())
+    ..registerSingleton(NetworkService())
+    ..registerSingleton(ApiNetworkService())
     ..registerSingleton(CalendarBloc())
-    ..registerSingleton(CourseBloc())
     ..registerSingleton(FileBloc())
-    ..registerSingleton(LoginBloc())
-    ..registerSingleton(NewsBloc());
+    ..registerSingleton(SignInBloc());
+
+  LicenseRegistry.addLicense(() async* {
+    yield EmptyStateLicense();
+  });
 
   runApp(
-    AppConfig(
-      data: appConfig,
-      child: FutureBuilder<void>(
-        future: services.allReady(),
-        builder: (_, snapshot) {
-          if (!snapshot.hasData) {
-            return Container(
-              color: Colors.white,
-              alignment: Alignment.center,
-              child: CircularProgressIndicator(),
-            );
-          }
+    FutureBuilder<void>(
+      future: services.allReady(),
+      builder: (_, snapshot) {
+        if (!snapshot.hasData) {
+          return Container(
+            color: Colors.white,
+            alignment: Alignment.center,
+            child: CircularProgressIndicator(),
+          );
+        }
 
-          return SchulCloudApp();
-        },
-      ),
+        return SchulCloudApp();
+      },
     ),
   );
 }

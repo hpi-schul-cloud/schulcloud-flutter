@@ -1,7 +1,8 @@
-import 'package:flutter_cached/flutter_cached.dart';
+import 'package:black_hole_flutter/black_hole_flutter.dart';
 import 'package:flare_flutter/flare_actor.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_cached/flutter_cached.dart';
 import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/course/course.dart';
 
@@ -10,6 +11,7 @@ import '../data.dart';
 import 'app_bar.dart';
 import 'file_tile.dart';
 import 'page_route.dart';
+import 'upload_fab.dart';
 
 class FileBrowser extends StatelessWidget {
   FileBrowser({
@@ -29,6 +31,12 @@ class FileBrowser extends StatelessWidget {
   /// show an app bar.
   final bool isEmbedded;
 
+  CacheController<List<File>> get _filesController {
+    // The owner is either a [User] or a [Course]. Either way, the [owner] is
+    // guaranteed to have a [files] field.
+    return parent?.files?.controller ?? (owner as dynamic).files.controller;
+  }
+
   void _openDirectory(BuildContext context, File file) {
     assert(file.isDirectory);
 
@@ -38,18 +46,15 @@ class FileBrowser extends StatelessWidget {
   }
 
   Future<void> _downloadFile(BuildContext context, File file) async {
-    assert(file.isNotDirectory);
+    assert(file.isActualFile);
 
     try {
       await services.get<FileBloc>().downloadFile(file);
-      Scaffold.of(context).showSnackBar(SnackBar(
-        content: Text(context.s.file_fileBrowser_downloading(file.name)),
-      ));
+      context.showSimpleSnackBar(
+          context.s.file_fileBrowser_downloading(file.name));
     } on PermissionNotGranted {
-      Scaffold.of(context).showSnackBar(SnackBar(
-        content: Text(
-          context.s.file_fileBrowser_download_storageAccess,
-        ),
+      context.scaffold.showSnackBar(SnackBar(
+        content: Text(context.s.file_fileBrowser_download_storageAccess),
         action: SnackBarAction(
           label: context.s.file_fileBrowser_download_storageAccess_allow,
           onPressed: services.get<FileBloc>().ensureStoragePermissionGranted,
@@ -65,7 +70,7 @@ class FileBrowser extends StatelessWidget {
 
   Widget _buildEmbedded(BuildContext context) {
     return CachedRawBuilder<List<File>>(
-      controller: services.get<FileBloc>().fetchFiles(owner.id, parent),
+      controller: _filesController,
       builder: (context, update) {
         if (update.hasError) {
           return ErrorScreen(update.error, update.stackTrace);
@@ -93,8 +98,12 @@ class FileBrowser extends StatelessWidget {
           title: parent?.name ?? ownerAsCourse?.name ?? context.s.file_files_my,
         ),
       ),
+      floatingActionButton: UploadFab(
+        ownerId: owner.id,
+        parentId: parent?.id,
+      ),
       body: CachedBuilder<List<File>>(
-        controller: services.get<FileBloc>().fetchFiles(owner.id, parent),
+        controller: _filesController,
         errorBannerBuilder: (_, error, st) => ErrorBanner(error, st),
         errorScreenBuilder: (_, error, st) => ErrorScreen(error, st),
         builder: (context, files) {

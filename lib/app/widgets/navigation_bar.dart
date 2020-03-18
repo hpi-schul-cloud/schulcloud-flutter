@@ -1,3 +1,4 @@
+import 'package:black_hole_flutter/black_hole_flutter.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:schulcloud/app/app.dart';
@@ -24,10 +25,10 @@ class _MyNavigationBarState extends State<MyNavigationBar> {
 
   static const screens = [
     Screen.dashboard,
-    Screen.news,
     Screen.courses,
     Screen.assignments,
     Screen.files,
+    Screen.news,
   ];
 
   @override
@@ -49,18 +50,13 @@ class _MyNavigationBarState extends State<MyNavigationBar> {
 
     return BottomNavigationBar(
       selectedItemColor: theme.accentColor,
-      unselectedItemColor: theme.mediumEmphasisColor,
+      unselectedItemColor: theme.mediumEmphasisOnBackground,
       currentIndex: screens.indexOf(_activeScreen),
       onTap: _onNavigate,
       items: [
         BottomNavigationBarItem(
           icon: Icon(Icons.dashboard),
           title: Text(s.dashboard, key: ValueKey('navigation-dashboard')),
-          backgroundColor: theme.bottomAppBarColor,
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.new_releases),
-          title: Text(s.news, key: ValueKey('navigation-news')),
           backgroundColor: theme.bottomAppBarColor,
         ),
         BottomNavigationBarItem(
@@ -76,6 +72,11 @@ class _MyNavigationBarState extends State<MyNavigationBar> {
         BottomNavigationBarItem(
           icon: Icon(Icons.folder),
           title: Text(s.file, key: ValueKey('navigation-file')),
+          backgroundColor: theme.bottomAppBarColor,
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.new_releases),
+          title: Text(s.news),
           backgroundColor: theme.bottomAppBarColor,
         ),
       ],

@@ -1,21 +1,27 @@
+import 'package:black_hole_flutter/black_hole_flutter.dart';
 import 'package:flutter/material.dart';
-import 'package:schulcloud/app/app.dart';
+
+import 'text.dart';
 
 class FancyCard extends StatelessWidget {
   const FancyCard({
     Key key,
-    this.onTap,
-    this.omitHorizontalPadding = false,
-    this.color,
     this.title,
     @required this.child,
-  }) : super(key: key);
+    this.onTap,
+    this.color,
+    this.omitHorizontalPadding = false,
+    this.omitBottomPadding = false,
+  })  : assert(omitHorizontalPadding != null),
+        assert(omitBottomPadding != null),
+        super(key: key);
 
-  final VoidCallback onTap;
-  final bool omitHorizontalPadding;
-  final Color color;
   final String title;
   final Widget child;
+  final VoidCallback onTap;
+  final Color color;
+  final bool omitHorizontalPadding;
+  final bool omitBottomPadding;
 
   @override
   Widget build(BuildContext context) {
@@ -29,6 +35,7 @@ class FancyCard extends StatelessWidget {
             ? BorderSide(color: context.theme.dividerColor, width: 1)
             : BorderSide.none,
       ),
+      clipBehavior: Clip.antiAlias,
       margin: EdgeInsets.zero,
       borderOnForeground: true,
       color: color,
@@ -48,10 +55,10 @@ class FancyCard extends StatelessWidget {
         if (title != null)
           Padding(
             padding: EdgeInsets.fromLTRB(16, 0, 16, 16),
-            child: Text(
+            child: FancyText(
               title.toUpperCase(),
-              style: context.textTheme.overline
-                  .copyWith(color: context.theme.disabledColor),
+              style: context.textTheme.overline,
+              emphasis: TextEmphasis.disabled,
             ),
           ),
         Padding(
@@ -60,7 +67,7 @@ class FancyCard extends StatelessWidget {
               : EdgeInsets.symmetric(horizontal: 16),
           child: child,
         ),
-        SizedBox(height: 16),
+        if (!omitBottomPadding) SizedBox(height: 16),
       ],
     );
   }

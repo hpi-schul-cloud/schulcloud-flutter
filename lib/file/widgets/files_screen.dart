@@ -1,18 +1,20 @@
-import 'package:flutter_cached/flutter_cached.dart';
+import 'package:black_hole_flutter/black_hole_flutter.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_cached/flutter_cached.dart';
 import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/course/course.dart';
 
-import '../bloc.dart';
 import 'file_browser.dart';
 import 'page_route.dart';
+import 'upload_fab.dart';
 
 class FilesScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FancyScaffold(
       appBar: FancyAppBar(title: Text(context.s.file)),
+      floatingActionButton: UploadFab(ownerId: services.storage.userId),
       sliver: SliverList(
         delegate: SliverChildListDelegate([
           _CoursesList(),
@@ -30,13 +32,13 @@ class _CoursesList extends StatelessWidget {
     return FancyCard(
       title: context.s.file_files_course,
       child: CachedRawBuilder(
-        controller: services.get<FileBloc>().fetchCourses()..fetch(),
+        controller: services.storage.root.courses.controller,
         builder: (context, update) {
           return GridView.extent(
             primary: false,
             shrinkWrap: true,
             maxCrossAxisExtent: 300,
-            childAspectRatio: 3.2,
+            childAspectRatio: 2.8,
             mainAxisSpacing: 8,
             crossAxisSpacing: 8,
             children: <Widget>[
@@ -85,7 +87,7 @@ class _UserFiles extends StatelessWidget {
       title: context.s.file_files_my,
       omitHorizontalPadding: true,
       child: CachedRawBuilder(
-        controller: services.get<UserFetcherService>().fetchCurrentUser(),
+        controller: services.storage.userId.controller,
         builder: (context, update) {
           return update.hasData
               ? FileBrowser(owner: update.data, isEmbedded: true)

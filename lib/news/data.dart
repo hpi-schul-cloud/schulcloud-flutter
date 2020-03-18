@@ -5,19 +5,17 @@ import 'package:time_machine/time_machine.dart';
 
 part 'data.g.dart';
 
-@immutable
-@HiveType(typeId: typeArticle)
-class Article implements Entity {
+@HiveType(typeId: TypeId.article)
+class Article implements Entity<Article> {
   const Article({
     @required this.id,
     @required this.title,
-    @required this.author,
+    @required this.authorId,
     @required this.publishedAt,
     this.imageUrl,
     @required this.content,
-  })  : assert(id != null),
-        assert(title != null),
-        assert(author != null),
+  })  : assert(title != null),
+        assert(authorId != null),
         assert(publishedAt != null),
         assert(content != null);
 
@@ -25,11 +23,14 @@ class Article implements Entity {
       : this(
           id: Id<Article>(data['_id']),
           title: data['title'],
-          author: Id<User>(data['creatorId']),
-          publishedAt: (data['displayAt'] as String).parseApiInstant(),
+          authorId: Id<User>(data['creatorId']),
+          publishedAt: (data['displayAt'] as String).parseInstant(),
           imageUrl: null,
-          content: removeHtmlTags(data['content']),
+          content: (data['content'] as String).withoutHtmlTags,
         );
+
+  static Future<Article> fetch(Id<Article> id) async =>
+      Article.fromJson(await services.api.get('news/$id').json);
 
   // used before: 4, 5
 
@@ -41,7 +42,7 @@ class Article implements Entity {
   final String title;
 
   @HiveField(2)
-  final Id<User> author;
+  final Id<User> authorId;
 
   @HiveField(8)
   final Instant publishedAt;

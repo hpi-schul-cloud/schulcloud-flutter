@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:schulcloud/app/app.dart';
 
+import '../app.dart';
 import 'buttons.dart';
 
 /// A screen with no content on it. Instead a placeholder is displayed,
@@ -33,6 +33,7 @@ class EmptyStateScreen extends StatelessWidget {
         children: <Widget>[
           child ??
               SvgPicture.asset('assets/empty_states/default.svg', height: 300),
+          SizedBox(height: 16),
           Text(text, textAlign: TextAlign.center),
           if (actions.isNotEmpty || onRetry != null) ...[
             SizedBox(height: 16),

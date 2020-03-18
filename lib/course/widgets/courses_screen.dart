@@ -2,7 +2,6 @@ import 'package:flutter_cached/flutter_cached.dart';
 import 'package:flutter/material.dart';
 import 'package:schulcloud/app/app.dart';
 
-import '../bloc.dart';
 import '../data.dart';
 import 'course_card.dart';
 
@@ -11,7 +10,7 @@ class CoursesScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: CachedBuilder<List<Course>>(
-        controller: services.get<CourseBloc>().fetchCourses(),
+        controller: services.storage.root.courses.controller,
         errorBannerBuilder: (_, error, st) => ErrorBanner(error, st),
         errorScreenBuilder: (_, error, st) => ErrorScreen(error, st),
         builder: (context, courses) {
@@ -25,12 +24,13 @@ class CoursesScreen extends StatelessWidget {
               FancyAppBar(title: Text(context.s.course)),
               SliverPadding(
                 padding: EdgeInsets.fromLTRB(16, 8, 16, 16),
-                sliver: SliverGrid.count(
-                  childAspectRatio: 1.5,
-                  crossAxisCount: 2,
-                  children: <Widget>[
-                    for (var course in courses) CourseCard(course: course),
-                  ],
+                sliver: SliverList(
+                  delegate: SliverChildBuilderDelegate((_, i) {
+                    return Padding(
+                      padding: EdgeInsets.only(bottom: 16),
+                      child: CourseCard(courses[i]),
+                    );
+                  }, childCount: courses.length),
                 ),
               ),
             ],
