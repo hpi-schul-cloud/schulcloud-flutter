@@ -1,5 +1,8 @@
+import 'dart:io' as io;
+
 import 'package:hive/hive.dart';
 import 'package:meta/meta.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/course/course.dart';
 import 'package:time_machine/time_machine.dart';
@@ -68,6 +71,24 @@ class File implements Entity<File>, Comparable<File> {
 
   @HiveField(1)
   final String name;
+  String get extension {
+    final lastDot = name.lastIndexOf('.');
+    return lastDot == null ? null : name.substring(lastDot + 1);
+  }
+
+  Future<io.File> get localFile async {
+    final directory = await getExternalStorageDirectory();
+    final fileName = extension == null ? id.toString() : '$id.$extension';
+    return io.File('${directory.path}/$fileName');
+  }
+
+  Future<bool> get isDownloaded async {
+    // Calling `.existsSync()` is much faster than using `exists()`. But in
+    // this case, latency is much more important than throughput: This code is
+    // executed during rendering and we don't want any jank.
+    // ignore: avoid_slow_async_io
+    return (await localFile).exists();
+  }
 
   /// An [Id] for either a [User] or [Course].
   @HiveField(3)
