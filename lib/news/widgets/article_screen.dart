@@ -21,18 +21,9 @@ class ArticleScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CachedRawBuilder<Article>(
+    return FancyCachedBuilder<Article>.handleLoading(
       controller: articleId.controller,
-      builder: (context, update) {
-        if (!update.hasData) {
-          return Center(
-            child: update.hasError
-                ? ErrorScreen(update.error, update.stackTrace)
-                : CircularProgressIndicator(),
-          );
-        }
-
-        final article = update.data;
+      builder: (context, article, isFetching) {
         return Scaffold(
           body: LayoutBuilder(
             builder: (ctx, constraints) {
