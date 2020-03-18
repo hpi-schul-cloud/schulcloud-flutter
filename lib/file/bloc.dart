@@ -9,7 +9,6 @@ import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:meta/meta.dart';
 import 'package:mime/mime.dart';
 import 'package:open_file/open_file.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:schulcloud/app/app.dart';
 
@@ -53,7 +52,6 @@ class FileBloc {
     );
     final signedUrl = json.decode(response.body)['url'];
 
-    print((await getExternalStorageDirectory()).path);
     final localFile = await file.localFile;
 
     await FlutterDownloader.enqueue(
@@ -61,7 +59,7 @@ class FileBloc {
       savedDir: localFile.dirName,
       fileName: localFile.name,
       showNotification: true,
-      // openFileFromNotification: true,
+      openFileFromNotification: true,
     );
   }
 
