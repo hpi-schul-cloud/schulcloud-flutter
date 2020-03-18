@@ -67,6 +67,8 @@
   "course_detailsScreen_empty": "This course doesn't contain any topics.",
   "dashboard": "Dashboard",
   "file": "Files",
+  "file_chooseDestination_upload": "Where to upload the file?",
+  "file_chooseDestination_upload_button": "Upload here",
   "file_delete_loading": "Deleting {name}…",
   "file_delete_success": "Deleted {name} 😊",
   "file_delete_failure": "Couldn't delete {name}",

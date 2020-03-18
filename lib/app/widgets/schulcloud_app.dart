@@ -95,9 +95,11 @@ class _SignedInScreenState extends ReceiveShareState<SignedInScreen> {
       logger.i('Letting the user choose a destination where to upload '
           '${shared.path}.');
       final destination = await navigator.push(MaterialPageRoute(
+        fullscreenDialog: true,
         builder: (_) => ChooseDestinationScreen(
-          title: Text('Where to upload the file?'),
-          buttonContent: Icon(Icons.file_upload),
+          title: Text(context.s.file_chooseDestination_upload),
+          fabIcon: Icon(Icons.file_upload),
+          fabLabel: Text(context.s.file_chooseDestination_upload_button),
         ),
       ));
 

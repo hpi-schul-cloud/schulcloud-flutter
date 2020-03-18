@@ -15,36 +15,42 @@ class FileDestination {
 class ChooseDestinationScreen extends StatelessWidget {
   const ChooseDestinationScreen({
     @required this.title,
-    @required this.buttonContent,
+    @required this.fabIcon,
+    @required this.fabLabel,
   })  : assert(title != null),
-        assert(buttonContent != null);
+        assert(fabIcon != null),
+        assert(fabLabel != null);
 
   final Widget title;
-  final Widget buttonContent;
+  final Widget fabIcon;
+  final Widget fabLabel;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          icon: Icon(Icons.close),
-          onPressed: () => context.navigator.pop(),
-        ),
-        title: title,
-      ),
+      appBar: AppBar(title: title),
       body: Center(
-        child: Text("For now, you can't choose a destination.\n"
-            'The destination will be the root of your personal files.'),
+        // Not localized yet because the text will be replaced by something
+        // totally different.
+        child: Text(
+          "For now, you can't choose a destination.\n"
+          'The destination will be the root of your personal files.',
+          textAlign: TextAlign.center,
+        ),
       ),
-      floatingActionButton: FloatingActionButton(
+      floatingActionButton: FloatingActionButton.extended(
         backgroundColor: Colors.white,
         onPressed: () => context.navigator.pop(FileDestination._(
           ownerId: services.storage.userId,
           parentId: null,
         )),
-        child: IconTheme(
+        icon: IconTheme(
           data: IconThemeData(color: context.theme.primaryColor),
-          child: buttonContent,
+          child: fabIcon,
+        ),
+        label: DefaultTextStyle(
+          style: TextStyle(color: context.theme.primaryColor),
+          child: fabLabel,
         ),
       ),
     );
