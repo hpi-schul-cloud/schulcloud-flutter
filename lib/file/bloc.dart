@@ -8,6 +8,8 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:meta/meta.dart';
 import 'package:mime/mime.dart';
+import 'package:open_file/open_file.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:schulcloud/app/app.dart';
 
@@ -31,6 +33,13 @@ class UploadProgressUpdate {
 class FileBloc {
   const FileBloc();
 
+  Future<void> openFile(File file) async {
+    if (!(await file.isDownloaded)) {
+      await downloadFile(file);
+    }
+    await OpenFile.open((await file.localFile).path);
+  }
+
   Future<void> downloadFile(File file) async {
     assert(file != null);
 
@@ -44,25 +53,22 @@ class FileBloc {
     );
     final signedUrl = json.decode(response.body)['url'];
 
+    print((await getExternalStorageDirectory()).path);
+    final localFile = await file.localFile;
+
     await FlutterDownloader.enqueue(
       url: signedUrl,
-      savedDir: '/sdcard/Download',
-      fileName: file.name,
+      savedDir: localFile.dirName,
+      fileName: localFile.name,
       showNotification: true,
-      openFileFromNotification: true,
+      // openFileFromNotification: true,
     );
   }
 
   Future<void> ensureStoragePermissionGranted() async {
-    final permissions = await PermissionHandler()
-        .checkPermissionStatus(PermissionGroup.storage);
-    bool isGranted() => permissions.value != 0;
-
-    if (isGranted()) {
-      return;
-    }
-    await PermissionHandler().requestPermissions([PermissionGroup.storage]);
-    if (!isGranted()) {
+    final permissions =
+        await PermissionHandler().requestPermissions([PermissionGroup.storage]);
+    if (permissions[PermissionGroup.storage] != PermissionStatus.granted) {
       throw PermissionNotGranted();
     }
   }
