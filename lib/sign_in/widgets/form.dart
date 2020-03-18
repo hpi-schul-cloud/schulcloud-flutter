@@ -4,11 +4,10 @@ import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:pedantic/pedantic.dart';
 import 'package:schulcloud/app/app.dart';
-import 'package:schulcloud/sign_in/widgets/signin_browser.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
-import '../../app/app.dart';
 import '../bloc.dart';
+import 'sign_in_browser.dart';
 
 class SignInForm extends StatefulWidget {
   @override
@@ -30,24 +29,22 @@ class _SignInFormState extends State<SignInForm> {
         .pushReplacement(TopLevelPageRoute(builder: (_) => SignedInScreen())));
   }
 
-  Future<void> _executeLogin(Future<void> Function() login) async {
-    await login();
+  Future<void> _executeSignIn(Future<void> Function() signIn) async {
+    await signIn();
 
-    // Logged in.
     unawaited(context.navigator.pushReplacement(TopLevelPageRoute(
       builder: (_) => SignedInScreen(),
     )));
   }
 
-  Future<void> _loginAsDemoStudent() =>
-      _executeLogin(() => services.get<SignInBloc>().signInAsDemoStudent());
+  Future<void> _signInAsDemoStudent() =>
+      _executeSignIn(() => services.get<SignInBloc>().signInAsDemoStudent());
 
-  Future<void> _loginAsDemoTeacher() =>
-      _executeLogin(() => services.get<SignInBloc>().signInAsDemoTeacher());
+  Future<void> _signInAsDemoTeacher() =>
+      _executeSignIn(() => services.get<SignInBloc>().signInAsDemoTeacher());
 
   @override
   Widget build(BuildContext context) {
-    final mediaQuery = MediaQuery.of(context);
     final s = context.s;
 
     return Container(
@@ -68,28 +65,21 @@ class _SignInFormState extends State<SignInForm> {
             ),
           ),
           SizedBox(height: 32),
-          ConstrainedBox(
-              constraints: BoxConstraints(
-                maxHeight: mediaQuery.size.height -
-                    400 -
-                    mediaQuery.padding.bottom -
-                    mediaQuery.padding.top,
-              ),
-              child: PrimaryButton(
-                  onPressed: () => browser.open(
-                      url: services.get<AppConfig>().webUrl('login'),
-                      options: InAppBrowserClassOptions()),
-                  child: Text(s.signIn_form_signIn))),
+          PrimaryButton(
+              onPressed: () => browser.open(
+                  url: services.config.webUrl('login'),
+                  options: InAppBrowserClassOptions()),
+              child: Text(s.signIn_form_signIn)),
           SizedBox(height: 32),
           Wrap(
             children: <Widget>[
               SecondaryButton(
-                onPressed: _loginAsDemoStudent,
+                onPressed: _signInAsDemoStudent,
                 child: Text(s.signIn_form_demo_student),
               ),
               SizedBox(width: 8),
               SecondaryButton(
-                onPressed: _loginAsDemoTeacher,
+                onPressed: _signInAsDemoTeacher,
                 child: Text(s.signIn_form_demo_teacher),
               ),
             ],

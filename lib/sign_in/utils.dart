@@ -33,7 +33,6 @@ Future<bool> signOut(BuildContext context) async {
   if (confirmed) {
     // Actually log out.
 
-    await services.get<NetworkService>().delete('authentication');
     unawaited(CookieManager().deleteAllCookies());
     // This should probably be awaited, but right now awaiting it
     // leads to the issue that logging out becomes impossible.

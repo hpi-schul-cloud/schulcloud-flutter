@@ -48,7 +48,7 @@ class SignInBloc {
       userId: response.userId,
       token: response.accessToken,
     );
-    logger.i('Logged in with userId ${response.userId}!');
+    logger.i('Signed in with userId ${response.userId}!');
   }
 
   Future<void> signInAsDemoStudent() =>

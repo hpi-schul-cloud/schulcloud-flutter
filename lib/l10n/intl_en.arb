@@ -16,7 +16,7 @@
   "app_navigation_userDataEmpty": "—",
   "app_notFound": "Page not found",
   "app_notFound_message": "404 – We couldn't find the page you were looking for:\n{uri}",
-  "app_signOut_content": "You will need to provide your login credentials to use the app again.",
+  "app_signOut_content": "You will need to provide your signin credentials to use the app again.",
   "app_signOut_title": "Sign out?",
   "assignment": "Assignments",
   "assignment_assignment_isArchived": "Archived",
