@@ -8,7 +8,7 @@ extension FormDialogs on BuildContext {
   Future<bool> showDiscardChangesDialog() {
     final s = this.s;
 
-    return showDialog<bool>(
+    final result = showDialog<bool>(
       context: this,
       builder: (context) {
         return AlertDialog(
@@ -27,6 +27,7 @@ extension FormDialogs on BuildContext {
         );
       },
     );
+    return result ?? false;
   }
 
   Future<bool> showConfirmDeleteDialog(String message) {
