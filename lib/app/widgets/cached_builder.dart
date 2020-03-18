@@ -90,3 +90,27 @@ class FancyCachedBuilderWithLoading<T> extends FancyCachedBuilder<T> {
           },
         );
 }
+
+class FancyCachedBuilderWithPullToRefresh<T>
+    extends FancyCachedBuilderWithLoading<T> {
+  FancyCachedBuilderWithPullToRefresh({
+    @required CacheController<T> controller,
+    @required List<Widget> Function(BuildContext, bool) headerSliverBuilder,
+    @required CachedBuilderContentBuilder<T> builder,
+  }) : super(
+          controller: controller,
+          builder: (context, data, isFetching) {
+            return NestedScrollView(
+              headerSliverBuilder: headerSliverBuilder,
+              body: RefreshIndicator(
+                onRefresh: controller.fetch,
+                child: data == null
+                    ? SliverFillRemaining(
+                        child: Center(child: CircularProgressIndicator()),
+                      )
+                    : builder(context, data, isFetching),
+              ),
+            );
+          },
+        );
+}
