@@ -38,7 +38,7 @@ class _SignInFormState extends State<SignInForm> {
       _isEmailValid = e.isEmailValid;
       _isPasswordValid = e.isPasswordValid;
     } on NoConnectionToServerError {
-      _ambientError = context.s.signIn_form_errorNoConnection;
+      _ambientError = context.s.app_error_noConnection;
     } on AuthenticationError {
       _ambientError = context.s.signIn_form_errorAuth;
     } on TooManyRequestsError catch (error) {

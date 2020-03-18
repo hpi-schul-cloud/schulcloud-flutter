@@ -128,8 +128,7 @@ class PermissionNotGranted<T> extends FancyException {
   PermissionNotGranted()
       : super(
           isGlobal: false,
-          // TODO(marcelgarus): Localize!
-          messageBuilder: (_) => "A permission wasn't granted by the user.",
+          messageBuilder: (context) => context.s.app_error_noPermission,
         );
 }
 

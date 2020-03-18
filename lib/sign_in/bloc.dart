@@ -12,12 +12,11 @@ class InvalidSignInSyntaxError extends FancyException {
   })  : assert(!isEmailValid || !isPasswordValid),
         super(
           isGlobal: false,
-          messageBuilder: (_) {
-            // TODO(marcelgarus): Localize!
+          messageBuilder: (context) {
             if (!isEmailValid) {
-              return "The email isn't valid.";
+              return context.s.signIn_form_email_error;
             } else if (!isPasswordValid) {
-              return "The password isn't valid.";
+              return context.s.signIn_form_password_error;
             }
             throw StateError('Email or password needs to be invalid for an '
                 'InvalidSignInSyntaxError to be thrown.');

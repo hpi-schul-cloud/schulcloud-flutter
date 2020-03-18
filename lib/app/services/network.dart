@@ -63,7 +63,7 @@ class NoConnectionToServerError extends FancyException {
   NoConnectionToServerError(dynamic error, StackTrace stackTrace)
       : super(
           isGlobal: true,
-          messageBuilder: (context) => context.s.app_errorScreen_noConnection,
+          messageBuilder: (context) => context.s.app_error_noConnection,
           originalException: error,
           stackTrace: stackTrace,
         );
@@ -89,24 +89,24 @@ class ServerError extends FancyException {
 }
 
 class ConflictError extends ServerError {
-  // TODO(marcelgarus): Localize!
-  ConflictError(ErrorBody body) : super(body, (_) => 'A conflict occurred.');
+  ConflictError(ErrorBody body)
+      : super(body, (context) => context.s.app_error_conflict);
 }
 
 class AuthenticationError extends ServerError {
   AuthenticationError(ErrorBody body)
       : super(
           body,
-          (context) => context.s.app_errorScreen_authError,
+          (context) => context.s.app_error_tokenExpired,
           isGlobal: true,
         );
 }
 
 class TooManyRequestsError extends ServerError {
-  // TODO(marcelgarus): Localize!
   TooManyRequestsError(ErrorBody body, {@required this.timeToWait})
       : assert(timeToWait != null),
-        super(body, (context) => 'Too many requests. Wait $timeToWait.');
+        super(body,
+            (context) => context.s.signIn_form_errorRateLimit(timeToWait));
 
   final Duration timeToWait;
 }

@@ -163,7 +163,7 @@ class _EditSubmissionFormState extends State<EditSubmissionForm> {
       unawaited(services.snackBar.showMessage(e.body.message));
     } catch (e) {
       unawaited(services.snackBar
-          .showMessage(context.s.app_errorScreen_unknown(exceptionMessage(e))));
+          .showMessage(context.s.app_error_unknown(exceptionMessage(e))));
     } finally {
       setState(() => _isSaving = false);
     }

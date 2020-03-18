@@ -14,8 +14,8 @@ class NewsScreen extends StatelessWidget {
           FancyAppBar(title: Text(context.s.news)),
         ],
         controller: services.storage.root.news.controller,
-        emptyStateBuilder: (_, __) => EmptyStateScreen(
-          text: 'No news.', // TODO(marcelgarus): Localize!
+        emptyStateBuilder: (context, __) => EmptyStateScreen(
+          text: context.s.news_empty,
         ),
         builder: (context, articles, isFetching) {
           articles.sort((a1, a2) => a2.publishedAt.compareTo(a1.publishedAt));

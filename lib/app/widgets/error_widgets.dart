@@ -14,7 +14,7 @@ void _showStackTrace(
   context.navigator.push(MaterialPageRoute(
     builder: (_) {
       return Scaffold(
-        appBar: AppBar(title: Text(context.s.app_errorScreen_stackTrace)),
+        appBar: AppBar(title: Text(context.s.app_error_stackTrace)),
         body: ListView(
           padding: EdgeInsets.all(16),
           children: [
@@ -108,7 +108,7 @@ class ErrorScreen extends StatelessWidget {
               error.originalException,
               error.stackTrace,
             ),
-            child: Text('Show stack trace'), // TODO(marcelgarus): Localize!
+            child: Text(context.s.app_error_showStackTrace),
           ),
       ],
       onRetry: onRetry,
@@ -147,8 +147,7 @@ class ErrorBanner extends StatelessWidget {
                     error.originalException,
                     error.stackTrace,
                   ),
-                  child:
-                      Text('Show stack trace'), // TODO(marcelgarus): Localize!
+                  child: Text(context.s.app_error_showStackTrace),
                 ),
             ],
           ),
