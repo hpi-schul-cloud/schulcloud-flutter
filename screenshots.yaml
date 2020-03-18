@@ -10,7 +10,7 @@ locales:
 
 devices:
   android:
-    Nexus 6P:
+    Pixel 3 XL:
       orientation: Portrait
 
 frame: false
