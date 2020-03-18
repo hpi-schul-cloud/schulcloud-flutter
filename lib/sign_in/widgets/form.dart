@@ -58,7 +58,7 @@ class _SignInFormState extends State<SignInForm> {
             padding: EdgeInsets.symmetric(horizontal: 32),
             child: SvgPicture.asset(
               services
-                  .get<AppConfig>()
+                  .config
                   .assetName(context, 'logo/logo_with_text.svg'),
               height: 64,
               alignment: Alignment.bottomCenter,
@@ -71,6 +71,7 @@ class _SignInFormState extends State<SignInForm> {
                   options: InAppBrowserClassOptions()),
               child: Text(s.signIn_form_signIn)),
           SizedBox(height: 32),
+
           Wrap(
             children: <Widget>[
               SecondaryButton(
