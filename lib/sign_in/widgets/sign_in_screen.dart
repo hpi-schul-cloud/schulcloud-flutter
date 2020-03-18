@@ -1,6 +1,7 @@
 import 'package:black_hole_flutter/black_hole_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:schulcloud/app/app.dart';
+import 'package:schulcloud/settings/settings.dart';
 
 import 'form.dart';
 import 'slanted_section.dart';
@@ -61,6 +62,7 @@ class SignInScreen extends StatelessWidget {
         alignment: Alignment.center,
         child: Text(s.signIn_signInScreen_placeholder),
       ),
+      LegalBar(),
     ];
   }
 }

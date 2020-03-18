@@ -10,7 +10,7 @@ import '../bloc.dart';
 import '../data.dart';
 import 'app_bar.dart';
 import 'file_tile.dart';
-import 'upload_button.dart';
+import 'upload_fab.dart';
 
 class FileBrowser extends StatelessWidget {
   const FileBrowser(
@@ -56,9 +56,7 @@ class FileBrowser extends StatelessWidget {
           context.s.file_fileBrowser_downloading(file.name));
     } on PermissionNotGranted {
       context.scaffold.showSnackBar(SnackBar(
-        content: Text(
-          context.s.file_fileBrowser_download_storageAccess,
-        ),
+        content: Text(context.s.file_fileBrowser_download_storageAccess),
         action: SnackBarAction(
           label: context.s.file_fileBrowser_download_storageAccess_allow,
           onPressed: services.get<FileBloc>().ensureStoragePermissionGranted,
@@ -160,7 +158,7 @@ class FileBrowser extends StatelessWidget {
         preferredSize: AppBar().preferredSize,
         child: appBar,
       ),
-      floatingActionButton: UploadButton(
+      floatingActionButton: UploadFab(
         ownerId: ownerId,
         parentId: parentId,
       ),

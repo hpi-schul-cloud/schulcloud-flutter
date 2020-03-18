@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_native_timezone/flutter_native_timezone.dart';
@@ -9,6 +10,8 @@ import 'package:schulcloud/file/file.dart';
 import 'package:schulcloud/sign_in/sign_in.dart';
 import 'package:time_machine/time_machine.dart';
 import 'package:uni_links/uni_links.dart';
+
+import 'settings/settings.dart';
 
 const _schulCloudRed = MaterialColor(0xffb10438, {
   50: Color(0xfffce2e6),
@@ -90,6 +93,11 @@ Future<void> main({AppConfig appConfig = schulCloudAppConfig}) async {
   unawaited(Observable(getUriLinksStream())
       .doOnData((uri) => logger.i('Received deep link: $uri'))
       .pipe(incomingDeepLinksSink));
+
+  logger.d('Adding custom licenses to registry…');
+  LicenseRegistry.addLicense(() async* {
+    yield EmptyStateLicense();
+  });
 
   logger.d('Running…');
   runApp(

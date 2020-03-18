@@ -9,6 +9,7 @@ import '../data.dart';
 import '../services/storage.dart';
 import '../utils.dart';
 import 'account_avatar.dart';
+import 'text.dart';
 
 class AccountDialog extends StatelessWidget {
   @override
@@ -93,8 +94,8 @@ class AccountDialog extends StatelessWidget {
         final user = update.data;
         return ListTile(
           leading: AccountAvatar(),
-          title: Text(user?.name ?? context.s.general_loading),
-          subtitle: Text(user?.email ?? ''),
+          title: FancyText(user?.name),
+          subtitle: FancyText(user?.email),
         );
       },
     );

@@ -129,7 +129,6 @@ class _LessonScreenState extends State<LessonScreen> {
                 _controller.loadUrl(_buildWebViewUrl(content));
                 Navigator.pop(context);
               },
-              isActive: false,
             ),
         ],
       ),
