@@ -15,7 +15,7 @@ class SnackBarRequest {
   final SnackBar snackBar;
 }
 
-/// A service that offers displaying app-wide SnackBars at the bottom.
+/// A service that offers displaying app-wide [SnackBar]s at the bottom.
 class SnackBarService {
   final _controller = StreamController<SnackBarRequest>.broadcast();
   Stream<SnackBarRequest> get requests => _controller.stream;
@@ -40,7 +40,7 @@ class SnackBarService {
       show(SnackBar(content: Text(message)));
 
   Future<ScaffoldFeatureController<SnackBar, SnackBarClosedReason>>
-      showMessageShortly(String message) {
+      showMessageBriefly(String message) {
     return show(SnackBar(
       duration: Duration(seconds: 2),
       content: Text(message),
@@ -88,11 +88,11 @@ class SnackBarService {
     try {
       await action();
       controller.close();
-      await showMessageShortly(successMessage);
+      await showMessageBriefly(successMessage);
     } catch (e, st) {
       logger.e("Simple action couldn't be performed.", e, st);
       controller.close();
-      await showMessageShortly(failureMessage);
+      await showMessageBriefly(failureMessage);
     }
   }
 }
