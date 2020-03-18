@@ -25,6 +25,14 @@ class FileTile extends StatelessWidget {
       title: Text(file.name),
       subtitle: Text(subtitle),
       leading: FileThumbnail(file: file),
+      trailing: FutureBuilder<bool>(
+        future: file.isDownloaded,
+        builder: (context, snapshot) {
+          return snapshot.data == true
+              ? Icon(Icons.offline_pin)
+              : SizedBox.shrink();
+        },
+      ),
       onTap: () => onOpen(file),
       onLongPress: () => FileMenu.show(context, file),
     );
