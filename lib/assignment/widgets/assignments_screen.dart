@@ -1,7 +1,7 @@
+import 'package:black_hole_flutter/black_hole_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cached/flutter_cached.dart';
 import 'package:schulcloud/app/app.dart';
-import 'package:schulcloud/app/chip.dart';
 import 'package:schulcloud/course/course.dart';
 import 'package:time_machine/time_machine.dart';
 
@@ -183,10 +183,9 @@ class AssignmentCard extends StatelessWidget {
       textBaseline: TextBaseline.alphabetic,
       children: <Widget>[
         Expanded(
-          child: Text(
+          child: FancyText(
             assignment.name,
-            style: context.theme.textTheme.subhead,
-            overflow: TextOverflow.ellipsis,
+            style: context.textTheme.subhead,
             maxLines: 2,
           ),
         ),

@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_native_timezone/flutter_native_timezone.dart';
@@ -6,6 +7,8 @@ import 'package:schulcloud/calendar/calendar.dart';
 import 'package:schulcloud/file/file.dart';
 import 'package:schulcloud/sign_in/sign_in.dart';
 import 'package:time_machine/time_machine.dart';
+
+import 'settings/settings.dart';
 
 const _schulCloudRed = MaterialColor(0xffb10438, {
   50: Color(0xfffce2e6),
@@ -61,18 +64,27 @@ Future<void> main({AppConfig appConfig = schulCloudAppConfig}) async {
       // We need to initialize TimeMachine before launching the app, and using
       // get_it to keep track of initialization statuses is the simplest way.
       // Hence we just ignore the return value.
+      var timeZone = await FlutterNativeTimezone.getLocalTimezone();
+      if (timeZone == 'GMT') {
+        timeZone = 'UTC';
+      }
       await TimeMachine.initialize({
         'rootBundle': rootBundle,
-        'timeZone': await FlutterNativeTimezone.getLocalTimezone(),
+        'timeZone': timeZone,
       });
     }, instanceName: 'ignored')
     ..registerSingleton(appConfig)
     ..registerSingletonAsync((_) => StorageService.create())
+    ..registerSingleton(SnackBarService())
     ..registerSingleton(NetworkService())
     ..registerSingleton(ApiNetworkService())
     ..registerSingleton(FileService())
     ..registerSingleton(CalendarBloc())
     ..registerSingleton(SignInBloc());
+
+  LicenseRegistry.addLicense(() async* {
+    yield EmptyStateLicense();
+  });
 
   runApp(
     FutureBuilder<void>(

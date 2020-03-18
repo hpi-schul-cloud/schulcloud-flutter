@@ -1,14 +1,16 @@
 import 'dart:async';
 
 import 'package:file_picker/file_picker.dart';
+import 'package:black_hole_flutter/black_hole_flutter.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_cached/flutter_cached.dart';
 import 'package:schulcloud/app/app.dart';
 
 import '../data.dart';
 import '../service.dart';
 
-class UploadButton extends StatefulWidget {
-  const UploadButton({@required this.ownerId, this.parentId})
+class UploadFab extends StatefulWidget {
+  const UploadFab({@required this.ownerId, this.parentId})
       : assert(ownerId != null);
 
   /// The owner of uploaded files.
@@ -18,10 +20,10 @@ class UploadButton extends StatefulWidget {
   final Id<File> parentId;
 
   @override
-  _UploadButtonState createState() => _UploadButtonState();
+  _UploadFabState createState() => _UploadFabState();
 }
 
-class _UploadButtonState extends State<UploadButton> {
+class _UploadFabState extends State<UploadFab> {
   /// Controller for the [SnackBar].
   ScaffoldFeatureController<SnackBar, SnackBarClosedReason> snackBar;
 
@@ -32,7 +34,7 @@ class _UploadButtonState extends State<UploadButton> {
       parentId: widget.parentId,
     );
 
-    snackBar = Scaffold.of(context).showSnackBar(SnackBar(
+    snackBar = context.scaffold.showSnackBar(SnackBar(
       duration: Duration(days: 1),
       content: Row(
         children: <Widget>[
@@ -71,7 +73,7 @@ class _UploadButtonState extends State<UploadButton> {
 
   void _onUpdateComplete() {
     snackBar.close();
-    Scaffold.of(context).showSnackBar(SnackBar(
+    context.scaffold.showSnackBar(SnackBar(
       duration: Duration(seconds: 2),
       content: Text(context.s.file_uploadCompletedSnackBar),
     ));
@@ -79,10 +81,19 @@ class _UploadButtonState extends State<UploadButton> {
 
   @override
   Widget build(BuildContext context) {
-    return FloatingActionButton(
-      backgroundColor: Colors.white,
-      onPressed: () => _startUpload(context),
-      child: Icon(Icons.file_upload, color: context.theme.primaryColor),
+    return CachedRawBuilder<User>(
+      controller: services.storage.userId.controller,
+      builder: (context, update) {
+        if (update.hasNoData ||
+            !update.data.hasPermission(Permission.fileStorageCreate)) {
+          return SizedBox();
+        }
+
+        return FloatingActionButton(
+          onPressed: () => _startUpload(context),
+          child: Icon(Icons.file_upload),
+        );
+      },
     );
   }
 }

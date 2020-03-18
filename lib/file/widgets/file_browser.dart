@@ -1,7 +1,9 @@
+import 'package:black_hole_flutter/black_hole_flutter.dart';
 import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cached/flutter_cached.dart';
+import 'package:pedantic/pedantic.dart';
 import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/course/course.dart';
 
@@ -10,7 +12,7 @@ import '../service.dart';
 import 'app_bar.dart';
 import 'file_tile.dart';
 import 'page_route.dart';
-import 'upload_button.dart';
+import 'upload_fab.dart';
 
 class FileBrowser extends StatelessWidget {
   FileBrowser({
@@ -49,13 +51,11 @@ class FileBrowser extends StatelessWidget {
 
     try {
       await services.files.downloadFile(file);
-      context.showSimpleSnackBar(
-          context.s.file_fileBrowser_downloading(file.name));
+      unawaited(services.snackBar
+          .showMessage(context.s.file_fileBrowser_downloading(file.name)));
     } on PermissionNotGranted {
       context.scaffold.showSnackBar(SnackBar(
-        content: Text(
-          context.s.file_fileBrowser_download_storageAccess,
-        ),
+        content: Text(context.s.file_fileBrowser_download_storageAccess),
         action: SnackBarAction(
           label: context.s.file_fileBrowser_download_storageAccess_allow,
           onPressed: services.files.ensureStoragePermissionGranted,
@@ -99,9 +99,9 @@ class FileBrowser extends StatelessWidget {
           title: parent?.name ?? ownerAsCourse?.name ?? context.s.file_files_my,
         ),
       ),
-      floatingActionButton: UploadButton(
+      floatingActionButton: UploadFab(
         ownerId: owner.id,
-        parentId: parent.id,
+        parentId: parent?.id,
       ),
       body: CachedBuilder<List<File>>(
         controller: _filesController,

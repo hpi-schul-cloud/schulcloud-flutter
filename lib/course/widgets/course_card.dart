@@ -1,3 +1,4 @@
+import 'package:black_hole_flutter/black_hole_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cached/flutter_cached.dart';
 import 'package:schulcloud/app/app.dart';
@@ -6,7 +7,7 @@ import '../data.dart';
 import 'course_detail_screen.dart';
 
 class CourseCard extends StatelessWidget {
-  const CourseCard({@required this.course}) : assert(course != null);
+  const CourseCard(this.course) : assert(course != null);
 
   final Course course;
 
@@ -30,14 +31,13 @@ class CourseCard extends StatelessWidget {
               controller: course.teacherIds.controller,
               builder: (_, update) {
                 final teachers = update.data;
-                return Text(
-                  (teachers ?? [])
-                      .where((teacher) => teacher != null)
-                      .map((teacher) => teacher.shortName)
-                      .join(', '),
+                return FancyText(
+                  teachers
+                      ?.where((teacher) => teacher != null)
+                      ?.map((teacher) => teacher.shortName)
+                      ?.join(', '),
                   maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(color: context.theme.disabledColor),
+                  emphasis: TextEmphasis.medium,
                 );
               },
             ),

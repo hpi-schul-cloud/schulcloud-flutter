@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io' as io;
 
 import 'package:flutter/material.dart';
@@ -11,14 +12,15 @@ import 'package:schulcloud/course/course.dart';
 import 'package:schulcloud/dashboard/dashboard.dart';
 import 'package:schulcloud/file/file.dart';
 import 'package:schulcloud/generated/l10n.dart';
-import 'package:schulcloud/sign_in/sign_in.dart';
 import 'package:schulcloud/news/news.dart';
+import 'package:schulcloud/sign_in/sign_in.dart';
 import 'package:share/receive_share_state.dart';
 import 'package:share/share.dart';
 
 import '../app_config.dart';
 import '../logger.dart';
 import '../services/navigator_observer.dart';
+import '../services/snack_bar.dart';
 import '../services/storage.dart';
 import '../utils.dart';
 import 'navigation_bar.dart';
@@ -59,6 +61,9 @@ class SignedInScreen extends StatefulWidget {
 }
 
 class _SignedInScreenState extends ReceiveShareState<SignedInScreen> {
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
+  ScaffoldState get scaffold => _scaffoldKey.currentState;
+
   final _navigatorKey = GlobalKey<NavigatorState>();
   NavigatorState get navigator => _navigatorKey.currentState;
 
@@ -74,6 +79,7 @@ class _SignedInScreenState extends ReceiveShareState<SignedInScreen> {
     enableShareReceiving();
     _controller = BehaviorSubject<Screen>();
     _screenStream = _controller.stream;
+    scheduleMicrotask(_showSnackBars);
   }
 
   @override
@@ -88,7 +94,7 @@ class _SignedInScreenState extends ReceiveShareState<SignedInScreen> {
     Future.delayed(Duration(seconds: 1), () async {
       logger.i('Letting the user choose a destination where to upload '
           '${shared.path}.');
-      final destination = await context.navigator.push(MaterialPageRoute(
+      final destination = await navigator.push(MaterialPageRoute(
         builder: (_) => ChooseDestinationScreen(
           title: Text('Where to upload the file?'),
           buttonContent: Icon(Icons.file_upload),
@@ -147,13 +153,28 @@ class _SignedInScreenState extends ReceiveShareState<SignedInScreen> {
     }
   }
 
+  Future<void> _showSnackBars() async {
+    StreamSubscription subscription;
+    subscription = services.snackBar.requests.listen((request) {
+      final scaffold = this.scaffold;
+      if (scaffold == null) {
+        // This widget is no longer active.
+        subscription.cancel();
+        return;
+      }
+      final controller = scaffold.showSnackBar(request.snackBar);
+      request.completer.complete(controller);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return LogConsoleOnShake(
-      child: WillPopScope(
-        onWillPop: _onWillPop,
-        child: Scaffold(
-          body: Navigator(
+      child: Scaffold(
+        key: _scaffoldKey,
+        body: WillPopScope(
+          onWillPop: _onWillPop,
+          child: Navigator(
             key: _navigatorKey,
             onGenerateRoute: (_) =>
                 MaterialPageRoute(builder: (_) => DashboardScreen()),
@@ -162,10 +183,10 @@ class _SignedInScreenState extends ReceiveShareState<SignedInScreen> {
               HeroController(),
             ],
           ),
-          bottomNavigationBar: MyNavigationBar(
-            onNavigate: _navigateTo,
-            activeScreenStream: _screenStream,
-          ),
+        ),
+        bottomNavigationBar: MyNavigationBar(
+          onNavigate: _navigateTo,
+          activeScreenStream: _screenStream,
         ),
       ),
     );

@@ -1,3 +1,4 @@
+import 'package:black_hole_flutter/black_hole_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:pedantic/pedantic.dart';
@@ -105,7 +106,7 @@ class _SignInFormState extends State<SignInForm> {
               padding: EdgeInsets.all(12),
               child: Text(
                 _isLoading ? s.general_loading : s.signIn_form_signIn,
-                style: TextStyle(color: Colors.white, fontSize: 20),
+                style: TextStyle(fontSize: 20),
               ),
             ),
           ),

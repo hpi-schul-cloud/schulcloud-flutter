@@ -1,3 +1,4 @@
+import 'package:black_hole_flutter/black_hole_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:schulcloud/app/app.dart';
 
@@ -7,7 +8,7 @@ extension FormDialogs on BuildContext {
   Future<bool> showDiscardChangesDialog() {
     final s = this.s;
 
-    return showDialog<bool>(
+    final result = showDialog<bool>(
       context: this,
       builder: (context) {
         return AlertDialog(
@@ -26,12 +27,13 @@ extension FormDialogs on BuildContext {
         );
       },
     );
+    return result ?? false;
   }
 
   Future<bool> showConfirmDeleteDialog(String message) {
     final s = this.s;
 
-    return showDialog<bool>(
+    final result = showDialog<bool>(
       context: this,
       builder: (context) {
         return AlertDialog(
@@ -50,5 +52,6 @@ extension FormDialogs on BuildContext {
         );
       },
     );
+    return result ?? false;
   }
 }

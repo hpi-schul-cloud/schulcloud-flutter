@@ -1,3 +1,4 @@
+import 'package:black_hole_flutter/black_hole_flutter.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cached/flutter_cached.dart';
@@ -113,7 +114,7 @@ class _CourseAssignmentCountTile extends StatelessWidget {
     return ListTile(
       leading: CourseColorDot(course),
       title: shouldHaveCourse
-          ? TextOrPlaceholder(course?.name)
+          ? FancyText(course?.name)
           : Text(context.s.assignment_dashboardCard_noCourse),
       trailing: Text(
         assignmentCount.toString(),

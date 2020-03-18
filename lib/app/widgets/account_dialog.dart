@@ -1,14 +1,16 @@
+import 'package:black_hole_flutter/black_hole_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cached/flutter_cached.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:schulcloud/sign_in/sign_in.dart';
 import 'package:schulcloud/settings/settings.dart';
+import 'package:schulcloud/sign_in/sign_in.dart';
 
 import '../app_config.dart';
 import '../data.dart';
 import '../services/storage.dart';
 import '../utils.dart';
 import 'account_avatar.dart';
+import 'text.dart';
 
 class AccountDialog extends StatelessWidget {
   @override
@@ -36,6 +38,7 @@ class AccountDialog extends StatelessWidget {
                   Theme.of(context).dialogBackgroundColor,
               elevation: dialogTheme.elevation ?? 24,
               shape: dialogTheme.shape,
+              clipBehavior: Clip.antiAlias,
               type: MaterialType.card,
               child: _buildContent(context),
             ),
@@ -78,14 +81,13 @@ class AccountDialog extends StatelessWidget {
         ListTile(
           leading: SvgPicture.asset(
             'assets/icon_signOut.svg',
-            color: context.theme.brightness == Brightness.dark
-                ? Colors.white
-                : Colors.black45,
+            color: context.theme.isDark ? Colors.white : Colors.black45,
             width: 24,
           ),
           title: Text(s.general_signOut),
           onTap: () => signOut(context),
         ),
+        SizedBox(height: 8),
       ],
     );
   }
@@ -97,8 +99,8 @@ class AccountDialog extends StatelessWidget {
         final user = update.data;
         return ListTile(
           leading: AccountAvatar(),
-          title: Text(user?.name ?? context.s.general_loading),
-          subtitle: Text(user?.email ?? ''),
+          title: FancyText(user?.name),
+          subtitle: FancyText(user?.email),
         );
       },
     );

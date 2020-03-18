@@ -1,3 +1,4 @@
+import 'package:black_hole_flutter/black_hole_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:schulcloud/app/app.dart';
 
@@ -16,13 +17,13 @@ class CourseChip extends StatelessWidget {
     if (onPressed == null && course == null) {
       return Chip(
         avatar: CourseColorDot(course),
-        label: TextOrPlaceholder(course?.name),
+        label: FancyText(course?.name),
       );
     }
 
     return ActionChip(
       avatar: CourseColorDot(course),
-      label: TextOrPlaceholder(course?.name),
+      label: FancyText(course?.name),
       onPressed: onPressed ??
           () => context.navigator.push(MaterialPageRoute(
                 builder: (_) => CourseDetailsScreen(course: course),

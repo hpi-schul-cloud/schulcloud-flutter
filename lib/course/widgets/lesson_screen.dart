@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:black_hole_flutter/black_hole_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:schulcloud/app/app.dart';
 import 'package:sprintf/sprintf.dart';
@@ -147,7 +148,6 @@ class _LessonScreenState extends State<LessonScreen> {
               _controller.loadUrl(_textOrUrl(content));
               Navigator.pop(context);
             },
-            isActive: false,
           ),
       ],
     );

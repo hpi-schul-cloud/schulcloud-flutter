@@ -1,5 +1,6 @@
-import 'package:flutter_cached/flutter_cached.dart';
+import 'package:black_hole_flutter/black_hole_flutter.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_cached/flutter_cached.dart';
 import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/file/file.dart';
 
@@ -54,17 +55,11 @@ class CourseDetailsScreen extends StatelessWidget {
                       vertical: 18,
                       horizontal: 12,
                     ),
-                    child: Text(
-                      course.description,
-                      style: TextStyle(fontSize: 20),
-                    ),
+                    child: Text(course.description),
                   ),
-                  for (var lesson in lessons)
+                  for (final lesson in lessons)
                     ListTile(
-                      title: Text(
-                        lesson.name,
-                        style: TextStyle(fontSize: 20),
-                      ),
+                      title: Text(lesson.name),
                       onTap: () => _showLessonScreen(
                         context: context,
                         lesson: lesson,

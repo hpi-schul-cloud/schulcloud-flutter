@@ -146,7 +146,7 @@ class Assignment implements Entity<Assignment> {
           (await services.api.get('submissions', parameters: {
         'homeworkId': id.value,
         'studentId': services.storage.userIdString.getValue(),
-      }).parsedJsonList())
+      }).parseJsonList())
               .singleWhere((_) => true, orElse: () => null)),
       saveToCache: HiveCache.put,
       loadFromCache: () => throw NotInCacheException(),

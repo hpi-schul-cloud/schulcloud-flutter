@@ -1,3 +1,4 @@
+import 'package:black_hole_flutter/black_hole_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cached/flutter_cached.dart';
 import 'package:schulcloud/app/app.dart';
@@ -14,16 +15,18 @@ class CalendarDashboardCard extends StatelessWidget {
 
     return DashboardCard(
       title: s.calendar_dashboardCard,
-      omitHorizontalPadding: false,
+      omitHorizontalPadding: true,
       color: context.theme.primaryColor
           .withOpacity(context.theme.isDark ? 0.5 : 0.12),
       child: CachedRawBuilder<List<Event>>(
         controller: services.get<CalendarBloc>().fetchTodaysEvents(),
         builder: (context, update) {
           if (!update.hasData) {
-            return update.hasError
-                ? ErrorBanner(update.error, update.stackTrace)
-                : Center(child: CircularProgressIndicator());
+            return Center(
+              child: update.hasError
+                  ? Text(update.error.toString())
+                  : CircularProgressIndicator(),
+            );
           }
 
           final now = Instant.now();

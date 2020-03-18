@@ -1,3 +1,4 @@
+import 'package:black_hole_flutter/black_hole_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cached/flutter_cached.dart';
 import 'package:provider/provider.dart';
@@ -46,13 +47,16 @@ class ArticlePreview extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Section(
-              child: TextOrPlaceholder(
+              child: Text(
                 'Section',
                 style: TextStyle(color: Colors.white),
               ),
             ),
             _buildImage(),
-            SizedBox(height: 8),
+            FancyText(
+              article?.title,
+              style: theme.textTheme.display2,
+            ),
             CachedRawBuilder<User>(
               controller: article.authorId.controller,
               builder: (_, update) {
@@ -62,25 +66,20 @@ class ArticlePreview extends StatelessWidget {
                         ? context.s.general_user_unknown
                         : context.s.general_placeholder);
 
-                return TextOrPlaceholder(
+                return FancyText(
                   _isPlaceholder
                       ? null
                       : context.s.news_articlePreview_subtitle(
                           article.publishedAt.shortDateString, authorName),
-                  style: TextStyle(
-                    color: theme.cardColor.mediumEmphasisColor,
-                  ),
+                  emphasis: TextEmphasis.medium,
+                  style: theme.textTheme.subtitle,
                 );
               },
             ),
-            TextOrPlaceholder(
-              article?.title,
-              style: theme.textTheme.display2,
-            ),
-            TextOrPlaceholder(
-              // ignore: deprecated_member_use_from_same_package
-              _isPlaceholder ? null : limitString(article.content, 200),
-              style: theme.textTheme.body2,
+            SizedBox(height: 4),
+            FancyText.preview(
+              article?.content,
+              maxLines: 3,
             ),
           ],
         ),
