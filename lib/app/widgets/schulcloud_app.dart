@@ -2,19 +2,15 @@ import 'dart:async';
 
 import 'package:black_hole_flutter/black_hole_flutter.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_cached/flutter_cached.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:schulcloud/generated/l10n.dart';
 
 import '../app_config.dart';
-import '../exception.dart';
 import '../routing.dart';
 import '../services/navigator_observer.dart';
 import '../services/snack_bar.dart';
 import '../services/storage.dart';
 import '../utils.dart';
-import 'cached_builder.dart';
-import 'page_route.dart';
 
 class SchulCloudApp extends StatelessWidget {
   static final navigatorKey = GlobalKey<NavigatorState>();
