@@ -1,6 +1,7 @@
 import 'package:black_hole_flutter/black_hole_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:schulcloud/generated/l10n.dart';
 
 import '../app_config.dart';
@@ -184,27 +185,27 @@ class _BottomTab {
   // We don't use relative URLs as they would start with a '/' and hence the
   // navigator automatically populates our initial back stack with '/'.
   static final dashboard = _BottomTab(
-    icon: Icons.dashboard,
+    icon: FontAwesomeIcons.thLarge,
     title: (s) => s.dashboard,
     initialRoute: services.get<AppConfig>().webUrl('dashboard'),
   );
   static final course = _BottomTab(
-    icon: Icons.school,
+    icon: FontAwesomeIcons.graduationCap,
     title: (s) => s.course,
     initialRoute: services.get<AppConfig>().webUrl('courses'),
   );
   static final assignment = _BottomTab(
-    icon: Icons.playlist_add_check,
+    icon: FontAwesomeIcons.tasks,
     title: (s) => s.assignment,
     initialRoute: services.get<AppConfig>().webUrl('homework'),
   );
   static final file = _BottomTab(
-    icon: Icons.folder,
+    icon: FontAwesomeIcons.solidFolderOpen,
     title: (s) => s.file,
     initialRoute: services.get<AppConfig>().webUrl('files'),
   );
   static final news = _BottomTab(
-    icon: Icons.new_releases,
+    icon: FontAwesomeIcons.solidNewspaper,
     title: (s) => s.news,
     initialRoute: services.get<AppConfig>().webUrl('news'),
   );
