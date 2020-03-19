@@ -23,7 +23,7 @@ class SignInBrowser extends InAppBrowser {
       final userIdJson = json
           .decode(String.fromCharCodes(base64Decode(jwt.value.split('.')[1])));
       await services.storage.userIdString.setValue(userIdJson['userId']);
-      logger.i('Signed in as userId ${userIdJson['userId']}');
+      logger.i('Signed in with userId ${userIdJson['userId']}');
 
       signedInCallback();
       await close();
