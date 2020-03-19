@@ -14,6 +14,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: JonasWanke/unicorn@v0.1
+      - uses: JonasWanke/unicorn@9b4b462
         with:
           repo-token: "${{ secrets.UNICORN_TOKEN }}"
