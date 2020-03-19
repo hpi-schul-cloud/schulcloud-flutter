@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:html/parser.dart';
 import 'package:http/http.dart';
-import 'package:rxdart/rxdart.dart';
 import 'package:schulcloud/generated/l10n.dart';
 import 'package:url_launcher/url_launcher.dart';
 
