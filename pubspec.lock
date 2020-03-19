@@ -23,7 +23,7 @@ packages:
     source: hosted
     version: "1.5.3"
   async:
-    dependency: "direct main"
+    dependency: transitive
     description:
       name: async
       url: "https://pub.dartlang.org"
@@ -367,7 +367,7 @@ packages:
       name: intl
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.16.1"
+    version: "0.16.0"
   intl_translation:
     dependency: transitive
     description:

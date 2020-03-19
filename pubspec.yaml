@@ -13,7 +13,6 @@ dependencies:
     sdk: flutter
 
   analyzer: ^0.39.4
-  async: ^2.4.0
   black_hole_flutter: ^0.1.0
   cupertino_icons: ^0.1.2
   dartx: ^0.2.0
