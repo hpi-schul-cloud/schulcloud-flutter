@@ -16,7 +16,7 @@ class SignInBrowser extends InAppBrowser {
   Future onLoadStart(String url) async {
     final firstPathSegment = Uri.parse(url).pathSegments.first;
     if (firstPathSegment == 'dashboard') {
-      logger.i('Signing in...');
+      logger.i('Signing in…');
 
       final jwt = await CookieManager().getCookie(url: url, name: 'jwt');
       await services.storage.token.setValue(jwt.value);
