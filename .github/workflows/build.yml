@@ -157,14 +157,15 @@ jobs:
         run: |
           brew update && brew install imagemagick
           flutter pub global activate screenshots
-      - name: Take screenshots
-        run: flutter pub global run screenshots:main -v -f sc
-      - name: Upload screenshots as artifact
-        uses: actions/upload-artifact@v1
-        with:
-          name: screenshots-${{ matrix.flavor }}
-          path: android/fastlane/metadata/android
-      - uses: actions/upload-artifact@v1
-        with:
-          name: tmp-screenshots
-          path: /tmp/screenshots
+      # TODO(JonasWanke): enabled when this issue is fixed: https://github.com/flutter/flutter/issues/36244
+      # - name: Take screenshots
+      #   run: flutter pub global run screenshots:main -v -f sc
+      # - name: Upload screenshots as artifact
+      #   uses: actions/upload-artifact@v1
+      #   with:
+      #     name: screenshots-${{ matrix.flavor }}
+      #     path: android/fastlane/metadata/android
+      # - uses: actions/upload-artifact@v1
+      #   with:
+      #     name: tmp-screenshots
+      #     path: /tmp/screenshots

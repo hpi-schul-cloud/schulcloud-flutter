@@ -121,7 +121,7 @@ class SignedInScreenState extends State<SignedInScreen>
           items: [
             for (final tab in _BottomTab.values)
               BottomNavigationBarItem(
-                icon: Icon(tab.icon),
+                icon: Icon(tab.icon, key: tab.key),
                 title: Text(tab.title(s)),
                 backgroundColor: barColor,
               ),
@@ -191,6 +191,7 @@ class SignedInScreenState extends State<SignedInScreen>
 @immutable
 class _BottomTab {
   const _BottomTab({
+    this.key,
     @required this.icon,
     @required this.title,
     @required this.initialRoute,
@@ -198,6 +199,7 @@ class _BottomTab {
         assert(title != null),
         assert(initialRoute != null);
 
+  final ValueKey key;
   final IconData icon;
   final L10nStringGetter title;
   final String initialRoute;
@@ -213,21 +215,25 @@ class _BottomTab {
     initialRoute: services.get<AppConfig>().webUrl('dashboard'),
   );
   static final course = _BottomTab(
+    key: ValueKey('navigation-course'),
     icon: FontAwesomeIcons.graduationCap,
     title: (s) => s.course,
     initialRoute: services.get<AppConfig>().webUrl('courses'),
   );
   static final assignment = _BottomTab(
+    key: ValueKey('navigation-assignment'),
     icon: FontAwesomeIcons.tasks,
     title: (s) => s.assignment,
     initialRoute: services.get<AppConfig>().webUrl('homework'),
   );
   static final file = _BottomTab(
+    key: ValueKey('navigation-file'),
     icon: FontAwesomeIcons.solidFolderOpen,
     title: (s) => s.file,
     initialRoute: services.get<AppConfig>().webUrl('files'),
   );
   static final news = _BottomTab(
+    key: ValueKey('navigation-news'),
     icon: FontAwesomeIcons.solidNewspaper,
     title: (s) => s.news,
     initialRoute: services.get<AppConfig>().webUrl('news'),
