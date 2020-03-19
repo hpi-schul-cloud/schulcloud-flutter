@@ -1,9 +1,9 @@
-import 'package:black_hole_flutter/black_hole_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:pedantic/pedantic.dart';
 import 'package:schulcloud/app/app.dart';
+import 'package:schulcloud/app/routing.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 import '../bloc.dart';
@@ -20,21 +20,20 @@ class _SignInFormState extends State<SignInForm> {
 
   @override
   void initState() {
-    browser = SignInBrowser(signedInCallback: pushSignedInPage);
+    browser = SignInBrowser(signedInCallback: _pushSignedInPage);
     super.initState();
   }
 
-  void pushSignedInPage() {
-    unawaited(context.navigator
-        .pushReplacement(TopLevelPageRoute(builder: (_) => SignedInScreen())));
+  void _pushSignedInPage() {
+    unawaited(SchulCloudApp.navigator
+        .pushReplacementNamed(appSchemeLink('signedInScreen')));
   }
 
   Future<void> _executeSignIn(Future<void> Function() signIn) async {
     await signIn();
 
-    unawaited(context.navigator.pushReplacement(TopLevelPageRoute(
-      builder: (_) => SignedInScreen(),
-    )));
+    unawaited(SchulCloudApp.navigator
+        .pushReplacementNamed(appSchemeLink('signedInScreen')));
   }
 
   Future<void> _signInAsDemoStudent() =>
@@ -57,9 +56,7 @@ class _SignInFormState extends State<SignInForm> {
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 32),
             child: SvgPicture.asset(
-              services
-                  .config
-                  .assetName(context, 'logo/logo_with_text.svg'),
+              services.config.assetName(context, 'logo/logo_with_text.svg'),
               height: 64,
               alignment: Alignment.bottomCenter,
             ),
@@ -72,7 +69,6 @@ class _SignInFormState extends State<SignInForm> {
             child: Text(s.signIn_form_signIn),
           ),
           SizedBox(height: 32),
-
           Wrap(
             children: <Widget>[
               SecondaryButton(
@@ -81,6 +77,7 @@ class _SignInFormState extends State<SignInForm> {
               ),
               SizedBox(width: 8),
               SecondaryButton(
+                key: ValueKey('signIn-demoTeacher'),
                 onPressed: _signInAsDemoTeacher,
                 child: Text(s.signIn_form_demo_teacher),
               ),

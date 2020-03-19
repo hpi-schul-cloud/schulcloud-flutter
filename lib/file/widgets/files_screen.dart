@@ -6,7 +6,6 @@ import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/course/course.dart';
 
 import 'file_browser.dart';
-import 'page_route.dart';
 import 'upload_fab.dart';
 
 class FilesScreen extends StatelessWidget {
@@ -56,16 +55,10 @@ class _CourseCard extends StatelessWidget {
 
   final Course course;
 
-  void _showCourseFiles(BuildContext context) {
-    context.navigator.push(FileBrowserPageRoute(
-      builder: (context) => FileBrowser(owner: course),
-    ));
-  }
-
   @override
   Widget build(BuildContext context) {
     return FlatMaterial(
-      onTap: () => _showCourseFiles(context),
+      onTap: () => context.navigator.pushNamed('/files/courses/${course.id}'),
       child: SizedBox(
         height: 48,
         child: Row(
@@ -86,14 +79,7 @@ class _UserFiles extends StatelessWidget {
     return FancyCard(
       title: context.s.file_files_my,
       omitHorizontalPadding: true,
-      child: CachedRawBuilder(
-        controller: services.storage.userId.controller,
-        builder: (context, update) {
-          return update.hasData
-              ? FileBrowser(owner: update.data, isEmbedded: true)
-              : Container();
-        },
-      ),
+      child: FileBrowser.myFiles(null, isEmbedded: true),
     );
   }
 }

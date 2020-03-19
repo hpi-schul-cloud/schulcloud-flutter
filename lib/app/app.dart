@@ -5,6 +5,7 @@ export 'hive.dart';
 export 'logger.dart';
 export 'services/api_network.dart';
 export 'services/network.dart';
+export 'services/snack_bar.dart';
 export 'services/storage.dart';
 export 'sort_filter/filtering.dart';
 export 'sort_filter/sort_filter.dart';
