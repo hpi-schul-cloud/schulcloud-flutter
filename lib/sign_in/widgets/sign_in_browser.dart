@@ -4,7 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:meta/meta.dart';
 
-import '../../app/app.dart';
+import 'package:schulcloud/app/app.dart';
 
 class SignInBrowser extends InAppBrowser {
   SignInBrowser({@required this.signedInCallback})
@@ -19,10 +19,12 @@ class SignInBrowser extends InAppBrowser {
       logger.i('Signing in…');
 
       final jwt = await CookieManager().getCookie(url: url, name: 'jwt');
-      await services.storage.token.setValue(jwt.value);
       final userIdJson = json
           .decode(String.fromCharCodes(base64Decode(jwt.value.split('.')[1])));
-      await services.storage.userIdString.setValue(userIdJson['userId']);
+      await services.storage.setUserInfo(
+        userId: userIdJson['userId'],
+        token: jwt.value,
+      );
       logger.i('Signed in with userId ${userIdJson['userId']}');
 
       signedInCallback();

@@ -39,12 +39,8 @@ class SignInBloc {
       body: SignInRequest(email: email, password: password).toJson(),
     );
 
-    final storage = services.get<StorageService>();
-    await storage.email.setValue(email);
-
     final response = SignInResponse.fromJson(json.decode(rawResponse.body));
     await services.storage.setUserInfo(
-      email: email,
       userId: response.userId,
       token: response.accessToken,
     );
