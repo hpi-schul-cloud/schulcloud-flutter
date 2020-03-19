@@ -66,10 +66,11 @@ class _SignInFormState extends State<SignInForm> {
           ),
           SizedBox(height: 32),
           PrimaryButton(
-              onPressed: () => browser.open(
-                  url: services.config.webUrl('login'),
-                  options: InAppBrowserClassOptions()),
-              child: Text(s.signIn_form_signIn)),
+            onPressed: () => browser.open(
+                url: services.config.webUrl('login'),
+                options: InAppBrowserClassOptions()),
+            child: Text(s.signIn_form_signIn),
+          ),
           SizedBox(height: 32),
 
           Wrap(
