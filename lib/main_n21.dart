@@ -17,7 +17,7 @@ const _n21Blue = MaterialColor(0xff78aae5, {
 
 const n21AppConfig = AppConfig(
   name: 'n21',
-  domain: 'niedersachsen.cloud',
+  host: 'niedersachsen.cloud',
   title: 'Niedersächsische Bildungscloud',
   primaryColor: _n21Blue,
   secondaryColor: _n21Blue,

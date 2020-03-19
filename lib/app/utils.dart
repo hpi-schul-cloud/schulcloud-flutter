@@ -1,7 +1,7 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:ui';
 
-import 'package:black_hole_flutter/black_hole_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:html/parser.dart';
@@ -15,12 +15,6 @@ final services = GetIt.instance;
 
 extension FancyContext on BuildContext {
   S get s => S.of(this);
-
-  void showSimpleSnackBar(String message) {
-    scaffold.showSnackBar(SnackBar(
-      content: Text(message),
-    ));
-  }
 }
 
 extension ResponseToJson on Response {
@@ -59,6 +53,8 @@ String formatFileSize(int bytes) {
 
   return '${(bytes / power).toStringAsFixed(index == 0 ? 0 : 1)} ${units[index]}';
 }
+
+typedef L10nStringGetter = String Function(S);
 
 extension LegenWaitForItDaryString on String {
   String get withoutLinebreaks => replaceAll(RegExp('[\r\n]'), '');

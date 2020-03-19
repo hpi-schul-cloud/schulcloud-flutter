@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:schulcloud/app/app.dart';
 
 import 'filtering.dart';
 
@@ -22,18 +23,31 @@ extension SortOrderUtils on SortOrder {
       SortOrder.descending: Icons.arrow_downward,
     }[this];
   }
+
+  static SortOrder tryParseWebQuery(Map<String, String> query) {
+    return {
+      '1': SortOrder.ascending,
+      '-1': SortOrder.descending,
+    }[query['sortorder']];
+  }
 }
 
 @immutable
 class Sorter<T> {
-  const Sorter(this.title, {@required this.comparator})
-      : assert(title != null),
+  const Sorter(
+    this.title, {
+    this.webQueryKey,
+    @required this.comparator,
+  })  : assert(title != null),
         assert(comparator != null);
+
   Sorter.simple(
-    String title, {
+    L10nStringGetter titleGetter, {
+    String webQueryKey,
     @required Selector<T, Comparable> selector,
   }) : this(
-          title,
+          titleGetter,
+          webQueryKey: webQueryKey,
           comparator: (a, b) {
             final selectorA = selector(a);
             if (selectorA == null) {
@@ -47,6 +61,7 @@ class Sorter<T> {
           },
         );
 
-  final String title;
+  final L10nStringGetter title;
+  final String webQueryKey;
   final Comparator<T> comparator;
 }

@@ -83,6 +83,7 @@ class File implements Entity<File>, Comparable<File> {
   @HiveField(5)
   final Id<File> parentId;
 
+  @HiveField(11)
   final bool isDirectory;
   bool get isActualFile => !isDirectory;
 
@@ -106,4 +107,46 @@ class File implements Entity<File>, Comparable<File> {
     }
     return name.compareTo(other.name);
   }
+
+  File copyWith({
+    String name,
+    Id<dynamic> ownerId,
+    Id<File> parentId,
+  }) {
+    return File(
+      id: id,
+      name: name ?? this.name,
+      ownerId: ownerId ?? this.ownerId,
+      createdAt: createdAt,
+      updatedAt: updatedAt,
+      parentId: parentId ?? this.parentId,
+      isDirectory: isDirectory,
+      mimeType: mimeType,
+      size: size,
+    );
+  }
+
+  Future<void> rename(String newName) async {
+    await services.api.post('fileStorage/rename', body: {
+      'id': id.value,
+      'newName': newName,
+    });
+    copyWith(name: newName).saveToCache();
+  }
+
+  Future<void> moveTo(Id<File> parentDirectory) async {
+    await services.api.patch('fileStorage/$id', body: {
+      'parent': parentDirectory,
+    });
+    copyWith(parentId: parentDirectory).saveToCache();
+  }
+
+  Future<void> delete() => services.api.delete('fileStorage/$id');
+}
+
+extension FileLoading on Id<dynamic> {
+  LazyIds<File> files([Id<File> parentId]) => LazyIds<File>(
+        collectionId: 'files of $this in directory $parentId',
+        fetcher: () => File.fetchList(this, parentId: parentId),
+      );
 }

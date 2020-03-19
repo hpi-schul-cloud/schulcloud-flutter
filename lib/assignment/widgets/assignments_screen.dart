@@ -2,76 +2,82 @@ import 'package:black_hole_flutter/black_hole_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cached/flutter_cached.dart';
 import 'package:schulcloud/app/app.dart';
+import 'package:schulcloud/assignment/assignment.dart';
 import 'package:schulcloud/course/course.dart';
 import 'package:time_machine/time_machine.dart';
 
 import '../data.dart';
-import 'assignment_details_screen.dart';
 
 class AssignmentsScreen extends StatefulWidget {
+  AssignmentsScreen({
+    SortFilterSelection<Assignment> sortFilterSelection,
+  }) : initialSortFilterSelection =
+            sortFilterSelection ?? sortFilterConfig.defaultSelection;
+
+  static final sortFilterConfig = SortFilter<Assignment>(
+    sorters: {
+      'createdAt': Sorter<Assignment>.simple(
+        (s) => s.assignment_assignment_property_createdAt,
+        selector: (assignment) => assignment.createdAt,
+      ),
+      'updatedAt': Sorter<Assignment>.simple(
+        (s) => s.assignment_assignment_property_updatedAt,
+        selector: (assignment) => assignment.updatedAt,
+      ),
+      'availableAt': Sorter<Assignment>.simple(
+        (s) => s.assignment_assignment_property_availableAt,
+        webQueryKey: 'availableDate',
+        selector: (assignment) => assignment.availableAt,
+      ),
+      'dueAt': Sorter<Assignment>.simple(
+        (s) => s.assignment_assignment_property_dueAt,
+        selector: (assignment) => assignment.dueAt,
+      ),
+    },
+    defaultSorter: 'dueAt',
+    filters: {
+      'dueAt': DateRangeFilter<Assignment>(
+        (s) => s.assignment_assignment_property_dueAt,
+        webQueryKey: 'dueDate',
+        selector: (assignment) => assignment.dueAt?.inLocalZone()?.calendarDate,
+        defaultSelection: DateRangeFilterSelection(start: LocalDate.today()),
+      ),
+      'more': FlagsFilter<Assignment>(
+        (s) => s.assignment_assignment_property_more,
+        filters: {
+          'isArchived': FlagFilter<Assignment>(
+            (s) => s.assignment_assignment_property_isArchived,
+            selector: (assignment) => assignment.isArchived,
+            defaultSelection: false,
+          ),
+          'isPrivate': FlagFilter<Assignment>(
+            (s) => s.assignment_assignment_property_isPrivate,
+            webQueryKey: 'private',
+            selector: (assignment) => assignment.isPrivate,
+          ),
+          'hasPublicSubmissions': FlagFilter<Assignment>(
+            (s) => s.assignment_assignment_property_hasPublicSubmissions,
+            webQueryKey: 'publicSubmissions',
+            selector: (assignment) => assignment.hasPublicSubmissions,
+          ),
+        },
+      ),
+    },
+  );
+  final SortFilterSelection<Assignment> initialSortFilterSelection;
+
   @override
   _AssignmentsScreenState createState() => _AssignmentsScreenState();
 }
 
 class _AssignmentsScreenState extends State<AssignmentsScreen> {
-  SortFilter<Assignment> _sortFilterConfig;
   SortFilterSelection<Assignment> _sortFilter;
 
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
+  void initState() {
+    super.initState();
 
-    final s = context.s;
-    _sortFilterConfig = SortFilter<Assignment>(
-      sortOptions: {
-        'createdAt': Sorter<Assignment>.simple(
-          s.assignment_assignment_property_createdAt,
-          selector: (assignment) => assignment.createdAt,
-        ),
-        'availableAt': Sorter<Assignment>.simple(
-          s.assignment_assignment_property_availableAt,
-          selector: (assignment) => assignment.availableAt,
-        ),
-        'dueAt': Sorter<Assignment>.simple(
-          s.assignment_assignment_property_dueAt,
-          selector: (assignment) => assignment.dueAt,
-        ),
-      },
-      filters: {
-        'dueAt': DateRangeFilter<Assignment>(
-          s.assignment_assignment_property_dueAt,
-          selector: (assignment) =>
-              assignment.dueAt?.inLocalZone()?.calendarDate,
-        ),
-        'more': FlagsFilter<Assignment>(
-          s.assignment_assignment_property_more,
-          filters: {
-            'isArchived': FlagFilter<Assignment>(
-              s.assignment_assignment_property_isArchived,
-              selector: (assignment) => assignment.isArchived,
-            ),
-            'isPrivate': FlagFilter<Assignment>(
-              s.assignment_assignment_property_isPrivate,
-              selector: (assignment) => assignment.isPrivate,
-            ),
-            'hasPublicSubmissions': FlagFilter<Assignment>(
-              s.assignment_assignment_property_hasPublicSubmissions,
-              selector: (assignment) => assignment.hasPublicSubmissions,
-            ),
-          },
-        ),
-      },
-    );
-    _sortFilter ??= SortFilterSelection(
-      config: _sortFilterConfig,
-      sortSelectionKey: 'dueAt',
-      filterSelections: {
-        'dueAt': DateRangeFilterSelection(start: LocalDate.today()),
-        'more': {
-          'isArchived': false,
-        },
-      },
-    );
+    _sortFilter ??= widget.initialSortFilterSelection;
   }
 
   @override
@@ -156,9 +162,7 @@ class AssignmentCard extends StatelessWidget {
   final SetFlagFilterCallback<Assignment> setFlagFilterCallback;
 
   void _showAssignmentDetailsScreen(BuildContext context) {
-    context.navigator.push(MaterialPageRoute(
-      builder: (context) => AssignmentDetailsScreen(assignment: assignment),
-    ));
+    context.navigator.pushNamed('/homework/${assignment.id}');
   }
 
   @override
