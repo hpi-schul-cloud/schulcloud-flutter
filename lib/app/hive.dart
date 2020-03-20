@@ -240,11 +240,9 @@ class HiveCacheImpl {
 
   E get<E extends Entity<E>>(Id<E> id) => _box.get(id.value) as E;
   Stream<E> getStreamed<E extends Entity<E>>(Id<E> id) {
-    logger.i('Watching $id.');
     return _box
         .watch(key: id.value)
         .map((event) {
-          logger.i('Update of $id ($E): ${event.value}');
           return event;
         })
         .map((event) => event.value)
