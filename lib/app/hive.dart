@@ -1,12 +1,14 @@
 import 'dart:async';
 import 'dart:ui';
 
+import 'package:async/async.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_cached/flutter_cached.dart';
 import 'package:grec_minimal/grec_minimal.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:meta/meta.dart';
+import 'package:rxdart/rxdart.dart';
 import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/assignment/assignment.dart';
 import 'package:schulcloud/calendar/calendar.dart';
@@ -45,9 +47,9 @@ class Id<E extends Entity<E>> {
   int get typeId => HiveCache.typeIdByType<E>();
 
   CacheController<E> get controller {
-    return SimpleCacheController<E>(
+    return StreamedCacheController<E>(
       saveToCache: HiveCache.put,
-      loadFromCache: () => HiveCache.get(this) ?? (throw NotInCacheException()),
+      loadFromCache: () => HiveCache.getStreamed(this),
       fetcher: () => HiveCache.fetch(this),
     );
   }
@@ -121,14 +123,17 @@ class LazyIds<E extends Entity<E>> {
   final FutureOr<List<E>> Function() fetcher;
 
   CacheController<List<E>> get controller {
-    return SimpleCacheController<List<E>>(
+    return StreamedCacheController<List<E>>(
       fetcher: fetcher,
-      loadFromCache: () async {
-        final ids = HiveCache.get(_id) ?? (throw NotInCacheException());
-        return [
-          for (final itemId in ids.childrenIds)
-            HiveCache.get(itemId) ?? (throw NotInCacheException()),
-        ];
+      loadFromCache: () {
+        final streamOfIds = HiveCache.getStreamed<IdCollection<E>>(_id)
+            .map((collection) => collection.childrenIds);
+
+        return Observable.switchLatest(streamOfIds.map((ids) {
+          return CombineLatestStream.list([
+            for (final id in ids) HiveCache.getStreamed(id),
+          ]);
+        }));
       },
       saveToCache: (items) {
         final collection = IdCollection<E>(
@@ -235,6 +240,17 @@ class HiveCacheImpl {
   }
 
   E get<E extends Entity<E>>(Id<E> id) => _box.get(id.value) as E;
+  Stream<E> getStreamed<E extends Entity<E>>(Id<E> id) {
+    logger.i('Watching $id.');
+    return _box
+        .watch(key: id.value)
+        .map((event) {
+          logger.i('Update of $id ($E): ${event.value}');
+          return event;
+        })
+        .map((event) => event.value)
+        .cast<E>();
+  }
 }
 
 class ColorAdapter extends TypeAdapter<Color> {
