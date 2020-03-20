@@ -101,9 +101,7 @@ class _AssignmentsScreenState extends State<AssignmentsScreen> {
           actions: <Widget>[
             SecondaryButton(
               onPressed: () => _showSortFilterSheet(context),
-              child: Text(
-                s.assignment_assignmentsScreen_empty_editFilters,
-              ),
+              child: Text(s.assignment_assignmentsScreen_empty_editFilters),
             ),
           ],
         ),
