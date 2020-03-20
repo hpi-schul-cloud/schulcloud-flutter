@@ -77,14 +77,14 @@ class FileService {
         totalNumberOfFiles: files.length,
       );
 
-      await _uploadSingleFile(file: file, owner: ownerId, parent: parentId);
+      await _uploadSingleFile(file: file, ownerId: ownerId, parentId: parentId);
     }
   }
 
   Future<void> _uploadSingleFile({
     @required io.File file,
-    @required Id<dynamic> owner,
-    Id<File> parent,
+    @required Id<dynamic> ownerId,
+    Id<File> parentId,
   }) async {
     assert(file != null);
     logger.i('Uploading file $file');
@@ -104,7 +104,7 @@ class FileService {
         await services.api.post('fileStorage/signedUrl', body: {
       'filename': fileName,
       'fileType': mimeType,
-      if (parent != null) 'parent': parent,
+      if (parentId != null) 'parent': parentId,
     });
     final signedInfo = json.decode(signedUrlResponse.body);
 
@@ -122,8 +122,8 @@ class FileService {
     logger.d('Notifying the file backend.');
     await services.api.post('fileStorage', body: {
       'name': fileName,
-      if (owner is! Id<User>) ...{
-        'owner': owner.value,
+      if (ownerId is! Id<User>) ...{
+        'owner': ownerId.value,
         // TODO(marcelgarus): For now, we only support user and course owner, but there's also team.
         'refOwnerModel': 'course',
       },
