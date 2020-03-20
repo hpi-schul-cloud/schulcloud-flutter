@@ -4,7 +4,6 @@ import 'package:flutter_svg/svg.dart';
 import 'package:pedantic/pedantic.dart';
 import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/app/routing.dart';
-import 'package:webview_flutter/webview_flutter.dart';
 
 import '../bloc.dart';
 import 'sign_in_browser.dart';
@@ -15,7 +14,6 @@ class SignInForm extends StatefulWidget {
 }
 
 class _SignInFormState extends State<SignInForm> {
-  WebViewController controller;
   SignInBrowser browser;
 
   @override
