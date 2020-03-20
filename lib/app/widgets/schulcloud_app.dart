@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io' as io;
 
+import 'package:black_hole_flutter/black_hole_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_absolute_path/flutter_absolute_path.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -94,7 +95,7 @@ class _SignedInScreenState extends ReceiveShareState<SignedInScreen> {
     Future.delayed(Duration(seconds: 1), () async {
       logger.i('Letting the user choose a destination where to upload '
           '${shared.path}.');
-      final destination = await navigator.push(MaterialPageRoute(
+      final destination = await context.rootNavigator.push(MaterialPageRoute(
         fullscreenDialog: true,
         builder: (_) => ChooseDestinationScreen(
           title: Text(context.s.file_chooseDestination_upload),
