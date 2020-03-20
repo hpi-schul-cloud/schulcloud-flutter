@@ -30,11 +30,8 @@ class ChooseDestinationScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: title),
       body: Center(
-        // Not localized yet because the text will be replaced by something
-        // totally different.
         child: Text(
-          "For now, you can't choose a destination.\n"
-          'The destination will be the root of your personal files.',
+          context.s.file_chooseDestination_content,
           textAlign: TextAlign.center,
         ),
       ),

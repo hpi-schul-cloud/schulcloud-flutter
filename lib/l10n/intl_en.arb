@@ -67,6 +67,7 @@
   "course_detailsScreen_empty": "This course doesn't contain any topics.",
   "dashboard": "Dashboard",
   "file": "Files",
+  "file_chooseDestination_content": "For now, you can't choose a destination.\nThe destination will be the root of your personal files.",
   "file_chooseDestination_upload": "Where to upload the file?",
   "file_chooseDestination_upload_button": "Upload here",
   "file_delete_loading": "Deleting {name}…",
