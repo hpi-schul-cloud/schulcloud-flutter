@@ -132,8 +132,12 @@ class FancyCachedBuilderWithPullToRefresh<T> extends FancyCachedBuilder<T> {
               body: RefreshIndicator(
                 onRefresh: controller.fetch,
                 child: data == null
-                    ? SliverFillRemaining(
-                        child: Center(child: CircularProgressIndicator()),
+                    ? CustomScrollView(
+                        slivers: <Widget>[
+                          SliverFillRemaining(
+                            child: Center(child: CircularProgressIndicator()),
+                          ),
+                        ],
                       )
                     : builder(context, data, isFetching),
               ),
