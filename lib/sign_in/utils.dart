@@ -1,10 +1,7 @@
 import 'package:black_hole_flutter/black_hole_flutter.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:pedantic/pedantic.dart';
 import 'package:schulcloud/app/app.dart';
-import 'package:schulcloud/app/routing.dart';
-import 'package:schulcloud/sign_in/sign_in.dart';
 
 Future<bool> signOut(BuildContext context) async {
   logger.i('Signing out…');
