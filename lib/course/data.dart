@@ -119,7 +119,7 @@ class Lesson implements Entity<Lesson>, Comparable<Lesson> {
   @HiveField(2)
   final List<Content> contents;
 
-  @HiveField(3)
+  @HiveField(5)
   final bool isHidden;
   bool get isVisible => !isHidden;
 
