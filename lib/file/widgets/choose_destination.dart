@@ -10,6 +10,9 @@ class FileDestination {
 
   final Id<dynamic> ownerId;
   final Id<File> parentId;
+
+  @override
+  String toString() => '$ownerId/${parentId ?? 'root'}';
 }
 
 class ChooseDestinationScreen extends StatelessWidget {
