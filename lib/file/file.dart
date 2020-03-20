@@ -1,4 +1,5 @@
 export 'data.dart';
+export 'routes.dart';
 export 'service.dart';
 export 'widgets/choose_destination.dart';
 export 'widgets/file_browser.dart';

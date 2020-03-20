@@ -41,7 +41,7 @@ const _brbBlue = MaterialColor(0xff0b2bdf, {
 
 const brbAppConfig = AppConfig(
   name: 'brb',
-  domain: 'brandenburg.schul-cloud.org',
+  host: 'brandenburg.schul-cloud.org',
   title: 'Schul-Cloud Brandenburg',
   primaryColor: _brbCyan,
   secondaryColor: _brbRed,

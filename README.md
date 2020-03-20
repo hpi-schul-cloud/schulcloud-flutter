@@ -1,5 +1,7 @@
 # A Flutter based mobile App for the HPI Schul-Cloud
 
+![Build & Lint](https://github.com/schul-cloud/schulcloud-flutter/workflows/Build%20&%20Lint/badge.svg)
+
 Check the wiki for more info.
 - [Wiki](https://github.com/schul-cloud/schulcloud-flutter/wiki)
 
@@ -14,7 +16,8 @@ For help getting started with Flutter, view the
 [online documentation](https://flutter.io/docs), which offers tutorials, 
 samples, guidance on mobile development, and a full API reference.
 
-## How to run the app
+
+## How to: Run the app
 
 - Run `flutter packages get`
 - Run `flutter packages pub run build_runner build`
@@ -25,6 +28,11 @@ samples, guidance on mobile development, and a full API reference.
 ## L10n (Localization)
 
 We recommend using [L42n](https://github.com/JonasWanke/l42n) for editing localization files, located in `lib/l10n`. Note that you still need to re-generate the dart files after editing these files using [Flutter Intl][flutter-intl].
+
+
+## How to: Create a new module
+
+Run `unicorn template apply module` (using [🦄 Unicorn](https://github.com/JonasWanke/Unicorn)) and enter the required information.
 
 
 [flutter-intl]: https://marketplace.visualstudio.com/items?itemName=localizely.flutter-intl

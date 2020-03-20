@@ -1,12 +1,51 @@
 import 'package:black_hole_flutter/black_hole_flutter.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_cached/flutter_cached.dart';
 import 'package:pedantic/pedantic.dart';
 import 'package:schulcloud/app/app.dart';
 
 import '../data.dart';
 
-class EditSubmissionScreen extends StatefulWidget {
-  const EditSubmissionScreen({
+class EditSubmissionScreen extends StatelessWidget {
+  const EditSubmissionScreen(this.assignmentId) : assert(assignmentId != null);
+
+  final Id<Assignment> assignmentId;
+
+  @override
+  Widget build(BuildContext context) {
+    return CachedRawBuilder<Assignment>(
+      controller: assignmentId.controller,
+      builder: (_, assignmentUpdate) {
+        final assignment = assignmentUpdate.data;
+        return CachedRawBuilder<Submission>(
+          controller: assignment.mySubmission,
+          builder: (_, update) {
+            final submission = update.data;
+
+            if (assignmentUpdate.hasError || update.hasError) {
+              return Center(
+                child:
+                    Text((assignmentUpdate.error ?? update.error).toString()),
+              );
+            }
+
+            if (assignmentUpdate.data == null) {
+              return Center(child: CircularProgressIndicator());
+            }
+
+            return EditSubmissionForm(
+              assignment: assignment,
+              submission: submission,
+            );
+          },
+        );
+      },
+    );
+  }
+}
+
+class EditSubmissionForm extends StatefulWidget {
+  const EditSubmissionForm({
     Key key,
     @required this.assignment,
     this.submission,
@@ -17,10 +56,10 @@ class EditSubmissionScreen extends StatefulWidget {
   final Submission submission;
 
   @override
-  _EditSubmissionScreenState createState() => _EditSubmissionScreenState();
+  _EditSubmissionFormState createState() => _EditSubmissionFormState();
 }
 
-class _EditSubmissionScreenState extends State<EditSubmissionScreen> {
+class _EditSubmissionFormState extends State<EditSubmissionForm> {
   final _formKey = GlobalKey<FormState>();
   bool _isValid;
   bool _ignoreFormattingOverwrite = false;
@@ -64,9 +103,6 @@ class _EditSubmissionScreenState extends State<EditSubmissionScreen> {
                 if (result) {
                   await submission.delete();
 
-                  // Intentionally using a context outside our scaffold. The
-                  // current scaffold only exists inside the route and is being
-                  // removed by Navigator.pop().
                   await services.snackBar
                       .showMessage(s.assignment_editSubmission_delete_success);
                   context.navigator.pop();

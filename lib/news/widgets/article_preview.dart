@@ -6,7 +6,6 @@ import 'package:schulcloud/app/app.dart';
 
 import '../data.dart';
 import 'article_image.dart';
-import 'article_screen.dart';
 import 'section.dart';
 import 'theme.dart';
 
@@ -29,18 +28,14 @@ class ArticlePreview extends StatelessWidget {
 
   bool get _isPlaceholder => article == null;
 
-  void _openArticle(BuildContext context) {
-    context.navigator.push(MaterialPageRoute(
-      builder: (_) => ArticleScreen(article: article),
-    ));
-  }
-
   @override
   Widget build(BuildContext context) {
     final theme = context.theme;
 
     return FancyCard(
-      onTap: _isPlaceholder ? null : () => _openArticle(context),
+      onTap: _isPlaceholder
+          ? null
+          : () => context.navigator.pushNamed('/news/${article.id}'),
       child: Provider<ArticleTheme>(
         create: (_) => ArticleTheme(darkColor: Colors.purple, padding: 16),
         child: Column(
