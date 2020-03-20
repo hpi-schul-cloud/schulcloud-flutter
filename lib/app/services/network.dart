@@ -248,7 +248,7 @@ class NetworkService {
   Map<String, String> _getHeaders(Map<String, String> headers) {
     return {
       'Content-Type': 'application/json',
-      ...headers,
+      if (headers != null) ...headers,
     };
   }
 }

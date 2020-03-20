@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:pedantic/pedantic.dart';
 import 'package:schulcloud/app/app.dart';
 
@@ -14,7 +15,9 @@ class _SignOutScreenState extends State<SignOutScreen> {
   void initState() {
     super.initState();
 
-    scheduleMicrotask(() {
+    scheduleMicrotask(() async {
+      await services.api.delete('authentication');
+      await CookieManager().deleteAllCookies();
       // This should probably be awaited, but right now awaiting it
       // leads to the issue that logging out becomes impossible.
       unawaited(services.get<StorageService>().clear());
