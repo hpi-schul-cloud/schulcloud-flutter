@@ -16,22 +16,13 @@ class FancyCachedBuilder<T> extends StatelessWidget {
   factory FancyCachedBuilder.handleLoading({
     @required CacheController<T> controller,
     @required CachedBuilderContentBuilder<T> builder,
-  }) =>
-      FancyCachedBuilderWithLoading(
-        controller: controller,
-        builder: builder,
-      );
+  }) = FancyCachedBuilderWithLoading;
 
   factory FancyCachedBuilder.handlePullToRefresh({
     @required NestedScrollViewHeaderSliversBuilder headerSliverBuilder,
     @required CacheController<T> controller,
     @required CachedBuilderContentBuilder<T> builder,
-  }) =>
-      FancyCachedBuilderWithPullToRefresh(
-        headerSliverBuilder: headerSliverBuilder,
-        controller: controller,
-        builder: builder,
-      );
+  }) = FancyCachedBuilderWithPullToRefresh;
 
   static FancyCachedBuilder<List<T>> list<T>({
     NestedScrollViewHeaderSliversBuilder headerSliverBuilder =
