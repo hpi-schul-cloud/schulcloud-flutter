@@ -2,7 +2,7 @@ import 'package:black_hole_flutter/black_hole_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
-import '../app.dart';
+import '../exception.dart';
 import '../utils.dart';
 import 'buttons.dart';
 import 'empty_state.dart';
@@ -68,8 +68,7 @@ class PinkStripedErrorWidget extends StatelessWidget {
           child: SafeArea(
             child: Center(
               child: Text(
-                'Oops. That should not have happened:\n'
-                '$error\nLong-tap to view stack trace.',
+                context.s.app_error_unknown(error),
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   color: Colors.black,
