@@ -143,6 +143,8 @@ class FileService {
   }) async {
     logger.i('Letting the user choose a destination where to upload '
         '$localPath.');
+    final file = io.File(localPath);
+
     final destination = await context.rootNavigator.push(MaterialPageRoute(
       fullscreenDialog: true,
       builder: (_) => ChooseDestinationScreen(
@@ -154,11 +156,17 @@ class FileService {
 
     if (destination != null) {
       logger.i('Uploading to $destination.');
-      unawaited(uploadFiles(
-        files: [io.File(localPath)],
-        ownerId: destination.ownerId,
-        parentId: destination.parentId,
-      ).forEach((_) {}));
+      await services.snackBar.performAction(
+        action: () => uploadFiles(
+          files: [file],
+          ownerId: destination.ownerId,
+          parentId: destination.parentId,
+        ).forEach((_) {}),
+        loadingMessage:
+            context.s.file_uploadProgressSnackBarContent(1, file.name, 1),
+        successMessage: context.s.file_uploadCompletedSnackBar,
+        failureMessage: context.s.file_uploadFailedSnackBar,
+      );
     }
   }
 }

@@ -97,6 +97,7 @@
   "file_renameDialog_inputHint": "Neuer Dateiname",
   "file_renameDialog_rename": "Umbenennen",
   "file_uploadCompletedSnackBar": "Fertig hochgeladen 😊",
+  "file_uploadFailedSnackBar": "Upload fehlgeschlagen 😬",
   "file_uploadProgressSnackBarContent": "{total, plural, one{{fileName} wird hochgeladen…} other{{fileName} wird hochgeladen… ({current} / {total})}}",
   "general_cancel": "Abbrechen",
   "general_dismiss": "Verstanden",
