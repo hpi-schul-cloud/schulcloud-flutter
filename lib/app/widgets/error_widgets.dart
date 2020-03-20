@@ -37,8 +37,7 @@ class PinkStripedErrorWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(builder: (context, constraints) {
-      final size = constraints.biggest;
-      final diagonal = sqrt(pow(size.width, 2) + pow(size.height, 2));
+      final diagonal = constraints.biggest.diagonal;
       final numSegments = diagonal.isInfinite ? 1 : diagonal ~/ 50;
 
       return Container(
@@ -65,12 +64,13 @@ class PinkStripedErrorWidget extends StatelessWidget {
             ],
           ),
         ),
-        padding: const EdgeInsets.all(8),
+        padding: EdgeInsets.all(8),
         child: GestureDetector(
           onLongPress: () => _showStackTrace(context, error, stackTrace),
           child: SafeArea(
             child: Center(
               child: Text(
+                'Oops. That should not have happened:\n'
                 '$error\nLong-tap to view stack trace.',
                 textAlign: TextAlign.center,
                 style: TextStyle(
