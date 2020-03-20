@@ -631,7 +631,7 @@ packages:
     dependency: "direct main"
     description:
       path: "."
-      ref: HEAD
+      ref: "1f8b139"
       resolved-ref: "1f8b139ca0bd35b643ef4f5ccce3a1b09931f16a"
       url: "https://github.com/d-silveira/flutter-share.git"
     source: git

@@ -49,6 +49,7 @@ dependencies:
   share:
     git:
       url: https://github.com/d-silveira/flutter-share.git
+      ref: 1f8b139
   sprintf: ^4.0.2
   streaming_shared_preferences: ^1.0.1
   time_machine: ^0.9.12
