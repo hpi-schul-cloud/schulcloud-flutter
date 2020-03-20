@@ -99,7 +99,7 @@ class FileService {
     final mimeType = lookupMimeType(fileName, headerBytes: fileBuffer);
 
     // Request a signed url.
-    logger.i('Requesting a signed url.');
+    logger.d('Requesting a signed url.');
     final signedUrlResponse =
         await services.api.post('fileStorage/signedUrl', body: {
       'filename': fileName,
@@ -110,8 +110,8 @@ class FileService {
 
     // Upload the file to the storage server.
     logger
-      ..i('Received signed info $signedInfo.')
-      ..i('Now uploading the actual file to ${signedInfo['url']}.');
+      ..d('Received signed info $signedInfo.')
+      ..d('Now uploading the actual file to ${signedInfo['url']}.');
     await services.network.put(
       signedInfo['url'],
       headers: (signedInfo['header'] as Map).cast<String, String>(),
@@ -119,7 +119,7 @@ class FileService {
     );
 
     // Notify the api backend.
-    logger.i('Notifying the file backend.');
+    logger.d('Notifying the file backend.');
     await services.api.post('fileStorage', body: {
       'name': fileName,
       if (owner is! Id<User>) ...{
