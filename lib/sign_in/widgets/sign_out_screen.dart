@@ -16,7 +16,12 @@ class _SignOutScreenState extends State<SignOutScreen> {
     super.initState();
 
     scheduleMicrotask(() async {
-      await services.api.delete('authentication');
+      try {
+        await services.api.delete('authentication');
+      } on AuthenticationError {
+        // Authentication has already expired.
+      }
+
       await CookieManager().deleteAllCookies();
       // This should probably be awaited, but right now awaiting it
       // leads to the issue that logging out becomes impossible.
