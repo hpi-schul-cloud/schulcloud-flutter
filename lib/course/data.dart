@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:hive/hive.dart';
+import 'package:dartx/dartx.dart';
 import 'package:meta/meta.dart';
 import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/file/file.dart';
@@ -89,7 +90,7 @@ class Lesson implements Entity<Lesson>, Comparable<Lesson> {
           name: data['name'],
           contents: (data['contents'] as List<dynamic>)
               .map((content) => Content.fromJson(content))
-              .where((c) => c != null)
+              .whereNotNull()
               .toList(),
           isHidden: data['hidden'] ?? false,
           position: data['position'],
