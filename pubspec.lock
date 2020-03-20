@@ -215,7 +215,7 @@ packages:
       name: flutter_cached
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "4.2.6"
+    version: "4.2.7"
   flutter_deep_linking:
     dependency: "direct main"
     description:
@@ -367,7 +367,7 @@ packages:
       name: intl
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.16.1"
+    version: "0.16.0"
   intl_translation:
     dependency: transitive
     description:
