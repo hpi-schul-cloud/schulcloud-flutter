@@ -68,7 +68,7 @@ dependencies:
   webview_flutter:
     git:
       url: git://github.com/jaumard/plugins
-      ref: feature/webview_transparency
+      ref: 968e4b199ce06cda64f0f0d15bda848c021333ea
       path: packages/webview_flutter
 
 dev_dependencies:

@@ -1036,11 +1036,11 @@ packages:
     dependency: "direct main"
     description:
       path: "packages/webview_flutter"
-      ref: "feature/webview_transparency"
-      resolved-ref: dfb6d637297c2a716afcd723fb901abf52db57a3
+      ref: "968e4b199ce06cda64f0f0d15bda848c021333ea"
+      resolved-ref: "968e4b199ce06cda64f0f0d15bda848c021333ea"
       url: "git://github.com/jaumard/plugins"
     source: git
-    version: "0.3.5+2"
+    version: "0.3.19+9"
   xml:
     dependency: transitive
     description:
