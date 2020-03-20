@@ -9,7 +9,6 @@ import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:get_it/get_it.dart';
 import 'package:meta/meta.dart';
 import 'package:mime/mime.dart';
-import 'package:pedantic/pedantic.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/file/file.dart';
@@ -64,11 +63,10 @@ class FileService {
 
   Stream<UploadProgressUpdate> uploadFiles({
     @required List<io.File> files,
-    @required Id<dynamic> ownerId,
-    Id<File> parentId,
+    @required FilePath path,
   }) async* {
     assert(files != null);
-    assert(ownerId != null);
+    assert(path != null);
 
     for (var i = 0; i < files.length; i++) {
       final file = files[i];
@@ -79,14 +77,13 @@ class FileService {
         totalNumberOfFiles: files.length,
       );
 
-      await _uploadSingleFile(file: file, ownerId: ownerId, parentId: parentId);
+      await _uploadSingleFile(file: file, path: path);
     }
   }
 
   Future<void> _uploadSingleFile({
     @required io.File file,
-    @required Id<dynamic> ownerId,
-    Id<File> parentId,
+    @required FilePath path,
   }) async {
     assert(file != null);
     logger.i('Uploading file $file');
@@ -106,7 +103,7 @@ class FileService {
         await services.api.post('fileStorage/signedUrl', body: {
       'filename': fileName,
       'fileType': mimeType,
-      if (parentId != null) 'parent': parentId,
+      if (path.parentId != null) 'parent': path.parentId,
     });
     final signedInfo = json.decode(signedUrlResponse.body);
 
@@ -124,8 +121,8 @@ class FileService {
     logger.d('Notifying the file backend.');
     await services.api.post('fileStorage', body: {
       'name': fileName,
-      if (ownerId is! Id<User>) ...{
-        'owner': ownerId.value,
+      if (path.ownerId is! Id<User>) ...{
+        'owner': path.ownerId.value,
         // TODO(marcelgarus): For now, we only support user and course owner, but there's also team.
         'refOwnerModel': 'course',
       },
@@ -159,8 +156,7 @@ class FileService {
       await services.snackBar.performAction(
         action: () => uploadFiles(
           files: [file],
-          ownerId: destination.ownerId,
-          parentId: destination.parentId,
+          path: destination,
         ).forEach((_) {}),
         loadingMessage:
             context.s.file_uploadProgressSnackBarContent(1, file.name, 1),

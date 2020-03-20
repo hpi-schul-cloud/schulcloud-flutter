@@ -30,8 +30,10 @@ class _UploadFabState extends State<UploadFab> {
   void _startUpload(BuildContext context) async {
     final updates = services.files.uploadFiles(
       files: await FilePicker.getMultiFile(),
-      ownerId: widget.ownerId,
-      parentId: widget.parentId,
+      path: FilePath(
+        ownerId: widget.ownerId,
+        parentId: widget.parentId,
+      ),
     );
 
     snackBar = context.scaffold.showSnackBar(SnackBar(

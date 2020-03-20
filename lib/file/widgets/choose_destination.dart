@@ -4,17 +4,6 @@ import 'package:schulcloud/app/app.dart';
 
 import '../data.dart';
 
-@immutable
-class FileDestination {
-  const FileDestination._({@required this.ownerId, this.parentId});
-
-  final Id<dynamic> ownerId;
-  final Id<File> parentId;
-
-  @override
-  String toString() => '$ownerId/${parentId ?? 'root'}';
-}
-
 class ChooseDestinationScreen extends StatelessWidget {
   const ChooseDestinationScreen({
     @required this.title,
@@ -39,7 +28,7 @@ class ChooseDestinationScreen extends StatelessWidget {
         ),
       ),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => context.navigator.pop(FileDestination._(
+        onPressed: () => context.navigator.pop(FilePath(
           ownerId: services.storage.userId,
           parentId: null,
         )),
