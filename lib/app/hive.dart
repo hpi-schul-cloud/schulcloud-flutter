@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:ui';
 
-import 'package:async/async.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_cached/flutter_cached.dart';
 import 'package:grec_minimal/grec_minimal.dart';
