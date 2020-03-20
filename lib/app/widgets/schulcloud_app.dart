@@ -93,27 +93,10 @@ class _SignedInScreenState extends ReceiveShareState<SignedInScreen> {
   void receiveShare(Share shared) {
     logger.i('The user shared $shared into the app.');
     Future.delayed(Duration(seconds: 1), () async {
-      logger.i('Letting the user choose a destination where to upload '
-          '${shared.path}.');
-      final destination = await context.rootNavigator.push(MaterialPageRoute(
-        fullscreenDialog: true,
-        builder: (_) => ChooseDestinationScreen(
-          title: Text(context.s.file_chooseDestination_upload),
-          fabIcon: Icon(Icons.file_upload),
-          fabLabel: Text(context.s.file_chooseDestination_upload_button),
-        ),
-      ));
-
-      if (destination != null) {
-        logger.i('Uploading to $destination.');
-        unawaited(services.files.uploadFiles(
-          files: [
-            io.File(await FlutterAbsolutePath.getAbsolutePath(shared.path)),
-          ],
-          ownerId: destination.ownerId,
-          parentId: destination.parentId,
-        ).forEach((_) {}));
-      }
+      await services.files.uploadFileFromLocalPath(
+        context: context,
+        localPath: await FlutterAbsolutePath.getAbsolutePath(shared.path),
+      );
     });
   }
 

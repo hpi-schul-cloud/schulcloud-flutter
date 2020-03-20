@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io' as io;
 
+import 'package:black_hole_flutter/black_hole_flutter.dart';
 import 'package:dartx/dartx_io.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -8,6 +9,7 @@ import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:get_it/get_it.dart';
 import 'package:meta/meta.dart';
 import 'package:mime/mime.dart';
+import 'package:pedantic/pedantic.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/file/file.dart';
@@ -133,6 +135,31 @@ class FileService {
       'thumbnail': signedInfo['header']['x-amz-meta-thumbnail'],
     });
     logger.i('Done uploading the file.');
+  }
+
+  Future<void> uploadFileFromLocalPath({
+    @required BuildContext context,
+    @required String localPath,
+  }) async {
+    logger.i('Letting the user choose a destination where to upload '
+        '$localPath.');
+    final destination = await context.rootNavigator.push(MaterialPageRoute(
+      fullscreenDialog: true,
+      builder: (_) => ChooseDestinationScreen(
+        title: Text(context.s.file_chooseDestination_upload),
+        fabIcon: Icon(Icons.file_upload),
+        fabLabel: Text(context.s.file_chooseDestination_upload_button),
+      ),
+    ));
+
+    if (destination != null) {
+      logger.i('Uploading to $destination.');
+      unawaited(uploadFiles(
+        files: [io.File(localPath)],
+        ownerId: destination.ownerId,
+        parentId: destination.parentId,
+      ).forEach((_) {}));
+    }
   }
 }
 
