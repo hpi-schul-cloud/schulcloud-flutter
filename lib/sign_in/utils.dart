@@ -37,9 +37,6 @@ Future<bool> signOut(BuildContext context) async {
   if (confirmed) {
     // Actually log out.
 
-    await CookieManager().deleteAllCookies();
-    await services.storage.clear();
-
     unawaited(SchulCloudApp.navigator.pushReplacementNamed('/logout'));
   }
   return confirmed;
