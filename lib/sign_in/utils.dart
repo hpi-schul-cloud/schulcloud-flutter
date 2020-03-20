@@ -32,6 +32,8 @@ Future<bool> signOut(BuildContext context) async {
   );
 
   if (confirmed) {
+    // Actually log out.
+
     unawaited(SchulCloudApp.navigator.pushReplacementNamed('/logout'));
   }
   return confirmed;
