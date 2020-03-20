@@ -100,7 +100,7 @@ class ErrorScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return EmptyStateScreen(
-      text: error.buildMessage(context),
+      text: error.messageBuilder(context),
       actions: [
         if (error.hasOriginalException)
           SecondaryButton(
@@ -140,7 +140,7 @@ class ErrorBanner extends StatelessWidget {
           padding: EdgeInsets.all(8),
           child: Row(
             children: <Widget>[
-              Expanded(child: Text(error.buildMessage(context))),
+              Expanded(child: Text(error.messageBuilder(context))),
               if (error.hasOriginalException)
                 SecondaryButton(
                   onPressed: () => _showStackTrace(

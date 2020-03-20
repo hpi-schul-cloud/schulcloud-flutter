@@ -9,10 +9,10 @@ import '../exception.dart';
 import '../logger.dart';
 import '../utils.dart';
 
-/// The api server returns error data as json when an error occurs. We parse
-/// this data because its helpful for debugging (there's a message, a code
-/// which may be different from the actual http status code, and several more
-/// fields), we parse them.
+/// The API server returns error data as JSON when an error occurs. We parse
+/// this data because it's helpful for debugging (there's a message, a code
+/// which may be different from the actual HTTP status code, and several more
+/// fields).
 @immutable
 class ErrorBody {
   const ErrorBody({

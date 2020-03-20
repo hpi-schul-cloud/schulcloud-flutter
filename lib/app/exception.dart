@@ -1,4 +1,4 @@
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/widgets.dart';
 
 typedef ErrorMessageBuilder = String Function(BuildContext context);
 
@@ -22,9 +22,7 @@ class FancyException implements Exception {
   /// Creates a localized message describing this error.
   final ErrorMessageBuilder messageBuilder;
 
-  String buildMessage(context) => messageBuilder(context);
-
-  /// Some [FancyException] are thrown because other, non-fancy [Exception]s
+  /// Some [FancyException]s are thrown because other, non-fancy [Exception]s
   /// got thrown before and got caught.
   final dynamic originalException;
   final StackTrace stackTrace;
