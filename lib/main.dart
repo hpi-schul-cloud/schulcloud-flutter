@@ -10,7 +10,6 @@ import 'package:schulcloud/file/file.dart';
 import 'package:schulcloud/sign_in/sign_in.dart';
 import 'package:time_machine/time_machine.dart';
 
-import 'app/services/deep_linking.dart';
 import 'settings/settings.dart';
 
 const _schulCloudRed = MaterialColor(0xffb10438, {
@@ -60,56 +59,58 @@ const schulCloudAppConfig = AppConfig(
 );
 
 Future<void> main({AppConfig appConfig = schulCloudAppConfig}) async {
-  logger
-    ..i('Starting…')
-    ..d('Initializing hive…');
-  await initializeHive();
-
-  logger.d('Initializing services…');
-  services
-    ..registerSingletonAsync((_) async {
-      // We need to initialize TimeMachine before launching the app, and using
-      // get_it to keep track of initialization statuses is the simplest way.
-      // Hence we just ignore the return value.
-      var timeZone = await FlutterNativeTimezone.getLocalTimezone();
-      if (timeZone == 'GMT') {
-        timeZone = 'UTC';
-      }
-      await TimeMachine.initialize({
-        'rootBundle': rootBundle,
-        'timeZone': timeZone,
-      });
-    }, instanceName: 'ignored')
-    ..registerSingleton(appConfig)
-    ..registerSingletonAsync((_) => StorageService.create())
-    ..registerSingleton(SnackBarService())
-    ..registerSingleton(NetworkService())
-    ..registerSingleton(ApiNetworkService())
-    ..registerSingletonAsync((_) => DeepLinkingService.create())
-    ..registerSingleton(CalendarBloc())
-    ..registerSingleton(FileBloc())
-    ..registerSingleton(SignInBloc());
-
-  logger.d('Adding custom licenses to registry…');
-  LicenseRegistry.addLicense(() async* {
-    yield EmptyStateLicense();
-  });
-
-  logger.d('Running…');
-  runApp(
-    FutureBuilder<void>(
-      future: services.allReady(),
-      builder: (_, snapshot) {
-        if (!snapshot.hasData) {
-          return Container(
-            color: Colors.white,
-            alignment: Alignment.center,
-            child: CircularProgressIndicator(),
-          );
+  await runWithErrorReporting(() async {
+    logger
+      ..i('Starting…')
+      ..d('Initializing hive…');
+    await initializeHive();
+    throw 'Test';
+    logger.d('Initializing services…');
+    services
+      ..registerSingletonAsync((_) async {
+        // We need to initialize TimeMachine before launching the app, and using
+        // get_it to keep track of initialization statuses is the simplest way.
+        // Hence we just ignore the return value.
+        var timeZone = await FlutterNativeTimezone.getLocalTimezone();
+        if (timeZone == 'GMT') {
+          timeZone = 'UTC';
         }
+        await TimeMachine.initialize({
+          'rootBundle': rootBundle,
+          'timeZone': timeZone,
+        });
+      }, instanceName: 'ignored')
+      ..registerSingleton(appConfig)
+      ..registerSingletonAsync((_) => StorageService.create())
+      ..registerSingleton(SnackBarService())
+      ..registerSingleton(NetworkService())
+      ..registerSingleton(ApiNetworkService())
+      ..registerSingletonAsync((_) => DeepLinkingService.create())
+      ..registerSingleton(CalendarBloc())
+      ..registerSingleton(FileBloc())
+      ..registerSingleton(SignInBloc());
 
-        return SchulCloudApp();
-      },
-    ),
-  );
+    logger.d('Adding custom licenses to registry…');
+    LicenseRegistry.addLicense(() async* {
+      yield EmptyStateLicense();
+    });
+
+    logger.d('Running…');
+    runApp(
+      FutureBuilder<void>(
+        future: services.allReady(),
+        builder: (_, snapshot) {
+          if (!snapshot.hasData) {
+            return Container(
+              color: Colors.white,
+              alignment: Alignment.center,
+              child: CircularProgressIndicator(),
+            );
+          }
+
+          return SchulCloudApp();
+        },
+      ),
+    );
+  });
 }
