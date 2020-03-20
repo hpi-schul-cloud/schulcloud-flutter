@@ -39,9 +39,10 @@ class PinkStripedErrorWidget extends StatelessWidget {
     return LayoutBuilder(builder: (context, constraints) {
       final size = constraints.biggest;
       final diagonal = sqrt(pow(size.width, 2) + pow(size.height, 2));
-      final numSegments = diagonal ~/ 50;
+      final numSegments = diagonal.isInfinite ? 1 : diagonal ~/ 50;
 
       return Container(
+        height: 300,
         decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topLeft,
