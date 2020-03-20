@@ -3,7 +3,7 @@
   "app_emptyState_retry": "Nochmal versuchen",
   "app_error_conflict": "Deine Änderungen können nicht gespeichert werden, weil jemand anderes zur selben Zeit etwas geändert hat.",
   "app_error_noConnection": "Es konnte keine Verbindung zum Server aufgebaut werden.",
-  "app_error_noPermission": "Du darfst das nicht.",
+  "app_error_noPermission": "Du hast keine Berechtigung dazu.",
   "app_error_rateLimit": "Zu viele Versuche. Versuche es erneut in {timeToWait}.",
   "app_error_showStackTrace": "Stack-Trace zeigen",
   "app_error_stackTrace": "Stack-Trace",
