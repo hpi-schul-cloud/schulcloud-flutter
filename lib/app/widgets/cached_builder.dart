@@ -16,13 +16,13 @@ class FancyCachedBuilder<T> extends StatelessWidget {
   factory FancyCachedBuilder.handleLoading({
     @required CacheController<T> controller,
     @required CachedBuilderContentBuilder<T> builder,
-  }) = FancyCachedBuilderWithLoading;
+  }) = _FancyCachedBuilderWithLoading;
 
   factory FancyCachedBuilder.handlePullToRefresh({
     @required NestedScrollViewHeaderSliversBuilder headerSliverBuilder,
     @required CacheController<T> controller,
     @required CachedBuilderContentBuilder<T> builder,
-  }) = FancyCachedBuilderWithPullToRefresh;
+  }) = _FancyCachedBuilderWithPullToRefresh;
 
   static FancyCachedBuilder<List<T>> list<T>({
     NestedScrollViewHeaderSliversBuilder headerSliverBuilder =
@@ -31,7 +31,7 @@ class FancyCachedBuilder<T> extends StatelessWidget {
     @required EmptyStateBuilder emptyStateBuilder,
     @required CachedBuilderContentBuilder<List<T>> builder,
   }) =>
-      FancyCachedListBuilderWithPullToRefresh(
+      _FancyCachedListBuilderWithPullToRefresh(
         headerSliverBuilder: headerSliverBuilder,
         controller: controller,
         emptyStateBuilder: emptyStateBuilder,
@@ -74,7 +74,7 @@ class FancyCachedBuilder<T> extends StatelessWidget {
 
         final error = update.error as FancyException;
 
-        // If there are no data, then there's nothing we can display except the
+        // If there is no data, then there's nothing we can display except the
         // error.
         if (update.hasNoData) {
           return ErrorScreen(update.error);
@@ -96,8 +96,8 @@ class FancyCachedBuilder<T> extends StatelessWidget {
   }
 }
 
-class FancyCachedBuilderWithLoading<T> extends FancyCachedBuilder<T> {
-  FancyCachedBuilderWithLoading({
+class _FancyCachedBuilderWithLoading<T> extends FancyCachedBuilder<T> {
+  _FancyCachedBuilderWithLoading({
     @required CacheController<T> controller,
     @required CachedBuilderContentBuilder<T> builder,
   }) : super(
@@ -110,8 +110,8 @@ class FancyCachedBuilderWithLoading<T> extends FancyCachedBuilder<T> {
         );
 }
 
-class FancyCachedBuilderWithPullToRefresh<T> extends FancyCachedBuilder<T> {
-  FancyCachedBuilderWithPullToRefresh({
+class _FancyCachedBuilderWithPullToRefresh<T> extends FancyCachedBuilder<T> {
+  _FancyCachedBuilderWithPullToRefresh({
     @required NestedScrollViewHeaderSliversBuilder headerSliverBuilder,
     @required CacheController<T> controller,
     @required CachedBuilderContentBuilder<T> builder,
@@ -137,9 +137,9 @@ class FancyCachedBuilderWithPullToRefresh<T> extends FancyCachedBuilder<T> {
         );
 }
 
-class FancyCachedListBuilderWithPullToRefresh<T>
-    extends FancyCachedBuilderWithPullToRefresh<List<T>> {
-  FancyCachedListBuilderWithPullToRefresh({
+class _FancyCachedListBuilderWithPullToRefresh<T>
+    extends _FancyCachedBuilderWithPullToRefresh<List<T>> {
+  _FancyCachedListBuilderWithPullToRefresh({
     @required NestedScrollViewHeaderSliversBuilder headerSliverBuilder,
     @required CacheController<List<T>> controller,
     @required EmptyStateBuilder emptyStateBuilder,
