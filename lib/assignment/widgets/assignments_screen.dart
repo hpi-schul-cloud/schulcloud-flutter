@@ -1,6 +1,5 @@
 import 'package:black_hole_flutter/black_hole_flutter.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_cached/flutter_cached.dart';
 import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/assignment/assignment.dart';
 import 'package:schulcloud/course/course.dart';
@@ -194,11 +193,11 @@ class AssignmentCard extends StatelessWidget {
 
     return <Widget>[
       if (assignment.courseId != null)
-        CachedRawBuilder<Course>(
+        FancyCachedBuilder<Course>(
           controller: assignment.courseId.controller,
-          builder: (_, update) {
+          builder: (_, course, __) {
             return CourseChip(
-              update.data,
+              course,
               onPressed: () {
                 // TODO(JonasWanke): filter list by course, https://github.com/schul-cloud/schulcloud-flutter/issues/145
               },

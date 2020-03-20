@@ -1,6 +1,5 @@
 import 'package:black_hole_flutter/black_hole_flutter.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_cached/flutter_cached.dart';
 import 'package:provider/provider.dart';
 import 'package:schulcloud/app/app.dart';
 
@@ -52,14 +51,11 @@ class ArticlePreview extends StatelessWidget {
               article?.title,
               style: theme.textTheme.display2,
             ),
-            CachedRawBuilder<User>(
+            FancyCachedBuilder<User>(
               controller: article.authorId.controller,
-              builder: (_, update) {
-                final author = update.data;
-                final authorName = author?.displayName ??
-                    (update.hasError
-                        ? context.s.general_user_unknown
-                        : context.s.general_placeholder);
+              builder: (_, author, __) {
+                final authorName =
+                    author?.displayName ?? context.s.general_placeholder;
 
                 return FancyText(
                   _isPlaceholder

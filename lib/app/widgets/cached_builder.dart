@@ -7,21 +7,22 @@ typedef CachedBuilderContentBuilder<T> = Widget Function(
 typedef EmptyStateBuilder = Widget Function(BuildContext, bool isFetching);
 
 class FancyCachedBuilder<T> extends StatelessWidget {
-  const FancyCachedBuilder({@required this.controller, @required this.builder})
+  FancyCachedBuilder({@required this.controller, @required this.builder})
       : assert(controller != null),
-        assert(builder != null);
+        assert(builder != null),
+        assert(T != dynamic);
 
   factory FancyCachedBuilder.handleLoading({
     @required CacheController<T> controller,
     @required CachedBuilderContentBuilder<T> builder,
   }) = _FancyCachedBuilderWithLoading<T>;
 
-  factory FancyCachedBuilder.handlePullToRefresh({
-    NestedScrollViewHeaderSliversBuilder headerSliverBuilder,
-    FancyAppBar appBar,
-    @required CacheController<T> controller,
-    @required CachedBuilderContentBuilder<T> builder,
-  }) = _FancyCachedBuilderWithPullToRefresh<T>;
+  // factory FancyCachedBuilder.handlePullToRefresh({
+  //   NestedScrollViewHeaderSliversBuilder headerSliverBuilder,
+  //   FancyAppBar appBar,
+  //   @required CacheController<T> controller,
+  //   @required CachedBuilderContentBuilder<T> builder,
+  // }) = _FancyCachedBuilderWithPullToRefresh<T>;
 
   static FancyCachedBuilder<List<T>> list<T>({
     NestedScrollViewHeaderSliversBuilder headerSliverBuilder,
@@ -30,7 +31,7 @@ class FancyCachedBuilder<T> extends StatelessWidget {
     @required EmptyStateBuilder emptyStateBuilder,
     @required CachedBuilderContentBuilder<List<T>> builder,
   }) =>
-      _FancyCachedListBuilderWithPullToRefresh(
+      _FancyCachedListBuilderWithPullToRefresh<T>(
         headerSliverBuilder: headerSliverBuilder,
         appBar: appBar,
         controller: controller,
@@ -126,13 +127,8 @@ class _FancyCachedBuilderWithPullToRefresh<T> extends FancyCachedBuilder<T> {
               body: RefreshIndicator(
                 onRefresh: controller.fetch,
                 child: data == null
-                    ? CustomScrollView(
-                        slivers: <Widget>[
-                          SliverFillRemaining(
-                            child: Center(child: CircularProgressIndicator()),
-                          ),
-                        ],
-                      )
+                    ? CircularProgressIndicator()
+                    // : Container(width: 30, height: 30, color: Colors.amber),
                     : builder(context, data, isFetching),
               ),
             );

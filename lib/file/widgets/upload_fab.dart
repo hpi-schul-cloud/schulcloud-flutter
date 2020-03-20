@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:black_hole_flutter/black_hole_flutter.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_cached/flutter_cached.dart';
 import 'package:schulcloud/app/app.dart';
 
 import '../bloc.dart';
@@ -79,11 +78,10 @@ class _UploadFabState extends State<UploadFab> {
 
   @override
   Widget build(BuildContext context) {
-    return CachedRawBuilder<User>(
+    return FancyCachedBuilder<User>(
       controller: services.storage.userId.controller,
-      builder: (context, update) {
-        if (update.hasNoData ||
-            !update.data.hasPermission(Permission.fileStorageCreate)) {
+      builder: (context, user, _) {
+        if (user == null || !user.hasPermission(Permission.fileStorageCreate)) {
           return SizedBox();
         }
 

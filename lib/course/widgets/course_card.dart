@@ -1,6 +1,5 @@
 import 'package:black_hole_flutter/black_hole_flutter.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_cached/flutter_cached.dart';
 import 'package:schulcloud/app/app.dart';
 
 import '../data.dart';
@@ -20,10 +19,9 @@ class CourseCard extends StatelessWidget {
           Text(course.name),
           SizedBox(width: 16),
           Expanded(
-            child: CachedRawBuilder<List<User>>(
+            child: FancyCachedBuilder<List<User>>(
               controller: course.teacherIds.controller,
-              builder: (_, update) {
-                final teachers = update.data;
+              builder: (_, teachers, __) {
                 return FancyText(
                   teachers
                       ?.where((teacher) => teacher != null)

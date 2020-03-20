@@ -1,7 +1,6 @@
 import 'package:black_hole_flutter/black_hole_flutter.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_cached/flutter_cached.dart';
 import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/course/course.dart';
 import 'package:schulcloud/dashboard/dashboard.dart';
@@ -83,17 +82,9 @@ class _CourseAssignmentCountTile extends StatelessWidget {
       return _buildListTile(context, null, shouldHaveCourse: false);
     }
 
-    return CachedRawBuilder<Course>(
+    return FancyCachedBuilder<Course>(
       controller: courseId.controller,
-      builder: (context, update) {
-        if (update.hasError) {
-          return ListTile(
-            title: Text(update.error.toString()),
-          );
-        }
-
-        return _buildListTile(context, update.data);
-      },
+      builder: (context, course, _) => _buildListTile(context, course),
     );
   }
 

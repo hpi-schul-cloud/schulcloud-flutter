@@ -1,6 +1,5 @@
 import 'package:black_hole_flutter/black_hole_flutter.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_cached/flutter_cached.dart';
 import 'package:pedantic/pedantic.dart';
 import 'package:schulcloud/app/app.dart';
 
@@ -13,26 +12,12 @@ class EditSubmissionScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CachedRawBuilder<Assignment>(
+    return FancyCachedBuilder<Assignment>.handleLoading(
       controller: assignmentId.controller,
-      builder: (_, assignmentUpdate) {
-        final assignment = assignmentUpdate.data;
-        return CachedRawBuilder<Submission>(
+      builder: (_, assignment, __) {
+        return FancyCachedBuilder<Submission>.handleLoading(
           controller: assignment.mySubmission,
-          builder: (_, update) {
-            final submission = update.data;
-
-            if (assignmentUpdate.hasError || update.hasError) {
-              return Center(
-                child:
-                    Text((assignmentUpdate.error ?? update.error).toString()),
-              );
-            }
-
-            if (assignmentUpdate.data == null) {
-              return Center(child: CircularProgressIndicator());
-            }
-
+          builder: (_, submission, __) {
             return EditSubmissionForm(
               assignment: assignment,
               submission: submission,

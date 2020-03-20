@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_cached/flutter_cached.dart';
 import 'package:provider/provider.dart';
 import 'package:schulcloud/app/app.dart';
 
@@ -124,18 +123,9 @@ class _ArticleViewState extends State<ArticleView> {
   }
 
   Widget _buildAuthorView(BuildContext context) {
-    return CachedRawBuilder(
+    return FancyCachedBuilder.handleLoading(
       controller: widget.article.authorId.controller,
-      builder: (_, update) {
-        if (!update.hasData) {
-          return Center(
-              child: update.hasError
-                  ? Text(update.error.toString())
-                  : CircularProgressIndicator());
-        }
-
-        return AuthorView(author: update.data);
-      },
+      builder: (_, author, __) => AuthorView(author: author),
     );
   }
 

@@ -2,7 +2,6 @@ import 'package:black_hole_flutter/black_hole_flutter.dart';
 import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_cached/flutter_cached.dart';
 import 'package:pedantic/pedantic.dart';
 import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/course/course.dart';
@@ -101,14 +100,9 @@ class FileBrowser extends StatelessWidget {
 
     Widget appBar;
     if (isOwnerCourse) {
-      appBar = CachedRawBuilder<Course>(
+      appBar = FancyCachedBuilder<Course>.handleLoading(
         controller: ownerId.controller,
-        builder: (context, update) {
-          if (!update.hasData) {
-            return buildLoadingErrorAppBar(update.error);
-          }
-
-          final course = update.data;
+        builder: (context, course, _) {
           if (parentId == null) {
             return FileBrowserAppBar(
               title: course.name,
@@ -116,16 +110,11 @@ class FileBrowser extends StatelessWidget {
             );
           }
 
-          return CachedRawBuilder<File>(
+          return FancyCachedBuilder<File>.handleLoading(
             controller: parentId.controller,
-            builder: (context, update) {
-              if (!update.hasData) {
-                return buildLoadingErrorAppBar(update.error, course.color);
-              }
-
-              final parent = update.data;
+            builder: (context, parentDirectory, _) {
               return FileBrowserAppBar(
-                title: parent.name,
+                title: parentDirectory.name,
                 backgroundColor: course.color,
               );
             },
@@ -133,16 +122,9 @@ class FileBrowser extends StatelessWidget {
         },
       );
     } else if (parentId != null) {
-      appBar = CachedRawBuilder<File>(
+      appBar = FancyCachedBuilder<File>.handleLoading(
         controller: parentId.controller,
-        builder: (context, update) {
-          if (!update.hasData) {
-            return buildLoadingErrorAppBar(update.error);
-          }
-
-          final parent = update.data;
-          return FileBrowserAppBar(title: parent.name);
-        },
+        builder: (context, parent, _) => FileBrowserAppBar(title: parent.name),
       );
     } else if (isOwnerMe) {
       appBar = FileBrowserAppBar(title: context.s.file_files_my);

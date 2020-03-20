@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:black_hole_flutter/black_hole_flutter.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_cached/flutter_cached.dart';
 import 'package:schulcloud/app/app.dart';
 import 'package:sprintf/sprintf.dart';
 import 'package:webview_flutter/webview_flutter.dart';
@@ -79,12 +78,10 @@ class _LessonScreenState extends State<LessonScreen> {
         return FancyScaffold(
           appBar: FancyAppBar(
             title: Text(lesson.name),
-            subtitle: CachedRawBuilder<Course>(
+            subtitle: FancyCachedBuilder<Course>(
               controller: widget.courseId.controller,
-              builder: (_, update) {
-                final course = update.data;
-                return Text(course?.name ?? context.s.general_loading);
-              },
+              builder: (_, course, __) =>
+                  Text(course?.name ?? context.s.general_loading),
             ),
             actions: <Widget>[
               IconButton(

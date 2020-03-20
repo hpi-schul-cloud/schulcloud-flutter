@@ -1,6 +1,5 @@
 import 'package:black_hole_flutter/black_hole_flutter.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_cached/flutter_cached.dart';
 import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/course/course.dart';
 import 'package:schulcloud/file/file.dart';
@@ -25,14 +24,12 @@ class _AssignmentDetailScreenState extends State<AssignmentDetailScreen>
   Widget build(BuildContext context) {
     final s = context.s;
 
-    return CachedRawBuilder<Assignment>(
+    return FancyCachedBuilder<Assignment>.handleLoading(
       controller: widget.assignmentId.controller,
-      builder: (context, update) {
-        final assignment = update.data;
-        return CachedRawBuilder<User>(
+      builder: (context, assignment, isFetching) {
+        return FancyCachedBuilder<User>.handleLoading(
           controller: services.storage.userId.controller,
-          builder: (context, update) {
-            final user = update.data;
+          builder: (context, user, isFetching) {
             final showSubmissionTab =
                 assignment.isPrivate || user?.isTeacher == false;
             final showFeedbackTab =
@@ -92,17 +89,13 @@ class _AssignmentDetailScreenState extends State<AssignmentDetailScreen>
       return null;
     }
 
-    return CachedRawBuilder<Course>(
+    return FancyCachedBuilder<Course>(
       controller: courseId.controller,
-      builder: (context, update) {
+      builder: (context, course, _) {
         return Row(children: <Widget>[
-          CourseColorDot(update.data),
+          CourseColorDot(course),
           SizedBox(width: 8),
-          Text(
-            update.data?.name ??
-                update.error?.toString() ??
-                context.s.general_loading,
-          ),
+          Text(course?.name ?? context.s.general_loading),
         ]);
       },
     );
@@ -372,17 +365,15 @@ List<Widget> _buildFileSection(
       ),
     ],
     for (final fileId in fileIds)
-      CachedRawBuilder<File>(
+      FancyCachedBuilder<File>(
         controller: fileId.controller,
-        builder: (context, update) {
-          if (!update.hasData) {
+        builder: (context, file, _) {
+          if (file == null) {
             return ListTile(
-              leading: update.hasNoError ? CircularProgressIndicator() : null,
-              title: FancyText(update.error?.toString()),
+              leading: CircularProgressIndicator(),
             );
           }
 
-          final file = update.data;
           return FileTile(
             file: file,
             onOpen: (file) => services.get<FileBloc>().downloadFile(file),
