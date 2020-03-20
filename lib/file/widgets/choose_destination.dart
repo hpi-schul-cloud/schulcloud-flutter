@@ -39,19 +39,12 @@ class ChooseDestinationScreen extends StatelessWidget {
         ),
       ),
       floatingActionButton: FloatingActionButton.extended(
-        backgroundColor: Colors.white,
         onPressed: () => context.navigator.pop(FileDestination._(
           ownerId: services.storage.userId,
           parentId: null,
         )),
-        icon: IconTheme(
-          data: IconThemeData(color: context.theme.primaryColor),
-          child: fabIcon,
-        ),
-        label: DefaultTextStyle(
-          style: TextStyle(color: context.theme.primaryColor),
-          child: fabLabel,
-        ),
+        icon: fabIcon,
+        label: fabLabel,
       ),
     );
   }
