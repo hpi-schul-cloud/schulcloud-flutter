@@ -86,17 +86,15 @@ class _AssignmentsScreenState extends State<AssignmentsScreen> {
 
     return Scaffold(
       body: FancyCachedBuilder.list<Assignment>(
-        headerSliverBuilder: (_, __) => [
-          FancyAppBar(
-            title: Text(context.s.assignment),
-            actions: <Widget>[
-              IconButton(
-                icon: Icon(Icons.sort),
-                onPressed: () => _showSortFilterSheet(context),
-              ),
-            ],
-          ),
-        ],
+        appBar: FancyAppBar(
+          title: Text(context.s.assignment),
+          actions: <Widget>[
+            IconButton(
+              icon: Icon(Icons.sort),
+              onPressed: () => _showSortFilterSheet(context),
+            ),
+          ],
+        ),
         controller: services.storage.root.assignments.controller,
         emptyStateBuilder: (_, __) => EmptyStateScreen(
           text: s.assignment_assignmentsScreen_empty,

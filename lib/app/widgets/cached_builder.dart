@@ -6,8 +6,6 @@ typedef CachedBuilderContentBuilder<T> = Widget Function(
     BuildContext, T data, bool isFetching);
 typedef EmptyStateBuilder = Widget Function(BuildContext, bool isFetching);
 
-List<Widget> _emptyHeaderBuilder(BuildContext context, bool isFetching) => [];
-
 class FancyCachedBuilder<T> extends StatelessWidget {
   const FancyCachedBuilder({@required this.controller, @required this.builder})
       : assert(controller != null),
@@ -19,20 +17,22 @@ class FancyCachedBuilder<T> extends StatelessWidget {
   }) = _FancyCachedBuilderWithLoading;
 
   factory FancyCachedBuilder.handlePullToRefresh({
-    @required NestedScrollViewHeaderSliversBuilder headerSliverBuilder,
+    NestedScrollViewHeaderSliversBuilder headerSliverBuilder,
+    FancyAppBar appBar,
     @required CacheController<T> controller,
     @required CachedBuilderContentBuilder<T> builder,
   }) = _FancyCachedBuilderWithPullToRefresh;
 
   static FancyCachedBuilder<List<T>> list<T>({
-    NestedScrollViewHeaderSliversBuilder headerSliverBuilder =
-        _emptyHeaderBuilder,
+    NestedScrollViewHeaderSliversBuilder headerSliverBuilder,
+    FancyAppBar appBar,
     @required CacheController<List<T>> controller,
     @required EmptyStateBuilder emptyStateBuilder,
     @required CachedBuilderContentBuilder<List<T>> builder,
   }) =>
       _FancyCachedListBuilderWithPullToRefresh(
         headerSliverBuilder: headerSliverBuilder,
+        appBar: appBar,
         controller: controller,
         emptyStateBuilder: emptyStateBuilder,
         builder: builder,
@@ -112,14 +112,17 @@ class _FancyCachedBuilderWithLoading<T> extends FancyCachedBuilder<T> {
 
 class _FancyCachedBuilderWithPullToRefresh<T> extends FancyCachedBuilder<T> {
   _FancyCachedBuilderWithPullToRefresh({
-    @required NestedScrollViewHeaderSliversBuilder headerSliverBuilder,
+    NestedScrollViewHeaderSliversBuilder headerSliverBuilder,
+    Widget appBar,
     @required CacheController<T> controller,
     @required CachedBuilderContentBuilder<T> builder,
-  }) : super(
+  })  : assert(headerSliverBuilder == null || appBar == null),
+        super(
           controller: controller,
           builder: (context, data, isFetching) {
             return NestedScrollView(
-              headerSliverBuilder: headerSliverBuilder,
+              headerSliverBuilder: headerSliverBuilder ??
+                  (_, __) => [if (appBar != null) appBar],
               body: RefreshIndicator(
                 onRefresh: controller.fetch,
                 child: data == null
@@ -140,12 +143,14 @@ class _FancyCachedBuilderWithPullToRefresh<T> extends FancyCachedBuilder<T> {
 class _FancyCachedListBuilderWithPullToRefresh<T>
     extends _FancyCachedBuilderWithPullToRefresh<List<T>> {
   _FancyCachedListBuilderWithPullToRefresh({
-    @required NestedScrollViewHeaderSliversBuilder headerSliverBuilder,
+    NestedScrollViewHeaderSliversBuilder headerSliverBuilder,
+    FancyAppBar appBar,
     @required CacheController<List<T>> controller,
     @required EmptyStateBuilder emptyStateBuilder,
     @required CachedBuilderContentBuilder<List<T>> builder,
   }) : super(
           headerSliverBuilder: headerSliverBuilder,
+          appBar: appBar,
           controller: controller,
           builder: (context, data, isFetching) {
             return data.isEmpty

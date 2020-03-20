@@ -9,9 +9,7 @@ class CoursesScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: FancyCachedBuilder.list<Course>(
-        headerSliverBuilder: (_, __) => [
-          FancyAppBar(title: Text(context.s.course)),
-        ],
+        appBar: FancyAppBar(title: Text(context.s.course)),
         controller: services.storage.root.courses.controller,
         emptyStateBuilder: (_, __) => EmptyStateScreen(
           text: context.s.course_coursesScreen_empty,

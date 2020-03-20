@@ -10,9 +10,7 @@ class NewsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: FancyCachedBuilder.list<Article>(
-        headerSliverBuilder: (_, __) => [
-          FancyAppBar(title: Text(context.s.news)),
-        ],
+        appBar: FancyAppBar(title: Text(context.s.news)),
         controller: services.storage.root.news.controller,
         emptyStateBuilder: (context, __) => EmptyStateScreen(
           text: context.s.news_empty,
