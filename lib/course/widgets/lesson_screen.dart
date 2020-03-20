@@ -83,7 +83,7 @@ class _LessonScreenState extends State<LessonScreen> {
         }
 
         final lesson = update.data;
-        final firstContent = lesson.contents.first;
+        final firstContent = lesson.contents.where((c) => c.isVisible).first;
         return FancyScaffold(
           appBar: FancyAppBar(
             title: Text(lesson.name),
@@ -96,7 +96,7 @@ class _LessonScreenState extends State<LessonScreen> {
             ),
             actions: <Widget>[
               IconButton(
-                icon: Icon(Icons.web),
+                icon: Icon(Icons.format_list_numbered),
                 onPressed: () => _showLessonContentMenu(context, lesson),
               ),
             ],
@@ -125,10 +125,11 @@ class _LessonScreenState extends State<LessonScreen> {
 
   void _showLessonContentMenu(BuildContext context, Lesson lesson) {
     context.showFancyModalBottomSheet(
+      useRootNavigator: true,
       builder: (context) => Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          for (final content in lesson.contents)
+          for (final content in lesson.contents.where((c) => c.isVisible))
             NavigationItem(
               icon: Icons.textsms,
               text: content.title,

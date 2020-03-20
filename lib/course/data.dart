@@ -147,11 +147,13 @@ class Content implements Entity<Content> {
   const Content({
     @required this.id,
     @required this.title,
+    @required this.isHidden,
     @required this.type,
     this.text,
     this.url,
   })  : assert(id != null),
         assert(title != null),
+        assert(isHidden != null),
         assert(type != null);
 
   factory Content.fromJson(Map<String, dynamic> data) {
@@ -172,6 +174,7 @@ class Content implements Entity<Content> {
     return Content(
       id: Id(data['_id']),
       title: data['title'] != '' ? data['title'] : 'Ohne Titel',
+      isHidden: data['hidden'] ?? false,
       type: type,
       text: type == ContentType.text ? data['content']['text'] : null,
       url: type != ContentType.text ? data['content']['url'] : null,
@@ -193,6 +196,10 @@ class Content implements Entity<Content> {
 
   @HiveField(4)
   final String url;
+
+  @HiveField(5)
+  final bool isHidden;
+  bool get isVisible => !isHidden;
 
   bool get isText => text != null;
 }
