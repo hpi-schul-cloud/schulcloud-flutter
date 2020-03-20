@@ -146,12 +146,18 @@ class Assignment implements Entity<Assignment> {
   // TODO(marcelgarus): create some kind of LazyId.
   CacheController<Submission> get mySubmission {
     return SimpleCacheController(
-      fetcher: () async => Submission.fromJson(
-          (await services.api.get('submissions', parameters: {
-        'homeworkId': id.value,
-        'studentId': services.storage.userIdString.getValue(),
-      }).parseJsonList())
-              .singleWhere((_) => true, orElse: () => null)),
+      fetcher: () async {
+        final data = await services.api.get('submissions', parameters: {
+          'homeworkId': id.value,
+          'studentId': services.storage.userIdString.getValue(),
+        }).parseJsonList();
+        // For a single student, there's at most one submission per assignment.
+        final submissionData =
+            data.singleWhere((_) => true, orElse: () => null);
+        return submissionData == null
+            ? null
+            : Submission.fromJson(submissionData);
+      },
       saveToCache: HiveCache.put,
       loadFromCache: () => throw NotInCacheException(),
     );
