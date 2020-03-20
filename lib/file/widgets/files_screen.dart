@@ -15,7 +15,7 @@ class FilesScreen extends StatelessWidget {
       floatingActionButton: UploadFab(ownerId: services.storage.userId),
       sliver: SliverList(
         delegate: SliverChildListDelegate([
-          _CoursesList(),
+          // _CoursesList(),
           SizedBox(height: 16),
           _UserFiles(),
         ]),

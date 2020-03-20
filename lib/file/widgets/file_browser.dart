@@ -74,6 +74,7 @@ class FileBrowser extends StatelessWidget {
     return FancyCachedBuilder<List<File>>(
       controller: ownerId.files(parentId).controller,
       builder: (context, files, isFetching) {
+        logger.w('Files were updated to $files');
         if (files?.isEmpty ?? true) {
           return _buildEmptyState(context);
         }
