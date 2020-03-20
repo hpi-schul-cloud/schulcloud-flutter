@@ -123,6 +123,7 @@ class _SignInFormState extends State<SignInForm> {
               ),
               SizedBox(width: 8),
               SecondaryButton(
+                key: ValueKey('signIn-demoTeacher'),
                 onPressed: _signInAsDemoTeacher,
                 child: Text(s.signIn_form_demo_teacher),
               ),

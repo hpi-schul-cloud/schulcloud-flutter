@@ -103,9 +103,6 @@ class _EditSubmissionFormState extends State<EditSubmissionForm> {
                 if (result) {
                   await submission.delete();
 
-                  // Intentionally using a context outside our scaffold. The
-                  // current scaffold only exists inside the route and is being
-                  // removed by Navigator.pop().
                   await services.snackBar
                       .showMessage(s.assignment_editSubmission_delete_success);
                   context.navigator.pop();

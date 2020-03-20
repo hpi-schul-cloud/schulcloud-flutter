@@ -50,7 +50,7 @@ class SortFilter<T> {
 
     return SortFilterSelection(
       config: this,
-      sortSelectionKey: _tryParseWebQuerySorter(query),
+      sortSelectionKey: _tryParseWebQuerySorter(query) ?? defaultSorter,
       sortOrder: SortOrderUtils.tryParseWebQuery(query) ?? defaultSortOrder,
       filterSelections: {
         for (final entry in filters.entries)

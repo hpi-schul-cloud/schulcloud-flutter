@@ -5,7 +5,7 @@ import 'package:logger_flutter/logger_flutter.dart';
 import 'package:schulcloud/sign_in/sign_in.dart';
 
 import '../logger.dart';
-import '../services/snack_bar.dart';
+import '../services/deep_linking.dart';
 import '../services/storage.dart';
 import '../utils.dart';
 import 'schulcloud_app.dart';
@@ -21,12 +21,12 @@ class TopLevelScreenWrapper extends StatefulWidget {
 
 class _TopLevelScreenWrapperState extends State<TopLevelScreenWrapper> {
   StreamSubscription _deepLinksSubscription;
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   void initState() {
     super.initState();
-
-    _deepLinksSubscription = _subscribe().listen(_handleUri);
+    _deepLinksSubscription = services.deepLinking.stream.listen(_handleUri);
   }
 
   @override
@@ -38,19 +38,19 @@ class _TopLevelScreenWrapperState extends State<TopLevelScreenWrapper> {
   @override
   Widget build(BuildContext context) {
     return LogConsoleOnShake(
-      child: Scaffold(body: widget.child),
+      child: Scaffold(
+        key: _scaffoldKey,
+        body: widget.child,
+      ),
     );
   }
 
-  Stream<Uri> _subscribe() async* {
-    // ignore: literal_only_boolean_expressions
-    while (true) {
-      yield await incomingDeepLinks.next;
-    }
-  }
-
   void _handleUri(Uri uri) {
+    if (uri == null) {
+      return;
+    }
     logger.d('Handling URI $uri');
+    services.deepLinking.onUriHandled();
     assert(SchulCloudApp.navigator != null);
 
     final isSignedOut = services.storage.isSignedOut;
@@ -69,8 +69,9 @@ class _TopLevelScreenWrapperState extends State<TopLevelScreenWrapper> {
     if (isSignedOut) {
       // We're still at the sign in screen. Wait for the user to sign in and
       // then continue to our destination.
-      services.snackBar
-          .showMessage(context.s.app_topLevelScreenWrapper_signInFirst);
+      _scaffoldKey.currentState.showSnackBar(SnackBar(
+        content: Text(context.s.app_topLevelScreenWrapper_signInFirst),
+      ));
       return;
     }
 

@@ -31,9 +31,9 @@ class _SignOutScreenState extends State<SignOutScreen> {
         padding: EdgeInsets.symmetric(horizontal: 16, vertical: 64),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
-            CircularProgressIndicator(),
+            Center(child: CircularProgressIndicator()),
             SizedBox(height: 8),
             Text(
               context.s.signIn_signOutScreen_message,

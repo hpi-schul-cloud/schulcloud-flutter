@@ -1,4 +1,4 @@
-package com.example.schulcloud;
+package org.schulcloud.android;
 
 import android.os.Bundle;
 import io.flutter.app.FlutterActivity;
