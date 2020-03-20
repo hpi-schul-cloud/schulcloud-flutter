@@ -62,19 +62,26 @@ class Course implements Entity<Course> {
   final LazyIds<File> files;
 }
 
+extension CourseId on Id<Course> {
+  String get webUrl => scWebUrl('courses/$this');
+}
+
 @HiveType(typeId: TypeId.lesson)
 class Lesson implements Entity<Lesson> {
   const Lesson({
     @required this.id,
+    @required this.courseId,
     @required this.name,
     @required this.contents,
   })  : assert(id != null),
+        assert(courseId != null),
         assert(name != null),
         assert(contents != null);
 
   Lesson.fromJson(Map<String, dynamic> data)
       : this(
           id: Id<Lesson>(data['_id']),
+          courseId: Id<Course>(data['courseId']),
           name: data['name'],
           contents: (data['contents'] as List<dynamic>)
               .map((content) => Content.fromJson(content))
@@ -96,11 +103,16 @@ class Lesson implements Entity<Lesson> {
   @HiveField(0)
   final Id<Lesson> id;
 
+  @HiveField(3)
+  final Id<Course> courseId;
+
   @HiveField(1)
   final String name;
 
   @HiveField(2)
   final List<Content> contents;
+
+  String get webUrl => '${courseId.webUrl}/topics/$id';
 }
 
 @HiveType(typeId: TypeId.contentType)
