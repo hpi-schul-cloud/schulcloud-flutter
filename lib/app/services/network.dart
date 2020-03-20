@@ -105,8 +105,7 @@ class AuthenticationError extends ServerError {
 class TooManyRequestsError extends ServerError {
   TooManyRequestsError(ErrorBody body, {@required this.timeToWait})
       : assert(timeToWait != null),
-        super(body,
-            (context) => context.s.signIn_form_errorRateLimit(timeToWait));
+        super(body, (context) => context.s.app_error_rateLimit(timeToWait));
 
   final Duration timeToWait;
 }

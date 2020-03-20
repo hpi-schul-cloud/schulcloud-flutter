@@ -42,7 +42,7 @@ class _SignInFormState extends State<SignInForm> {
     } on AuthenticationError {
       _ambientError = context.s.signIn_form_errorAuth;
     } on TooManyRequestsError catch (error) {
-      _ambientError = context.s.signIn_form_errorRateLimit(error.timeToWait);
+      _ambientError = context.s.app_error_rateLimit(error.timeToWait);
     } finally {
       setState(() => _isLoading = false);
     }
