@@ -1,12 +1,9 @@
 import 'dart:async';
-import 'dart:io' as io;
 
-import 'package:black_hole_flutter/black_hole_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_absolute_path/flutter_absolute_path.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:logger_flutter/logger_flutter.dart';
-import 'package:pedantic/pedantic.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:schulcloud/assignment/assignment.dart';
 import 'package:schulcloud/course/course.dart';
