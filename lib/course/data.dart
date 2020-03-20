@@ -67,16 +67,20 @@ extension CourseId on Id<Course> {
 }
 
 @HiveType(typeId: TypeId.lesson)
-class Lesson implements Entity<Lesson> {
+class Lesson implements Entity<Lesson>, Comparable<Lesson> {
   const Lesson({
     @required this.id,
     @required this.courseId,
     @required this.name,
     @required this.contents,
+    @required this.isHidden,
+    @required this.position,
   })  : assert(id != null),
         assert(courseId != null),
         assert(name != null),
-        assert(contents != null);
+        assert(contents != null),
+        assert(isHidden != null),
+        assert(position != null);
 
   Lesson.fromJson(Map<String, dynamic> data)
       : this(
@@ -87,6 +91,8 @@ class Lesson implements Entity<Lesson> {
               .map((content) => Content.fromJson(content))
               .where((c) => c != null)
               .toList(),
+          isHidden: data['hidden'] ?? false,
+          position: data['position'],
         );
 
   static Future<Lesson> fetch(Id<Lesson> id) async =>
@@ -111,6 +117,15 @@ class Lesson implements Entity<Lesson> {
 
   @HiveField(2)
   final List<Content> contents;
+
+  @HiveField(3)
+  final bool isHidden;
+  bool get isVisible => !isHidden;
+
+  @HiveField(4)
+  final int position;
+  @override
+  int compareTo(Lesson other) => position.compareTo(other.position);
 
   String get webUrl => '${courseId.webUrl}/topics/$id';
 }

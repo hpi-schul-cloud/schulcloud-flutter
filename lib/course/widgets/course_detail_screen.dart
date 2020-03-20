@@ -1,4 +1,5 @@
 import 'package:black_hole_flutter/black_hole_flutter.dart';
+import 'package:dartx/dartx.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cached/flutter_cached.dart';
 import 'package:schulcloud/app/app.dart';
@@ -65,7 +66,7 @@ class CourseDetailsScreen extends StatelessWidget {
           return Center(child: CircularProgressIndicator());
         }
 
-        final lessons = update.data;
+        final lessons = update.data.where((l) => l.isVisible).sorted();
         if (lessons.isEmpty) {
           return EmptyStateScreen(
             text: context.s.course_detailsScreen_empty,
