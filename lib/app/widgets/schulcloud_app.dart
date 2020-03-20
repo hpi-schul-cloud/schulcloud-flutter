@@ -104,8 +104,8 @@ class _SignedInScreenState extends ReceiveShareState<SignedInScreen> {
         ),
       ));
 
-      logger.i('Uploading to $destination.');
       if (destination != null) {
+        logger.i('Uploading to $destination.');
         unawaited(services.files.uploadFiles(
           files: [
             io.File(await FlutterAbsolutePath.getAbsolutePath(shared.path)),
