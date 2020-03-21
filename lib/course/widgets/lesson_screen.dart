@@ -127,7 +127,7 @@ class _LessonScreenState extends State<LessonScreen> {
       builder: (context) => Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          for (final content in lesson.contents.where((c) => c.isVisible))
+          for (final content in lesson.visibleContents)
             NavigationItem(
               icon: Icons.textsms,
               text: content.title,

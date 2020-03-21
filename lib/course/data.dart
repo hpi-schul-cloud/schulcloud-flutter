@@ -118,6 +118,7 @@ class Lesson implements Entity<Lesson>, Comparable<Lesson> {
 
   @HiveField(2)
   final List<Content> contents;
+  Iterable<Content> get visibleContents => contents.where((c) => c.isVisible);
 
   @HiveField(5)
   final bool isHidden;
