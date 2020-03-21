@@ -1,4 +1,5 @@
 import 'package:black_hole_flutter/black_hole_flutter.dart';
+import 'package:dartx/dartx.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cached/flutter_cached.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
@@ -71,6 +72,8 @@ class _LessonScreenState extends State<LessonScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final s = context.s;
+
     return CachedRawBuilder<Lesson>(
       controller: widget.lessonId.controller,
       builder: (context, update) {
@@ -81,7 +84,8 @@ class _LessonScreenState extends State<LessonScreen> {
         }
 
         final lesson = update.data;
-        final firstContent = lesson.contents.where((c) => c.isVisible).first;
+        final isEmpty = lesson.visibleContents.isEmpty;
+        final firstContent = lesson.visibleContents.firstOrNull;
         return FancyScaffold(
           appBar: FancyAppBar(
             title: Text(lesson.name),
@@ -93,28 +97,39 @@ class _LessonScreenState extends State<LessonScreen> {
               },
             ),
             actions: <Widget>[
-              IconButton(
-                icon: Icon(Icons.format_list_numbered),
-                onPressed: () => _showLessonContentMenu(context, lesson),
-              ),
+              if (!isEmpty)
+                IconButton(
+                  icon: Icon(Icons.format_list_numbered),
+                  onPressed: () => _showLessonContentMenu(context, lesson),
+                ),
             ],
           ),
           sliver: SliverFillRemaining(
-            child: InAppWebView(
-              initialUrl: firstContent.isText ? null : firstContent.url,
-              initialData: firstContent.isText
-                  ? InAppWebViewInitialData(
-                      data: _wrapTextContent(firstContent.text),
-                      baseUrl: lesson.webUrl,
-                    )
-                  : null,
-              onWebViewCreated: (controller) => _controller = controller,
-              initialOptions: InAppWebViewWidgetOptions(
-                inAppWebViewOptions: InAppWebViewOptions(
-                  transparentBackground: true,
-                ),
-              ),
-            ),
+            child: isEmpty
+                ? EmptyStateScreen(
+                    text: s.course_lessonScreen_empty,
+                    actions: <Widget>[
+                      PrimaryButton(
+                        onPressed: () => tryLaunchingUrl(lesson.webUrl),
+                        child: Text(s.course_lessonScreen_empty_viewInBrowser),
+                      ),
+                    ],
+                  )
+                : InAppWebView(
+                    initialUrl: firstContent.isText ? null : firstContent.url,
+                    initialData: firstContent.isText
+                        ? InAppWebViewInitialData(
+                            data: _wrapTextContent(firstContent.text),
+                            baseUrl: lesson.webUrl,
+                          )
+                        : null,
+                    onWebViewCreated: (controller) => _controller = controller,
+                    initialOptions: InAppWebViewWidgetOptions(
+                      inAppWebViewOptions: InAppWebViewOptions(
+                        transparentBackground: true,
+                      ),
+                    ),
+                  ),
           ),
         );
       },
