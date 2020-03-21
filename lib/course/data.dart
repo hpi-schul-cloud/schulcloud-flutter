@@ -12,12 +12,11 @@ class Course implements Entity<Course> {
   Course({
     @required this.id,
     @required this.name,
-    @required this.description,
+    this.description,
     @required this.teacherIds,
     @required this.color,
   })  : assert(id != null),
         assert(name != null),
-        assert(description != null),
         assert(teacherIds != null),
         assert(color != null),
         lessons = LazyIds<Lesson>(
