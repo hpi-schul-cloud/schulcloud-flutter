@@ -1,9 +1,9 @@
 import 'dart:convert';
 
+import 'package:dartx/dartx.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:meta/meta.dart';
-
 import 'package:schulcloud/app/app.dart';
 
 class SignInBrowser extends InAppBrowser {
@@ -14,7 +14,7 @@ class SignInBrowser extends InAppBrowser {
 
   @override
   Future onLoadStart(String url) async {
-    final firstPathSegment = Uri.parse(url).pathSegments.first;
+    final firstPathSegment = Uri.parse(url).pathSegments.firstOrNull;
     if (firstPathSegment == 'dashboard') {
       logger.i('Signing in…');
 
