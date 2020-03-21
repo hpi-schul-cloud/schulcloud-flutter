@@ -3,7 +3,6 @@ import 'dart:ui';
 import 'package:hive/hive.dart';
 import 'package:meta/meta.dart';
 import 'package:schulcloud/app/app.dart';
-import 'package:schulcloud/file/file.dart';
 
 part 'data.g.dart';
 
@@ -23,10 +22,6 @@ class Course implements Entity<Course> {
         lessons = LazyIds<Lesson>(
           collectionId: 'lessons of course $id',
           fetcher: () async => Lesson.fetchList(courseId: id),
-        ),
-        files = LazyIds<File>(
-          collectionId: 'files of $id',
-          fetcher: () => File.fetchList(id),
         );
 
   Course.fromJson(Map<String, dynamic> data)
@@ -58,8 +53,6 @@ class Course implements Entity<Course> {
   final Color color;
 
   final LazyIds<Lesson> lessons;
-
-  final LazyIds<File> files;
 }
 
 @HiveType(typeId: TypeId.lesson)
