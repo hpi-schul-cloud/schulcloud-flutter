@@ -10,14 +10,9 @@ import '../data.dart';
 import '../service.dart';
 
 class UploadFab extends StatefulWidget {
-  const UploadFab({@required this.ownerId, this.parentId})
-      : assert(ownerId != null);
+  const UploadFab({@required this.path}) : assert(path != null);
 
-  /// The owner of uploaded files.
-  final Id<dynamic> ownerId;
-
-  /// The parent folder of uploaded files.
-  final Id<File> parentId;
+  final FilePath path;
 
   @override
   _UploadFabState createState() => _UploadFabState();
@@ -30,10 +25,7 @@ class _UploadFabState extends State<UploadFab> {
   void _startUpload(BuildContext context) async {
     final updates = services.files.uploadFiles(
       files: await FilePicker.getMultiFile(),
-      path: FilePath(
-        ownerId: widget.ownerId,
-        parentId: widget.parentId,
-      ),
+      path: widget.path,
     );
 
     snackBar = context.scaffold.showSnackBar(SnackBar(

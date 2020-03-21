@@ -6,14 +6,32 @@ import 'package:time_machine/time_machine.dart';
 
 part 'data.g.dart';
 
+const _defaultFile = Id<File>('invalid');
+
 @HiveType(typeId: TypeId.filePath)
 @immutable
 class FilePath {
-  const FilePath({@required this.ownerId, this.parentId})
-      : assert(ownerId != null);
+  const FilePath(this.ownerId, [this.parentId])
+      : assert(ownerId != null),
+        assert(ownerId is Id<User> || ownerId is Id<Course>);
 
+  @HiveField(0)
   final Id<dynamic> ownerId;
+
+  @HiveField(1)
   final Id<File> parentId;
+
+  LazyIds<File> get files => LazyIds<File>(
+        collectionId: 'files of $ownerId in directory $parentId',
+        fetcher: () => File.fetchList(this),
+      );
+
+  FilePath copyWith({Id<dynamic> ownerId, Id<File> parentId = _defaultFile}) {
+    return FilePath(
+      ownerId ?? this.ownerId,
+      parentId == _defaultFile ? this.parentId : parentId,
+    );
+  }
 
   @override
   String toString() => '$ownerId/${parentId ?? 'root'}';
@@ -32,14 +50,12 @@ class File implements Entity<File>, Comparable<File> {
     @required this.size,
   })  : assert(id != null),
         assert(name != null),
-        assert(path.ownerId != null),
-        assert(path.ownerId is Id<User> || path.ownerId is Id<Course>),
         assert(createdAt != null),
         assert(updatedAt != null),
         assert(isDirectory != null),
         files = LazyIds<File>(
           collectionId: 'files in directory $id',
-          fetcher: () => File.fetchList(path.ownerId, parentId: id),
+          fetcher: () => File.fetchList(path.copyWith(parentId: id)),
         );
 
   File.fromJson(Map<String, dynamic> data)
@@ -48,11 +64,11 @@ class File implements Entity<File>, Comparable<File> {
           name: data['name'],
           mimeType: data['type'],
           path: FilePath(
-            ownerId: {
+            {
               'user': Id<User>(data['owner']),
               'course': Id<Course>(data['owner']),
             }[data['refOwnerModel']],
-            parentId: data['parent'] == null ? null : Id<File>(data['parent']),
+            Id<File>.orNull(data['parent']),
           ),
           createdAt: (data['createdAt'] as String).parseInstant(),
           updatedAt: (data['updatedAt'] as String).parseInstant(),
@@ -60,15 +76,12 @@ class File implements Entity<File>, Comparable<File> {
           size: data['size'],
         );
 
-  static Future<List<File>> fetchList(
-    Id<dynamic> ownerId, {
-    Id<File> parentId,
-  }) async {
+  static Future<List<File>> fetchList(FilePath path) async {
     final files = await services.api.get(
       'fileStorage',
       parameters: {
-        'owner': ownerId.value,
-        if (parentId != null) 'parent': parentId.value,
+        'owner': path.ownerId.value,
+        if (path.parentId != null) 'parent': path.parentId.value,
       },
     ).parseJsonList(isServicePaginated: false);
     return files.map((data) => File.fromJson(data)).toList();
@@ -83,7 +96,6 @@ class File implements Entity<File>, Comparable<File> {
   @HiveField(1)
   final String name;
 
-  /// An [Id] for either a [User] or [Course].
   @HiveField(12)
   final FilePath path;
   Id<dynamic> get ownerId => path.ownerId;
@@ -129,8 +141,8 @@ class File implements Entity<File>, Comparable<File> {
       id: id,
       name: name ?? this.name,
       path: FilePath(
-        ownerId: ownerId ?? this.ownerId,
-        parentId: parentId ?? this.parentId,
+        ownerId ?? this.ownerId,
+        parentId ?? this.parentId,
       ),
       createdAt: createdAt,
       updatedAt: updatedAt,
@@ -159,8 +171,5 @@ class File implements Entity<File>, Comparable<File> {
 }
 
 extension FileLoading on Id<dynamic> {
-  LazyIds<File> files([Id<File> parentId]) => LazyIds<File>(
-        collectionId: 'files of $this in directory $parentId',
-        fetcher: () => File.fetchList(this, parentId: parentId),
-      );
+  LazyIds<File> files([Id<File> parentId]) => FilePath(this, parentId).files;
 }

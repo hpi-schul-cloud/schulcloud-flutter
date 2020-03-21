@@ -28,10 +28,8 @@ class ChooseDestinationScreen extends StatelessWidget {
         ),
       ),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => context.navigator.pop(FilePath(
-          ownerId: services.storage.userId,
-          parentId: null,
-        )),
+        onPressed: () =>
+            context.navigator.pop(FilePath(services.storage.userId)),
         icon: fabIcon,
         label: fabLabel,
       ),
