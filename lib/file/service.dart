@@ -159,7 +159,7 @@ class FileService {
           path: destination,
         ).forEach((_) {}),
         loadingMessage:
-            context.s.file_uploadProgressSnackBarContent(1, file.name, 1),
+            context.s.file_uploadProgressSnackBarContent(1, file.name, 0),
         successMessage: context.s.file_uploadCompletedSnackBar,
         failureMessage: context.s.file_uploadFailedSnackBar,
       );
