@@ -128,12 +128,12 @@ class LazyIds<E extends Entity<E>> {
         final streamOfIds = HiveCache.getStreamed<IdCollection<E>>(_id)
             .map((collection) => collection.childrenIds);
 
-        return Observable.switchLatest(streamOfIds.map((ids) {
+        return Observable(streamOfIds).switchMap((ids) {
           logger.w('Combining the streams of $ids');
           return CombineLatestStream.list([
             for (final id in ids) HiveCache.getStreamed(id),
           ]);
-        }));
+        });
       },
       saveToCache: (items) {
         final collection = IdCollection<E>(
