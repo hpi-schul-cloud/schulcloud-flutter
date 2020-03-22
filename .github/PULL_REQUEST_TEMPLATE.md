@@ -1,8 +1,7 @@
-**Fixes: #Issue**
-<!-- Please enter the corresponding issue ID in the placeholder above. -->
+<!-- Please enter the corresponding issue ID: -->
+**Closes: #Issue**
 
-**Changes**
-<!-- Please summarize your changes -->
+<!-- Please summarize your changes: -->
 
 
 
