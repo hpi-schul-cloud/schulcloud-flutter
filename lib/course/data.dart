@@ -25,6 +25,10 @@ class Course implements Entity<Course> {
           collectionId: 'lessons of course $id',
           fetcher: () async => Lesson.fetchList(courseId: id),
         ),
+        visibleLessons = LazyIds<Lesson>(
+          collectionId: 'visible lessons of course $id',
+          fetcher: () async => Lesson.fetchList(courseId: id, hidden: false),
+        ),
         files = LazyIds<File>(
           collectionId: 'files of $id',
           fetcher: () => File.fetchList(id),
@@ -59,6 +63,7 @@ class Course implements Entity<Course> {
   final Color color;
 
   final LazyIds<Lesson> lessons;
+  final LazyIds<Lesson> visibleLessons;
 
   final LazyIds<File> files;
 }
@@ -99,9 +104,16 @@ class Lesson implements Entity<Lesson>, Comparable<Lesson> {
   static Future<Lesson> fetch(Id<Lesson> id) async =>
       Lesson.fromJson(await services.api.get('lessons/$id').json);
 
-  static Future<List<Lesson>> fetchList({Id<Course> courseId}) async {
+  static Future<List<Lesson>> fetchList({
+    Id<Course> courseId,
+    bool hidden,
+  }) async {
     final jsonList = await services.api.get('lessons', parameters: {
       if (courseId != null) 'courseId': courseId.value,
+      if (hidden == true)
+        'hidden': 'true'
+      else if (hidden == false)
+        'hidden[\$ne]': 'true',
     }).parseJsonList();
     return jsonList.map((data) => Lesson.fromJson(data)).toList();
   }
