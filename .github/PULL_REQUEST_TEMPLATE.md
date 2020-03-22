@@ -1,5 +1,5 @@
 <!-- Please enter the corresponding issue ID: -->
-**Fixes: #Issue**
+**Closes: #Issue**
 
 <!-- Please summarize your changes: -->
 
