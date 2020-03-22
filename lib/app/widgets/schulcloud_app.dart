@@ -110,7 +110,13 @@ class SignedInScreenState extends State<SignedInScreen>
         body: Stack(
           fit: StackFit.expand,
           children: <Widget>[
-            for (var i = 0; i < _BottomTab.count; i++) _buildChild(i),
+            for (var i = 0; i < _BottomTab.count; i++)
+              _TabContent(
+                navigatorKey: _navigatorKeys[i],
+                initialRoute: _BottomTab.values[i].initialRoute,
+                fader: _faders[i],
+                isActive: i == _selectedTabIndex,
+              ),
           ],
         ),
         bottomNavigationBar: BottomNavigationBar(
@@ -145,33 +151,6 @@ class SignedInScreenState extends State<SignedInScreen>
     });
   }
 
-  Widget _buildChild(int index) {
-    final fader = _faders[index];
-    final child = FadeTransition(
-      opacity: fader.drive(CurveTween(curve: Curves.fastOutSlowIn)),
-      child: Navigator(
-        key: _navigatorKeys[index],
-        initialRoute: _BottomTab.values[index].initialRoute,
-        onGenerateRoute: router.onGenerateRoute,
-        observers: [
-          LoggingNavigatorObserver(),
-          HeroController(),
-        ],
-      ),
-    );
-
-    if (index == _selectedTabIndex) {
-      fader.forward();
-      return child;
-    }
-
-    fader.reverse();
-    if (fader.isAnimating) {
-      return IgnorePointer(child: child);
-    }
-    return Offstage(child: child);
-  }
-
   /// When the user tries to pop, we first try to pop with the inner navigator.
   /// If that's not possible (we are at a top-level location), we go to the
   /// dashboard. Only if we were already there, we pop (aka close the app).
@@ -185,6 +164,60 @@ class SignedInScreenState extends State<SignedInScreen>
     } else {
       return true;
     }
+  }
+}
+
+class _TabContent extends StatefulWidget {
+  const _TabContent({
+    Key key,
+    @required this.navigatorKey,
+    @required this.initialRoute,
+    @required this.fader,
+    @required this.isActive,
+  })  : assert(navigatorKey != null),
+        assert(initialRoute != null),
+        assert(fader != null),
+        assert(isActive != null),
+        super(key: key);
+
+  final GlobalKey<NavigatorState> navigatorKey;
+  final String initialRoute;
+  final AnimationController fader;
+  final bool isActive;
+
+  @override
+  _TabContentState createState() => _TabContentState();
+}
+
+class _TabContentState extends State<_TabContent> {
+  Widget _child;
+
+  @override
+  Widget build(BuildContext context) {
+    if (!widget.isActive) {
+      widget.fader.reverse();
+      final child = _child ?? SizedBox();
+      if (widget.fader.isAnimating) {
+        return IgnorePointer(child: child);
+      }
+      return Offstage(child: child);
+    }
+
+    _child ??= FadeTransition(
+      opacity: widget.fader.drive(CurveTween(curve: Curves.fastOutSlowIn)),
+      child: Navigator(
+        key: widget.navigatorKey,
+        initialRoute: widget.initialRoute,
+        onGenerateRoute: router.onGenerateRoute,
+        observers: [
+          LoggingNavigatorObserver(),
+          HeroController(),
+        ],
+      ),
+    );
+
+    widget.fader.forward();
+    return _child;
   }
 }
 
