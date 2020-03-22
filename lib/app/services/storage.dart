@@ -17,34 +17,17 @@ class StorageService {
   }) : _prefs = prefs;
 
   static Future<StorageService> create() async {
-    StreamingSharedPreferences prefs;
-    Preference<String> userIdString;
-    Preference<String> email;
-    Preference<String> token;
-    Preference<bool> errorReportingEnabled;
-
-    await Future.wait([
-      () async {
-        prefs = await StreamingSharedPreferences.instance;
-        userIdString = prefs.getString('userId', defaultValue: '');
-        email = prefs.getString('email', defaultValue: '');
-        token = prefs.getString('token', defaultValue: '');
-        errorReportingEnabled = prefs.getBool(
-          'settings_privacy_errorReporting_enabled',
-          defaultValue: true,
-        );
-      }(),
-    ]);
-
-    final root = Root();
-
+    final prefs = await StreamingSharedPreferences.instance;
     return StorageService._(
       prefs: prefs,
-      userIdString: userIdString,
-      email: email,
-      token: token,
-      errorReportingEnabled: errorReportingEnabled,
-      root: root,
+      userIdString: prefs.getString('userId', defaultValue: ''),
+      email: prefs.getString('email', defaultValue: ''),
+      token: prefs.getString('token', defaultValue: ''),
+      errorReportingEnabled: prefs.getBool(
+        'settings_privacy_errorReporting_enabled',
+        defaultValue: true,
+      ),
+      root: Root(),
     );
   }
 
@@ -77,7 +60,7 @@ class StorageService {
   }
 
   // TODO(marcelgarus): clear the HiveCache
-  Future<void> clear() => Future.wait([_prefs.clear()]);
+  Future<void> clear() => _prefs.clear();
 }
 
 extension StorageServiceGetIt on GetIt {
