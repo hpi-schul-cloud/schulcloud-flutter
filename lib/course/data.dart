@@ -17,6 +17,7 @@ class Course implements Entity<Course> {
     @required this.color,
   })  : assert(id != null),
         assert(name != null),
+        assert(description != ''),
         assert(teacherIds != null),
         assert(color != null),
         lessons = LazyIds<Lesson>(
@@ -32,7 +33,7 @@ class Course implements Entity<Course> {
       : this(
           id: Id<Course>(data['_id']),
           name: data['name'],
-          description: data['description'],
+          description: data['description'] == '' ? null : data['description'],
           teacherIds: (data['teacherIds'] as List<dynamic>).castIds<User>(),
           color: (data['color'] as String).hexToColor,
         );
