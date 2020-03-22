@@ -1,3 +1,4 @@
+import 'package:black_hole_flutter/black_hole_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:flutter_svg/svg.dart';
@@ -23,15 +24,13 @@ class _SignInFormState extends State<SignInForm> {
   }
 
   void _pushSignedInPage() {
-    unawaited(SchulCloudApp.navigator
+    unawaited(context.rootNavigator
         .pushReplacementNamed(appSchemeLink('signedInScreen')));
   }
 
   Future<void> _executeSignIn(Future<void> Function() signIn) async {
     await signIn();
-
-    unawaited(SchulCloudApp.navigator
-        .pushReplacementNamed(appSchemeLink('signedInScreen')));
+    _pushSignedInPage();
   }
 
   Future<void> _signInAsDemoStudent() =>
