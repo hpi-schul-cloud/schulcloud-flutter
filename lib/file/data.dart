@@ -132,18 +132,11 @@ class File implements Entity<File>, Comparable<File> {
     return name.compareTo(other.name);
   }
 
-  File copyWith({
-    String name,
-    Id<dynamic> ownerId,
-    Id<File> parentId,
-  }) {
+  File copyWith({String name, FilePath path}) {
     return File(
       id: id,
       name: name ?? this.name,
-      path: FilePath(
-        ownerId ?? this.ownerId,
-        parentId ?? this.parentId,
-      ),
+      path: path ?? this.path,
       createdAt: createdAt,
       updatedAt: updatedAt,
       isDirectory: isDirectory,
@@ -164,7 +157,7 @@ class File implements Entity<File>, Comparable<File> {
     await services.api.patch('fileStorage/$id', body: {
       'parent': parentDirectory,
     });
-    copyWith(parentId: parentDirectory).saveToCache();
+    copyWith(path: path.copyWith(parentId: parentDirectory)).saveToCache();
   }
 
   Future<void> delete() => services.api.delete('fileStorage/$id');
