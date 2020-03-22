@@ -144,56 +144,28 @@ class Lesson implements Entity<Lesson>, Comparable<Lesson> {
   String get webUrl => '${courseId.webUrl}/topics/$id';
 }
 
-@HiveType(typeId: TypeId.contentType)
-enum ContentType {
-  @HiveField(0)
-  text,
-
-  @HiveField(1)
-  etherpad,
-
-  @HiveField(2)
-  nexboad,
-}
-
 @HiveType(typeId: TypeId.content)
 class Content implements Entity<Content> {
   const Content({
     @required this.id,
     @required this.title,
     @required this.isHidden,
-    @required this.type,
-    this.text,
-    this.url,
+    @required this.component,
   })  : assert(id != null),
-        assert(title != null),
+        assert(title != ''),
         assert(isHidden != null),
-        assert(type != null);
+        assert(component != null);
 
   factory Content.fromJson(Map<String, dynamic> data) {
-    ContentType type;
-    switch (data['component']) {
-      case 'text':
-        type = ContentType.text;
-        break;
-      case 'Etherpad':
-        type = ContentType.etherpad;
-        break;
-      case 'neXboard':
-        type = ContentType.nexboad;
-        break;
-      default:
-        return null;
-    }
     return Content(
       id: Id(data['_id']),
-      title: data['title'] != '' ? data['title'] : 'Ohne Titel',
+      title: data['title'] == '' ? null : data['title'],
       isHidden: data['hidden'] ?? false,
-      type: type,
-      text: type == ContentType.text ? data['content']['text'] : null,
-      url: type != ContentType.text ? data['content']['url'] : null,
+      component: Component.fromJson(data),
     );
   }
+
+  // Used before: 2 – 4
 
   @override
   @HiveField(0)
@@ -202,18 +174,67 @@ class Content implements Entity<Content> {
   @HiveField(1)
   final String title;
 
-  @HiveField(2)
-  final ContentType type;
-
-  @HiveField(3)
-  final String text;
-
-  @HiveField(4)
-  final String url;
-
   @HiveField(5)
   final bool isHidden;
   bool get isVisible => !isHidden;
 
-  bool get isText => text != null;
+  @HiveField(6)
+  final Component component;
+}
+
+abstract class Component {
+  const Component();
+
+  factory Component.fromJson(Map<String, dynamic> data) {
+    final content = data['content'] ?? {};
+    if (data['component'] == 'text') {
+      return TextComponent.fromJson(content);
+    }
+    if (data['component'] == 'Etherpad') {
+      return EtherpadComponent.fromJson(content);
+    }
+    return UnsupportedComponent();
+  }
+}
+
+@HiveType(typeId: TypeId.unsupportedComponent)
+class UnsupportedComponent extends Component {
+  const UnsupportedComponent();
+}
+
+@HiveType(typeId: TypeId.textComponent)
+class TextComponent extends Component {
+  const TextComponent({
+    @required this.text,
+  }) : assert(text != '');
+
+  factory TextComponent.fromJson(Map<String, dynamic> data) {
+    return TextComponent(
+      text: data['text'] == '' ? null : data['text'],
+    );
+  }
+
+  @HiveField(0)
+  final String text;
+}
+
+@HiveType(typeId: TypeId.etherpadComponent)
+class EtherpadComponent extends Component {
+  const EtherpadComponent({
+    @required this.url,
+    this.description,
+  }) : assert(url != null);
+
+  factory EtherpadComponent.fromJson(Map<String, dynamic> data) {
+    return EtherpadComponent(
+      url: data['url'],
+      description: data['description'] == '' ? null : data['description'],
+    );
+  }
+
+  @HiveField(0)
+  final String url;
+
+  @HiveField(1)
+  final String description;
 }
