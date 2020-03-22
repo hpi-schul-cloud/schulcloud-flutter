@@ -66,6 +66,8 @@
   "course": "Courses",
   "course_coursesScreen_empty": "Seems like you're currently not enrolled in any courses.",
   "course_detailsScreen_empty": "This course doesn't contain any topics.",
+  "course_lessonScreen_empty": "This topic doesn't contain any content we support in this app.",
+  "course_lessonScreen_empty_viewInBrowser": "View in browser",
   "dashboard": "Dashboard",
   "file": "Files",
   "file_delete_loading": "Deleting {name}…",
