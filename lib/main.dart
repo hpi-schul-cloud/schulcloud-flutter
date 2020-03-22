@@ -64,7 +64,7 @@ Future<void> main({AppConfig appConfig = schulCloudAppConfig}) async {
       ..i('Starting…')
       ..d('Initializing hive…');
     await initializeHive();
-    throw 'Test';
+
     logger.d('Initializing services…');
     services
       ..registerSingletonAsync((_) async {

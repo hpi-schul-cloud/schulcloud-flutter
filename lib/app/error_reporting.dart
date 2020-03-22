@@ -8,6 +8,9 @@ import 'package:package_info/package_info.dart';
 import 'package:sentry/sentry.dart';
 import 'package:system_info/system_info.dart';
 
+import 'services/storage.dart';
+import 'utils.dart';
+
 final _dsn = {
   TargetPlatform.android:
       'https://f5a0d14ac2aa4587beeddaa3db21ba44@sentry.schul-cloud.dev/11',
@@ -46,6 +49,10 @@ bool get _isInDebugMode {
 }
 
 Future<bool> reportEvent(Event event) async {
+  if (!services.storage.errorReportingEnabled.getValue()) {
+    return true;
+  }
+
   final packageInfo = await PackageInfo.fromPlatform();
   final fullEvent = Event(
     release: packageInfo.version,

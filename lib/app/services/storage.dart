@@ -12,6 +12,7 @@ class StorageService {
     @required this.userIdString,
     @required this.email,
     @required this.token,
+    @required this.errorReportingEnabled,
     @required this.root,
   }) : _prefs = prefs;
 
@@ -20,6 +21,7 @@ class StorageService {
     Preference<String> userIdString;
     Preference<String> email;
     Preference<String> token;
+    Preference<bool> errorReportingEnabled;
 
     await Future.wait([
       () async {
@@ -27,6 +29,10 @@ class StorageService {
         userIdString = prefs.getString('userId', defaultValue: '');
         email = prefs.getString('email', defaultValue: '');
         token = prefs.getString('token', defaultValue: '');
+        errorReportingEnabled = prefs.getBool(
+          'settings_privacy_errorReporting_enabled',
+          defaultValue: true,
+        );
       }(),
     ]);
 
@@ -37,6 +43,7 @@ class StorageService {
       userIdString: userIdString,
       email: email,
       token: token,
+      errorReportingEnabled: errorReportingEnabled,
       root: root,
     );
   }
@@ -52,6 +59,8 @@ class StorageService {
   bool get hasToken => token.getValue().isNotEmpty;
   bool get isSignedIn => hasToken;
   bool get isSignedOut => !isSignedIn;
+
+  final Preference<bool> errorReportingEnabled;
 
   final Root root;
 
