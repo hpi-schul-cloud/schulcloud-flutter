@@ -1048,15 +1048,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.1.0"
-  webview_flutter:
-    dependency: "direct main"
-    description:
-      path: "packages/webview_flutter"
-      ref: "968e4b199ce06cda64f0f0d15bda848c021333ea"
-      resolved-ref: "968e4b199ce06cda64f0f0d15bda848c021333ea"
-      url: "git://github.com/jaumard/plugins"
-    source: git
-    version: "0.3.19+9"
   xml:
     dependency: transitive
     description:

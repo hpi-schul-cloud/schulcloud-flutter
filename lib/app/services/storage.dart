@@ -1,3 +1,4 @@
+import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:get_it/get_it.dart';
 import 'package:meta/meta.dart';
 import 'package:streaming_shared_preferences/streaming_shared_preferences.dart';
@@ -52,11 +53,18 @@ class StorageService {
   Future<void> setUserInfo({
     @required String userId,
     @required String token,
-  }) {
-    return Future.wait([
+  }) async {
+    await Future.wait([
       userIdString.setValue(userId),
       this.token.setValue(token),
     ]);
+
+    // Required by [LessonScreen]
+    await CookieManager().setCookie(
+      url: services.config.baseWebUrl,
+      name: 'jwt',
+      value: token,
+    );
   }
 
   // TODO(marcelgarus): clear the HiveCache

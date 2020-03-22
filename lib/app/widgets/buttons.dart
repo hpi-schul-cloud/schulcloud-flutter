@@ -20,7 +20,7 @@ class PrimaryButton extends StatelessWidget {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
       child: DefaultTextStyle(
         style: TextStyle(
-          color: Colors.white,
+          color: context.theme.primaryColor.highEmphasisOnColor,
           fontFamily: 'PT Sans Narrow',
           fontWeight: FontWeight.w700,
           height: 1.25,

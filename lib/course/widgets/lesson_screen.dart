@@ -1,11 +1,10 @@
-import 'dart:convert';
-
 import 'package:black_hole_flutter/black_hole_flutter.dart';
+import 'package:dartx/dartx.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cached/flutter_cached.dart';
+import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:schulcloud/app/app.dart';
 import 'package:sprintf/sprintf.dart';
-import 'package:webview_flutter/webview_flutter.dart';
 
 import '../data.dart';
 
@@ -69,10 +68,12 @@ class _LessonScreenState extends State<LessonScreen> {
 </body>
 </html>''';
 
-  WebViewController _controller;
+  InAppWebViewController _controller;
 
   @override
   Widget build(BuildContext context) {
+    final s = context.s;
+
     return CachedRawBuilder<Lesson>(
       controller: widget.lessonId.controller,
       builder: (context, update) {
@@ -83,7 +84,8 @@ class _LessonScreenState extends State<LessonScreen> {
         }
 
         final lesson = update.data;
-        // TODO(marcelgarus): use FancyScaffold when flutter_cached supports slivers
+        final isEmpty = lesson.visibleContents.isEmpty;
+        final firstContent = lesson.visibleContents.firstOrNull;
         return FancyScaffold(
           appBar: FancyAppBar(
             title: Text(lesson.name),
@@ -95,18 +97,39 @@ class _LessonScreenState extends State<LessonScreen> {
               },
             ),
             actions: <Widget>[
-              IconButton(
-                icon: Icon(Icons.web),
-                onPressed: () => _showLessonContentMenu(context, lesson),
-              ),
+              if (!isEmpty)
+                IconButton(
+                  icon: Icon(Icons.format_list_numbered),
+                  onPressed: () => _showLessonContentMenu(context, lesson),
+                ),
             ],
           ),
           sliver: SliverFillRemaining(
-            child: WebView(
-              initialUrl: _buildWebViewUrl(lesson.contents[0]),
-              onWebViewCreated: (controller) => _controller = controller,
-              javascriptMode: JavascriptMode.unrestricted,
-            ),
+            child: isEmpty
+                ? EmptyStateScreen(
+                    text: s.course_lessonScreen_empty,
+                    actions: <Widget>[
+                      PrimaryButton(
+                        onPressed: () => tryLaunchingUrl(lesson.webUrl),
+                        child: Text(s.course_lessonScreen_empty_viewInBrowser),
+                      ),
+                    ],
+                  )
+                : InAppWebView(
+                    initialUrl: firstContent.isText ? null : firstContent.url,
+                    initialData: firstContent.isText
+                        ? InAppWebViewInitialData(
+                            data: _wrapTextContent(firstContent.text),
+                            baseUrl: lesson.webUrl,
+                          )
+                        : null,
+                    onWebViewCreated: (controller) => _controller = controller,
+                    initialOptions: InAppWebViewWidgetOptions(
+                      inAppWebViewOptions: InAppWebViewOptions(
+                        transparentBackground: true,
+                      ),
+                    ),
+                  ),
           ),
         );
       },
@@ -115,10 +138,11 @@ class _LessonScreenState extends State<LessonScreen> {
 
   void _showLessonContentMenu(BuildContext context, Lesson lesson) {
     context.showFancyModalBottomSheet(
+      useRootNavigator: true,
       builder: (context) => Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          for (final content in lesson.contents)
+          for (final content in lesson.visibleContents)
             NavigationItem(
               icon: Icons.textsms,
               text: content.title,
@@ -126,8 +150,16 @@ class _LessonScreenState extends State<LessonScreen> {
                 if (_controller == null) {
                   return;
                 }
-                _controller.loadUrl(_buildWebViewUrl(content));
-                Navigator.pop(context);
+
+                if (content.isText) {
+                  _controller.loadData(
+                    data: _wrapTextContent(content.text),
+                    baseUrl: lesson.webUrl,
+                  );
+                } else {
+                  _controller.loadUrl(url: content.url);
+                }
+                context.navigator.pop();
               },
             ),
         ],
@@ -135,27 +167,17 @@ class _LessonScreenState extends State<LessonScreen> {
     );
   }
 
-  String _buildWebViewUrl(Content content) =>
-      content.isText ? _createTextSource(content.text) : content.url;
-  String _createTextSource(String html) {
+  String _wrapTextContent(String html) {
     final theme = context.theme;
 
     String cssColor(Color color) =>
         'rgba(${color.red}, ${color.green}, ${color.blue}, ${color.opacity})';
 
-    final fullHtml = sprintf(
-      contentTextFormat,
-      [
-        html,
-        services.config.baseWebUrl,
-        cssColor(theme.contrastColor),
-        cssColor(theme.accentColor),
-      ],
-    );
-    return Uri.dataFromString(
-      fullHtml,
-      mimeType: 'text/html',
-      encoding: Encoding.getByName('utf-8'),
-    ).toString();
+    return sprintf(contentTextFormat, [
+      html,
+      services.config.baseWebUrl,
+      cssColor(theme.contrastColor),
+      cssColor(theme.accentColor),
+    ]);
   }
 }
