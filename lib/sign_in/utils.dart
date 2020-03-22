@@ -31,10 +31,10 @@ Future<bool> signOut(BuildContext context) async {
     },
   );
 
-  if (confirmed) {
-    // Actually log out.
-
-    unawaited(SchulCloudApp.navigator.pushReplacementNamed('/logout'));
+  if (confirmed == true) {
+    // There may be multiple routes in the back stack, e.g. when signing out
+    // from inside the [AccountDialog].
+    unawaited(context.rootNavigator.pushNamedAndRemoveAll('/logout'));
   }
-  return confirmed;
+  return confirmed ?? false;
 }
