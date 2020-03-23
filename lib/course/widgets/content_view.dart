@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_cached/flutter_cached.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:schulcloud/app/app.dart';
-import 'package:sprintf/sprintf.dart';
 
 import '../data.dart';
 
