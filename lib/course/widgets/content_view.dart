@@ -41,6 +41,9 @@ class _ComponentView extends StatelessWidget {
     // Required so dart automatically casts component in if-branches.
     final component = this.component;
     if (component is TextComponent) {
+      if (component.text == null) {
+        return SizedBox();
+      }
       return FancyText.rich(component.text);
     }
     if (component is EtherpadComponent) {
