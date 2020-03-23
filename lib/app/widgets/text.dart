@@ -4,6 +4,7 @@ import 'dart:ui';
 import 'package:black_hole_flutter/black_hole_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:flutter_html/style.dart';
 import 'package:schulcloud/app/app.dart';
 
 import '../utils.dart';
@@ -112,8 +113,9 @@ class _FancyTextState extends State<FancyText> {
     if (widget.data == null) {
       child = _buildLoading(context, style);
     } else {
-      child =
-          widget.showRichText ? _buildRichText(style) : _buildPlainText(style);
+      child = widget.showRichText
+          ? _buildRichText(context, style)
+          : _buildPlainText(style);
     }
 
     return AnimatedSwitcher(
@@ -185,7 +187,7 @@ class _FancyTextState extends State<FancyText> {
     );
   }
 
-  Widget _buildRichText(TextStyle style) {
+  Widget _buildRichText(BuildContext context, TextStyle style) {
     if (widget.textType == TextType.plain) {
       return Text(
         widget.data,
@@ -195,10 +197,30 @@ class _FancyTextState extends State<FancyText> {
 
     assert(widget.textType == TextType.html,
         'Unknown TextType: ${widget.textType}.');
+    final theme = context.theme;
     return Html(
       data: widget.data,
-      defaultTextStyle: style,
       onLinkTap: tryLaunchingUrl,
+      style: {
+        'a': Style(
+          color: theme.primaryColor,
+          textDecoration: TextDecoration.none,
+        ),
+        'code': Style(
+          backgroundColor: theme.contrastColor.withOpacity(0.05),
+          color: theme.primaryColor,
+        ),
+        // Reset style so we can render our custom hr.
+        'hr': Style(
+          // TODO(JonasWanke): Check rendering when margin is merged into existing styles.
+          margin: EdgeInsets.all(0),
+          border: Border.fromBorderSide(BorderSide.none),
+        ),
+        's': Style(textDecoration: TextDecoration.lineThrough),
+      },
+      customRender: {
+        'hr': (_, __, ___, ____) => Divider(),
+      },
     );
   }
 }

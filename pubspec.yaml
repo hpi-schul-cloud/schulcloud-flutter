@@ -31,7 +31,10 @@ dependencies:
   flutter_deep_linking: ^0.1.0
   # The current version of flutter_downloader, 1.2.1, causes the build to fail. Until this is fixed, we rely on an older version.
   flutter_downloader: 1.1.9
-  flutter_html: ^0.10.4
+  flutter_html:
+    git:
+      url: git://github.com/Sub6Resources/flutter_html
+      ref: b5046d9
   flutter_inappwebview: ^2.1.0+1
   flutter_native_timezone: ^1.0.4
   flutter_svg: ^0.14.2
