@@ -95,7 +95,6 @@ class Lesson implements Entity<Lesson>, Comparable<Lesson> {
           name: data['name'],
           contents: (data['contents'] as List<dynamic>)
               .map((content) => Content.fromJson(content))
-              .whereNotNull()
               .toList(),
           isHidden: data['hidden'] ?? false,
           position: data['position'],
@@ -146,20 +145,20 @@ class Lesson implements Entity<Lesson>, Comparable<Lesson> {
 
 @HiveType(typeId: TypeId.content)
 class Content implements Entity<Content> {
-  const Content({
+  Content({
     @required this.id,
     @required this.title,
     @required this.isHidden,
     @required this.component,
   })  : assert(id != null),
-        assert(title != ''),
+        assert(title?.isBlank != true),
         assert(isHidden != null),
         assert(component != null);
 
   factory Content.fromJson(Map<String, dynamic> data) {
     return Content(
       id: Id(data['_id']),
-      title: data['title'] == '' ? null : data['title'],
+      title: (data['title'] as String).blankToNull,
       isHidden: data['hidden'] ?? false,
       component: Component.fromJson(data),
     );
@@ -204,13 +203,13 @@ class UnsupportedComponent extends Component {
 
 @HiveType(typeId: TypeId.textComponent)
 class TextComponent extends Component {
-  const TextComponent({
+  TextComponent({
     @required this.text,
-  }) : assert(text != '');
+  }) : assert(text?.isBlank != true);
 
   factory TextComponent.fromJson(Map<String, dynamic> data) {
     return TextComponent(
-      text: data['text'] == '' ? null : data['text'],
+      text: (data['text'] as String).blankToNull,
     );
   }
 
@@ -220,15 +219,16 @@ class TextComponent extends Component {
 
 @HiveType(typeId: TypeId.etherpadComponent)
 class EtherpadComponent extends Component {
-  const EtherpadComponent({
+  EtherpadComponent({
     @required this.url,
     this.description,
-  }) : assert(url != null);
+  })  : assert(url != null),
+        assert(description?.isBlank != true);
 
   factory EtherpadComponent.fromJson(Map<String, dynamic> data) {
     return EtherpadComponent(
       url: data['url'],
-      description: data['description'] == '' ? null : data['description'],
+      description: (data['description'] as String).blankToNull,
     );
   }
 
