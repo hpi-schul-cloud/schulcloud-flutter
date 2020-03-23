@@ -123,9 +123,7 @@ class _ComponentView extends StatelessWidget {
     }
 
     assert(component is UnsupportedComponent);
-    return EmptyStateScreen(
-      text: 'This content is not yet supported in this app',
-    );
+    return EmptyStateScreen(text: context.s.course_contentView_unsupported);
   }
 
   static String _wrapTextContent(BuildContext context, String html) {
@@ -173,7 +171,7 @@ class _ComponentWrapper extends StatelessWidget {
               textColor: context.theme.mediumEmphasisOnBackground,
               onPressed: () => tryLaunchingUrl(url),
               icon: Icon(Icons.open_in_new),
-              label: Text('Open in browser'),
+              label: Text(context.s.general_viewInBrowser),
             ),
           ),
       ],

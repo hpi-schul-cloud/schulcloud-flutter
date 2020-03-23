@@ -48,7 +48,7 @@ class _LessonScreenState extends State<LessonScreen> {
                     actions: <Widget>[
                       PrimaryButton(
                         onPressed: () => tryLaunchingUrl(lesson.webUrl),
-                        child: Text(s.course_lessonScreen_empty_viewInBrowser),
+                        child: Text(s.general_viewInBrowser),
                       ),
                     ],
                   ),
