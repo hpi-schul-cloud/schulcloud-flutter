@@ -27,6 +27,7 @@ dependencies:
   datetime_picker_formfield: ^1.0.0
   file_picker: ^1.4.3+2
   flare_flutter: ^1.5.8
+  flutter_absolute_path: ^1.0.6
   flutter_cached: ^4.2.4
   flutter_deep_linking: ^0.1.0
   # The current version of flutter_downloader, 1.2.1, causes the build to fail. Until this is fixed, we rely on an older version.
@@ -56,6 +57,10 @@ dependencies:
   permission_handler: ^3.3.0
   provider: ^4.0.0
   rxdart: ^0.22.3
+  share:
+    git:
+      url: https://github.com/d-silveira/flutter-share.git
+      ref: 1f8b139
   sprintf: ^4.0.2
   streaming_shared_preferences: ^1.0.1
   time_machine: ^0.9.12

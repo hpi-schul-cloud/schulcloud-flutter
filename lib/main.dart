@@ -87,9 +87,9 @@ Future<void> main({AppConfig appConfig = schulCloudAppConfig}) async {
     ..registerSingleton(SnackBarService())
     ..registerSingleton(NetworkService())
     ..registerSingleton(ApiNetworkService())
+    ..registerSingleton(FileService())
     ..registerSingletonAsync((_) => DeepLinkingService.create())
     ..registerSingleton(CalendarBloc())
-    ..registerSingleton(FileBloc())
     ..registerSingleton(SignInBloc());
 
   logger.d('Adding custom licenses to registry…');

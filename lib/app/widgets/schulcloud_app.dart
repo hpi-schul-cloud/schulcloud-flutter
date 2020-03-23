@@ -2,11 +2,16 @@ import 'dart:async';
 
 import 'package:black_hole_flutter/black_hole_flutter.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_absolute_path/flutter_absolute_path.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:schulcloud/generated/l10n.dart';
+import 'package:share/receive_share_state.dart';
+import 'package:share/share.dart';
+import 'package:schulcloud/file/file.dart';
 
 import '../app_config.dart';
+import '../logger.dart';
 import '../routing.dart';
 import '../services/navigator_observer.dart';
 import '../services/snack_bar.dart';
@@ -49,7 +54,7 @@ class SignedInScreen extends StatefulWidget {
   SignedInScreenState createState() => SignedInScreenState();
 }
 
-class SignedInScreenState extends State<SignedInScreen>
+class SignedInScreenState extends ReceiveShareState<SignedInScreen>
     with TickerProviderStateMixin {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   ScaffoldState get scaffold => _scaffoldKey.currentState;
@@ -77,6 +82,7 @@ class SignedInScreenState extends State<SignedInScreen>
   @override
   void initState() {
     super.initState();
+    enableShareReceiving();
 
     scheduleMicrotask(_showSnackBars);
 
@@ -93,8 +99,18 @@ class SignedInScreenState extends State<SignedInScreen>
     for (final fader in _faders) {
       fader.dispose();
     }
-
     super.dispose();
+  }
+
+  @override
+  void receiveShare(Share shared) {
+    logger.i('The user shared $shared into the app.');
+    Future.delayed(Duration(seconds: 1), () async {
+      await services.files.uploadFileFromLocalPath(
+        context: context,
+        localPath: await FlutterAbsolutePath.getAbsolutePath(shared.path),
+      );
+    });
   }
 
   @override
