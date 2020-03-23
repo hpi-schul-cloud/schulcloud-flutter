@@ -116,7 +116,7 @@ class _ComponentView extends StatelessWidget {
   }
 }
 
-class _ExternalContentWebView extends StatelessWidget {
+class _ExternalContentWebView extends StatefulWidget {
   const _ExternalContentWebView(this.url, {Key key})
       : assert(url != null),
         super(key: key);
@@ -124,17 +124,49 @@ class _ExternalContentWebView extends StatelessWidget {
   final String url;
 
   @override
+  _ExternalContentWebViewState createState() => _ExternalContentWebViewState();
+}
+
+class _ExternalContentWebViewState extends State<_ExternalContentWebView>
+    with AutomaticKeepAliveClientMixin {
+  // We want WebViews to keep their state after scrolling, so e.g. an Etherpad
+  // doesn't have to reload.
+  @override
+  bool get wantKeepAlive => true;
+
+  @override
   Widget build(BuildContext context) {
+    super.build(context);
+
     // About 75 % of the device height minus AppBar and BottomNavigationBar.
-    final height = (context.mediaQuery.size.height - 2 * 64) * 0.75;
-    return LimitedBox(
-      maxHeight: max(384, height),
-      child: InAppWebView(
-        initialUrl: url,
-        initialOptions: InAppWebViewWidgetOptions(
-          inAppWebViewOptions: InAppWebViewOptions(transparentBackground: true),
+    final webViewHeight = (context.mediaQuery.size.height - 2 * 64) * 0.75;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.end,
+      children: <Widget>[
+        LimitedBox(
+          maxHeight: max(384, webViewHeight),
+          child: Container(
+            decoration: BoxDecoration(
+              border: Border.all(color: context.theme.primaryColor),
+            ),
+            // To make the border visible.
+            padding: EdgeInsets.all(1),
+            child: InAppWebView(
+              initialUrl: widget.url,
+              initialOptions: InAppWebViewWidgetOptions(
+                inAppWebViewOptions:
+                    InAppWebViewOptions(transparentBackground: true),
+              ),
+            ),
+          ),
         ),
-      ),
+        FlatButton.icon(
+          textColor: context.theme.mediumEmphasisOnBackground,
+          onPressed: () => tryLaunchingUrl(widget.url),
+          icon: Icon(Icons.open_in_new),
+          label: Text('Open in browser'),
+        ),
+      ],
     );
   }
 }
