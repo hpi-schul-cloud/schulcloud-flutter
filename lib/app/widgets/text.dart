@@ -2,9 +2,11 @@ import 'dart:math';
 import 'dart:ui';
 
 import 'package:black_hole_flutter/black_hole_flutter.dart';
+import 'package:dartx/dartx.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_html/style.dart';
+import 'package:http/http.dart';
 import 'package:schulcloud/app/app.dart';
 
 import '../utils.dart';
@@ -220,6 +222,34 @@ class _FancyTextState extends State<FancyText> {
       },
       customRender: {
         'hr': (_, __, ___, ____) => Divider(),
+        // If the src-attribute point to an internal asset (/files/file...) we
+        // have to add our token.
+        'img': (context, _, attributes, __) {
+          final src = attributes['src'];
+          if (src == null || src.isBlank) {
+            return null;
+          }
+
+          final parsed = Uri.tryParse(src);
+          if (parsed == null ||
+              (parsed.isAbsolute && parsed.host != services.config.host)) {
+            return null;
+          }
+
+          final resolved =
+              Uri.parse(services.config.baseWebUrl).resolveUri(parsed);
+          return Image.network(
+            resolved.toString(),
+            headers: {'Cookie': 'jwt=${services.storage.token.getValue()}'},
+            frameBuilder: (_, child, frame, __) {
+              if (frame == null) {
+                return Text(attributes['alt'] ?? '',
+                    style: context.style.generateTextStyle());
+              }
+              return child;
+            },
+          );
+        },
       },
     );
   }
