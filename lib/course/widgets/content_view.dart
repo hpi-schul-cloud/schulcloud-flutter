@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:black_hole_flutter/black_hole_flutter.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
@@ -9,6 +11,26 @@ import '../data.dart';
 class ContentView extends StatelessWidget {
   const ContentView(this.content, {Key key})
       : assert(content != null),
+        super(key: key);
+
+  final Content content;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: <Widget>[
+        if (content.title != null)
+          Text(content.title, style: context.textTheme.headline),
+        _ComponentView(content.component),
+      ],
+    );
+  }
+}
+
+class _ComponentView extends StatelessWidget {
+  const _ComponentView(this.component, {Key key})
+      : assert(component != null),
         super(key: key);
 
   static const _contentTextFormat = '''
@@ -58,37 +80,19 @@ class ContentView extends StatelessWidget {
 </body>
 </html>''';
 
-  final Content content;
+  final Component component;
 
   @override
   Widget build(BuildContext context) {
-    final component = content.component;
+    // Required so dart automatically casts component in if-branches.
+    final component = this.component;
     if (component is TextComponent) {
-      return SizedBox(
-        height: 512,
-        child: InAppWebView(
-          initialData: InAppWebViewInitialData(
-            data: _wrapTextContent(context, component.text),
-            // baseUrl: lesson.webUrl,
-          ),
-          initialOptions: InAppWebViewWidgetOptions(
-            inAppWebViewOptions:
-                InAppWebViewOptions(transparentBackground: true),
-          ),
-        ),
+      return FancyText.rich(
+        _wrapTextContent(context, component.text),
       );
     }
     if (component is EtherpadComponent) {
-      return LimitedBox(
-        maxHeight: 512,
-        child: InAppWebView(
-          initialUrl: component.url,
-          initialOptions: InAppWebViewWidgetOptions(
-            inAppWebViewOptions:
-                InAppWebViewOptions(transparentBackground: true),
-          ),
-        ),
-      );
+      return _ExternalContentWebView(component.url);
     }
 
     assert(component is UnsupportedComponent);
@@ -109,5 +113,28 @@ class ContentView extends StatelessWidget {
       cssColor(theme.contrastColor),
       cssColor(theme.accentColor),
     ]);
+  }
+}
+
+class _ExternalContentWebView extends StatelessWidget {
+  const _ExternalContentWebView(this.url, {Key key})
+      : assert(url != null),
+        super(key: key);
+
+  final String url;
+
+  @override
+  Widget build(BuildContext context) {
+    // About 75 % of the device height minus AppBar and BottomNavigationBar.
+    final height = (context.mediaQuery.size.height - 2 * 64) * 0.75;
+    return LimitedBox(
+      maxHeight: max(384, height),
+      child: InAppWebView(
+        initialUrl: url,
+        initialOptions: InAppWebViewWidgetOptions(
+          inAppWebViewOptions: InAppWebViewOptions(transparentBackground: true),
+        ),
+      ),
+    );
   }
 }
