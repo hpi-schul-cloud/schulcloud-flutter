@@ -2,11 +2,16 @@ import 'dart:async';
 
 import 'package:black_hole_flutter/black_hole_flutter.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_absolute_path/flutter_absolute_path.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:schulcloud/generated/l10n.dart';
+import 'package:share/receive_share_state.dart';
+import 'package:share/share.dart';
+import 'package:schulcloud/file/file.dart';
 
 import '../app_config.dart';
+import '../logger.dart';
 import '../routing.dart';
 import '../services/navigator_observer.dart';
 import '../services/snack_bar.dart';
@@ -49,7 +54,7 @@ class SignedInScreen extends StatefulWidget {
   SignedInScreenState createState() => SignedInScreenState();
 }
 
-class SignedInScreenState extends State<SignedInScreen>
+class SignedInScreenState extends ReceiveShareState<SignedInScreen>
     with TickerProviderStateMixin {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   ScaffoldState get scaffold => _scaffoldKey.currentState;
@@ -77,6 +82,7 @@ class SignedInScreenState extends State<SignedInScreen>
   @override
   void initState() {
     super.initState();
+    enableShareReceiving();
 
     scheduleMicrotask(_showSnackBars);
 
@@ -93,8 +99,18 @@ class SignedInScreenState extends State<SignedInScreen>
     for (final fader in _faders) {
       fader.dispose();
     }
-
     super.dispose();
+  }
+
+  @override
+  void receiveShare(Share shared) {
+    logger.i('The user shared $shared into the app.');
+    Future.delayed(Duration(seconds: 1), () async {
+      await services.files.uploadFileFromLocalPath(
+        context: context,
+        localPath: await FlutterAbsolutePath.getAbsolutePath(shared.path),
+      );
+    });
   }
 
   @override
@@ -110,7 +126,13 @@ class SignedInScreenState extends State<SignedInScreen>
         body: Stack(
           fit: StackFit.expand,
           children: <Widget>[
-            for (var i = 0; i < _BottomTab.count; i++) _buildChild(i),
+            for (var i = 0; i < _BottomTab.count; i++)
+              _TabContent(
+                navigatorKey: _navigatorKeys[i],
+                initialRoute: _BottomTab.values[i].initialRoute,
+                fader: _faders[i],
+                isActive: i == _selectedTabIndex,
+              ),
           ],
         ),
         bottomNavigationBar: BottomNavigationBar(
@@ -145,33 +167,6 @@ class SignedInScreenState extends State<SignedInScreen>
     });
   }
 
-  Widget _buildChild(int index) {
-    final fader = _faders[index];
-    final child = FadeTransition(
-      opacity: fader.drive(CurveTween(curve: Curves.fastOutSlowIn)),
-      child: Navigator(
-        key: _navigatorKeys[index],
-        initialRoute: _BottomTab.values[index].initialRoute,
-        onGenerateRoute: router.onGenerateRoute,
-        observers: [
-          LoggingNavigatorObserver(),
-          HeroController(),
-        ],
-      ),
-    );
-
-    if (index == _selectedTabIndex) {
-      fader.forward();
-      return child;
-    }
-
-    fader.reverse();
-    if (fader.isAnimating) {
-      return IgnorePointer(child: child);
-    }
-    return Offstage(child: child);
-  }
-
   /// When the user tries to pop, we first try to pop with the inner navigator.
   /// If that's not possible (we are at a top-level location), we go to the
   /// dashboard. Only if we were already there, we pop (aka close the app).
@@ -185,6 +180,60 @@ class SignedInScreenState extends State<SignedInScreen>
     } else {
       return true;
     }
+  }
+}
+
+class _TabContent extends StatefulWidget {
+  const _TabContent({
+    Key key,
+    @required this.navigatorKey,
+    @required this.initialRoute,
+    @required this.fader,
+    @required this.isActive,
+  })  : assert(navigatorKey != null),
+        assert(initialRoute != null),
+        assert(fader != null),
+        assert(isActive != null),
+        super(key: key);
+
+  final GlobalKey<NavigatorState> navigatorKey;
+  final String initialRoute;
+  final AnimationController fader;
+  final bool isActive;
+
+  @override
+  _TabContentState createState() => _TabContentState();
+}
+
+class _TabContentState extends State<_TabContent> {
+  Widget _child;
+
+  @override
+  Widget build(BuildContext context) {
+    if (!widget.isActive) {
+      widget.fader.reverse();
+      final child = _child ?? SizedBox();
+      if (widget.fader.isAnimating) {
+        return IgnorePointer(child: child);
+      }
+      return Offstage(child: child);
+    }
+
+    _child ??= FadeTransition(
+      opacity: widget.fader.drive(CurveTween(curve: Curves.fastOutSlowIn)),
+      child: Navigator(
+        key: widget.navigatorKey,
+        initialRoute: widget.initialRoute,
+        onGenerateRoute: router.onGenerateRoute,
+        observers: [
+          LoggingNavigatorObserver(),
+          HeroController(),
+        ],
+      ),
+    );
+
+    widget.fader.forward();
+    return _child;
   }
 }
 

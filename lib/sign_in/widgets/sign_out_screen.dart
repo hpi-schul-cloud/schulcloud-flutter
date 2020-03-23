@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:black_hole_flutter/black_hole_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:pedantic/pedantic.dart';
@@ -27,7 +28,7 @@ class _SignOutScreenState extends State<SignOutScreen> {
       // leads to the issue that logging out becomes impossible.
       unawaited(services.get<StorageService>().clear());
 
-      unawaited(SchulCloudApp.navigator.pushReplacementNamed('/login'));
+      unawaited(context.rootNavigator.pushReplacementNamed('/login'));
       logger.i('Signed out!');
     });
   }

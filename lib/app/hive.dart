@@ -33,9 +33,7 @@ extension SaveableEntity<E extends Entity<E>> on Entity<E> {
 /// different types.
 @immutable
 class Id<E extends Entity<E>> {
-  Id(this.value)
-      : assert(value != null),
-        assert(value.isNotEmpty);
+  const Id(this.value) : assert(value != null);
 
   factory Id.orNull(String value) => value == null ? null : Id<E>(value);
 
@@ -305,6 +303,7 @@ class TypeId {
   static const article = 56;
 
   static const file = 53;
+  static const filePath = 72;
 }
 
 Future<void> initializeHive() async {
@@ -336,7 +335,8 @@ Future<void> initializeHive() async {
     // News module:
     ..registerAdapter(ArticleAdapter())
     // Files module:
-    ..registerAdapter(FileAdapter());
+    ..registerAdapter(FileAdapter())
+    ..registerAdapter(FilePathAdapter());
 
   HiveCache
     ..registerEntityType(TypeId.user, User.fetch)

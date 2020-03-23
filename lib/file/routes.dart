@@ -11,8 +11,10 @@ Route _buildSubdirRoute(Id<Entity> Function(RouteResult result) ownerGetter) {
   return Route(
     matcher: Matcher.path('{parentId}'),
     builder: (result) => FileBrowserPageRoute(
-      builder: (_) =>
-          FileBrowser(ownerGetter(result), Id<File>(result['parentId'])),
+      builder: (_) => FileBrowser(FilePath(
+        ownerGetter(result),
+        Id<File>(result['parentId']),
+      )),
       settings: result.settings,
     ),
   );
@@ -25,7 +27,7 @@ final fileRoutes = Route(
     Route(
       matcher: Matcher.path('my'),
       builder: (result) => FileBrowserPageRoute(
-        builder: (_) => FileBrowser(services.storage.userId, null),
+        builder: (_) => FileBrowser(FilePath(services.storage.userId)),
         settings: result.settings,
       ),
       routes: [
@@ -39,7 +41,8 @@ final fileRoutes = Route(
         Route(
           matcher: Matcher.path('{courseId}'),
           builder: (result) => FileBrowserPageRoute(
-            builder: (_) => FileBrowser(Id<Course>(result['courseId']), null),
+            builder: (_) =>
+                FileBrowser(FilePath(Id<Course>(result['courseId']))),
             settings: result.settings,
           ),
           routes: [

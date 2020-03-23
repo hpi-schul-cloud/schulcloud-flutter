@@ -7,29 +7,30 @@ import 'package:pedantic/pedantic.dart';
 import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/course/course.dart';
 
-import '../bloc.dart';
 import '../data.dart';
+import '../service.dart';
 import 'app_bar.dart';
 import 'file_tile.dart';
 import 'upload_fab.dart';
 
 class FileBrowser extends StatelessWidget {
   const FileBrowser(
-    this.ownerId,
-    this.parentId, {
+    this.path, {
     this.isEmbedded = false,
-  })  : assert(ownerId != null),
+  })  : assert(path != null),
         assert(isEmbedded != null);
 
   FileBrowser.myFiles(
     Id<File> parentId, {
     bool isEmbedded = false,
-  }) : this(services.storage.userId, parentId, isEmbedded: isEmbedded);
+  }) : this(
+          FilePath(services.storage.userId, parentId),
+          isEmbedded: isEmbedded,
+        );
 
-  final Id<Entity> ownerId;
-  bool get isOwnerCourse => ownerId is Id<Course>;
-  bool get isOwnerMe => ownerId == services.storage.userId;
-  final Id<File> parentId;
+  final FilePath path;
+  bool get isOwnerCourse => path.ownerId is Id<Course>;
+  bool get isOwnerMe => path.ownerId == services.storage.userId;
 
   /// Whether this widget is embedded into another screen. If true, doesn't
   /// show an app bar.
@@ -39,12 +40,12 @@ class FileBrowser extends StatelessWidget {
     assert(file.isDirectory);
 
     if (isOwnerCourse) {
-      context.navigator.pushNamed('/files/courses/$ownerId/${file.id}');
+      context.navigator.pushNamed('/files/courses/${path.ownerId}/${file.id}');
     } else if (isOwnerMe) {
       context.navigator.pushNamed('/files/my/${file.id}');
     } else {
       logger.e(
-          'Unknown owner: $ownerId (type: ${ownerId.runtimeType}) while trying to open directory ${file.id}');
+          'Unknown owner: ${path.ownerId} (type: ${path.ownerId.runtimeType}) while trying to open directory ${file.id}');
     }
   }
 
@@ -52,7 +53,7 @@ class FileBrowser extends StatelessWidget {
     assert(file.isActualFile);
 
     try {
-      await services.get<FileBloc>().downloadFile(file);
+      await services.files.downloadFile(file);
       unawaited(services.snackBar
           .showMessage(context.s.file_fileBrowser_downloading(file.name)));
     } on PermissionNotGranted {
@@ -60,7 +61,7 @@ class FileBrowser extends StatelessWidget {
         content: Text(context.s.file_fileBrowser_download_storageAccess),
         action: SnackBarAction(
           label: context.s.file_fileBrowser_download_storageAccess_allow,
-          onPressed: services.get<FileBloc>().ensureStoragePermissionGranted,
+          onPressed: services.files.ensureStoragePermissionGranted,
         ),
       ));
     }
@@ -75,7 +76,7 @@ class FileBrowser extends StatelessWidget {
     return CachedRawBuilder<List<File>>(
       // The owner is either a [User] or a [Course]. Either way, the [owner] is
       // guaranteed to have a [files] field.
-      controller: ownerId.files(parentId).controller,
+      controller: path.files.controller,
       builder: (context, update) {
         if (update.hasError) {
           return ErrorScreen(update.error, update.stackTrace);
@@ -108,14 +109,14 @@ class FileBrowser extends StatelessWidget {
     Widget appBar;
     if (isOwnerCourse) {
       appBar = CachedRawBuilder<Course>(
-        controller: ownerId.controller,
+        controller: path.ownerId.controller,
         builder: (context, update) {
           if (!update.hasData) {
             return buildLoadingErrorAppBar(update.error);
           }
 
           final course = update.data;
-          if (parentId == null) {
+          if (path.parentId == null) {
             return FileBrowserAppBar(
               title: course.name,
               backgroundColor: course.color,
@@ -123,7 +124,7 @@ class FileBrowser extends StatelessWidget {
           }
 
           return CachedRawBuilder<File>(
-            controller: parentId.controller,
+            controller: path.parentId.controller,
             builder: (context, update) {
               if (!update.hasData) {
                 return buildLoadingErrorAppBar(update.error, course.color);
@@ -138,9 +139,9 @@ class FileBrowser extends StatelessWidget {
           );
         },
       );
-    } else if (parentId != null) {
+    } else if (path.parentId != null) {
       appBar = CachedRawBuilder<File>(
-        controller: parentId.controller,
+        controller: path.parentId.controller,
         builder: (context, update) {
           if (!update.hasData) {
             return buildLoadingErrorAppBar(update.error);
@@ -159,12 +160,9 @@ class FileBrowser extends StatelessWidget {
         preferredSize: AppBar().preferredSize,
         child: appBar,
       ),
-      floatingActionButton: UploadFab(
-        ownerId: ownerId,
-        parentId: parentId,
-      ),
+      floatingActionButton: UploadFab(path: path),
       body: CachedBuilder<List<File>>(
-        controller: ownerId.files(parentId).controller,
+        controller: path.files.controller,
         errorBannerBuilder: (_, error, st) => ErrorBanner(error, st),
         errorScreenBuilder: (_, error, st) => ErrorScreen(error, st),
         builder: (context, files) {
