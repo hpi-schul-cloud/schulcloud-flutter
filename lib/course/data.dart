@@ -185,15 +185,18 @@ abstract class Component {
   const Component();
 
   factory Component.fromJson(Map<String, dynamic> data) {
-    final content = data['content'] ?? {};
-    if (data['component'] == 'text') {
-      return TextComponent.fromJson(content);
+    final componentFactory = _componentFactories[data['component']];
+    if (componentFactory == null) {
+      return UnsupportedComponent();
     }
-    if (data['component'] == 'Etherpad') {
-      return EtherpadComponent.fromJson(content);
-    }
-    return UnsupportedComponent();
+
+    return componentFactory(data['content'] ?? {});
   }
+  static final _componentFactories = {
+    'text': (content) => TextComponent.fromJson(content),
+    'Etherpad': (content) => EtherpadComponent.fromJson(content),
+    'neXboard': (content) => NexboardComponent.fromJson(content),
+  };
 }
 
 @HiveType(typeId: TypeId.unsupportedComponent)
@@ -227,6 +230,28 @@ class EtherpadComponent extends Component {
 
   factory EtherpadComponent.fromJson(Map<String, dynamic> data) {
     return EtherpadComponent(
+      url: data['url'],
+      description: (data['description'] as String).blankToNull,
+    );
+  }
+
+  @HiveField(0)
+  final String url;
+
+  @HiveField(1)
+  final String description;
+}
+
+@HiveType(typeId: TypeId.nexboardComponent)
+class NexboardComponent extends Component {
+  NexboardComponent({
+    @required this.url,
+    this.description,
+  })  : assert(url != null),
+        assert(description?.isBlank != true);
+
+  factory NexboardComponent.fromJson(Map<String, dynamic> data) {
+    return NexboardComponent(
       url: data['url'],
       description: (data['description'] as String).blankToNull,
     );

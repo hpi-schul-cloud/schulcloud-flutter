@@ -300,6 +300,7 @@ class TypeId {
   static const unsupportedComponent = 73;
   static const textComponent = 72;
   static const etherpadComponent = 74;
+  static const nexboardComponent = 75;
 
   static const article = 56;
 
@@ -329,8 +330,9 @@ Future<void> initializeHive() async {
     ..registerAdapter(LessonAdapter())
     ..registerAdapter(ContentAdapter())
     ..registerAdapter(UnsupportedComponentAdapter())
-    ..registerAdapter(EtherpadComponentAdapter())
     ..registerAdapter(TextComponentAdapter())
+    ..registerAdapter(EtherpadComponentAdapter())
+    ..registerAdapter(NexboardComponentAdapter())
     // News module:
     ..registerAdapter(ArticleAdapter())
     // Files module:

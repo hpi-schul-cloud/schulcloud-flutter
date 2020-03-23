@@ -1,7 +1,8 @@
 import 'dart:math';
 
 import 'package:black_hole_flutter/black_hole_flutter.dart';
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_cached/flutter_cached.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:schulcloud/app/app.dart';
 import 'package:sprintf/sprintf.dart';
@@ -92,7 +93,33 @@ class _ComponentView extends StatelessWidget {
       );
     }
     if (component is EtherpadComponent) {
-      return _ExternalContentWebView(component.url);
+      return _ComponentWrapper(
+        description: component.description,
+        url: component.url,
+        child: _ExternalContentWebView(component.url),
+      );
+    }
+    if (component is NexboardComponent) {
+      return CachedRawBuilder<User>(
+        controller: services.storage.userId.controller,
+        builder: (context, update) {
+          if (update.hasError) {
+            return ErrorBanner(update.error, update.stackTrace);
+          } else if (update.hasNoData) {
+            return Center(child: CircularProgressIndicator());
+          }
+
+          final user = update.data;
+          // https://github.com/schul-cloud/schulcloud-client/blob/90e7d1f70be4b0e8224f9e18525a7ef1c7ff297a/views/topic/components/content-neXboard.hbs#L3-L4
+          final url =
+              '${component.url}?disableConference=true&username=${user.avatarInitials}';
+          return _ComponentWrapper(
+            description: component.description,
+            url: url,
+            child: _ExternalContentWebView(url),
+          );
+        },
+      );
     }
 
     assert(component is UnsupportedComponent);
@@ -113,6 +140,44 @@ class _ComponentView extends StatelessWidget {
       cssColor(theme.contrastColor),
       cssColor(theme.accentColor),
     ]);
+  }
+}
+
+class _ComponentWrapper extends StatelessWidget {
+  const _ComponentWrapper({
+    Key key,
+    this.description,
+    @required this.child,
+    this.url,
+  })  : assert(child != null),
+        super(key: key);
+
+  final String description;
+  final Widget child;
+  final String url;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: <Widget>[
+        if (description != null) ...[
+          FancyText(description, emphasis: TextEmphasis.medium),
+          SizedBox(height: 8),
+        ],
+        child,
+        if (url != null)
+          Align(
+            alignment: AlignmentDirectional.centerEnd,
+            child: FlatButton.icon(
+              textColor: context.theme.mediumEmphasisOnBackground,
+              onPressed: () => tryLaunchingUrl(url),
+              icon: Icon(Icons.open_in_new),
+              label: Text('Open in browser'),
+            ),
+          ),
+      ],
+    );
   }
 }
 
@@ -140,33 +205,22 @@ class _ExternalContentWebViewState extends State<_ExternalContentWebView>
 
     // About 75 % of the device height minus AppBar and BottomNavigationBar.
     final webViewHeight = (context.mediaQuery.size.height - 2 * 64) * 0.75;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.end,
-      children: <Widget>[
-        LimitedBox(
-          maxHeight: max(384, webViewHeight),
-          child: Container(
-            decoration: BoxDecoration(
-              border: Border.all(color: context.theme.primaryColor),
-            ),
-            // To make the border visible.
-            padding: EdgeInsets.all(1),
-            child: InAppWebView(
-              initialUrl: widget.url,
-              initialOptions: InAppWebViewWidgetOptions(
-                inAppWebViewOptions:
-                    InAppWebViewOptions(transparentBackground: true),
-              ),
-            ),
+    return LimitedBox(
+      maxHeight: max(384, webViewHeight),
+      child: Container(
+        decoration: BoxDecoration(
+          border: Border.all(color: context.theme.primaryColor),
+        ),
+        // To make the border visible.
+        padding: EdgeInsets.all(1),
+        child: InAppWebView(
+          initialUrl: widget.url,
+          initialOptions: InAppWebViewWidgetOptions(
+            inAppWebViewOptions:
+                InAppWebViewOptions(transparentBackground: true),
           ),
         ),
-        FlatButton.icon(
-          textColor: context.theme.mediumEmphasisOnBackground,
-          onPressed: () => tryLaunchingUrl(widget.url),
-          icon: Icon(Icons.open_in_new),
-          label: Text('Open in browser'),
-        ),
-      ],
+      ),
     );
   }
 }
