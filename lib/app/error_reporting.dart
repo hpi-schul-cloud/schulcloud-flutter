@@ -72,7 +72,7 @@ Future<bool> reportEvent(Event event) async {
 
   final packageInfo = await PackageInfo.fromPlatform();
   final platformString = defaultTargetPlatform.toString();
-  User user = storage.userId.controller.lastData;
+  User user = storage.userFromCache;
   final fullEvent = Event(
     release: packageInfo.version,
     environment: _isInDebugMode ? 'debug' : 'production',

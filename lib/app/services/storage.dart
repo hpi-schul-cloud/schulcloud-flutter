@@ -28,6 +28,7 @@ class StorageService {
 
   final Preference<String> userIdString;
   Id<User> get userId => Id<User>(userIdString.getValue());
+  User get userFromCache => userId == null ? null : HiveCache.get(userId);
 
   final Preference<String> email;
 
