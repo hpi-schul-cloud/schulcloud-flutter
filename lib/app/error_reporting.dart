@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:ui';
 
-import 'package:dartx/dartx.dart';
 import 'package:device_info/device_info.dart';
 import 'package:flutter/foundation.dart';
 import 'package:package_info/package_info.dart';
@@ -14,13 +13,8 @@ import 'data.dart';
 import 'services/storage.dart';
 import 'utils.dart';
 
-final _dsn = {
-  TargetPlatform.android:
-      'https://f5a0d14ac2aa4587beeddaa3db21ba44@sentry.schul-cloud.dev/11',
-  TargetPlatform.iOS:
-      'https://568171c9d0f94662b5a3f94696540759@sentry.schul-cloud.dev/12',
-}[defaultTargetPlatform];
-final _sentry = SentryClient(dsn: _dsn);
+final _sentry = SentryClient(
+    dsn: 'https://f5a0d14ac2aa4587beeddaa3db21ba44@sentry.schul-cloud.dev/11');
 
 Future<void> runWithErrorReporting(Future<void> Function() body) async {
   await runZoned<Future<void>>(
