@@ -5,9 +5,11 @@ import 'dart:ui';
 import 'package:device_info/device_info.dart';
 import 'package:flutter/foundation.dart';
 import 'package:package_info/package_info.dart';
-import 'package:sentry/sentry.dart';
+import 'package:sentry/sentry.dart' hide User;
 import 'package:system_info/system_info.dart';
 
+import 'app_config.dart';
+import 'data.dart';
 import 'services/storage.dart';
 import 'utils.dart';
 
@@ -49,11 +51,26 @@ bool get _isInDebugMode {
 }
 
 Future<bool> reportEvent(Event event) async {
-  if (!services.storage.errorReportingEnabled.getValue()) {
+  StorageService storage;
+  try {
+    await services.isReady<StorageService>();
+    storage = services.storage;
+    // ignore: avoid_catching_errors
+  } on NoSuchMethodError {
+    // GetIt always asserts that a factory is already registered for that type.
+    // In production code, there is no specific exception being thrown (and of
+    // course no assertions), but it will crash by calling methods on the
+    // non-existent (`null`) factory.
+  }
+  // We don't have the permission to report errors or storage is null and we
+  // have a Schrödinger's cat-situation in which we can't guarantee a permission
+  // to do so.
+  if (storage == null || !storage.errorReportingEnabled.getValue()) {
     return true;
   }
 
   final packageInfo = await PackageInfo.fromPlatform();
+  User user = storage.userId.controller.lastData;
   final fullEvent = Event(
     release: packageInfo.version,
     environment: _isInDebugMode ? 'debug' : 'production',
@@ -62,6 +79,10 @@ Future<bool> reportEvent(Event event) async {
     stackTrace: event.stackTrace,
     level: event.level,
     contexts: await _getContexts(),
+    tags: {
+      'flavor': services.config.name,
+      if (user != null) 'schoolId': user.schoolId,
+    },
     extra: {
       'locale': window.locale.toString(),
       'textScaleFactor': window.textScaleFactor,

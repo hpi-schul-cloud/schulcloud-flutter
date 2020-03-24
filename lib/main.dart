@@ -59,13 +59,20 @@ const schulCloudAppConfig = AppConfig(
 );
 
 Future<void> main({AppConfig appConfig = schulCloudAppConfig}) async {
+  WidgetsFlutterBinding.ensureInitialized();
   await runWithErrorReporting(() async {
     logger
       ..i('Starting…')
-      ..d('Initializing hive…');
+      ..d('Registering first services…');
+    // We register these first as they're required for error reporting.
+    services
+      ..registerSingleton(appConfig)
+      ..registerSingletonAsync((_) => StorageService.create());
+
+    logger.d('Initializing hive…');
     await initializeHive();
 
-    logger.d('Initializing services…');
+    logger.d('Registering remaining services…');
     services
       ..registerSingletonAsync((_) async {
         // We need to initialize TimeMachine before launching the app, and using
@@ -80,8 +87,6 @@ Future<void> main({AppConfig appConfig = schulCloudAppConfig}) async {
           'timeZone': timeZone,
         });
       }, instanceName: 'ignored')
-      ..registerSingleton(appConfig)
-      ..registerSingletonAsync((_) => StorageService.create())
       ..registerSingleton(SnackBarService())
       ..registerSingleton(NetworkService())
       ..registerSingleton(ApiNetworkService())
