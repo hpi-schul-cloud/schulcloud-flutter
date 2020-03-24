@@ -28,6 +28,7 @@ class DashboardCard extends StatelessWidget {
       title: title,
       color: color,
       omitHorizontalPadding: true,
+      omitBottomPadding: footerButtonText != null,
       child: Column(
         children: <Widget>[
           Padding(
@@ -38,13 +39,13 @@ class DashboardCard extends StatelessWidget {
           ),
           if (footerButtonText != null)
             Container(
-              padding: EdgeInsets.symmetric(horizontal: 16),
+              padding: EdgeInsets.fromLTRB(16, 0, 16, 8),
               alignment: Alignment.bottomRight,
               child: OutlineButton(
                 onPressed: onFooterButtonPressed,
                 child: Text(footerButtonText),
               ),
-            )
+            ),
         ],
       ),
     );
