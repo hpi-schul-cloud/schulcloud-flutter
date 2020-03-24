@@ -365,10 +365,7 @@ Future<void> initializeHive() async {
       TypeId.content,
       (id) => throw UnsupportedError('Contents cannot be fetched by their id.'),
     )
-    ..registerEntityType<File>(
-        TypeId.file,
-        (id) => throw UnsupportedError('Files need to know the type of their '
-            'owner, so they cannot be fetched by their id alone.'))
+    ..registerEntityType<File>(TypeId.file, File.fetch)
     ..registerEntityType(TypeId.article, Article.fetch);
   await HiveCache.initialize();
 }
