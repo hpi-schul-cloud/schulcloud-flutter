@@ -68,6 +68,7 @@
   "course_detailsScreen_empty": "Dieser Kurs enthält noch keine Themen.",
   "course_lessonScreen_empty": "Dieses Thema enthält keine Inhalte.",
   "course_contentView_unsupported": "Dieser Inhalt wird in der App noch nicht unterstützt.",
+  "course_resourceCard_via": "via {client}",
   "dashboard": "Übersicht",
   "file": "Dateien",
   "file_chooseDestination_content": "Bislang kannst du noch kein Uploadziel wählen.\nDie Datei wird in deinen persönlichen Ordner hochgeladen.",

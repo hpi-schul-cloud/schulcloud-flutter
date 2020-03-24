@@ -155,7 +155,7 @@ class _ResourceCard extends StatelessWidget {
       ),
       padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: FancyText(
-        'via ${resource.client}',
+        context.s.course_resourceCard_via(resource.client),
         emphasis: TextEmphasis.medium,
       ),
     );
