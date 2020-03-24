@@ -59,7 +59,7 @@ class ApiNetworkService {
   String _url(String path) {
     assert(path != null);
     assert(path.isNotEmpty);
-    assert(path[0] != '/');
+    assert(!path.startsWith('/'));
     return '${services.get<AppConfig>().baseApiUrl}/$path';
   }
 

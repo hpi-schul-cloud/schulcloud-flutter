@@ -58,7 +58,7 @@ Future<bool> reportEvent(Event event) async {
     // non-existent (`null`) factory.
   }
   // We don't have the permission to report errors or storage is null and we
-  // have a Schrödinger's cat-situation in which we can't guarantee a permission
+  // have a Schrödinger's cat situation in which we can't guarantee a permission
   // to do so.
   if (storage == null || !storage.errorReportingEnabled.getValue()) {
     return true;
