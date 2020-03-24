@@ -49,9 +49,15 @@ class _CalendarDashboardCardState extends State<CalendarDashboardCard> {
           final events = update.data.where((e) => e.end > now);
           _subscription?.cancel();
           if (events.isEmpty) {
-            return Text(
-              s.calendar_dashboardCard_empty,
-              textAlign: TextAlign.center,
+            return Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16),
+              child: Center(
+                child: FancyText(
+                  s.calendar_dashboardCard_empty,
+                  emphasis: TextEmphasis.medium,
+                  textAlign: TextAlign.center,
+                ),
+              ),
             );
           }
 
