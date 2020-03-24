@@ -303,7 +303,7 @@ class TypeId {
   static const article = 56;
 
   static const file = 53;
-  static const filePath = 72;
+  static const filePath = 78;
 }
 
 Future<void> initializeHive() async {
