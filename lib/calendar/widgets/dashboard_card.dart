@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import 'package:black_hole_flutter/black_hole_flutter.dart';
+import 'package:dartx/dartx.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cached/flutter_cached.dart';
 import 'package:schulcloud/app/app.dart';
@@ -8,7 +11,20 @@ import 'package:time_machine/time_machine.dart';
 import '../bloc.dart';
 import '../data.dart';
 
-class CalendarDashboardCard extends StatelessWidget {
+class CalendarDashboardCard extends StatefulWidget {
+  @override
+  _CalendarDashboardCardState createState() => _CalendarDashboardCardState();
+}
+
+class _CalendarDashboardCardState extends State<CalendarDashboardCard> {
+  StreamSubscription _subscription;
+
+  @override
+  void dispose() {
+    _subscription?.cancel();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     final s = context.s;
@@ -31,6 +47,7 @@ class CalendarDashboardCard extends StatelessWidget {
 
           final now = Instant.now();
           final events = update.data.where((e) => e.end > now);
+          _subscription?.cancel();
           if (events.isEmpty) {
             return Text(
               s.calendar_dashboardCard_empty,
@@ -38,8 +55,14 @@ class CalendarDashboardCard extends StatelessWidget {
             );
           }
 
+          // Update this widget when the current event is over.
+          final nextEnd = events.map((e) => e.end).min();
+          _subscription =
+              Future.delayed(Instant.now().timeUntil(nextEnd).toDuration)
+                  .asStream()
+                  .listen((_) => setState(() {}));
           return Column(
-            children: events.map((e) => _EventPreview(event: e)).toList(),
+            children: events.map((e) => _EventPreview(e)).toList(),
           );
         },
       ),
@@ -48,9 +71,7 @@ class CalendarDashboardCard extends StatelessWidget {
 }
 
 class _EventPreview extends StatelessWidget {
-  const _EventPreview({Key key, @required this.event})
-      : assert(event != null),
-        super(key: key);
+  const _EventPreview(this.event) : assert(event != null);
 
   final Event event;
 
