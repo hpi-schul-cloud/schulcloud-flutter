@@ -367,7 +367,7 @@ List<Widget> _buildFileSection(
     for (final fileId in fileIds)
       FileTile(
         fileId,
-        onDownloadFile: (file) => services.get<FileBloc>().downloadFile(file),
+        onDownloadFile: services.get<FileService>().downloadFile,
       ),
   ];
 }

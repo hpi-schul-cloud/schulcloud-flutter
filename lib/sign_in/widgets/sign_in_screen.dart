@@ -57,11 +57,6 @@ class SignInScreen extends StatelessWidget {
           ),
         ),
       ),
-      Container(
-        padding: EdgeInsets.all(16),
-        alignment: Alignment.center,
-        child: Text(s.signIn_signInScreen_placeholder),
-      ),
       LegalBar(),
     ];
   }

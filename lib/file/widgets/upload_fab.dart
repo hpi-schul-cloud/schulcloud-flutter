@@ -1,21 +1,17 @@
 import 'dart:async';
 
+import 'package:file_picker/file_picker.dart';
 import 'package:black_hole_flutter/black_hole_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:schulcloud/app/app.dart';
 
-import '../bloc.dart';
 import '../data.dart';
+import '../service.dart';
 
 class UploadFab extends StatefulWidget {
-  const UploadFab({@required this.ownerId, this.parentId})
-      : assert(ownerId != null);
+  const UploadFab({@required this.path}) : assert(path != null);
 
-  /// The owner of uploaded files.
-  final Id<dynamic> ownerId;
-
-  /// The parent folder of uploaded files.
-  final Id<File> parentId;
+  final FilePath path;
 
   @override
   _UploadFabState createState() => _UploadFabState();
@@ -25,11 +21,11 @@ class _UploadFabState extends State<UploadFab> {
   /// Controller for the [SnackBar].
   ScaffoldFeatureController<SnackBar, SnackBarClosedReason> snackBar;
 
-  void _startUpload(BuildContext context) {
-    final updates = services.get<FileBloc>().uploadFile(
-          owner: widget.ownerId,
-          parent: widget.parentId,
-        );
+  void _startUpload(BuildContext context) async {
+    final updates = services.files.uploadFiles(
+      files: await FilePicker.getMultiFile(),
+      path: widget.path,
+    );
 
     snackBar = context.scaffold.showSnackBar(SnackBar(
       duration: Duration(days: 1),

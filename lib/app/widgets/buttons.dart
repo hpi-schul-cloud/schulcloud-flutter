@@ -2,29 +2,30 @@ import 'package:black_hole_flutter/black_hole_flutter.dart';
 import 'package:flutter/material.dart';
 
 class PrimaryButton extends StatelessWidget {
-  const PrimaryButton({Key key, this.onPressed, this.child}) : super(key: key);
+  const PrimaryButton({
+    Key key,
+    this.isEnabled,
+    @required this.onPressed,
+    @required this.child,
+    this.isLoading = false,
+  })  : assert(child != null),
+        assert(isLoading != null),
+        super(key: key);
 
+  final bool isEnabled;
   final VoidCallback onPressed;
   final Widget child;
+  final bool isLoading;
 
   @override
   Widget build(BuildContext context) {
-    return RaisedButton(
+    return FancyRaisedButton(
+      isEnabled: isEnabled,
       onPressed: onPressed,
-      elevation: 0,
-      disabledElevation: 0,
-      focusElevation: 4,
-      hoverElevation: 2,
-      highlightElevation: 4,
+      isLoading: isLoading,
       color: context.theme.primaryColor,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
-      child: DefaultTextStyle(
-        style: TextStyle(
-          color: Colors.white,
-          fontFamily: 'PT Sans Narrow',
-          fontWeight: FontWeight.w700,
-          height: 1.25,
-        ),
+      child: DefaultTextStyle.merge(
+        style: TextStyle(color: context.theme.primaryColor.contrastColor),
         child: child,
       ),
     );
@@ -34,19 +35,25 @@ class PrimaryButton extends StatelessWidget {
 class SecondaryButton extends StatelessWidget {
   const SecondaryButton({
     Key key,
+    this.isEnabled,
     @required this.onPressed,
     @required this.child,
+    this.isLoading = false,
   })  : assert(child != null),
+        assert(isLoading != null),
         super(key: key);
 
+  final bool isEnabled;
   final VoidCallback onPressed;
   final Widget child;
+  final bool isLoading;
 
   @override
   Widget build(BuildContext context) {
-    return OutlineButton(
+    return FancyOutlineButton(
+      isEnabled: isEnabled,
       onPressed: onPressed,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
+      isLoading: isLoading,
       child: child,
     );
   }

@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:ui';
 
+import 'package:dartx/dartx.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:html/parser.dart';
@@ -9,6 +10,7 @@ import 'package:http/http.dart';
 import 'package:schulcloud/generated/l10n.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import 'app_config.dart';
 import 'exception.dart';
 import 'services/network.dart';
 
@@ -58,6 +60,9 @@ String formatFileSize(int bytes) {
 typedef L10nStringGetter = String Function(S);
 
 extension LegenWaitForItDaryString on String {
+  // ignore: unnecessary_this
+  String get blankToNull => this?.isBlank != false ? null : this;
+
   String get withoutLinebreaks => replaceAll(RegExp('[\r\n]'), '');
 
   /// Removes html tags from a string.
@@ -94,8 +99,10 @@ extension LegenWaitForItDaryString on String {
 
 /// Tries launching a url.
 Future<bool> tryLaunchingUrl(String url) async {
-  if (await canLaunch(url)) {
-    await launch(url);
+  final resolved =
+      Uri.parse(services.config.baseWebUrl).resolve(url).toString();
+  if (await canLaunch(resolved)) {
+    await launch(resolved);
     return true;
   }
   return false;

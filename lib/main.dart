@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_native_timezone/flutter_native_timezone.dart';
+import 'package:logger/logger.dart';
 import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/calendar/calendar.dart';
 import 'package:schulcloud/file/file.dart';
@@ -60,6 +61,7 @@ const schulCloudAppConfig = AppConfig(
 );
 
 Future<void> main({AppConfig appConfig = schulCloudAppConfig}) async {
+  Logger.level = Level.debug;
   logger
     ..i('Starting…')
     ..d('Initializing hive…');
@@ -85,9 +87,9 @@ Future<void> main({AppConfig appConfig = schulCloudAppConfig}) async {
     ..registerSingleton(SnackBarService())
     ..registerSingleton(NetworkService())
     ..registerSingleton(ApiNetworkService())
+    ..registerSingleton(FileService())
     ..registerSingletonAsync((_) => DeepLinkingService.create())
     ..registerSingleton(CalendarBloc())
-    ..registerSingleton(FileBloc())
     ..registerSingleton(SignInBloc());
 
   logger.d('Adding custom licenses to registry…');

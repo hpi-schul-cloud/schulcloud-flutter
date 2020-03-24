@@ -1,4 +1,5 @@
 import 'package:black_hole_flutter/black_hole_flutter.dart';
+import 'package:dartx/dartx.dart';
 import 'package:flutter/material.dart';
 import 'package:schulcloud/app/app.dart';
 
@@ -28,16 +29,17 @@ class CourseDetailsScreen extends StatelessWidget {
           omitHorizontalPadding: true,
           sliver: SliverList(
             delegate: SliverChildListDelegate([
-              Padding(
-                padding: EdgeInsets.symmetric(
-                  vertical: 18,
-                  horizontal: 12,
+              if (course.description != null) ...[
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 16),
+                  child: FancyText(
+                    course.description,
+                    showRichText: true,
+                    emphasis: TextEmphasis.medium,
+                  ),
                 ),
-                child: Text(
-                  course.description,
-                  style: TextStyle(fontSize: 20),
-                ),
-              ),
+                SizedBox(height: 16),
+              ],
               // TODO(marcelgarus): use proper slivers when flutter_cached supports them
               _buildLessonsSliver(context, course),
             ]),
@@ -51,6 +53,8 @@ class CourseDetailsScreen extends StatelessWidget {
     return FancyCachedBuilder<List<Lesson>>.handleLoading(
       controller: course.lessons.populatedController,
       builder: (context, lessons, isFetching) {
+        lessons.sort();
+
         if (lessons.isEmpty) {
           return EmptyStateScreen(
             text: context.s.course_detailsScreen_empty,
