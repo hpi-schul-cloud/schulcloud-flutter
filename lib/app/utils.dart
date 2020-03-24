@@ -4,6 +4,7 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:dartx/dartx.dart';
 import 'package:html/parser.dart';
 import 'package:http/http.dart';
 import 'package:schulcloud/generated/l10n.dart';
@@ -57,6 +58,9 @@ String formatFileSize(int bytes) {
 typedef L10nStringGetter = String Function(S);
 
 extension LegenWaitForItDaryString on String {
+  // ignore: unnecessary_this
+  String get blankToNull => this?.isBlank != false ? null : this;
+
   String get withoutLinebreaks => replaceAll(RegExp('[\r\n]'), '');
 
   /// Removes html tags from a string.

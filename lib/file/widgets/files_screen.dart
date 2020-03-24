@@ -5,6 +5,7 @@ import 'package:flutter_cached/flutter_cached.dart';
 import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/course/course.dart';
 
+import '../data.dart';
 import 'file_browser.dart';
 import 'upload_fab.dart';
 
@@ -13,7 +14,9 @@ class FilesScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return FancyScaffold(
       appBar: FancyAppBar(title: Text(context.s.file)),
-      floatingActionButton: UploadFab(ownerId: services.storage.userId),
+      floatingActionButton: UploadFab(
+        path: FilePath(services.storage.userId),
+      ),
       sliver: SliverList(
         delegate: SliverChildListDelegate([
           _CoursesList(),
