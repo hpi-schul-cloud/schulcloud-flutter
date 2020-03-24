@@ -60,7 +60,7 @@ class _EventPreview extends StatelessWidget {
     final textTheme = context.textTheme;
     final hasStarted = event.start <= now;
 
-    Widget widget = ListTile(
+    return ListTile(
       title: Text(
         event.title,
         style: hasStarted ? textTheme.headline : textTheme.subhead,
@@ -77,23 +77,5 @@ class _EventPreview extends StatelessWidget {
         ),
       ),
     );
-
-    final durationMicros = event.duration.inMicroseconds;
-    if (hasStarted && durationMicros != 0) {
-      widget = Column(
-        children: <Widget>[
-          widget,
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: LinearProgressIndicator(
-              value: now.timeSince(event.start).inMicroseconds / durationMicros,
-              valueColor: AlwaysStoppedAnimation(context.theme.primaryColor),
-              backgroundColor: context.theme.primaryColor.withOpacity(0.12),
-            ),
-          )
-        ],
-      );
-    }
-    return widget;
   }
 }
