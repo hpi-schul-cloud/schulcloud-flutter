@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:ui';
 
+import 'package:dartx/dartx.dart';
 import 'package:device_info/device_info.dart';
 import 'package:flutter/foundation.dart';
 import 'package:package_info/package_info.dart';
@@ -70,6 +71,7 @@ Future<bool> reportEvent(Event event) async {
   }
 
   final packageInfo = await PackageInfo.fromPlatform();
+  final platformString = defaultTargetPlatform.toString();
   User user = storage.userId.controller.lastData;
   final fullEvent = Event(
     release: packageInfo.version,
@@ -80,6 +82,7 @@ Future<bool> reportEvent(Event event) async {
     level: event.level,
     contexts: await _getContexts(),
     tags: {
+      'platform': platformString.substring(platformString.indexOf('.') + 1),
       'flavor': services.config.name,
       if (user != null) 'schoolId': user.schoolId,
     },
