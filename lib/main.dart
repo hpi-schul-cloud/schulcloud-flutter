@@ -79,7 +79,7 @@ Future<void> main({AppConfig appConfig = schulCloudAppConfig}) async {
     ..registerSingleton(NetworkService())
     ..registerSingleton(ApiNetworkService())
     ..registerSingleton(CalendarBloc())
-    ..registerSingleton(FileBloc())
+    ..registerSingletonAsync((_) => FileBloc.create())
     ..registerSingleton(SignInBloc());
 
   LicenseRegistry.addLicense(() async* {

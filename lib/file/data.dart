@@ -9,6 +9,11 @@ import 'package:time_machine/time_machine.dart';
 
 part 'data.g.dart';
 
+String _extension(String fileName) {
+  final lastDot = fileName.lastIndexOf('.');
+  return lastDot == null ? null : fileName.substring(lastDot + 1);
+}
+
 @HiveType(typeId: TypeId.file)
 class File implements Entity<File>, Comparable<File> {
   File({
@@ -71,24 +76,7 @@ class File implements Entity<File>, Comparable<File> {
 
   @HiveField(1)
   final String name;
-  String get extension {
-    final lastDot = name.lastIndexOf('.');
-    return lastDot == null ? null : name.substring(lastDot + 1);
-  }
-
-  Future<io.File> get localFile async {
-    final directory = await getExternalStorageDirectory();
-    final fileName = extension == null ? id.toString() : '$id.$extension';
-    return io.File('${directory.path}/$fileName');
-  }
-
-  Future<bool> get isDownloaded async {
-    // Calling `.existsSync()` is much faster than using `exists()`. But in
-    // this case, latency is much more important than throughput: This code is
-    // executed during rendering and we don't want any jank.
-    // ignore: avoid_slow_async_io
-    return (await localFile).exists();
-  }
+  String get extension => _extension(name);
 
   /// An [Id] for either a [User] or [Course].
   @HiveField(3)
@@ -163,4 +151,60 @@ class File implements Entity<File>, Comparable<File> {
   }
 
   Future<void> delete() => services.api.delete('fileStorage/$id');
+}
+
+class LocalFile {
+  LocalFile({
+    @required this.fileId,
+    @required this.downloadedAt,
+    @required this.actualFile,
+  })  : assert(fileId != null),
+        assert(downloadedAt != null),
+        assert(actualFile != null),
+        assert(actualFile.existsSync());
+
+  final Id<File> fileId;
+  final io.File actualFile;
+
+  final Instant downloadedAt;
+
+  Future<LocalFile> copyWith({
+    Instant downloadedAt = Instant.unixEpoch,
+  }) async {
+    return LocalFile(
+      fileId: fileId,
+      downloadedAt: downloadedAt,
+      actualFile: actualFile,
+    );
+  }
+}
+
+class LocalFileAdapter extends TypeAdapter<LocalFile> {
+  @override
+  int get typeId => TypeId.localFile;
+
+  @override
+  void write(BinaryWriter writer, LocalFile file) {
+    writer
+      ..writeByte(3)
+      ..writeByte(0)
+      ..write(file.fileId)
+      ..writeByte(1)
+      ..write(file.downloadedAt)
+      ..writeByte(2)
+      ..write(file.actualFile.path);
+  }
+
+  @override
+  LocalFile read(BinaryReader reader) {
+    var numOfFields = reader.readByte();
+    var fields = <int, dynamic>{
+      for (var i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
+    };
+    return LocalFile(
+      fileId: fields[0] as Id<File>,
+      downloadedAt: fields[1] as Instant,
+      actualFile: io.File(fields[2] as String),
+    );
+  }
 }

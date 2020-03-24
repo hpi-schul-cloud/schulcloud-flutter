@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:schulcloud/app/app.dart';
 
+import '../bloc.dart';
 import '../data.dart';
 import 'file_menu.dart';
 import 'file_thumbnail.dart';
@@ -25,14 +26,7 @@ class FileTile extends StatelessWidget {
       title: Text(file.name),
       subtitle: Text(subtitle),
       leading: FileThumbnail(file: file),
-      trailing: FutureBuilder<bool>(
-        future: file.isDownloaded,
-        builder: (context, snapshot) {
-          return snapshot.data == true
-              ? Icon(Icons.offline_pin)
-              : SizedBox.shrink();
-        },
-      ),
+      trailing: file.isDownloaded ? Icon(Icons.offline_pin) : null,
       onTap: () => onOpen(file),
       onLongPress: () => FileMenu.show(context, file),
     );

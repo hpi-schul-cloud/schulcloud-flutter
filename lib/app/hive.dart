@@ -301,6 +301,7 @@ class TypeId {
   static const article = 56;
 
   static const file = 53;
+  static const localFile = 72;
 }
 
 Future<void> initializeHive() async {

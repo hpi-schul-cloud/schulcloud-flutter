@@ -6,11 +6,14 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
+import 'package:hive/hive.dart';
 import 'package:meta/meta.dart';
 import 'package:mime/mime.dart';
 import 'package:open_file/open_file.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:schulcloud/app/app.dart';
+import 'package:time_machine/time_machine.dart';
 
 import 'data.dart';
 
@@ -28,18 +31,28 @@ class UploadProgressUpdate {
   bool get isSingleFile => totalNumberOfFiles == 1;
 }
 
+extension AssociatedLocalFile on File {
+  LocalFile get localFile => services.get<FileBloc>().localFiles.get(id.value);
+  bool get isDownloaded => localFile != null;
+}
+
 @immutable
 class FileBloc {
-  const FileBloc();
+  const FileBloc._(this.localFiles);
 
-  Future<void> openFile(File file) async {
-    if (!(await file.isDownloaded)) {
-      await downloadFile(file);
-    }
-    await OpenFile.open((await file.localFile).path);
+  final Box<LocalFile> localFiles;
+
+  static Future<FileBloc> create() async {
+    final box = await Hive.openBox<LocalFile>('localFiles');
+    return FileBloc._(box);
   }
 
-  Future<void> downloadFile(File file) async {
+  Future<void> openFile(File file) async {
+    final localFile = file.localFile ?? await downloadFile(file);
+    await OpenFile.open(localFile.actualFile.path);
+  }
+
+  Future<LocalFile> downloadFile(File file) async {
     assert(file != null);
 
     await ensureStoragePermissionGranted();
@@ -52,15 +65,27 @@ class FileBloc {
     );
     final signedUrl = json.decode(response.body)['url'];
 
-    final localFile = await file.localFile;
+    final directory = await getApplicationDocumentsDirectory();
+    final extension = file.extension;
+    final fileName = '${file.id}${extension == null ? '' : '.$extension'}';
+    final actualFile = io.File('${directory.path}/$fileName');
 
     await FlutterDownloader.enqueue(
       url: signedUrl,
-      savedDir: localFile.dirName,
-      fileName: localFile.name,
+      savedDir: actualFile.dirName,
+      fileName: actualFile.name,
       showNotification: true,
       openFileFromNotification: true,
     );
+
+    // TODO(marcelgarus): Do this when the file downloaded successfully:
+    final localFile = LocalFile(
+      fileId: file.id,
+      downloadedAt: Instant.now(),
+      actualFile: actualFile,
+    );
+    await localFiles.put(file.id.value, localFile);
+    return localFile;
   }
 
   Future<void> ensureStoragePermissionGranted() async {
@@ -69,6 +94,18 @@ class FileBloc {
     if (permissions[PermissionGroup.storage] != PermissionStatus.granted) {
       throw PermissionNotGranted();
     }
+  }
+
+  Future<void> deleteLocalFile(File file) async {
+    await file.localFile?.actualFile?.delete();
+    await localFiles.delete(file.id.value);
+  }
+
+  Future<void> deleteAllLocalFiles() async {
+    await Future.wait([
+      for (final file in localFiles.values) file.actualFile.delete(),
+    ]);
+    await localFiles.clear();
   }
 
   Stream<UploadProgressUpdate> uploadFile({
