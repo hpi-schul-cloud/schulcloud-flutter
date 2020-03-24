@@ -53,16 +53,9 @@ class _ComponentView extends StatelessWidget {
       );
     }
     if (component is NexboardComponent) {
-      return CachedRawBuilder<User>(
+      return FancyCachedBuilder<User>.handleLoading(
         controller: services.storage.userId.controller,
-        builder: (context, update) {
-          if (update.hasError) {
-            return ErrorBanner(update.error, update.stackTrace);
-          } else if (update.hasNoData) {
-            return Center(child: CircularProgressIndicator());
-          }
-
-          final user = update.data;
+        builder: (context, user, _) {
           // https://github.com/schul-cloud/schulcloud-client/blob/90e7d1f70be4b0e8224f9e18525a7ef1c7ff297a/views/topic/components/content-neXboard.hbs#L3-L4
           final url =
               '${component.url}?disableConference=true&username=${user.avatarInitials}';
