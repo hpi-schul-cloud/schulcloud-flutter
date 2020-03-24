@@ -37,7 +37,7 @@ class _ComponentView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Required so dart automatically casts component in if-branches.
+    // Required so Dart automatically casts component in if-branches.
     final component = this.component;
     if (component is TextComponent) {
       if (component.text == null) {

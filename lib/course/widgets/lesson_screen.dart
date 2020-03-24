@@ -56,7 +56,7 @@ class _LessonScreenState extends State<LessonScreen> {
               : SliverList(
                   delegate: SliverChildBuilderDelegate(
                     (context, i) {
-                      if (i % 2 == 1) {
+                      if (i.isOdd) {
                         return Divider();
                       }
 
