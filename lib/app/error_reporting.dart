@@ -22,18 +22,18 @@ final _dsn = {
 final _sentry = SentryClient(dsn: _dsn);
 
 Future<void> runWithErrorReporting(Future<void> Function() body) async {
-  FlutterError.onError = (details) async {
-    if (_isInDebugMode) {
-      FlutterError.dumpErrorToConsole(details);
-    }
-    await reportEvent(Event(
-      exception: details.exception,
-      stackTrace: details.stack,
-    ));
-  };
-
   await runZoned<Future<void>>(
-    body,
+    () async {
+      FlutterError.onError = (details) async {
+        if (_isInDebugMode) {
+          FlutterError.dumpErrorToConsole(details);
+        } else {
+          Zone.current.handleUncaughtError(details.exception, details.stack);
+        }
+      };
+
+      await body();
+    },
     // ignore: avoid_types_on_closure_parameters
     onError: (dynamic error, StackTrace stackTrace) async {
       await reportEvent(Event(
