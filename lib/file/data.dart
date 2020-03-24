@@ -46,6 +46,9 @@ class File implements Entity<File>, Comparable<File> {
           size: data['size'],
         );
 
+  static Future<File> fetch(Id<File> id) async =>
+      File.fromJson(await services.api.get('files/$id').json);
+
   static Future<List<File>> fetchList(
     Id<dynamic> ownerId, {
     Id<File> parentId,
