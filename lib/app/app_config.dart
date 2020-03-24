@@ -53,6 +53,9 @@ class AppConfig {
           brightness == Brightness.light ? Colors.white : null,
       fontFamily: 'PT Sans',
       textTheme: _createTextTheme(brightness),
+      buttonTheme: ButtonThemeData(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+      ),
       dialogTheme: DialogTheme(
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
