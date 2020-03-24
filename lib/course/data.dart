@@ -185,10 +185,12 @@ abstract class Component {
 
     return componentFactory(data['content'] ?? {});
   }
-  static final _componentFactories = {
+  static final Map<String, Component Function(Map<String, dynamic> json)>
+      _componentFactories = {
     'text': (content) => TextComponent.fromJson(content),
     'Etherpad': (content) => EtherpadComponent.fromJson(content),
     'neXboard': (content) => NexboardComponent.fromJson(content),
+    'resources': (content) => ResourcesComponent.fromJson(content),
   };
 }
 
@@ -255,4 +257,56 @@ class NexboardComponent extends Component {
 
   @HiveField(1)
   final String description;
+}
+
+@HiveType(typeId: TypeId.resourcesComponent)
+class ResourcesComponent extends Component {
+  ResourcesComponent({
+    @required this.resources,
+  }) : assert(resources != null);
+
+  factory ResourcesComponent.fromJson(Map<String, dynamic> data) {
+    return ResourcesComponent(
+      resources: (data['resources'] as List<dynamic> ?? [])
+          .map((r) => Resource.fromJson(r))
+          .toList(),
+    );
+  }
+
+  @HiveField(0)
+  final List<Resource> resources;
+}
+
+@HiveType(typeId: TypeId.resource)
+class Resource {
+  Resource({
+    @required this.url,
+    @required this.title,
+    this.description,
+    @required this.client,
+  })  : assert(url != null),
+        assert(title != null && title.isNotBlank),
+        assert(description?.isBlank != true),
+        assert(client != null);
+
+  factory Resource.fromJson(Map<String, dynamic> data) {
+    return Resource(
+      url: data['url'],
+      title: (data['title'] as String).blankToNull,
+      description: (data['description'] as String).blankToNull,
+      client: data['client'],
+    );
+  }
+
+  @HiveField(0)
+  final String url;
+
+  @HiveField(1)
+  final String title;
+
+  @HiveField(2)
+  final String description;
+
+  @HiveField(3)
+  final String client;
 }
