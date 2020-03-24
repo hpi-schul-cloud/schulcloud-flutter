@@ -71,15 +71,15 @@ class FileBrowser extends StatelessWidget {
   }
 
   Widget _buildEmbedded(BuildContext context) {
-    return FancyCachedBuilder<List<File>>(
+    return FancyCachedBuilder<List<Id<File>>>(
       controller: ownerId.files(parentId).controller,
-      builder: (context, files, isFetching) {
-        logger.w('Files were updated to $files');
-        if (files?.isEmpty ?? true) {
+      builder: (context, fileIds, isFetching) {
+        logger.w('Files were updated to $fileIds.');
+        if (fileIds?.isEmpty ?? true) {
           return _buildEmptyState(context);
         }
         return FileList(
-          files: files,
+          fileIds,
           primary: false,
           onOpenDirectory: (directory) => _openDirectory(context, directory),
           onDownloadFile: (file) => _downloadFile(context, file),
@@ -140,12 +140,12 @@ class FileBrowser extends StatelessWidget {
         ownerId: ownerId,
         parentId: parentId,
       ),
-      body: FancyCachedBuilder.list<File>(
+      body: FancyCachedBuilder.list<Id<File>>(
         controller: ownerId.files(parentId).controller,
         emptyStateBuilder: (context, _) => _buildEmptyState(context),
-        builder: (context, files, isFetching) {
+        builder: (context, fileIds, isFetching) {
           return FileList(
-            files: files,
+            fileIds,
             onOpenDirectory: (directory) => _openDirectory(context, directory),
             onDownloadFile: (file) => _downloadFile(context, file),
           );
@@ -172,19 +172,19 @@ class FileBrowser extends StatelessWidget {
 }
 
 class FileList extends StatelessWidget {
-  const FileList({
+  const FileList(
+    this.fileIds, {
     Key key,
-    @required this.files,
     @required this.onOpenDirectory,
     @required this.onDownloadFile,
     this.primary = true,
-  })  : assert(files != null),
+  })  : assert(fileIds != null),
         assert(onOpenDirectory != null),
         assert(onDownloadFile != null),
         assert(primary != null),
         super(key: key);
 
-  final List<File> files;
+  final List<Id<File>> fileIds;
   final void Function(File directory) onOpenDirectory;
   final void Function(File file) onDownloadFile;
   final bool primary;
@@ -195,18 +195,19 @@ class FileList extends StatelessWidget {
       primary: primary,
       shrinkWrap: !primary,
       itemBuilder: (context, index) {
-        if (index < files.length) {
-          final file = files[index];
+        if (index < fileIds.length) {
+          final file = fileIds[index];
           return FileTile(
-            file: file,
-            onOpen: file.isDirectory ? onOpenDirectory : onDownloadFile,
+            file,
+            onOpenDirectory: onOpenDirectory,
+            onDownloadFile: onDownloadFile,
           );
-        } else if (index == files.length) {
+        } else if (index == fileIds.length) {
           return Container(
             alignment: Alignment.center,
             padding: EdgeInsets.all(16),
             child: Text(
-              context.s.file_fileBrowser_totalCount(files.length),
+              context.s.file_fileBrowser_totalCount(fileIds.length),
               style: context.textTheme.caption,
             ),
           );

@@ -30,7 +30,7 @@ class _CoursesList extends StatelessWidget {
     return FancyCard(
       title: context.s.file_files_course,
       child: FancyCachedBuilder<List<Course>>.handleLoading(
-        controller: services.storage.root.courses.controller,
+        controller: services.storage.root.courses.populatedController,
         builder: (context, courses, _) {
           return GridView.extent(
             primary: false,

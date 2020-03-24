@@ -18,7 +18,7 @@ class AssignmentDashboardCard extends StatelessWidget {
       footerButtonText: s.assignment_dashboardCard_all,
       onFooterButtonPressed: () => context.navigator.pushNamed('/homework'),
       child: FancyCachedBuilder<List<Assignment>>.handleLoading(
-        controller: services.storage.root.assignments.controller,
+        controller: services.storage.root.assignments.populatedController,
         builder: (context, assignments, isFetching) {
           // Only show open assignments that are due in the next week
           final start = LocalDate.today();

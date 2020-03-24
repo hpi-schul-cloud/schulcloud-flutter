@@ -121,7 +121,21 @@ class LazyIds<E extends Entity<E>> {
 
   final FutureOr<List<E>> Function() fetcher;
 
-  CacheController<List<E>> get controller {
+  CacheController<List<Id<E>>> get controller {
+    return StreamedCacheController<List<Id<E>>>(
+      fetcher: () async {
+        final entities = await fetcher();
+        entities.forEach(HiveCache.put);
+        return entities.map((entity) => entity.id).toList();
+      },
+      loadFromCache: () => HiveCache.getStreamed<IdCollection<E>>(_id)
+          .map((collection) => collection.childrenIds),
+      saveToCache: (ids) =>
+          HiveCache.put(IdCollection<E>(id: _id, childrenIds: ids)),
+    );
+  }
+
+  CacheController<List<E>> get populatedController {
     return StreamedCacheController<List<E>>(
       fetcher: fetcher,
       loadFromCache: () {

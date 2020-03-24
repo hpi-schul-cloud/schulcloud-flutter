@@ -10,7 +10,7 @@ class CoursesScreen extends StatelessWidget {
     return Scaffold(
       body: FancyCachedBuilder.list<Course>(
         appBar: FancyAppBar(title: Text(context.s.course)),
-        controller: services.storage.root.courses.controller,
+        controller: services.storage.root.courses.populatedController,
         emptyStateBuilder: (_, __) => EmptyStateScreen(
           text: context.s.course_coursesScreen_empty,
         ),

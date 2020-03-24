@@ -18,7 +18,7 @@ class NewsDashboardCard extends StatelessWidget {
       footerButtonText: s.news_dashboardCard_all,
       onFooterButtonPressed: () => context.navigator.pushNamed('/news'),
       child: FancyCachedBuilder<List<Article>>.handleLoading(
-        controller: services.storage.root.news.controller,
+        controller: services.storage.root.news.populatedController,
         builder: (context, articles, isFetching) {
           if (articles.isEmpty) {
             return Padding(

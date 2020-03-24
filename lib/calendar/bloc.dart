@@ -18,7 +18,7 @@ class CalendarBloc {
     // And the simple but ingenious answer to that is:
     // 1. Download all events (every time). (≈ 50 kb using the demo account)
     // 2. Implement your own logic to filter them. Have fun 😊
-    return services.storage.root.events.controller.map((events) {
+    return services.storage.root.events.populatedController.map((events) {
       return events
           .map(_getTodaysInstanceOrNull)
           .where((e) => e != null)

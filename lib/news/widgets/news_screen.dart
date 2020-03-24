@@ -11,7 +11,7 @@ class NewsScreen extends StatelessWidget {
     return Scaffold(
       body: FancyCachedBuilder.list<Article>(
         appBar: FancyAppBar(title: Text(context.s.news)),
-        controller: services.storage.root.news.controller,
+        controller: services.storage.root.news.populatedController,
         emptyStateBuilder: (context, __) => EmptyStateScreen(
           text: context.s.news_empty,
         ),

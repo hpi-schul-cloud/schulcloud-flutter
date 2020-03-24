@@ -94,7 +94,7 @@ class _AssignmentsScreenState extends State<AssignmentsScreen> {
             ),
           ],
         ),
-        controller: services.storage.root.assignments.controller,
+        controller: services.storage.root.assignments.populatedController,
         emptyStateBuilder: (_, __) => EmptyStateScreen(
           text: s.assignment_assignmentsScreen_empty,
           actions: <Widget>[

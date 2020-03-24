@@ -6,27 +6,38 @@ import 'file_menu.dart';
 import 'file_thumbnail.dart';
 
 class FileTile extends StatelessWidget {
-  const FileTile({Key key, @required this.file, @required this.onOpen})
-      : assert(file != null),
-        assert(onOpen != null),
+  const FileTile(
+    this.fileId, {
+    Key key,
+    this.onOpenDirectory,
+    this.onDownloadFile,
+  })  : assert(fileId != null),
         super(key: key);
 
-  final File file;
-  final void Function(File file) onOpen;
+  final Id<File> fileId;
+  final void Function(File file) onOpenDirectory;
+  final void Function(File file) onDownloadFile;
+  void Function(File file) onTapHandler(File file) =>
+      file.isDirectory ? onOpenDirectory : onDownloadFile;
 
   @override
   Widget build(BuildContext context) {
-    final subtitle = [
-      if (file.isActualFile) file.sizeAsString,
-      if (file.updatedAt != null) file.updatedAt.shortDateTimeString,
-    ].join(', ');
+    return FancyCachedBuilder<File>.handleLoading(
+      controller: fileId.controller,
+      builder: (context, file, isFetching) {
+        final subtitle = [
+          if (file.isActualFile) file.sizeAsString,
+          if (file.updatedAt != null) file.updatedAt.shortDateTimeString,
+        ].join(', ');
 
-    return ListTile(
-      title: Text(file.name),
-      subtitle: Text(subtitle),
-      leading: FileThumbnail(file: file),
-      onTap: () => onOpen(file),
-      onLongPress: () => FileMenu.show(context, file),
+        return ListTile(
+          title: Text(file.name),
+          subtitle: Text(subtitle),
+          leading: FileThumbnail(file: file),
+          onTap: onTapHandler(file) == null ? null : () => onTapHandler(file),
+          onLongPress: () => FileMenu.show(context, file),
+        );
+      },
     );
   }
 }

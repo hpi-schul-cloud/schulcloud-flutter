@@ -49,7 +49,7 @@ class CourseDetailsScreen extends StatelessWidget {
 
   Widget _buildLessonsSliver(BuildContext context, Course course) {
     return FancyCachedBuilder<List<Lesson>>.handleLoading(
-      controller: course.lessons.controller,
+      controller: course.lessons.populatedController,
       builder: (context, lessons, isFetching) {
         if (lessons.isEmpty) {
           return EmptyStateScreen(

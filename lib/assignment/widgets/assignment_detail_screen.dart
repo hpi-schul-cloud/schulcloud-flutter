@@ -365,20 +365,9 @@ List<Widget> _buildFileSection(
       ),
     ],
     for (final fileId in fileIds)
-      FancyCachedBuilder<File>(
-        controller: fileId.controller,
-        builder: (context, file, _) {
-          if (file == null) {
-            return ListTile(
-              leading: CircularProgressIndicator(),
-            );
-          }
-
-          return FileTile(
-            file: file,
-            onOpen: (file) => services.get<FileBloc>().downloadFile(file),
-          );
-        },
+      FileTile(
+        fileId,
+        onDownloadFile: (file) => services.get<FileBloc>().downloadFile(file),
       ),
   ];
 }
