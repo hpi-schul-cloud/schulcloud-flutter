@@ -273,6 +273,7 @@ class RecurrenceRuleAdapter extends TypeAdapter<RecurrenceRule> {
 }
 
 // Type ids.
+// Used before: 46
 class TypeId {
   static const entity = 71;
   static const id = 40;
@@ -291,10 +292,13 @@ class TypeId {
 
   static const event = 64;
 
-  static const contentType = 46;
-  static const content = 57;
   static const course = 58;
   static const lesson = 59;
+  static const content = 57;
+  static const unsupportedComponent = 73;
+  static const textComponent = 72;
+  static const etherpadComponent = 74;
+  static const nexboardComponent = 75;
 
   static const article = 56;
 
@@ -321,10 +325,13 @@ Future<void> initializeHive() async {
     // Calendar module:
     ..registerAdapter(EventAdapter())
     // Courses module:
-    ..registerAdapter(ContentTypeAdapter())
-    ..registerAdapter(ContentAdapter())
     ..registerAdapter(CourseAdapter())
     ..registerAdapter(LessonAdapter())
+    ..registerAdapter(ContentAdapter())
+    ..registerAdapter(UnsupportedComponentAdapter())
+    ..registerAdapter(TextComponentAdapter())
+    ..registerAdapter(EtherpadComponentAdapter())
+    ..registerAdapter(NexboardComponentAdapter())
     // News module:
     ..registerAdapter(ArticleAdapter())
     // Files module:
