@@ -2,7 +2,6 @@ import 'package:black_hole_flutter/black_hole_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:pedantic/pedantic.dart';
 import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/app/routing.dart';
 
@@ -16,6 +15,13 @@ class SignInForm extends StatefulWidget {
 
 class _SignInFormState extends State<SignInForm> {
   SignInBrowser browser;
+  bool get _isSigningIn =>
+      _isSigningInViaWeb ||
+      _isSigningInAsDemoStudent ||
+      _isSigningInAsDemoTeacher;
+  bool _isSigningInViaWeb = false;
+  bool _isSigningInAsDemoStudent = false;
+  bool _isSigningInAsDemoTeacher = false;
 
   @override
   void initState() {
@@ -23,70 +29,87 @@ class _SignInFormState extends State<SignInForm> {
     super.initState();
   }
 
-  void _pushSignedInPage() {
-    unawaited(context.rootNavigator
-        .pushReplacementNamed(appSchemeLink('signedInScreen')));
-  }
-
-  Future<void> _executeSignIn(Future<void> Function() signIn) async {
-    await signIn();
-    _pushSignedInPage();
-  }
-
-  Future<void> _signInAsDemoStudent() =>
-      _executeSignIn(() => services.get<SignInBloc>().signInAsDemoStudent());
-
-  Future<void> _signInAsDemoTeacher() =>
-      _executeSignIn(() => services.get<SignInBloc>().signInAsDemoTeacher());
-
   @override
   Widget build(BuildContext context) {
-    final s = context.s;
-
     return Container(
       alignment: Alignment.center,
-      padding: EdgeInsets.symmetric(horizontal: 16),
-      width: 400,
-      child: Column(
-        children: [
-          SizedBox(height: 128),
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 32),
-            child: SvgPicture.asset(
+      padding: EdgeInsets.symmetric(horizontal: 32),
+      child: ConstrainedBox(
+        constraints: BoxConstraints(maxWidth: 384),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            SvgPicture.asset(
               services.config.assetName(context, 'logo/logo_with_text.svg'),
-              height: 64,
+              height: 128,
               alignment: Alignment.bottomCenter,
             ),
-          ),
-          SizedBox(height: 32),
-          PrimaryButton(
-            onPressed: () => browser.open(
-              url: services.config.webUrl('login'),
-              options: InAppBrowserClassOptions(
-                inAppBrowserOptions: InAppBrowserOptions(
-                  toolbarTop: false,
-                ),
+            SizedBox(height: 64),
+            SizedBox(
+              height: 48,
+              child: PrimaryButton(
+                isEnabled: !_isSigningIn,
+                isLoading: _isSigningInViaWeb,
+                onPressed: () async {
+                  setState(() => _isSigningInViaWeb = true);
+                  await browser.open(
+                    url: services.config.webUrl('login'),
+                    options: InAppBrowserClassOptions(
+                      inAppBrowserOptions:
+                          InAppBrowserOptions(toolbarTop: false),
+                    ),
+                  );
+                  setState(() => _isSigningInViaWeb = false);
+                },
+                child: Text(context.s.signIn_form_signIn),
               ),
             ),
-            child: Text(s.signIn_form_signIn),
-          ),
-          SizedBox(height: 32),
-          Wrap(
-            children: <Widget>[
-              SecondaryButton(
-                onPressed: _signInAsDemoStudent,
-                child: Text(s.signIn_form_demo_student),
-              ),
-              SizedBox(width: 8),
-              SecondaryButton(
-                key: ValueKey('signIn-demoTeacher'),
-                onPressed: _signInAsDemoTeacher,
-                child: Text(s.signIn_form_demo_teacher),
-              ),
-            ],
-          ),
-        ],
+            SizedBox(height: 12),
+            _buildDemoButtons(context),
+          ],
+        ),
       ),
     );
   }
+
+  Widget _buildDemoButtons(BuildContext context) {
+    final s = context.s;
+
+    return Row(
+      children: <Widget>[
+        Expanded(
+          child: SecondaryButton(
+            isEnabled: !_isSigningIn,
+            isLoading: _isSigningInAsDemoStudent,
+            onPressed: () async {
+              setState(() => _isSigningInAsDemoStudent = true);
+              await services.get<SignInBloc>().signInAsDemoStudent();
+              _pushSignedInPage();
+              setState(() => _isSigningInAsDemoStudent = false);
+            },
+            child: Text(s.signIn_form_demo_student),
+          ),
+        ),
+        SizedBox(width: 16),
+        Expanded(
+          child: SecondaryButton(
+            key: ValueKey('signIn-demoTeacher'),
+            isEnabled: !_isSigningIn,
+            isLoading: _isSigningInAsDemoTeacher,
+            onPressed: () async {
+              setState(() => _isSigningInAsDemoTeacher = true);
+              await services.get<SignInBloc>().signInAsDemoTeacher();
+              _pushSignedInPage();
+              setState(() => _isSigningInAsDemoTeacher = false);
+            },
+            child: Text(s.signIn_form_demo_teacher),
+          ),
+        ),
+      ],
+    );
+  }
+
+  void _pushSignedInPage() => context.rootNavigator
+      .pushReplacementNamed(appSchemeLink('signedInScreen'));
 }
