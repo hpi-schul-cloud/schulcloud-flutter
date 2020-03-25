@@ -119,6 +119,20 @@ class NetworkService {
   Future<http.Response> delete(String url, {Map<String, String> headers}) =>
       _send('DELETE', url, headers: headers);
 
+  /// Makes an HTTP HEAD request.
+  Future<http.Response> head(
+    String url, {
+    Map<String, String> headers,
+    bool followRedirects = true,
+  }) {
+    return _send(
+      'HEAD',
+      url,
+      headers: headers,
+      followRedirects: followRedirects,
+    );
+  }
+
   /// Calls the given [url] and turns various status codes and socket
   /// exceptions into custom error types like [AuthenticationError] or
   /// [NoConnectionToServerError].

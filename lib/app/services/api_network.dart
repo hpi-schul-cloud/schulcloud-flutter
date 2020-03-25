@@ -62,6 +62,15 @@ class ApiNetworkService {
   Future<http.Response> delete(String path) {
     return _network.delete(_url(path), headers: _getHeaders());
   }
+
+  /// Makes an HTTP HEAD request to the api.
+  Future<http.Response> head(String path, {bool followRedirects = true}) {
+    return _network.head(
+      _url(path),
+      headers: _getHeaders(),
+      followRedirects: followRedirects,
+    );
+  }
 }
 
 extension ApiNetworkServiceGetIt on GetIt {
