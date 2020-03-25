@@ -81,9 +81,7 @@ class TooManyRequestsError extends ServerError {
 /// A service that offers making network request to arbitrary servers.
 @immutable
 class NetworkService {
-  NetworkService();
-
-  final _client = http.Client();
+  const NetworkService();
 
   /// Makes an HTTP GET request.
   Future<http.Response> get(
@@ -220,8 +218,13 @@ class NetworkService {
       request.body = json.encode(body);
     }
 
-    final streamedResponse = await _client.send(request);
-    return http.Response.fromStream(streamedResponse);
+    final client = http.Client();
+    final streamedResponse = await client.send(request);
+    try {
+      return await http.Response.fromStream(streamedResponse);
+    } finally {
+      client.close();
+    }
   }
 }
 
