@@ -6,6 +6,7 @@ import 'package:dartx/dartx.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_html/style.dart';
+import 'package:html/parser.dart' as html_parser;
 import 'package:schulcloud/app/app.dart';
 
 import '../utils.dart';
@@ -199,8 +200,24 @@ class _FancyTextState extends State<FancyText> {
     assert(widget.textType == TextType.html,
         'Unknown TextType: ${widget.textType}.');
     final theme = context.theme;
+
+    final html = html_parser.parse(widget.data);
+    // Flutter's [Table] and also `html_flutter` don't support colspans. Without
+    // our help, rows using colspan would have less cells, but [Table] requires
+    // all rows to have the same number of cells. Hence we add empty cells to
+    // compensate.
+    for (final cell in html.querySelectorAll('td[colspan]')) {
+      final row = cell.parent;
+      assert(row.localName == 'tr');
+
+      final colspan = cell.attributes['colspan'].toInt();
+      for (var i = 1; i < colspan; i++) {
+        row.insertBefore(html.createElement('td'), cell.nextElementSibling);
+      }
+    }
+
     return Html(
-      data: widget.data,
+      data: html.outerHtml,
       onLinkTap: tryLaunchingUrl,
       style: {
         'a': Style(
