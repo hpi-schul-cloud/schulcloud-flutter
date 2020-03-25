@@ -242,25 +242,29 @@ class _FancyTextState extends State<FancyText> {
         // have to add our token.
         'img': (context, _, attributes, __) {
           final src = attributes['src'];
+          bool isInternal = true;
           if (src == null || src.isBlank) {
-            return null;
+            isInternal = false;
           }
 
           final parsed = Uri.tryParse(src);
           if (parsed == null ||
               (parsed.isAbsolute && parsed.host != services.config.host)) {
-            return null;
+            isInternal = false;
           }
 
-          final resolved =
-              Uri.parse(services.config.baseWebUrl).resolveUri(parsed);
           return Image.network(
-            resolved.toString(),
-            headers: {'Cookie': 'jwt=${services.storage.token.getValue()}'},
+            Uri.parse(services.config.baseWebUrl).resolveUri(parsed).toString(),
+            headers: {
+              if (isInternal)
+                'Cookie': 'jwt=${services.storage.token.getValue()}',
+            },
             frameBuilder: (_, child, frame, __) {
               if (frame == null) {
-                return Text(attributes['alt'] ?? '',
-                    style: context.style.generateTextStyle());
+                return Text(
+                  attributes['alt'] ?? '',
+                  style: context.style.generateTextStyle(),
+                );
               }
               return child;
             },
