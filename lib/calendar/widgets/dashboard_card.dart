@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import 'package:black_hole_flutter/black_hole_flutter.dart';
+import 'package:dartx/dartx.dart';
 import 'package:flutter/material.dart';
 import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/dashboard/widgets/dashboard_card.dart';
@@ -7,7 +10,20 @@ import 'package:time_machine/time_machine.dart';
 import '../bloc.dart';
 import '../data.dart';
 
-class CalendarDashboardCard extends StatelessWidget {
+class CalendarDashboardCard extends StatefulWidget {
+  @override
+  _CalendarDashboardCardState createState() => _CalendarDashboardCardState();
+}
+
+class _CalendarDashboardCardState extends State<CalendarDashboardCard> {
+  StreamSubscription _subscription;
+
+  @override
+  void dispose() {
+    _subscription?.cancel();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     final s = context.s;
@@ -22,15 +38,29 @@ class CalendarDashboardCard extends StatelessWidget {
         builder: (context, events, isFetching) {
           final now = Instant.now();
           events = events.where((e) => e.end > now).toList();
+          _subscription?.cancel();
+
           if (events.isEmpty) {
-            return Text(
-              s.calendar_dashboardCard_empty,
-              textAlign: TextAlign.center,
+            return Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16),
+              child: Center(
+                child: FancyText(
+                  s.calendar_dashboardCard_empty,
+                  emphasis: TextEmphasis.medium,
+                  textAlign: TextAlign.center,
+                ),
+              ),
             );
           }
 
+          // Update this widget when the current event is over.
+          final nextEnd = events.map((e) => e.end).min();
+          _subscription =
+              Future.delayed(Instant.now().timeUntil(nextEnd).toDuration)
+                  .asStream()
+                  .listen((_) => setState(() {}));
           return Column(
-            children: events.map((e) => _EventPreview(event: e)).toList(),
+            children: events.map((e) => _EventPreview(e)).toList(),
           );
         },
       ),
@@ -39,9 +69,7 @@ class CalendarDashboardCard extends StatelessWidget {
 }
 
 class _EventPreview extends StatelessWidget {
-  const _EventPreview({Key key, @required this.event})
-      : assert(event != null),
-        super(key: key);
+  const _EventPreview(this.event) : assert(event != null);
 
   final Event event;
 
@@ -51,7 +79,7 @@ class _EventPreview extends StatelessWidget {
     final textTheme = context.textTheme;
     final hasStarted = event.start <= now;
 
-    Widget widget = ListTile(
+    return ListTile(
       title: Text(
         event.title,
         style: hasStarted ? textTheme.headline : textTheme.subhead,
@@ -68,23 +96,5 @@ class _EventPreview extends StatelessWidget {
         ),
       ),
     );
-
-    final durationMicros = event.duration.inMicroseconds;
-    if (hasStarted && durationMicros != 0) {
-      widget = Column(
-        children: <Widget>[
-          widget,
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: LinearProgressIndicator(
-              value: now.timeSince(event.start).inMicroseconds / durationMicros,
-              valueColor: AlwaysStoppedAnimation(context.theme.primaryColor),
-              backgroundColor: context.theme.primaryColor.withOpacity(0.12),
-            ),
-          )
-        ],
-      );
-    }
-    return widget;
   }
 }
