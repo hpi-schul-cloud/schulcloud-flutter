@@ -2,7 +2,6 @@ import 'package:black_hole_flutter/black_hole_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cached/flutter_cached.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:schulcloud/settings/settings.dart';
 import 'package:schulcloud/sign_in/sign_in.dart';
 
 import '../app_config.dart';
@@ -72,11 +71,7 @@ class AccountDialog extends StatelessWidget {
         ListTile(
           leading: Icon(Icons.settings),
           title: Text(s.settings),
-          onTap: () {
-            context.navigator.pushReplacement(MaterialPageRoute(
-              builder: (_) => SettingsScreen(),
-            ));
-          },
+          onTap: () => context.navigator.pushNamed('/settings'),
         ),
         ListTile(
           leading: SvgPicture.asset(

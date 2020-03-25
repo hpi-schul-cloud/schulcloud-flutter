@@ -39,16 +39,12 @@ class SignInBloc {
       body: SignInRequest(email: email, password: password).toJson(),
     );
 
-    final storage = services.get<StorageService>();
-    await storage.email.setValue(email);
-
     final response = SignInResponse.fromJson(json.decode(rawResponse.body));
     await services.storage.setUserInfo(
-      email: email,
       userId: response.userId,
       token: response.accessToken,
     );
-    logger.i('Logged in with userId ${response.userId}!');
+    logger.i('Signed in with userId ${response.userId}!');
   }
 
   Future<void> signInAsDemoStudent() =>

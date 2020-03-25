@@ -1,3 +1,4 @@
+import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:get_it/get_it.dart';
 import 'package:meta/meta.dart';
 import 'package:streaming_shared_preferences/streaming_shared_preferences.dart';
@@ -10,7 +11,6 @@ class StorageService {
   StorageService._({
     StreamingSharedPreferences prefs,
     @required this.userIdString,
-    @required this.email,
     @required this.token,
     @required this.root,
   }) : _prefs = prefs;
@@ -18,14 +18,12 @@ class StorageService {
   static Future<StorageService> create() async {
     StreamingSharedPreferences prefs;
     Preference<String> userIdString;
-    Preference<String> email;
     Preference<String> token;
 
     await Future.wait([
       () async {
         prefs = await StreamingSharedPreferences.instance;
         userIdString = prefs.getString('userId', defaultValue: '');
-        email = prefs.getString('email', defaultValue: '');
         token = prefs.getString('token', defaultValue: '');
       }(),
     ]);
@@ -35,7 +33,6 @@ class StorageService {
     return StorageService._(
       prefs: prefs,
       userIdString: userIdString,
-      email: email,
       token: token,
       root: root,
     );
@@ -46,24 +43,28 @@ class StorageService {
   final Preference<String> userIdString;
   Id<User> get userId => Id<User>(userIdString.getValue());
 
-  final Preference<String> email;
-  bool get hasEmail => email.getValue().isNotEmpty;
-
   final Preference<String> token;
   bool get hasToken => token.getValue().isNotEmpty;
+  bool get isSignedIn => hasToken;
+  bool get isSignedOut => !isSignedIn;
 
   final Root root;
 
   Future<void> setUserInfo({
-    @required String email,
     @required String userId,
     @required String token,
-  }) {
-    return Future.wait([
-      this.email.setValue(email),
+  }) async {
+    await Future.wait([
       userIdString.setValue(userId),
       this.token.setValue(token),
     ]);
+
+    // Required by [LessonScreen]
+    await CookieManager().setCookie(
+      url: services.config.baseWebUrl,
+      name: 'jwt',
+      value: token,
+    );
   }
 
   // TODO(marcelgarus): clear the HiveCache

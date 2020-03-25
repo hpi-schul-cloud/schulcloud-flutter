@@ -18,7 +18,6 @@ export 'widgets/empty_state.dart';
 export 'widgets/error_widgets.dart';
 export 'widgets/fade_in.dart';
 export 'widgets/form.dart';
-export 'widgets/navigation_item.dart';
 export 'widgets/page_route.dart' show TopLevelPageRoute;
 export 'widgets/scaffold.dart';
 export 'widgets/schulcloud_app.dart' show SchulCloudApp, SignedInScreen;

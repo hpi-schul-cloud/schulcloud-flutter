@@ -15,7 +15,7 @@ class ApiNetworkService {
 
   String _url(String path) {
     assert(path != null);
-    return '${services.get<AppConfig>().baseApiUrl}/$path';
+    return '${services.config.baseApiUrl}/$path';
   }
 
   NetworkService get _network => services.network;

@@ -4,23 +4,16 @@ import 'package:flutter_cached/flutter_cached.dart';
 import 'package:schulcloud/app/app.dart';
 
 import '../data.dart';
-import 'course_detail_screen.dart';
 
 class CourseCard extends StatelessWidget {
   const CourseCard(this.course) : assert(course != null);
 
   final Course course;
 
-  void _openDetailsScreen(BuildContext context) {
-    context.navigator.push(MaterialPageRoute(
-      builder: (context) => CourseDetailsScreen(course: course),
-    ));
-  }
-
   @override
   Widget build(BuildContext context) {
     return FancyCard(
-      onTap: () => _openDetailsScreen(context),
+      onTap: () => context.navigator.pushNamed('/courses/${course.id}'),
       color: course.color.withOpacity(0.12),
       child: Row(
         children: <Widget>[

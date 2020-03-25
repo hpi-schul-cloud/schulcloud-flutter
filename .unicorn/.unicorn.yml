@@ -1,0 +1,86 @@
+unicornVersion: "0.1.0"
+name: "schulcloud"
+description: "A Flutter–based mobile app for the HPI Schul–Cloud."
+license: null
+version: "0.3.5"
+categorization:
+  component:
+    values:
+      - name: "app"
+        description: "app module"
+        paths:
+          - "lib/app/**"
+      - name: "assignment"
+        description: "assignment module"
+        paths:
+          - "lib/assignment/**"
+      - name: "calendar"
+        description: "calendar module"
+        paths:
+          - "lib/calendar/**"
+      - name: "course"
+        description: "course module"
+        paths:
+          - "lib/course/**"
+      - name: "dashboard"
+        description: "dashboard module"
+        paths:
+          - "lib/dashboard/**"
+      - name: "file"
+        description: "file module"
+        paths:
+          - "lib/file/**"
+      - name: "l10n"
+        description: "localization module"
+        paths:
+          - "lib/l10n/**"
+      - name: "signIn"
+        description: "signIn module"
+        paths:
+          - "lib/login/**"
+      - name: "news"
+        description: "news module"
+        paths:
+          - "lib/news/**"
+      - name: "settings"
+        description: "settings module"
+        paths:
+          - "lib/settings/**"
+    labels:
+      color: "c2e0c6"
+      prefix: "C: "
+      descriptionPrefix: "Component: "
+  priority:
+    values:
+      - name: "1"
+        description: "1 (Lowest)"
+      - name: "2"
+        description: "2 (Low)"
+      - name: "3"
+        description: "3 (Medium)"
+      - name: "4"
+        description: "4 (High)"
+      - name: "5"
+        description: "5 (Highest)"
+    labels:
+      color: "e5b5ff"
+      prefix: "P: "
+      descriptionPrefix: "Priority: "
+  type:
+    values:
+      - name: "feat"
+        description: ":tada: New Features"
+      - name: "change"
+        description: "⚡ Changes"
+      - name: "fix"
+        description: ":bug: Bug Fixes"
+      - name: "docs"
+        description: ":scroll: Documentation updates"
+      - name: "refactor"
+        description: ":building_construction: Refactoring"
+      - name: "build"
+        description: ":package: Build, CI & other meta changes"
+    labels:
+      color: "c5def5"
+      prefix: "T: "
+      descriptionPrefix: "Type: "

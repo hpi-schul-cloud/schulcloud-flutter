@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:schulcloud/app/app.dart';
 
-import '../bloc.dart';
 import '../data.dart';
+import '../service.dart';
 import 'file_menu.dart';
 import 'file_thumbnail.dart';
 

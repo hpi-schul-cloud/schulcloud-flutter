@@ -1,13 +1,17 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_native_timezone/flutter_native_timezone.dart';
+import 'package:logger/logger.dart';
 import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/calendar/calendar.dart';
 import 'package:schulcloud/file/file.dart';
 import 'package:schulcloud/sign_in/sign_in.dart';
 import 'package:time_machine/time_machine.dart';
 
+import 'app/services/deep_linking.dart';
 import 'settings/settings.dart';
 
 const _schulCloudRed = MaterialColor(0xffb10438, {
@@ -49,7 +53,7 @@ const _schulCloudYellow = MaterialColor(0xffe2661d, {
 
 const schulCloudAppConfig = AppConfig(
   name: 'sc',
-  domain: 'schul-cloud.org',
+  host: 'schul-cloud.org',
   title: 'Schul-Cloud',
   primaryColor: _schulCloudRed,
   secondaryColor: _schulCloudOrange,
@@ -57,8 +61,13 @@ const schulCloudAppConfig = AppConfig(
 );
 
 Future<void> main({AppConfig appConfig = schulCloudAppConfig}) async {
+  Logger.level = Level.debug;
+  logger
+    ..i('Starting…')
+    ..d('Initializing hive…');
   await initializeHive();
 
+  logger.d('Initializing services…');
   services
     ..registerSingletonAsync((_) async {
       // We need to initialize TimeMachine before launching the app, and using
@@ -78,14 +87,17 @@ Future<void> main({AppConfig appConfig = schulCloudAppConfig}) async {
     ..registerSingleton(SnackBarService())
     ..registerSingleton(NetworkService())
     ..registerSingleton(ApiNetworkService())
+    ..registerSingletonAsync((_) => DeepLinkingService.create())
     ..registerSingleton(CalendarBloc())
-    ..registerSingletonAsync((_) => FileBloc.create())
+    ..registerSingletonAsync((_) => FileService.create())
     ..registerSingleton(SignInBloc());
 
+  logger.d('Adding custom licenses to registry…');
   LicenseRegistry.addLicense(() async* {
     yield EmptyStateLicense();
   });
 
+  logger.d('Running…');
   runApp(
     FutureBuilder<void>(
       future: services.allReady(),

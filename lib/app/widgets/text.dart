@@ -2,8 +2,10 @@ import 'dart:math';
 import 'dart:ui';
 
 import 'package:black_hole_flutter/black_hole_flutter.dart';
+import 'package:dartx/dartx.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:flutter_html/style.dart';
 import 'package:schulcloud/app/app.dart';
 
 import '../utils.dart';
@@ -112,8 +114,9 @@ class _FancyTextState extends State<FancyText> {
     if (widget.data == null) {
       child = _buildLoading(context, style);
     } else {
-      child =
-          widget.showRichText ? _buildRichText(style) : _buildPlainText(style);
+      child = widget.showRichText
+          ? _buildRichText(context, style)
+          : _buildPlainText(style);
     }
 
     return AnimatedSwitcher(
@@ -185,7 +188,7 @@ class _FancyTextState extends State<FancyText> {
     );
   }
 
-  Widget _buildRichText(TextStyle style) {
+  Widget _buildRichText(BuildContext context, TextStyle style) {
     if (widget.textType == TextType.plain) {
       return Text(
         widget.data,
@@ -195,10 +198,58 @@ class _FancyTextState extends State<FancyText> {
 
     assert(widget.textType == TextType.html,
         'Unknown TextType: ${widget.textType}.');
+    final theme = context.theme;
     return Html(
       data: widget.data,
-      defaultTextStyle: style,
       onLinkTap: tryLaunchingUrl,
+      style: {
+        'a': Style(
+          color: theme.primaryColor,
+          textDecoration: TextDecoration.none,
+        ),
+        'code': Style(
+          backgroundColor: theme.contrastColor.withOpacity(0.05),
+          color: theme.primaryColor,
+        ),
+        // Reset style so we can render our custom hr.
+        'hr': Style(
+          // TODO(JonasWanke): Check rendering when margin is merged into existing styles.
+          margin: EdgeInsets.all(0),
+          border: Border.fromBorderSide(BorderSide.none),
+        ),
+        's': Style(textDecoration: TextDecoration.lineThrough),
+      },
+      customRender: {
+        'hr': (_, __, ___, ____) => Divider(),
+        // If the src-attribute point to an internal asset (/files/file...) we
+        // have to add our token.
+        'img': (context, _, attributes, __) {
+          final src = attributes['src'];
+          if (src == null || src.isBlank) {
+            return null;
+          }
+
+          final parsed = Uri.tryParse(src);
+          if (parsed == null ||
+              (parsed.isAbsolute && parsed.host != services.config.host)) {
+            return null;
+          }
+
+          final resolved =
+              Uri.parse(services.config.baseWebUrl).resolveUri(parsed);
+          return Image.network(
+            resolved.toString(),
+            headers: {'Cookie': 'jwt=${services.storage.token.getValue()}'},
+            frameBuilder: (_, child, frame, __) {
+              if (frame == null) {
+                return Text(attributes['alt'] ?? '',
+                    style: context.style.generateTextStyle());
+              }
+              return child;
+            },
+          );
+        },
+      },
     );
   }
 }

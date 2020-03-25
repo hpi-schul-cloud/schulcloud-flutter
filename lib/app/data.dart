@@ -6,7 +6,6 @@ import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/assignment/assignment.dart';
 import 'package:schulcloud/calendar/calendar.dart';
 import 'package:schulcloud/course/course.dart';
-import 'package:schulcloud/file/file.dart';
 import 'package:schulcloud/news/news.dart';
 
 part 'data.g.dart';
@@ -33,11 +32,7 @@ class User implements Entity<User> {
         assert(avatarInitials != null),
         assert(avatarBackgroundColor != null),
         assert(permissions != null),
-        assert(roleIds != null),
-        files = LazyIds<File>(
-          collectionId: 'files of $id',
-          fetcher: () => File.fetchList(id),
-        );
+        assert(roleIds != null);
 
   User.fromJson(Map<String, dynamic> data)
       : this(
@@ -98,8 +93,6 @@ class User implements Entity<User> {
     }[name];
     return id != null && roleIds.contains(Id<Role>(id));
   }
-
-  final LazyIds<File> files;
 }
 
 class Root implements Entity<Root> {

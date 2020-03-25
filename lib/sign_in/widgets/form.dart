@@ -1,12 +1,12 @@
 import 'package:black_hole_flutter/black_hole_flutter.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:pedantic/pedantic.dart';
 import 'package:schulcloud/app/app.dart';
+import 'package:schulcloud/app/routing.dart';
 
 import '../bloc.dart';
-import 'input.dart';
-import 'morphing_loading_button.dart';
+import 'sign_in_browser.dart';
 
 class SignInForm extends StatefulWidget {
   @override
@@ -14,123 +14,102 @@ class SignInForm extends StatefulWidget {
 }
 
 class _SignInFormState extends State<SignInForm> {
-  final _emailController = TextEditingController();
-  final _passwordController = TextEditingController();
-  bool _isEmailValid = true;
-  bool _isPasswordValid = true;
+  SignInBrowser browser;
+  bool get _isSigningIn =>
+      _isSigningInViaWeb ||
+      _isSigningInAsDemoStudent ||
+      _isSigningInAsDemoTeacher;
+  bool _isSigningInViaWeb = false;
+  bool _isSigningInAsDemoStudent = false;
+  bool _isSigningInAsDemoTeacher = false;
 
-  bool _isLoading = false;
-  String _ambientError;
-
-  Future<void> _executeSignIn(Future<void> Function() signIn) async {
-    setState(() => _isLoading = true);
-
-    try {
-      await signIn();
-      setState(() => _ambientError = null);
-
-      // Logged in.
-      unawaited(context.navigator.pushReplacement(TopLevelPageRoute(
-        builder: (_) => SignedInScreen(),
-      )));
-    } on InvalidSignInSyntaxError catch (e) {
-      // We will display syntax errors on the text fields themselves.
-      _ambientError = null;
-      _isEmailValid = e.isEmailValid;
-      _isPasswordValid = e.isPasswordValid;
-    } on NoConnectionToServerError {
-      _ambientError = context.s.signIn_form_errorNoConnection;
-    } on AuthenticationError {
-      _ambientError = context.s.signIn_form_errorAuth;
-    } on TooManyRequestsError catch (error) {
-      _ambientError = context.s.signIn_form_errorRateLimit(error.timeToWait);
-    } finally {
-      setState(() => _isLoading = false);
-    }
+  @override
+  void initState() {
+    browser = SignInBrowser(signedInCallback: _pushSignedInPage);
+    super.initState();
   }
-
-  Future<void> _signIn() async {
-    await _executeSignIn(
-      () => services
-          .get<SignInBloc>()
-          .signIn(_emailController.text, _passwordController.text),
-    );
-  }
-
-  Future<void> _signInAsDemoStudent() =>
-      _executeSignIn(() => services.get<SignInBloc>().signInAsDemoStudent());
-
-  Future<void> _signInAsDemoTeacher() =>
-      _executeSignIn(() => services.get<SignInBloc>().signInAsDemoTeacher());
 
   @override
   Widget build(BuildContext context) {
-    final s = context.s;
-
     return Container(
       alignment: Alignment.center,
-      padding: EdgeInsets.symmetric(horizontal: 16),
-      width: 400,
-      child: Column(
-        children: [
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 32),
-            child: SvgPicture.asset(
-              services
-                  .get<AppConfig>()
-                  .assetName(context, 'logo/logo_with_text.svg'),
-              height: 64,
+      padding: EdgeInsets.symmetric(horizontal: 32),
+      child: ConstrainedBox(
+        constraints: BoxConstraints(maxWidth: 384),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            SvgPicture.asset(
+              services.config.assetName(context, 'logo/logo_with_text.svg'),
+              height: 128,
               alignment: Alignment.bottomCenter,
             ),
-          ),
-          SizedBox(height: 16),
-          SignInInput(
-            controller: _emailController,
-            label: s.signIn_form_email,
-            error: _isEmailValid ? null : s.signIn_form_email_error,
-            onChanged: () => setState(() {}),
-          ),
-          SizedBox(height: 16),
-          SignInInput(
-            controller: _passwordController,
-            label: s.signIn_form_password,
-            obscureText: true,
-            error: _isPasswordValid ? null : s.signIn_form_password_error,
-            onChanged: () => setState(() {}),
-          ),
-          SizedBox(height: 16),
-          MorphingLoadingButton(
-            onPressed: _signIn,
-            isLoading: _isLoading,
-            child: Padding(
-              padding: EdgeInsets.all(12),
-              child: Text(
-                _isLoading ? s.general_loading : s.signIn_form_signIn,
-                style: TextStyle(fontSize: 20),
+            SizedBox(height: 64),
+            SizedBox(
+              height: 48,
+              child: PrimaryButton(
+                isEnabled: !_isSigningIn,
+                isLoading: _isSigningInViaWeb,
+                onPressed: () async {
+                  setState(() => _isSigningInViaWeb = true);
+                  await browser.open(
+                    url: services.config.webUrl('login'),
+                    options: InAppBrowserClassOptions(
+                      inAppBrowserOptions:
+                          InAppBrowserOptions(toolbarTop: false),
+                    ),
+                  );
+                  setState(() => _isSigningInViaWeb = false);
+                },
+                child: Text(context.s.signIn_form_signIn),
               ),
             ),
-          ),
-          SizedBox(height: 8),
-          if (_ambientError != null) Text(_ambientError),
-          Divider(),
-          SizedBox(height: 8),
-          Text(s.signIn_form_demo),
-          SizedBox(height: 8),
-          Wrap(
-            children: <Widget>[
-              SecondaryButton(
-                onPressed: _signInAsDemoStudent,
-                child: Text(s.signIn_form_demo_student),
-              ),
-              SizedBox(width: 8),
-              SecondaryButton(
-                onPressed: _signInAsDemoTeacher,
-                child: Text(s.signIn_form_demo_teacher),
-              ),
-            ],
-          ),
-        ],
+            SizedBox(height: 12),
+            _buildDemoButtons(context),
+          ],
+        ),
       ),
     );
   }
+
+  Widget _buildDemoButtons(BuildContext context) {
+    final s = context.s;
+
+    return Row(
+      children: <Widget>[
+        Expanded(
+          child: SecondaryButton(
+            isEnabled: !_isSigningIn,
+            isLoading: _isSigningInAsDemoStudent,
+            onPressed: () async {
+              setState(() => _isSigningInAsDemoStudent = true);
+              await services.get<SignInBloc>().signInAsDemoStudent();
+              _pushSignedInPage();
+              setState(() => _isSigningInAsDemoStudent = false);
+            },
+            child: Text(s.signIn_form_demo_student),
+          ),
+        ),
+        SizedBox(width: 16),
+        Expanded(
+          child: SecondaryButton(
+            key: ValueKey('signIn-demoTeacher'),
+            isEnabled: !_isSigningIn,
+            isLoading: _isSigningInAsDemoTeacher,
+            onPressed: () async {
+              setState(() => _isSigningInAsDemoTeacher = true);
+              await services.get<SignInBloc>().signInAsDemoTeacher();
+              _pushSignedInPage();
+              setState(() => _isSigningInAsDemoTeacher = false);
+            },
+            child: Text(s.signIn_form_demo_teacher),
+          ),
+        ),
+      ],
+    );
+  }
+
+  void _pushSignedInPage() => context.rootNavigator
+      .pushReplacementNamed(appSchemeLink('signedInScreen'));
 }

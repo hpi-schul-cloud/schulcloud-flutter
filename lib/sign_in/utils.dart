@@ -3,10 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:pedantic/pedantic.dart';
 import 'package:schulcloud/app/app.dart';
 
-import 'widgets/sign_in_screen.dart';
-
 Future<bool> signOut(BuildContext context) async {
   logger.i('Signing out…');
+  if (services.storage.isSignedOut) {
+    logger.i('Already signed out');
+    return true;
+  }
 
   final s = context.s;
   final confirmed = await showDialog(
@@ -29,19 +31,10 @@ Future<bool> signOut(BuildContext context) async {
     },
   );
 
-  if (confirmed) {
-    // Actually log out.
-
-    // This should probably be awaited, but right now awaiting it
-    // leads to the issue that logging out becomes impossible.
-    unawaited(services.storage.clear());
-
-    final navigator = context.rootNavigator..popUntil((route) => route.isFirst);
-    unawaited(navigator.pushReplacement(TopLevelPageRoute(
-      builder: (_) => SignInScreen(),
-    )));
+  if (confirmed == true) {
+    // There may be multiple routes in the back stack, e.g. when signing out
+    // from inside the [AccountDialog].
+    unawaited(context.rootNavigator.pushNamedAndRemoveAll('/logout'));
   }
-
-  logger.i('Signed out!');
-  return confirmed;
+  return confirmed ?? false;
 }

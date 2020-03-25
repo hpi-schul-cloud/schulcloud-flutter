@@ -1,6 +1,5 @@
 import 'package:black_hole_flutter/black_hole_flutter.dart';
 import 'package:flutter/material.dart';
-import 'package:logger_flutter/logger_flutter.dart';
 import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/settings/settings.dart';
 
@@ -10,15 +9,13 @@ import 'slanted_section.dart';
 class SignInScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return LogConsoleOnShake(
-      child: Scaffold(
-        body: CustomScrollView(
-          slivers: <Widget>[
-            SliverList(
-              delegate: SliverChildListDelegate(_buildContent(context)),
-            ),
-          ],
-        ),
+    return Scaffold(
+      body: CustomScrollView(
+        slivers: <Widget>[
+          SliverList(
+            delegate: SliverChildListDelegate(_buildContent(context)),
+          ),
+        ],
       ),
     );
   }
@@ -59,11 +56,6 @@ class SignInScreen extends StatelessWidget {
             textAlign: TextAlign.justify,
           ),
         ),
-      ),
-      Container(
-        padding: EdgeInsets.all(16),
-        alignment: Alignment.center,
-        child: Text(s.signIn_signInScreen_placeholder),
       ),
       LegalBar(),
     ];

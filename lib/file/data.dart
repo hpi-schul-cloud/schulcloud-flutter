@@ -2,7 +2,6 @@ import 'dart:io' as io;
 
 import 'package:hive/hive.dart';
 import 'package:meta/meta.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/course/course.dart';
 import 'package:time_machine/time_machine.dart';
@@ -14,28 +13,56 @@ String _extension(String fileName) {
   return lastDot == null ? null : fileName.substring(lastDot + 1);
 }
 
+const _defaultFile = Id<File>('invalid');
+
+@HiveType(typeId: TypeId.filePath)
+@immutable
+class FilePath {
+  const FilePath(this.ownerId, [this.parentId])
+      : assert(ownerId != null),
+        assert(ownerId is Id<User> || ownerId is Id<Course>);
+
+  @HiveField(0)
+  final Id<dynamic> ownerId;
+
+  @HiveField(1)
+  final Id<File> parentId;
+
+  LazyIds<File> get files => LazyIds<File>(
+        collectionId: 'files of $ownerId in directory $parentId',
+        fetcher: () => File.fetchList(this),
+      );
+
+  FilePath copyWith({Id<dynamic> ownerId, Id<File> parentId = _defaultFile}) {
+    return FilePath(
+      ownerId ?? this.ownerId,
+      parentId == _defaultFile ? this.parentId : parentId,
+    );
+  }
+
+  @override
+  String toString() => '$ownerId/${parentId ?? 'root'}';
+}
+
 @HiveType(typeId: TypeId.file)
 class File implements Entity<File>, Comparable<File> {
   File({
     @required this.id,
     @required this.name,
-    @required this.ownerId,
+    @required this.path,
     @required this.createdAt,
     @required this.updatedAt,
-    @required this.parentId,
     @required this.isDirectory,
     @required this.mimeType,
     @required this.size,
   })  : assert(id != null),
         assert(name != null),
-        assert(ownerId != null),
-        assert(ownerId is Id<User> || ownerId is Id<Course>),
         assert(createdAt != null),
         assert(updatedAt != null),
         assert(isDirectory != null),
         files = LazyIds<File>(
           collectionId: 'files in directory $id',
-          fetcher: () => File.fetchList(ownerId, parentId: id),
+          fetcher: () => File.fetchList(path.copyWith(parentId: id)),
         );
 
   File.fromJson(Map<String, dynamic> data)
@@ -43,32 +70,31 @@ class File implements Entity<File>, Comparable<File> {
           id: Id<File>(data['_id']),
           name: data['name'],
           mimeType: data['type'],
-          ownerId: {
-            'user': Id<User>(data['owner']),
-            'course': Id<Course>(data['owner']),
-          }[data['refOwnerModel']],
+          path: FilePath(
+            {
+              'user': Id<User>(data['owner']),
+              'course': Id<Course>(data['owner']),
+            }[data['refOwnerModel']],
+            Id<File>.orNull(data['parent']),
+          ),
           createdAt: (data['createdAt'] as String).parseInstant(),
           updatedAt: (data['updatedAt'] as String).parseInstant(),
           isDirectory: data['isDirectory'],
-          parentId: data['parent'] == null ? null : Id<File>(data['parent']),
           size: data['size'],
         );
 
-  static Future<List<File>> fetchList(
-    Id<dynamic> ownerId, {
-    Id<File> parentId,
-  }) async {
+  static Future<List<File>> fetchList(FilePath path) async {
     final files = await services.api.get(
       'fileStorage',
       parameters: {
-        'owner': ownerId.value,
-        if (parentId != null) 'parent': parentId.value,
+        'owner': path.ownerId.value,
+        if (path.parentId != null) 'parent': path.parentId.value,
       },
     ).parseJsonList(isServicePaginated: false);
     return files.map((data) => File.fromJson(data)).toList();
   }
 
-  // used before: 7, 8
+  // used before: 3, 5, 7, 8
 
   @override
   @HiveField(0)
@@ -78,19 +104,16 @@ class File implements Entity<File>, Comparable<File> {
   final String name;
   String get extension => _extension(name);
 
-  /// An [Id] for either a [User] or [Course].
-  @HiveField(3)
-  final Id<dynamic> ownerId;
+  @HiveField(12)
+  final FilePath path;
+  Id<dynamic> get ownerId => path.ownerId;
+  Id<File> get parentId => path.parentId;
 
   @HiveField(10)
   final Instant createdAt;
 
   @HiveField(9)
   final Instant updatedAt;
-
-  /// The parent directory.
-  @HiveField(5)
-  final Id<File> parentId;
 
   @HiveField(11)
   final bool isDirectory;
@@ -117,18 +140,13 @@ class File implements Entity<File>, Comparable<File> {
     return name.compareTo(other.name);
   }
 
-  File copyWith({
-    String name,
-    Id<dynamic> ownerId,
-    Id<File> parentId,
-  }) {
+  File copyWith({String name, FilePath path}) {
     return File(
       id: id,
       name: name ?? this.name,
-      ownerId: ownerId ?? this.ownerId,
+      path: path ?? this.path,
       createdAt: createdAt,
       updatedAt: updatedAt,
-      parentId: parentId ?? this.parentId,
       isDirectory: isDirectory,
       mimeType: mimeType,
       size: size,
@@ -147,10 +165,14 @@ class File implements Entity<File>, Comparable<File> {
     await services.api.patch('fileStorage/$id', body: {
       'parent': parentDirectory,
     });
-    copyWith(parentId: parentDirectory).saveToCache();
+    copyWith(path: path.copyWith(parentId: parentDirectory)).saveToCache();
   }
 
   Future<void> delete() => services.api.delete('fileStorage/$id');
+}
+
+extension FileLoading on Id<dynamic> {
+  LazyIds<File> files([Id<File> parentId]) => FilePath(this, parentId).files;
 }
 
 class LocalFile {

@@ -33,9 +33,7 @@ extension SaveableEntity<E extends Entity<E>> on Entity<E> {
 /// different types.
 @immutable
 class Id<E extends Entity<E>> {
-  Id(this.value)
-      : assert(value != null),
-        assert(value.isNotEmpty);
+  const Id(this.value) : assert(value != null);
 
   factory Id.orNull(String value) => value == null ? null : Id<E>(value);
 
@@ -275,6 +273,7 @@ class RecurrenceRuleAdapter extends TypeAdapter<RecurrenceRule> {
 }
 
 // Type ids.
+// Used before: 46
 class TypeId {
   static const entity = 71;
   static const id = 40;
@@ -293,15 +292,19 @@ class TypeId {
 
   static const event = 64;
 
-  static const contentType = 46;
-  static const content = 57;
   static const course = 58;
   static const lesson = 59;
+  static const content = 57;
+  static const unsupportedComponent = 73;
+  static const textComponent = 72;
+  static const etherpadComponent = 74;
+  static const nexboardComponent = 75;
 
   static const article = 56;
 
   static const file = 53;
-  static const localFile = 72;
+  static const filePath = 78;
+  static const localFile = 79;
 }
 
 Future<void> initializeHive() async {
@@ -323,14 +326,18 @@ Future<void> initializeHive() async {
     // Calendar module:
     ..registerAdapter(EventAdapter())
     // Courses module:
-    ..registerAdapter(ContentTypeAdapter())
-    ..registerAdapter(ContentAdapter())
     ..registerAdapter(CourseAdapter())
     ..registerAdapter(LessonAdapter())
+    ..registerAdapter(ContentAdapter())
+    ..registerAdapter(UnsupportedComponentAdapter())
+    ..registerAdapter(TextComponentAdapter())
+    ..registerAdapter(EtherpadComponentAdapter())
+    ..registerAdapter(NexboardComponentAdapter())
     // News module:
     ..registerAdapter(ArticleAdapter())
     // Files module:
-    ..registerAdapter(FileAdapter());
+    ..registerAdapter(FileAdapter())
+    ..registerAdapter(FilePathAdapter());
 
   HiveCache
     ..registerEntityType(TypeId.user, User.fetch)

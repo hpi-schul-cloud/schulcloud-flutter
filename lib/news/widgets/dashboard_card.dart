@@ -6,7 +6,6 @@ import 'package:schulcloud/dashboard/dashboard.dart';
 
 import '../data.dart';
 import '../news.dart';
-import 'article_screen.dart';
 
 class NewsDashboardCard extends StatelessWidget {
   static const articleCount = 3;
@@ -18,8 +17,7 @@ class NewsDashboardCard extends StatelessWidget {
     return DashboardCard(
       title: s.news_dashboardCard,
       footerButtonText: s.news_dashboardCard_all,
-      onFooterButtonPressed: () => context.navigator
-          .push(MaterialPageRoute(builder: (context) => NewsScreen())),
+      onFooterButtonPressed: () => context.navigator.pushNamed('/news'),
       child: CachedRawBuilder<List<Article>>(
         controller: services.storage.root.news.controller,
         builder: (context, update) {
@@ -54,9 +52,7 @@ class NewsDashboardCard extends StatelessWidget {
 
   Widget _buildArticlePreview(BuildContext context, Article article) {
     return InkWell(
-      onTap: () => context.navigator.push(MaterialPageRoute(
-        builder: (context) => ArticleScreen(article: article),
-      )),
+      onTap: () => context.navigator.pushNamed('/news/${article.id}'),
       child: Padding(
         padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         child: Column(
