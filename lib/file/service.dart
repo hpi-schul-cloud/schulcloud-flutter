@@ -77,17 +77,18 @@ class FileService {
       savedDir: actualFile.dirName,
       fileName: actualFile.name,
       showNotification: true,
-      openFileFromNotification: true,
+      openFileFromNotification: false,
     );
 
     // TODO(marcelgarus): Do this when the file downloaded successfully:
-    final localFile = LocalFile(
-      fileId: file.id,
-      downloadedAt: Instant.now(),
-      actualFile: actualFile,
-    );
-    await localFiles.put(file.id.value, localFile);
-    return localFile;
+    // final localFile = LocalFile(
+    //   fileId: file.id,
+    //   downloadedAt: Instant.now(),
+    //   actualFile: actualFile,
+    // );
+    // await localFiles.put(file.id.value, localFile);
+    // return localFile;
+    return null;
   }
 
   Future<void> ensureStoragePermissionGranted() async {
