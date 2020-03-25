@@ -31,11 +31,11 @@ class ApiNetworkService {
   /// Makes an http get request to the api.
   Future<http.Response> get(
     String path, {
-    Map<String, String> parameters = const {},
+    Map<String, String> queryParameters = const {},
   }) {
     return _network.get(
       _url(path),
-      parameters: parameters,
+      queryParameters: queryParameters,
       headers: _getHeaders(),
     );
   }

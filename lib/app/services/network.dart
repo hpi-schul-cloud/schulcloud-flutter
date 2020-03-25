@@ -2,11 +2,10 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/widgets.dart';
-import 'package:http/http.dart' as http;
 import 'package:get_it/get_it.dart';
+import 'package:http/http.dart' as http;
 
 import '../logger.dart';
-import '../utils.dart';
 
 @immutable
 class ErrorBody {
@@ -82,55 +81,104 @@ class TooManyRequestsError extends ServerError {
 /// A service that offers making network request to arbitrary servers.
 @immutable
 class NetworkService {
-  const NetworkService();
+  NetworkService();
 
-  /// Calls the given function and turns various status codes and socket
+  final _client = http.Client();
+
+  /// Makes an HTTP GET request.
+  Future<http.Response> get(
+    String url, {
+    Map<String, String> queryParameters = const {},
+    Map<String, String> headers,
+  }) =>
+      _send('GET', url, queryParameters: queryParameters, headers: headers);
+
+  /// Makes an HTTP POST request.
+  Future<http.Response> post(
+    String url, {
+    Map<String, String> headers,
+    Map<String, dynamic> body,
+  }) =>
+      _send('POST', url, headers: headers, body: body);
+
+  /// Makes an HTTP PUT request.
+  Future<http.Response> put(
+    String url, {
+    Map<String, String> headers,
+    dynamic body,
+  }) =>
+      _send('PUT', url, headers: headers, body: body);
+
+  /// Makes an HTTP PATCH request.
+  Future<http.Response> patch(
+    String url, {
+    Map<String, String> headers,
+    Map<String, dynamic> body,
+  }) =>
+      _send('PATCH', url, headers: headers, body: body);
+
+  // Makes an HTTP DELETE request.
+  Future<http.Response> delete(String url, {Map<String, String> headers}) =>
+      _send('DELETE', url, headers: headers);
+
+  /// Calls the given [url] and turns various status codes and socket
   /// exceptions into custom error types like [AuthenticationError] or
   /// [NoConnectionToServerError].
-  Future<http.Response> _makeCall({
-    @required String method,
-    @required String url,
-    @required Future<http.Response> Function() call,
+  Future<http.Response> _send(
+    String method,
+    String url, {
+    Map<String, String> queryParameters = const {},
+    Map<String, String> headers,
+    dynamic body,
+    bool followRedirects = false,
   }) async {
     assert(method != null);
     assert(url != null);
-    assert(call != null);
+    assert(queryParameters != null);
+    assert(followRedirects != null);
 
     http.Response response;
     try {
-      response = await call();
+      response = await _makeCall(
+        method,
+        url,
+        queryParameters: queryParameters,
+        headers: headers,
+        body: body,
+        followRedirects: followRedirects,
+      );
     } on SocketException catch (e) {
       logger.w('No server connection', e);
       throw NoConnectionToServerError();
     }
 
-    // Succeed if its a 2xx status code.
-    if (response.statusCode ~/ 100 == 2) {
+    // Succeed if its a 2xx or 3xx status code.
+    if (response.statusCode ~/ 100 == 2 || response.statusCode ~/ 100 == 3) {
       return response;
     }
 
-    final body = ErrorBody.fromJson(json.decode(response.body));
-    logger.w('Network ${response.statusCode}: $method $url', body);
+    final error = ErrorBody.fromJson(json.decode(response.body));
+    logger.w('Network ${response.statusCode}: $method $url', error);
 
     if (response.statusCode == 401) {
-      throw AuthenticationError(body);
+      throw AuthenticationError(error);
     }
 
-    if (response.statusCode == 409 && body.className == 'conflict') {
-      throw ConflictError(body);
+    if (response.statusCode == 409 && error.className == 'conflict') {
+      throw ConflictError(error);
     }
 
     if (response.statusCode == 429) {
       final timeToWait = () {
         try {
           return Duration(
-            seconds: body.data['timeToWait'],
+            seconds: error.data['timeToWait'],
           );
         } catch (_) {
           return Duration(seconds: 10);
         }
       }();
-      throw TooManyRequestsError(body, timeToWait: timeToWait);
+      throw TooManyRequestsError(error, timeToWait: timeToWait);
     }
 
     throw UnimplementedError(
@@ -138,87 +186,42 @@ class NetworkService {
         'Response body: ${response.body}');
   }
 
-  /// Makes an HTTP GET request.
-  Future<http.Response> get(
+  Future<http.Response> _makeCall(
+    String method,
     String url, {
-    Map<String, String> parameters = const {},
-    Map<String, String> headers,
-  }) {
-    assert(url != null);
-    assert(parameters != null);
-
-    // Add the parameters to the url.
-    if (parameters.isNotEmpty) {
-      final params = parameters.entries
-          .map((e) =>
-              '${e.key.uriComponentEncoded}=${e.value.uriComponentEncoded}')
-          .join('&');
-      // ignore: parameter_assignments
-      url += '?$params';
-    }
-    return _makeCall(
-      method: 'GET',
-      url: url,
-      call: () => http.get(url, headers: _getHeaders(headers)),
-    );
-  }
-
-  /// Makes an HTTP POST request.
-  Future<http.Response> post(
-    String url, {
-    Map<String, String> headers,
-    Map<String, dynamic> body,
-  }) {
-    return _makeCall(
-      method: 'POST',
-      url: url,
-      call: () => http.post(url,
-          headers: _getHeaders(headers), body: json.encode(body)),
-    );
-  }
-
-  /// Makes an HTTP PUT request.
-  Future<http.Response> put(
-    String url, {
+    Map<String, String> queryParameters = const {},
     Map<String, String> headers,
     dynamic body,
-  }) {
-    return _makeCall(
-      method: 'PUT',
-      url: url,
-      call: () =>
-          http.put(url, headers: _getHeaders(headers), body: json.encode(body)),
-    );
-  }
+    bool followRedirects = true,
+  }) async {
+    assert(method != null);
+    assert(url != null);
+    assert(queryParameters != null);
+    assert(followRedirects != null);
 
-  /// Makes an HTTP PATCH request.
-  Future<http.Response> patch(
-    String url, {
-    Map<String, String> headers,
-    Map<String, dynamic> body,
-  }) {
-    return _makeCall(
-      method: 'PATCH',
-      url: url,
-      call: () => http.patch(url,
-          headers: _getHeaders(headers), body: json.encode(body)),
-    );
-  }
+    var uri = Uri.parse(url);
+    assert(uri.queryParameters.isEmpty,
+        'Please add query parameters via the queryParameters argument!');
+    uri = uri.replace(queryParameters: queryParameters);
 
-  // Makes an HTTP DELETE request.
-  Future<http.Response> delete(String url, {Map<String, String> headers}) {
-    return _makeCall(
-      method: 'DELETE',
-      url: url,
-      call: () => http.delete(url, headers: headers),
-    );
-  }
+    final request = http.Request(method, uri)
+      ..followRedirects = followRedirects;
 
-  Map<String, String> _getHeaders(Map<String, String> headers) {
-    return {
+    // ignore: parameter_assignments
+    headers = {
       'Content-Type': 'application/json',
       if (headers != null) ...headers,
     };
+    for (final entry in headers.entries) {
+      request.headers[entry.key] = entry.value;
+    }
+
+    if (body != null) {
+      request.body = json.encode(body);
+    }
+
+    final streamedResponse = await _client.send(request);
+    return http.Response.fromStream(streamedResponse);
   }
 }
 

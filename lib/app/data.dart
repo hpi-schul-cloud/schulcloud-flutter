@@ -127,7 +127,7 @@ class Root implements Entity<Root> {
       // guessed it — no events are being returned at all 😂
       final jsonResponse = await services.api.get(
         'calendar',
-        parameters: {'all': 'true'},
+        queryParameters: {'all': 'true'},
       ).parseJsonList(isServicePaginated: false);
       return jsonResponse.map((data) => Event.fromJson(data)).toList();
     },

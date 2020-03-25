@@ -100,13 +100,16 @@ class Lesson implements Entity<Lesson>, Comparable<Lesson> {
     Id<Course> courseId,
     bool hidden,
   }) async {
-    final jsonList = await services.api.get('lessons', parameters: {
-      if (courseId != null) 'courseId': courseId.value,
-      if (hidden == true)
-        'hidden': 'true'
-      else if (hidden == false)
-        'hidden[\$ne]': 'true',
-    }).parseJsonList();
+    final jsonList = await services.api.get(
+      'lessons',
+      queryParameters: {
+        if (courseId != null) 'courseId': courseId.value,
+        if (hidden == true)
+          'hidden': 'true'
+        else if (hidden == false)
+          'hidden[\$ne]': 'true',
+      },
+    ).parseJsonList();
     return jsonList.map((data) => Lesson.fromJson(data)).toList();
   }
 
