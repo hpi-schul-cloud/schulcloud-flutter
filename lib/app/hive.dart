@@ -141,7 +141,6 @@ class LazyIds<E extends Entity<E>> {
             .map((collection) => collection.childrenIds);
 
         return Observable(streamOfIds).switchMap((ids) {
-          logger.w('Combining the streams of $ids');
           return CombineLatestStream.list([
             for (final id in ids) HiveCache.getStreamed(id),
           ]);
@@ -251,20 +250,9 @@ class HiveCacheImpl {
     _box.put(entity.id.value, entity);
   }
 
-  int _streamId = 0;
   E get<E extends Entity<E>>(Id<E> id) => _box.get(id.value) as E;
   Stream<E> getStreamed<E extends Entity<E>>(Id<E> id) {
-    final streamId = _streamId++;
-    logger.i('Stream #$streamId created for watching $id');
-    return _box
-        .watch(key: id.value)
-        .map((event) {
-          logger.i('Stream #$streamId: Update of $id ($E): '
-              '${event.value}');
-          return event;
-        })
-        .map((event) => event.value)
-        .cast<E>();
+    return _box.watch(key: id.value).map((event) => event.value).cast<E>();
   }
 }
 
@@ -336,7 +324,7 @@ class TypeId {
   static const article = 56;
 
   static const file = 53;
-  static const filePath = 72;
+  static const filePath = 76;
 }
 
 Future<void> initializeHive() async {

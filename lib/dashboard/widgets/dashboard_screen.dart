@@ -11,11 +11,11 @@ class DashboardScreen extends StatelessWidget {
       appBar: FancyAppBar(title: Text(context.s.dashboard)),
       sliver: SliverList(
         delegate: SliverChildListDelegate([
-          // CalendarDashboardCard(),
+          CalendarDashboardCard(),
           SizedBox(height: 16),
-          // AssignmentDashboardCard(),
+          AssignmentDashboardCard(),
           SizedBox(height: 16),
-          // NewsDashboardCard(),
+          NewsDashboardCard(),
         ]),
       ),
     );

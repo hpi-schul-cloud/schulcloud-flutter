@@ -17,6 +17,7 @@ class FancyCachedBuilder<T> extends StatelessWidget {
     @required CachedBuilderContentBuilder<T> builder,
   }) = _FancyCachedBuilderWithLoading<T>;
 
+  // TODO(marcelgarus): enable when used
   // factory FancyCachedBuilder.handlePullToRefresh({
   //   NestedScrollViewHeaderSliversBuilder headerSliverBuilder,
   //   FancyAppBar appBar,
@@ -127,7 +128,7 @@ class _FancyCachedBuilderWithPullToRefresh<T> extends FancyCachedBuilder<T> {
               body: RefreshIndicator(
                 onRefresh: controller.fetch,
                 child: data == null
-                    ? CircularProgressIndicator()
+                    ? Center(child: CircularProgressIndicator())
                     // : Container(width: 30, height: 30, color: Colors.amber),
                     : builder(context, data, isFetching),
               ),

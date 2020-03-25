@@ -18,7 +18,7 @@ class FilesScreen extends StatelessWidget {
       ),
       sliver: SliverList(
         delegate: SliverChildListDelegate([
-          // _CoursesList(),
+          _CoursesList(),
           SizedBox(height: 16),
           _UserFiles(),
         ]),
