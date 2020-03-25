@@ -12,13 +12,13 @@ part 'data.g.dart';
 
 @HiveType(typeId: TypeId.user)
 class User implements Entity<User> {
-  User({
+  const User({
     @required this.id,
     @required this.firstName,
     @required this.lastName,
     @required this.email,
     @required this.schoolId,
-    @required this.displayName,
+    String displayName,
     @required this.avatarInitials,
     @required this.avatarBackgroundColor,
     @required this.permissions,
@@ -28,7 +28,7 @@ class User implements Entity<User> {
         assert(lastName != null),
         assert(email != null),
         assert(schoolId != null),
-        assert(displayName != null),
+        displayName = displayName ?? '$firstName $lastName',
         assert(avatarInitials != null),
         assert(avatarBackgroundColor != null),
         assert(permissions != null),
@@ -62,7 +62,6 @@ class User implements Entity<User> {
   @HiveField(2)
   final String lastName;
 
-  String get name => '$firstName $lastName';
   String get shortName => '${firstName[0]}. $lastName';
 
   @HiveField(3)
