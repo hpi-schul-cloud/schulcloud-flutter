@@ -2,6 +2,7 @@ import 'package:black_hole_flutter/black_hole_flutter.dart';
 import 'package:dartx/dartx.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:schulcloud/app/app.dart';
 
 import '../utils.dart';
 import 'filtering.dart';
@@ -161,7 +162,7 @@ class SortFilterSelection<T> {
         padding: EdgeInsets.symmetric(horizontal: 16),
         child: StatefulBuilder(
           builder: (_, setState) {
-            return SortFilterWidget(
+            return SortFilterSelectionWidget(
               selection: currentSelection,
               onSelectionChange: (selection) {
                 setState(() => currentSelection = selection);
@@ -175,8 +176,8 @@ class SortFilterSelection<T> {
   }
 }
 
-class SortFilterWidget<T> extends StatelessWidget {
-  const SortFilterWidget({
+class SortFilterSelectionWidget<T> extends StatelessWidget {
+  const SortFilterSelectionWidget({
     Key key,
     @required this.selection,
     @required this.onSelectionChange,
@@ -258,5 +259,56 @@ class _Section extends StatelessWidget {
         ],
       ),
     );
+  }
+}
+
+class SortFilterIconButton extends StatelessWidget {
+  const SortFilterIconButton(this.showSortFilterSheet)
+      : assert(showSortFilterSheet != null);
+
+  final VoidCallback showSortFilterSheet;
+
+  @override
+  Widget build(BuildContext context) {
+    return IconButton(
+      icon: Icon(Icons.sort),
+      onPressed: showSortFilterSheet,
+    );
+  }
+}
+
+abstract class SortFilterWidget<T> extends StatefulWidget {
+  const SortFilterWidget(this.initialSortFilterSelection, {Key key})
+      : assert(initialSortFilterSelection != null),
+        super(key: key);
+
+  final SortFilterSelection<T> initialSortFilterSelection;
+}
+
+mixin SortFilterStateMixin<W extends SortFilterWidget<T>, T> on State<W> {
+  SortFilterSelection<T> sortFilterSelection;
+
+  @override
+  void initState() {
+    super.initState();
+
+    sortFilterSelection = widget.initialSortFilterSelection;
+  }
+
+  void showSortFilterSheet() {
+    sortFilterSelection.showSheet(
+      context: context,
+      callback: updateSortFilterSelection,
+    );
+  }
+
+  void updateSortFilterSelection(SortFilterSelection<T> selection) {
+    setState(() => sortFilterSelection = selection);
+  }
+
+  // ignore: avoid_positional_boolean_parameters
+  void setFlatFilter(String key, bool value) {
+    updateSortFilterSelection(
+        sortFilterSelection.withFlagsFilterSelection('more', key, value));
   }
 }

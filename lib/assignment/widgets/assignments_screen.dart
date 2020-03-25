@@ -8,11 +8,10 @@ import 'package:time_machine/time_machine.dart';
 
 import '../data.dart';
 
-class AssignmentsScreen extends StatefulWidget {
+class AssignmentsScreen extends SortFilterWidget<Assignment> {
   AssignmentsScreen({
     SortFilterSelection<Assignment> sortFilterSelection,
-  }) : initialSortFilterSelection =
-            sortFilterSelection ?? sortFilterConfig.defaultSelection;
+  }) : super(sortFilterSelection ?? sortFilterConfig.defaultSelection);
 
   static final sortFilterConfig = SortFilter<Assignment>(
     sorters: {
@@ -64,22 +63,13 @@ class AssignmentsScreen extends StatefulWidget {
       ),
     },
   );
-  final SortFilterSelection<Assignment> initialSortFilterSelection;
 
   @override
   _AssignmentsScreenState createState() => _AssignmentsScreenState();
 }
 
-class _AssignmentsScreenState extends State<AssignmentsScreen> {
-  SortFilterSelection<Assignment> _sortFilter;
-
-  @override
-  void initState() {
-    super.initState();
-
-    _sortFilter ??= widget.initialSortFilterSelection;
-  }
-
+class _AssignmentsScreenState extends State<AssignmentsScreen>
+    with SortFilterStateMixin<AssignmentsScreen, Assignment> {
   @override
   Widget build(BuildContext context) {
     final s = context.s;
@@ -90,18 +80,13 @@ class _AssignmentsScreenState extends State<AssignmentsScreen> {
         errorBannerBuilder: (_, error, st) => ErrorBanner(error, st),
         errorScreenBuilder: (_, error, st) => ErrorScreen(error, st),
         builder: (context, allAssignments) {
-          final assignments = _sortFilter.apply(allAssignments);
+          final assignments = sortFilterSelection.apply(allAssignments);
 
           return CustomScrollView(
             slivers: <Widget>[
               FancyAppBar(
                 title: Text(context.s.assignment),
-                actions: <Widget>[
-                  IconButton(
-                    icon: Icon(Icons.sort),
-                    onPressed: () => _showSortFilterSheet(context),
-                  ),
-                ],
+                actions: <Widget>[SortFilterIconButton(showSortFilterSheet)],
               ),
               if (assignments.isEmpty)
                 SliverFillRemaining(
@@ -109,7 +94,7 @@ class _AssignmentsScreenState extends State<AssignmentsScreen> {
                     text: s.assignment_assignmentsScreen_empty,
                     actions: <Widget>[
                       SecondaryButton(
-                        onPressed: () => _showSortFilterSheet(context),
+                        onPressed: showSortFilterSheet,
                         child: Text(
                           s.assignment_assignmentsScreen_empty_editFilters,
                         ),
@@ -125,10 +110,7 @@ class _AssignmentsScreenState extends State<AssignmentsScreen> {
                           EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                       child: AssignmentCard(
                         assignment: assignments[index],
-                        setFlagFilterCallback: (key, value) {
-                          setState(() => _sortFilter = _sortFilter
-                              .withFlagsFilterSelection('more', key, value));
-                        },
+                        setFlagFilterCallback: setFlatFilter,
                       ),
                     ),
                     childCount: assignments.length,
@@ -138,15 +120,6 @@ class _AssignmentsScreenState extends State<AssignmentsScreen> {
           );
         },
       ),
-    );
-  }
-
-  void _showSortFilterSheet(BuildContext context) {
-    _sortFilter.showSheet(
-      context: context,
-      callback: (selection) {
-        setState(() => _sortFilter = selection);
-      },
     );
   }
 }
