@@ -18,7 +18,7 @@ class FancyText extends StatefulWidget {
     this.maxLines,
     this.textType = TextType.plain,
     this.showRichText = false,
-    this.estimatedLines,
+    this.estimatedWidth,
     this.style,
     this.emphasis,
     this.textAlign,
@@ -28,10 +28,7 @@ class FancyText extends StatefulWidget {
         assert(!showRichText || maxLines == null,
             "maxLines isn't supported in combination with showRichText."),
         assert(maxLines == null || maxLines > 0),
-        assert(estimatedLines == null || estimatedLines > 0),
-        assert(estimatedLines == null ||
-            estimatedLines < 1 ||
-            estimatedLines % 1 == 0),
+        assert(estimatedWidth == null || estimatedWidth > 0),
         assert(!showRichText || textAlign == null,
             "textAlign isn't supported in combination with showRichText."),
         super(key: key);
@@ -40,7 +37,7 @@ class FancyText extends StatefulWidget {
     String data, {
     Key key,
     TextType textType = TextType.html,
-    double estimatedLines,
+    double estimatedWidth,
     TextStyle style,
     TextEmphasis emphasis,
   }) : this(
@@ -48,7 +45,7 @@ class FancyText extends StatefulWidget {
           key: key,
           textType: textType,
           showRichText: true,
-          estimatedLines: estimatedLines,
+          estimatedWidth: estimatedWidth,
           style: style,
           emphasis: emphasis,
         );
@@ -58,7 +55,7 @@ class FancyText extends StatefulWidget {
     Key key,
     int maxLines = 1,
     TextType textType = TextType.html,
-    double estimatedLines,
+    double estimatedWidth,
     TextStyle style,
   }) : this(
           data,
@@ -66,7 +63,7 @@ class FancyText extends StatefulWidget {
           maxLines: maxLines,
           textType: textType,
           showRichText: false,
-          estimatedLines: estimatedLines,
+          estimatedWidth: estimatedWidth,
           style: style,
           emphasis: TextEmphasis.medium,
         );
@@ -75,7 +72,7 @@ class FancyText extends StatefulWidget {
   final int maxLines;
   final TextType textType;
   final bool showRichText;
-  final double estimatedLines;
+  final double estimatedWidth;
   final TextStyle style;
   final TextEmphasis emphasis;
   final TextAlign textAlign;
@@ -85,18 +82,14 @@ class FancyText extends StatefulWidget {
 }
 
 class _FancyTextState extends State<FancyText> {
-  double previewLines;
+  double lastLineWidthFactor;
 
   @override
   void initState() {
     super.initState();
 
-    final estimatedLines = widget.estimatedLines ?? widget.maxLines ?? 1;
-    if (estimatedLines < 1) {
-      previewLines = estimatedLines;
-    } else {
-      previewLines =
-          estimatedLines - 1 + lerpDouble(0.2, 0.9, Random().nextDouble());
+    if (widget.estimatedWidth == null) {
+      lastLineWidthFactor = lerpDouble(0.2, 0.9, Random().nextDouble());
     }
   }
 
@@ -147,18 +140,20 @@ class _FancyTextState extends State<FancyText> {
     final resolvedStyle = DefaultTextStyle.of(context).style.merge(style);
     final color = context.theme.isDark ? theme.disabledColor : Colors.black38;
 
-    Widget buildBar(double widthFactor) {
+    Widget buildBar({double width, double widthFactor}) {
+      assert((width == null) != (widthFactor == null));
       return Material(
         shape: StadiumBorder(),
         color: color,
         child: FractionallySizedBox(
           widthFactor: widthFactor,
-          child: SizedBox(height: resolvedStyle.fontSize),
+          child: SizedBox(width: width, height: resolvedStyle.fontSize),
         ),
       );
     }
 
-    final fullLines = previewLines.floor();
+    assert(widget.estimatedWidth == null || lastLineWidthFactor == null);
+    final fullLines = widget.maxLines != null ? widget.maxLines - 1 : 0;
     final lineSpacing =
         ((resolvedStyle.height ?? 1.5) - 1) * resolvedStyle.fontSize;
     return Column(
@@ -166,10 +161,13 @@ class _FancyTextState extends State<FancyText> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         for (var i = 0; i < fullLines; i++) ...[
-          buildBar(1),
+          buildBar(widthFactor: 1),
           SizedBox(height: lineSpacing)
         ],
-        buildBar(previewLines - fullLines),
+        buildBar(
+          width: widget.estimatedWidth,
+          widthFactor: lastLineWidthFactor,
+        ),
       ],
     );
   }

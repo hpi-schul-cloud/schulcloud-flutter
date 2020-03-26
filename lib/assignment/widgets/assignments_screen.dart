@@ -190,16 +190,8 @@ class AssignmentCard extends StatelessWidget {
 
     return <Widget>[
       if (assignment.courseId != null)
-        CachedRawBuilder<Course>(
-          controller: assignment.courseId.controller,
-          builder: (_, update) {
-            return CourseChip(
-              update.data,
-              onPressed: () {
-                // TODO(JonasWanke): filter list by course, https://github.com/schul-cloud/schulcloud-flutter/issues/145
-              },
-            );
-          },
+        CourseChip(
+          assignment.courseId,
         ),
       if (assignment.isOverdue)
         ActionChip(
