@@ -27,6 +27,7 @@
   "assignment_assignment_isPrivate": "Private",
   "assignment_assignment_overdue": "Overdue",
   "assignment_assignment_property_availableAt": "Available date",
+  "assignment_assignment_property_course": "Course",
   "assignment_assignment_property_dueAt": "Due date",
   "assignment_assignment_property_hasPublicSubmissions": "Public submissions",
   "assignment_assignment_property_isPrivate": "Private assignment",

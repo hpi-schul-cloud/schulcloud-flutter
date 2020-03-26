@@ -27,6 +27,7 @@
   "assignment_assignment_isPrivate": "Privat",
   "assignment_assignment_overdue": "Überfällig",
   "assignment_assignment_property_availableAt": "Verfügbarkeitsdatum",
+  "assignment_assignment_property_course": "Kurs",
   "assignment_assignment_property_dueAt": "Abgabedatum",
   "assignment_assignment_property_hasPublicSubmissions": "Öffentliche Abgaben",
   "assignment_assignment_property_isPrivate": "Private Aufgabe",
