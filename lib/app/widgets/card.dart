@@ -55,11 +55,7 @@ class FancyCard extends StatelessWidget {
         if (title != null)
           Padding(
             padding: EdgeInsets.fromLTRB(16, 0, 16, 16),
-            child: FancyText(
-              title.toUpperCase(),
-              style: context.textTheme.overline,
-              emphasis: TextEmphasis.disabled,
-            ),
+            child: Text(title.toUpperCase(), style: context.textTheme.overline),
           ),
         Padding(
           padding: omitHorizontalPadding

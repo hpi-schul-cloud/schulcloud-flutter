@@ -245,11 +245,11 @@ class _Section extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
+      padding: EdgeInsets.symmetric(vertical: 8),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
-          Text(title, style: context.textTheme.overline),
+          Text(title.toUpperCase(), style: context.textTheme.overline),
           SizedBox(height: 4),
           child,
         ],
