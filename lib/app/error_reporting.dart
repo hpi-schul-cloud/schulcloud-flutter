@@ -28,6 +28,7 @@ Future<void> runWithErrorReporting(Future<void> Function() body) async {
           await reportEvent(Event(
             exception: details.exception,
             stackTrace: details.stack,
+            tags: {'source': 'flutter'},
           ));
         }
       };
@@ -42,6 +43,7 @@ Future<void> runWithErrorReporting(Future<void> Function() body) async {
         await reportEvent(Event(
           exception: error,
           stackTrace: stackTrace,
+          tags: {'source': 'dart'},
         ));
       }
     },
