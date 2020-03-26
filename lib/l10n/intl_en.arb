@@ -1,5 +1,7 @@
 {
   "@@locale": "en",
+  "app_dateRangeFilter_start": "from",
+  "app_dateRangeFilter_end": "until",
   "app_emptyState_retry": "Try again",
   "app_errorScreen_authError": "Seems like this device's authentication expired.\nMaybe signing out and in again helps?",
   "app_errorScreen_noConnection": "We can't connect to the server.\nAre you sure you're connected to the internet?",

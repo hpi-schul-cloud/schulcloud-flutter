@@ -12,6 +12,7 @@ import 'sort_filter.dart';
 typedef Test<T, D> = bool Function(T item, D data);
 typedef Selector<T, R> = R Function(T item);
 
+@immutable
 abstract class Filter<T, S> {
   const Filter(this.titleGetter) : assert(titleGetter != null);
 
@@ -19,7 +20,7 @@ abstract class Filter<T, S> {
 
   final L10nStringGetter titleGetter;
 
-  S tryParseWebQuerySorter(Map<String, String> query, String key);
+  S tryParseWebQuery(Map<String, String> query, String key);
 
   bool filter(T item, S selection);
   Widget buildWidget(
@@ -36,7 +37,6 @@ abstract class Filter<T, S> {
   }
 }
 
-@immutable
 class DateRangeFilter<T> extends Filter<T, DateRangeFilterSelection> {
   const DateRangeFilter(
     L10nStringGetter titleGetter, {
@@ -54,7 +54,7 @@ class DateRangeFilter<T> extends Filter<T, DateRangeFilterSelection> {
   final String webQueryKey;
 
   @override
-  DateRangeFilterSelection tryParseWebQuerySorter(
+  DateRangeFilterSelection tryParseWebQuery(
       Map<String, String> query, String key) {
     LocalDate tryParse(String value) {
       if (value == null) {
@@ -84,12 +84,14 @@ class DateRangeFilter<T> extends Filter<T, DateRangeFilterSelection> {
     DateRangeFilterSelection selection,
     DataChangeCallback<DateRangeFilterSelection> updater,
   ) {
+    final s = context.s;
+
     return Row(
       children: <Widget>[
         Expanded(
           child: _buildDateField(
             date: selection.start,
-            hintText: 'from',
+            hintText: s.app_dateRangeFilter_start,
             onChanged: (newStart) => updater(selection.withStart(newStart)),
             lastDate: selection.end,
           ),
@@ -100,7 +102,7 @@ class DateRangeFilter<T> extends Filter<T, DateRangeFilterSelection> {
         Expanded(
           child: _buildDateField(
             date: selection.end,
-            hintText: 'until',
+            hintText: s.app_dateRangeFilter_end,
             onChanged: (newEnd) => updater(selection.withEnd(newEnd)),
             firstDate: selection.start,
           ),
@@ -149,7 +151,6 @@ class DateRangeFilterSelection {
       DateRangeFilterSelection(start: start, end: end);
 }
 
-@immutable
 class FlagsFilter<T> extends Filter<T, Map<String, bool>> {
   const FlagsFilter(L10nStringGetter titleGetter, {@required this.filters})
       : assert(filters != null),
@@ -166,8 +167,7 @@ class FlagsFilter<T> extends Filter<T, Map<String, bool>> {
   final Map<String, FlagFilter<T>> filters;
 
   @override
-  Map<String, bool> tryParseWebQuerySorter(
-      Map<String, String> query, String key) {
+  Map<String, bool> tryParseWebQuery(Map<String, String> query, String key) {
     return {
       for (final entry in filters.entries)
         entry.key: entry.value.tryParseWebQuerySorter(query, entry.key),

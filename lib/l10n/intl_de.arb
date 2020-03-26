@@ -1,5 +1,7 @@
 {
   "@@locale": "de",
+  "app_dateRangeFilter_start": "von",
+  "app_dateRangeFilter_end": "bis",
   "app_emptyState_retry": "Nochmal versuchen",
   "app_errorScreen_authError": "Sieht aus, als ob die Authentifizierung abgelaufen ist.\nVielleicht hilft es, sich erneut einzuloggen?",
   "app_errorScreen_noConnection": "Es konnte keine Verbindung zum Server aufgebaut werden.\nBist du mit dem Internet verbunden?",

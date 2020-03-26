@@ -55,7 +55,7 @@ class SortFilter<T> {
       sortOrder: SortOrderUtils.tryParseWebQuery(query) ?? defaultSortOrder,
       filterSelections: {
         for (final entry in filters.entries)
-          entry.key: entry.value.tryParseWebQuerySorter(query, entry.key),
+          entry.key: entry.value.tryParseWebQuery(query, entry.key),
       },
     );
   }
