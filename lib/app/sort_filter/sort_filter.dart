@@ -157,21 +157,25 @@ class SortFilterSelection<T> {
 
     var currentSelection = this;
     context.showFancyModalBottomSheet(
+      // Gives us more vertical space.
+      isScrollControlled: true,
       useRootNavigator: true,
-      builder: (_) => Padding(
-        padding: EdgeInsets.symmetric(horizontal: 16),
-        child: StatefulBuilder(
-          builder: (_, setState) {
-            return SortFilterSelectionWidget(
-              selection: currentSelection,
-              onSelectionChange: (selection) {
-                setState(() => currentSelection = selection);
-                callback(selection);
-              },
-            );
-          },
-        ),
-      ),
+      builder: (_) {
+        return Padding(
+          padding: EdgeInsets.symmetric(horizontal: 16),
+          child: StatefulBuilder(
+            builder: (_, setState) {
+              return SortFilterSelectionWidget(
+                selection: currentSelection,
+                onSelectionChange: (selection) {
+                  setState(() => currentSelection = selection);
+                  callback(selection);
+                },
+              );
+            },
+          ),
+        );
+      },
     );
   }
 }

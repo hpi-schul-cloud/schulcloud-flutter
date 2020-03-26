@@ -1,12 +1,15 @@
 import 'package:black_hole_flutter/black_hole_flutter.dart';
+import 'package:dartx/dartx.dart';
 import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_cached/flutter_cached.dart';
 import 'package:intl/intl.dart';
 import 'package:time_machine/time_machine.dart';
 import 'package:time_machine/time_machine_text_patterns.dart';
 
 import '../datetime_utils.dart';
 import '../utils.dart';
+import '../widgets/error_widgets.dart';
 import 'sort_filter.dart';
 
 typedef Test<T, D> = bool Function(T item, D data);
@@ -149,6 +152,79 @@ class DateRangeFilterSelection {
       DateRangeFilterSelection(start: start, end: end);
   DateRangeFilterSelection withEnd(LocalDate end) =>
       DateRangeFilterSelection(start: start, end: end);
+}
+
+typedef CategoryLabelBuilder<C> = Widget Function(
+    BuildContext context, C category);
+
+class CategoryFilter<T, C> extends Filter<T, Set<C>> {
+  const CategoryFilter(
+    L10nStringGetter titleGetter, {
+    @required this.selector,
+    @required this.categoriesController,
+    @required this.categoryLabelBuilder,
+    this.defaultSelection = const {},
+  })  : assert(selector != null),
+        assert(categoriesController != null),
+        assert(categoryLabelBuilder != null),
+        assert(defaultSelection != null),
+        super(titleGetter);
+
+  final Selector<T, C> selector;
+  final CacheController<Iterable<C>> categoriesController;
+  final CategoryLabelBuilder<C> categoryLabelBuilder;
+
+  @override
+  final Set<C> defaultSelection;
+
+  @override
+  Set<C> tryParseWebQuery(Map<String, String> query, String key) {
+    return {};
+  }
+
+  @override
+  bool filter(T item, Set<C> selection) {
+    final category = selector(item);
+    return category == null ||
+        selection.isEmpty ||
+        selection.contains(category);
+  }
+
+  @override
+  Widget buildWidget(
+    BuildContext context,
+    Set<C> selection,
+    DataChangeCallback<Set<C>> updater,
+  ) {
+    return CachedRawBuilder<Iterable<C>>(
+      controller: categoriesController,
+      builder: (context, update) {
+        if (update.hasError) {
+          return ErrorBanner(update.error, update.stackTrace);
+        } else if (update.hasNoData) {
+          return Center(child: CircularProgressIndicator());
+        }
+
+        final categories = update.data;
+        return ChipGroup(
+          children: <Widget>[
+            for (final category in categories)
+              FilterChip(
+                selected: selection.contains(category),
+                onSelected: (isSelected) {
+                  if (isSelected) {
+                    updater({...selection, category});
+                  } else {
+                    updater(selection.whereNot((c) => c == category).toSet());
+                  }
+                },
+                label: categoryLabelBuilder(context, category),
+              )
+          ],
+        );
+      },
+    );
+  }
 }
 
 class FlagsFilter<T> extends Filter<T, Map<String, bool>> {
