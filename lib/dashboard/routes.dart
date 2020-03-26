@@ -1,8 +1,9 @@
 import 'package:flutter_deep_linking/flutter_deep_linking.dart';
+import 'package:schulcloud/app/app.dart';
 
 import 'widgets/dashboard_screen.dart';
 
-final dashboardRoutes = Route(
+final dashboardRoutes = FancyRoute(
   matcher: Matcher.path('dashboard'),
-  materialBuilder: (_, __) => DashboardScreen(),
+  builder: (_, __) => DashboardScreen(),
 );

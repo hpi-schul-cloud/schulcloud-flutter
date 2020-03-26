@@ -6,18 +6,18 @@ import 'widgets/course_detail_screen.dart';
 import 'widgets/courses_screen.dart';
 import 'widgets/lesson_screen.dart';
 
-final courseRoutes = Route(
+final courseRoutes = FancyRoute(
   matcher: Matcher.path('courses'),
-  materialBuilder: (_, __) => CoursesScreen(),
+  builder: (_, __) => CoursesScreen(),
   routes: [
-    Route(
+    FancyRoute(
       matcher: Matcher.path('{courseId}'),
-      materialBuilder: (_, result) =>
+      builder: (_, result) =>
           CourseDetailsScreen(Id<Course>(result['courseId'])),
       routes: [
-        Route(
+        FancyRoute(
           matcher: Matcher.path('topics/{topicId}'),
-          materialBuilder: (_, result) => LessonScreen(
+          builder: (_, result) => LessonScreen(
             courseId: Id<Course>(result['courseId']),
             lessonId: Id<Lesson>(result['topicId']),
           ),

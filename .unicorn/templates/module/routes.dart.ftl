@@ -5,13 +5,13 @@ import 'data.dart';
 import 'widgets/${module}_detail_screen.dart';
 import 'widgets/${module}s_screen.dart';
 
-final ${module}Routes = Route(
+final ${module}Routes =FancyRoute(
   matcher: Matcher.path('${module}s'),
-  materialBuilder: (_, __) => ${entity}sScreen(),
+  builder: (_, __) => ${entity}sScreen(),
   routes: [
-    Route(
+    FancyRoute(
       matcher: Matcher.path('{${module}Id}'),
-      materialBuilder: (_, result) => ${entity}DetailsScreen(
+      builder: (_, result) => ${entity}DetailsScreen(
         Id<${entity}>(result['${module}Id']),
       ),
     ),
