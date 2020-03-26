@@ -85,22 +85,13 @@ class _AssignmentsScreenState extends State<AssignmentsScreen>
           return CustomScrollView(
             slivers: <Widget>[
               FancyAppBar(
-                title: Text(context.s.assignment),
+                title: Text(s.assignment),
                 actions: <Widget>[SortFilterIconButton(showSortFilterSheet)],
               ),
               if (assignments.isEmpty)
-                SliverFillRemaining(
-                  child: EmptyStateScreen(
-                    text: s.assignment_assignmentsScreen_empty,
-                    actions: <Widget>[
-                      SecondaryButton(
-                        onPressed: showSortFilterSheet,
-                        child: Text(
-                          s.assignment_assignmentsScreen_empty_editFilters,
-                        ),
-                      ),
-                    ],
-                  ),
+                SortFilterEmptyState(
+                  showSortFilterSheet,
+                  text: s.assignment_assignmentsScreen_empty,
                 )
               else
                 SliverList(

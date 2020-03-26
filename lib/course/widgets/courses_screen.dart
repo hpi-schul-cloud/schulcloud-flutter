@@ -53,36 +53,37 @@ class _CoursesScreenState extends State<CoursesScreen>
     with SortFilterStateMixin<CoursesScreen, Course> {
   @override
   Widget build(BuildContext context) {
+    final s = context.s;
+
     return Scaffold(
       body: CachedBuilder<List<Course>>(
         controller: services.storage.root.courses.controller,
         errorBannerBuilder: (_, error, st) => ErrorBanner(error, st),
         errorScreenBuilder: (_, error, st) => ErrorScreen(error, st),
         builder: (context, allCourses) {
-          if (allCourses.isEmpty) {
-            return EmptyStateScreen(
-              text: context.s.course_coursesScreen_empty,
-            );
-          }
-
           final courses = sortFilterSelection.apply(allCourses);
+
           return CustomScrollView(
             slivers: <Widget>[
               FancyAppBar(
-                title: Text(context.s.course),
+                title: Text(s.course),
                 actions: <Widget>[SortFilterIconButton(showSortFilterSheet)],
               ),
-              SliverPadding(
-                padding: EdgeInsets.fromLTRB(16, 8, 16, 16),
-                sliver: SliverList(
-                  delegate: SliverChildBuilderDelegate((_, i) {
+              if (courses.isEmpty)
+                SortFilterEmptyState(
+                  showSortFilterSheet,
+                  text: s.course_coursesScreen_empty,
+                )
+              else
+                SliverList(
+                  delegate: SliverChildBuilderDelegate((_, index) {
                     return Padding(
-                      padding: EdgeInsets.only(bottom: 16),
-                      child: CourseCard(courses[i]),
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      child: CourseCard(courses[index]),
                     );
                   }, childCount: courses.length),
                 ),
-              ),
             ],
           );
         },

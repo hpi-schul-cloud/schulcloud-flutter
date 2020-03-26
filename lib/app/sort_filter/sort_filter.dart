@@ -277,6 +277,30 @@ class SortFilterIconButton extends StatelessWidget {
   }
 }
 
+class SortFilterEmptyState extends StatelessWidget {
+  const SortFilterEmptyState(this.showSortFilterSheet, {@required this.text})
+      : assert(showSortFilterSheet != null),
+        assert(text != null);
+
+  final VoidCallback showSortFilterSheet;
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    return SliverFillRemaining(
+      child: EmptyStateScreen(
+        text: text,
+        actions: <Widget>[
+          SecondaryButton(
+            onPressed: showSortFilterSheet,
+            child: Text(context.s.app_sortFilterEmptyState_editFilters),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 abstract class SortFilterWidget<T> extends StatefulWidget {
   const SortFilterWidget(this.initialSortFilterSelection, {Key key})
       : assert(initialSortFilterSelection != null),
