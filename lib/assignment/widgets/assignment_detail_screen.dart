@@ -55,7 +55,7 @@ class _AssignmentDetailScreenState extends State<AssignmentDetailScreen>
               initialTabIndex: initialTabIndex,
               appBarBuilder: (_) => FancyAppBar(
                 title: Text(assignment.name),
-                subtitle: _buildSubtitle(context, assignment.courseId),
+                subtitle: CourseName.orNull(assignment.courseId),
                 actions: <Widget>[
                   if (user?.hasPermission(Permission.assignmentEdit) == true)
                     _buildArchiveAction(context, assignment),
@@ -83,27 +83,6 @@ class _AssignmentDetailScreenState extends State<AssignmentDetailScreen>
             );
           },
         );
-      },
-    );
-  }
-
-  Widget _buildSubtitle(BuildContext context, Id<Course> courseId) {
-    if (courseId == null) {
-      return null;
-    }
-
-    return CachedRawBuilder<Course>(
-      controller: courseId.controller,
-      builder: (context, update) {
-        return Row(children: <Widget>[
-          CourseColorDot(update.data),
-          SizedBox(width: 8),
-          Text(
-            update.data?.name ??
-                update.error?.toString() ??
-                context.s.general_loading,
-          ),
-        ]);
       },
     );
   }
