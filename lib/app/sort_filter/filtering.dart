@@ -156,6 +156,7 @@ class DateRangeFilterSelection {
 
 typedef CategoryLabelBuilder<C> = Widget Function(
     BuildContext context, C category);
+typedef WebQueryCategoryParser<C> = C Function(String value);
 
 class CategoryFilter<T, C> extends Filter<T, Set<C>> {
   const CategoryFilter(
@@ -164,10 +165,13 @@ class CategoryFilter<T, C> extends Filter<T, Set<C>> {
     @required this.categoriesController,
     @required this.categoryLabelBuilder,
     this.defaultSelection = const {},
+    this.webQueryKey,
+    @required this.webQueryParser,
   })  : assert(selector != null),
         assert(categoriesController != null),
         assert(categoryLabelBuilder != null),
         assert(defaultSelection != null),
+        assert(webQueryParser != null),
         super(titleGetter);
 
   final Selector<T, C> selector;
@@ -177,9 +181,13 @@ class CategoryFilter<T, C> extends Filter<T, Set<C>> {
   @override
   final Set<C> defaultSelection;
 
+  final String webQueryKey;
+  final WebQueryCategoryParser<C> webQueryParser;
+
   @override
   Set<C> tryParseWebQuery(Map<String, String> query, String key) {
-    return {};
+    final queryValue = query[webQueryKey ?? key];
+    return queryValue.split(',').map(webQueryParser).toSet();
   }
 
   @override

@@ -47,6 +47,7 @@ class AssignmentsScreen extends SortFilterWidget<Assignment> {
         categoriesController: services.storage.root.courses.controller
             .map((courses) => courses.map((c) => c.id)),
         categoryLabelBuilder: (_, courseId) => CourseName(courseId),
+        webQueryParser: (value) => Id<Course>(value),
       ),
       'more': FlagsFilter<Assignment>(
         (s) => s.general_entity_property_more,
