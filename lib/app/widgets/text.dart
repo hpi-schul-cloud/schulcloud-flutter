@@ -27,8 +27,11 @@ class FancyText extends StatefulWidget {
         assert(showRichText != null),
         assert(!showRichText || maxLines == null,
             "maxLines isn't supported in combination with showRichText."),
-        assert((estimatedLines ?? maxLines) == null ||
-            (estimatedLines ?? maxLines) > 0),
+        assert(maxLines == null || maxLines > 0),
+        assert(estimatedLines == null || estimatedLines > 0),
+        assert(estimatedLines == null ||
+            estimatedLines < 1 ||
+            estimatedLines % 1 == 0),
         assert(!showRichText || textAlign == null,
             "textAlign isn't supported in combination with showRichText."),
         super(key: key);
@@ -37,7 +40,7 @@ class FancyText extends StatefulWidget {
     String data, {
     Key key,
     TextType textType = TextType.html,
-    int estimatedLines,
+    double estimatedLines,
     TextStyle style,
     TextEmphasis emphasis,
   }) : this(
@@ -55,7 +58,7 @@ class FancyText extends StatefulWidget {
     Key key,
     int maxLines = 1,
     TextType textType = TextType.html,
-    int estimatedLines,
+    double estimatedLines,
     TextStyle style,
   }) : this(
           data,
@@ -72,7 +75,7 @@ class FancyText extends StatefulWidget {
   final int maxLines;
   final TextType textType;
   final bool showRichText;
-  final int estimatedLines;
+  final double estimatedLines;
   final TextStyle style;
   final TextEmphasis emphasis;
   final TextAlign textAlign;
@@ -88,9 +91,13 @@ class _FancyTextState extends State<FancyText> {
   void initState() {
     super.initState();
 
-    previewLines = (widget.estimatedLines ?? widget.maxLines ?? 1) -
-        1 +
-        lerpDouble(0.2, 0.9, Random().nextDouble());
+    final estimatedLines = widget.estimatedLines ?? widget.maxLines ?? 1;
+    if (estimatedLines < 1) {
+      previewLines = estimatedLines;
+    } else {
+      previewLines =
+          estimatedLines - 1 + lerpDouble(0.2, 0.9, Random().nextDouble());
+    }
   }
 
   @override

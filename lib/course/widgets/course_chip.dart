@@ -16,13 +16,13 @@ class CourseChip extends StatelessWidget {
     if (onPressed == null && course == null) {
       return Chip(
         avatar: CourseColorDot(course),
-        label: FancyText(course?.name),
+        label: FancyText(course?.name, estimatedLines: 0.3),
       );
     }
 
     return ActionChip(
       avatar: CourseColorDot(course),
-      label: FancyText(course?.name),
+      label: FancyText(course?.name, estimatedLines: 0.3),
       onPressed: onPressed ??
           () => context.navigator.pushNamed('/courses/${course.id}'),
     );
