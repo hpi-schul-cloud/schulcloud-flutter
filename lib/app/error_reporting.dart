@@ -11,6 +11,7 @@ import 'package:system_info/system_info.dart';
 import 'app_config.dart';
 import 'data.dart';
 import 'hive.dart';
+import 'logger.dart';
 import 'services/storage.dart';
 import 'utils.dart';
 
@@ -24,7 +25,10 @@ Future<void> runWithErrorReporting(Future<void> Function() body) async {
         if (_isInDebugMode) {
           FlutterError.dumpErrorToConsole(details);
         } else {
-          Zone.current.handleUncaughtError(details.exception, details.stack);
+          await reportEvent(Event(
+            exception: details.exception,
+            stackTrace: details.stack,
+          ));
         }
       };
 
@@ -32,10 +36,14 @@ Future<void> runWithErrorReporting(Future<void> Function() body) async {
     },
     // ignore: avoid_types_on_closure_parameters
     onError: (dynamic error, StackTrace stackTrace) async {
-      await reportEvent(Event(
-        exception: error,
-        stackTrace: stackTrace,
-      ));
+      if (_isInDebugMode) {
+        logger.e('Uncaught exception', error, stackTrace);
+      } else {
+        await reportEvent(Event(
+          exception: error,
+          stackTrace: stackTrace,
+        ));
+      }
     },
   );
 }
@@ -80,6 +88,7 @@ Future<bool> reportEvent(Event event) async {
       'platform': platformString.substring(platformString.indexOf('.') + 1),
       'flavor': services.config.name,
       if (user != null) 'schoolId': user.schoolId,
+      for (final entry in event.tags?.entries ?? {}) entry.key: entry.value,
     },
     extra: {
       'locale': window.locale.toString(),
