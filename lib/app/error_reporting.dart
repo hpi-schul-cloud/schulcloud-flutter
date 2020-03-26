@@ -10,6 +10,7 @@ import 'package:system_info/system_info.dart';
 
 import 'app_config.dart';
 import 'data.dart';
+import 'hive.dart';
 import 'services/storage.dart';
 import 'utils.dart';
 
@@ -66,7 +67,7 @@ Future<bool> reportEvent(Event event) async {
 
   final packageInfo = await PackageInfo.fromPlatform();
   final platformString = defaultTargetPlatform.toString();
-  User user = storage.userFromCache;
+  User user = HiveCache.isInitialized ? storage.userFromCache : null;
   final fullEvent = Event(
     release: packageInfo.version,
     environment: _isInDebugMode ? 'debug' : 'production',
