@@ -197,6 +197,7 @@ class AssignmentCard extends StatelessWidget {
       if (assignment.courseId != null)
         CourseChip(
           assignment.courseId,
+          key: ValueKey(assignment.courseId),
           onPressed: () => onCourseClicked(assignment.courseId),
         ),
       if (assignment.isOverdue)
