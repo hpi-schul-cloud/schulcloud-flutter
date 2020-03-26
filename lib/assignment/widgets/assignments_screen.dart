@@ -41,22 +41,12 @@ class AssignmentsScreen extends SortFilterWidget<Assignment> {
         selector: (assignment) => assignment.dueAt?.inLocalZone()?.calendarDate,
         defaultSelection: DateRangeFilterSelection(start: LocalDate.today()),
       ),
-      'course': CategoryFilter<Assignment, Id<Course>>(
         (s) => 'Course',
+      'courseId': CategoryFilter<Assignment, Id<Course>>(
         selector: (assignment) => assignment.courseId,
         categoriesController: services.storage.root.courses.controller
             .map((courses) => courses.map((c) => c.id)),
-        categoryLabelBuilder: (_, courseId) {
-          return CachedRawBuilder<Course>(
-            controller: courseId.controller,
-            builder: (_, update) {
-              return FancyText(
-                update.error?.toString() ?? update.data?.name,
-                estimatedLines: 0.2,
-              );
-            },
-          );
-        },
+        categoryLabelBuilder: (_, courseId) => CourseName(courseId),
       ),
       'more': FlagsFilter<Assignment>(
         (s) => s.general_entity_property_more,
@@ -118,6 +108,8 @@ class _AssignmentsScreenState extends State<AssignmentsScreen>
                           EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                       child: AssignmentCard(
                         assignment: assignments[index],
+                        onCourseClicked: (courseId) =>
+                            setFilter('courseId', {courseId}),
                         setFlagFilterCallback: setFlagFilter,
                       ),
                     ),
@@ -132,14 +124,19 @@ class _AssignmentsScreenState extends State<AssignmentsScreen>
   }
 }
 
+typedef OnCourseClicked = void Function(Id<Course> courseId);
+
 class AssignmentCard extends StatelessWidget {
   const AssignmentCard({
     @required this.assignment,
+    @required this.onCourseClicked,
     @required this.setFlagFilterCallback,
   })  : assert(assignment != null),
+        assert(onCourseClicked != null),
         assert(setFlagFilterCallback != null);
 
   final Assignment assignment;
+  final OnCourseClicked onCourseClicked;
   final SetFlagFilterCallback<Assignment> setFlagFilterCallback;
 
   void _showAssignmentDetailsScreen(BuildContext context) {
@@ -192,6 +189,7 @@ class AssignmentCard extends StatelessWidget {
       if (assignment.courseId != null)
         CourseChip(
           assignment.courseId,
+          onPressed: () => onCourseClicked(assignment.courseId),
         ),
       if (assignment.isOverdue)
         ActionChip(

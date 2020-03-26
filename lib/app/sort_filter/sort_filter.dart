@@ -124,18 +124,10 @@ class SortFilterSelection<T> {
   ) {
     assert(config.filters[flagsKey] is FlagsFilter);
 
-    return SortFilterSelection(
-      config: config,
-      sortSelectionKey: sortSelectionKey,
-      sortOrder: sortOrder,
-      filterSelections: {
-        ...filterSelections,
-        flagsKey: <String, bool>{
-          ...filterSelections[flagsKey],
-          flag: selection,
-        }
-      },
-    );
+    return withFilterSelection(flagsKey, <String, bool>{
+      ...filterSelections[flagsKey],
+      flag: selection,
+    });
   }
 
   List<T> apply(List<T> allItems) {
@@ -332,6 +324,11 @@ mixin SortFilterStateMixin<W extends SortFilterWidget<T>, T> on State<W> {
 
   void updateSortFilterSelection(SortFilterSelection<T> selection) {
     setState(() => sortFilterSelection = selection);
+  }
+
+  void setFilter(String key, dynamic selection) {
+    updateSortFilterSelection(
+        sortFilterSelection.withFilterSelection(key, selection));
   }
 
   // ignore: avoid_positional_boolean_parameters
