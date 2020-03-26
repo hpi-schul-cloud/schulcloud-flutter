@@ -42,7 +42,7 @@ class FileService {
       'fileStorage/signedUrl',
       queryParameters: {
         'download': null,
-        'file': file.id.toString(),
+        'file': file.id.value,
       },
     );
     final signedUrl = json.decode(response.body)['url'];

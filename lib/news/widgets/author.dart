@@ -28,7 +28,7 @@ class _AuthorViewState extends State<AuthorView> {
       alignment: Alignment.centerLeft,
       padding: EdgeInsets.fromLTRB(0, 4, 8, 4),
       child: FancyText(
-        isPlaceholder ? null : context.s.news_authorView(author.name),
+        isPlaceholder ? null : context.s.news_authorView(author.displayName),
         style: context.textTheme.caption.copyWith(fontSize: 16),
       ),
     );
