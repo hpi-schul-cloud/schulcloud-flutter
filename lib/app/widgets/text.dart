@@ -2,8 +2,11 @@ import 'dart:math';
 import 'dart:ui';
 
 import 'package:black_hole_flutter/black_hole_flutter.dart';
+import 'package:dartx/dartx.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:flutter_html/style.dart';
+import 'package:html/parser.dart' as html_parser;
 import 'package:schulcloud/app/app.dart';
 
 import '../utils.dart';
@@ -112,8 +115,9 @@ class _FancyTextState extends State<FancyText> {
     if (widget.data == null) {
       child = _buildLoading(context, style);
     } else {
-      child =
-          widget.showRichText ? _buildRichText(style) : _buildPlainText(style);
+      child = widget.showRichText
+          ? _buildRichText(context, style)
+          : _buildPlainText(style);
     }
 
     return AnimatedSwitcher(
@@ -185,7 +189,7 @@ class _FancyTextState extends State<FancyText> {
     );
   }
 
-  Widget _buildRichText(TextStyle style) {
+  Widget _buildRichText(BuildContext context, TextStyle style) {
     if (widget.textType == TextType.plain) {
       return Text(
         widget.data,
@@ -195,10 +199,78 @@ class _FancyTextState extends State<FancyText> {
 
     assert(widget.textType == TextType.html,
         'Unknown TextType: ${widget.textType}.');
+    final theme = context.theme;
+
+    final html = html_parser.parse(widget.data);
+    // Flutter's [Table] and also `html_flutter` don't support colspans. Without
+    // our help, rows using colspan would have less cells, but [Table] requires
+    // all rows to have the same number of cells. Hence we add empty cells to
+    // compensate.
+    for (final cell in html.querySelectorAll('td[colspan]')) {
+      final row = cell.parent;
+      assert(row.localName == 'tr');
+
+      final colspan = cell.attributes['colspan'].toInt();
+      for (var i = 1; i < colspan; i++) {
+        row.insertBefore(html.createElement('td'), cell.nextElementSibling);
+      }
+    }
+
     return Html(
-      data: widget.data,
-      defaultTextStyle: style,
+      data: html.outerHtml,
       onLinkTap: tryLaunchingUrl,
+      style: {
+        'a': Style(
+          color: theme.primaryColor,
+          textDecoration: TextDecoration.none,
+        ),
+        'code': Style(
+          backgroundColor: theme.contrastColor.withOpacity(0.05),
+          color: theme.primaryColor,
+        ),
+        // Reset style so we can render our custom hr.
+        'hr': Style(
+          // TODO(JonasWanke): Check rendering when margin is merged into existing styles.
+          margin: EdgeInsets.all(0),
+          border: Border.fromBorderSide(BorderSide.none),
+        ),
+        's': Style(textDecoration: TextDecoration.lineThrough),
+      },
+      customRender: {
+        'hr': (_, __, ___, ____) => Divider(),
+        // If the src-attribute point to an internal asset (/files/file...) we
+        // have to add our token.
+        'img': (context, _, attributes, __) {
+          final src = attributes['src'];
+          bool isInternal = true;
+          if (src == null || src.isBlank) {
+            isInternal = false;
+          }
+
+          final parsed = Uri.tryParse(src);
+          if (parsed == null ||
+              (parsed.isAbsolute && parsed.host != services.config.host)) {
+            isInternal = false;
+          }
+
+          return Image.network(
+            Uri.parse(services.config.baseWebUrl).resolveUri(parsed).toString(),
+            headers: {
+              if (isInternal)
+                'Cookie': 'jwt=${services.storage.token.getValue()}',
+            },
+            frameBuilder: (_, child, frame, __) {
+              if (frame == null) {
+                return Text(
+                  attributes['alt'] ?? '',
+                  style: context.style.generateTextStyle(),
+                );
+              }
+              return child;
+            },
+          );
+        },
+      },
     );
   }
 }

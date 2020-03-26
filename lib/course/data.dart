@@ -88,7 +88,6 @@ class Lesson implements Entity<Lesson>, Comparable<Lesson> {
           name: data['name'],
           contents: (data['contents'] as List<dynamic>)
               .map((content) => Content.fromJson(content))
-              .whereNotNull()
               .toList(),
           isHidden: data['hidden'] ?? false,
           position: data['position'],
@@ -101,13 +100,16 @@ class Lesson implements Entity<Lesson>, Comparable<Lesson> {
     Id<Course> courseId,
     bool hidden,
   }) async {
-    final jsonList = await services.api.get('lessons', parameters: {
-      if (courseId != null) 'courseId': courseId.value,
-      if (hidden == true)
-        'hidden': 'true'
-      else if (hidden == false)
-        'hidden[\$ne]': 'true',
-    }).parseJsonList();
+    final jsonList = await services.api.get(
+      'lessons',
+      queryParameters: {
+        if (courseId != null) 'courseId': courseId.value,
+        if (hidden == true)
+          'hidden': 'true'
+        else if (hidden == false)
+          'hidden[\$ne]': 'true',
+      },
+    ).parseJsonList();
     return jsonList.map((data) => Lesson.fromJson(data)).toList();
   }
 
@@ -137,56 +139,28 @@ class Lesson implements Entity<Lesson>, Comparable<Lesson> {
   String get webUrl => '${courseId.webUrl}/topics/$id';
 }
 
-@HiveType(typeId: TypeId.contentType)
-enum ContentType {
-  @HiveField(0)
-  text,
-
-  @HiveField(1)
-  etherpad,
-
-  @HiveField(2)
-  nexboad,
-}
-
 @HiveType(typeId: TypeId.content)
 class Content implements Entity<Content> {
-  const Content({
+  Content({
     @required this.id,
     @required this.title,
     @required this.isHidden,
-    @required this.type,
-    this.text,
-    this.url,
+    @required this.component,
   })  : assert(id != null),
-        assert(title != null),
+        assert(title?.isBlank != true),
         assert(isHidden != null),
-        assert(type != null);
+        assert(component != null);
 
   factory Content.fromJson(Map<String, dynamic> data) {
-    ContentType type;
-    switch (data['component']) {
-      case 'text':
-        type = ContentType.text;
-        break;
-      case 'Etherpad':
-        type = ContentType.etherpad;
-        break;
-      case 'neXboard':
-        type = ContentType.nexboad;
-        break;
-      default:
-        return null;
-    }
     return Content(
       id: Id(data['_id']),
-      title: data['title'] != '' ? data['title'] : 'Ohne Titel',
+      title: (data['title'] as String).blankToNull,
       isHidden: data['hidden'] ?? false,
-      type: type,
-      text: type == ContentType.text ? data['content']['text'] : null,
-      url: type != ContentType.text ? data['content']['url'] : null,
+      component: Component.fromJson(data),
     );
   }
+
+  // Used before: 2 – 4
 
   @override
   @HiveField(0)
@@ -195,18 +169,147 @@ class Content implements Entity<Content> {
   @HiveField(1)
   final String title;
 
-  @HiveField(2)
-  final ContentType type;
-
-  @HiveField(3)
-  final String text;
-
-  @HiveField(4)
-  final String url;
-
   @HiveField(5)
   final bool isHidden;
   bool get isVisible => !isHidden;
 
-  bool get isText => text != null;
+  @HiveField(6)
+  final Component component;
+}
+
+abstract class Component {
+  const Component();
+
+  factory Component.fromJson(Map<String, dynamic> data) {
+    final componentFactory = _componentFactories[data['component']];
+    if (componentFactory == null) {
+      return UnsupportedComponent();
+    }
+
+    return componentFactory(data['content'] ?? {});
+  }
+  static final Map<String, Component Function(Map<String, dynamic> json)>
+      _componentFactories = {
+    'text': (content) => TextComponent.fromJson(content),
+    'Etherpad': (content) => EtherpadComponent.fromJson(content),
+    'neXboard': (content) => NexboardComponent.fromJson(content),
+    'resources': (content) => ResourcesComponent.fromJson(content),
+  };
+}
+
+@HiveType(typeId: TypeId.unsupportedComponent)
+class UnsupportedComponent extends Component {
+  const UnsupportedComponent();
+}
+
+@HiveType(typeId: TypeId.textComponent)
+class TextComponent extends Component {
+  TextComponent({
+    @required this.text,
+  }) : assert(text?.isBlank != true);
+
+  factory TextComponent.fromJson(Map<String, dynamic> data) {
+    return TextComponent(
+      text: (data['text'] as String).blankToNull,
+    );
+  }
+
+  @HiveField(0)
+  final String text;
+}
+
+@HiveType(typeId: TypeId.etherpadComponent)
+class EtherpadComponent extends Component {
+  EtherpadComponent({
+    @required this.url,
+    this.description,
+  })  : assert(url != null),
+        assert(description?.isBlank != true);
+
+  factory EtherpadComponent.fromJson(Map<String, dynamic> data) {
+    return EtherpadComponent(
+      url: data['url'],
+      description: (data['description'] as String).blankToNull,
+    );
+  }
+
+  @HiveField(0)
+  final String url;
+
+  @HiveField(1)
+  final String description;
+}
+
+@HiveType(typeId: TypeId.nexboardComponent)
+class NexboardComponent extends Component {
+  NexboardComponent({
+    @required this.url,
+    this.description,
+  })  : assert(url != null),
+        assert(description?.isBlank != true);
+
+  factory NexboardComponent.fromJson(Map<String, dynamic> data) {
+    return NexboardComponent(
+      url: data['url'],
+      description: (data['description'] as String).blankToNull,
+    );
+  }
+
+  @HiveField(0)
+  final String url;
+
+  @HiveField(1)
+  final String description;
+}
+
+@HiveType(typeId: TypeId.resourcesComponent)
+class ResourcesComponent extends Component {
+  ResourcesComponent({
+    @required this.resources,
+  }) : assert(resources != null);
+
+  factory ResourcesComponent.fromJson(Map<String, dynamic> data) {
+    return ResourcesComponent(
+      resources: (data['resources'] as List<dynamic> ?? [])
+          .map((r) => Resource.fromJson(r))
+          .toList(),
+    );
+  }
+
+  @HiveField(0)
+  final List<Resource> resources;
+}
+
+@HiveType(typeId: TypeId.resource)
+class Resource {
+  Resource({
+    @required this.url,
+    @required this.title,
+    this.description,
+    @required this.client,
+  })  : assert(url != null),
+        assert(title != null && title.isNotBlank),
+        assert(description?.isBlank != true),
+        assert(client != null);
+
+  factory Resource.fromJson(Map<String, dynamic> data) {
+    return Resource(
+      url: data['url'],
+      title: (data['title'] as String).blankToNull,
+      description: (data['description'] as String).blankToNull,
+      client: data['client'],
+    );
+  }
+
+  @HiveField(0)
+  final String url;
+
+  @HiveField(1)
+  final String title;
+
+  @HiveField(2)
+  final String description;
+
+  @HiveField(3)
+  final String client;
 }

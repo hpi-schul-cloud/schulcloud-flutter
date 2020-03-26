@@ -18,16 +18,16 @@ class ApiNetworkService {
   /// Makes an HTTP GET request to the api.
   Future<http.Response> get(
     String path, {
-    Map<String, String> parameters = const {},
+    Map<String, String> queryParameters = const {},
   }) {
     final user = services.storage.userFromCache;
     return _network.get(
       _url(path),
-      parameters: {
+      queryParameters: {
         // For better server performance.
         if (user != null)
           'schoolId': user.schoolId,
-        ...parameters,
+        ...queryParameters,
       },
       headers: _getHeaders(),
     );
@@ -54,6 +54,15 @@ class ApiNetworkService {
   /// Makes an HTTP DELETE request to the api.
   Future<http.Response> delete(String path) {
     return _network.delete(_url(path), headers: _getHeaders());
+  }
+
+  /// Makes an HTTP HEAD request to the api.
+  Future<http.Response> head(String path, {bool followRedirects = true}) {
+    return _network.head(
+      _url(path),
+      headers: _getHeaders(),
+      followRedirects: followRedirects,
+    );
   }
 
   String _url(String path) {

@@ -94,7 +94,7 @@ class AccountDialog extends StatelessWidget {
         final user = update.data;
         return ListTile(
           leading: AccountAvatar(),
-          title: FancyText(user?.name),
+          title: FancyText(user?.displayName),
           subtitle: FancyText(user?.email),
         );
       },

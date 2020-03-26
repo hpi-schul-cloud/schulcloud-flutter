@@ -66,8 +66,9 @@
   "course": "Courses",
   "course_coursesScreen_empty": "Seems like you're currently not enrolled in any courses.",
   "course_detailsScreen_empty": "This course doesn't contain any topics.",
-  "course_lessonScreen_empty": "This topic doesn't contain any content we support in this app.",
-  "course_lessonScreen_empty_viewInBrowser": "View in browser",
+  "course_lessonScreen_empty": "This topic doesn't contain any content.",
+  "course_contentView_unsupported": "This content is not yet supported in this app.",
+  "course_resourceCard_via": "via {client}",
   "dashboard": "Dashboard",
   "file": "Files",
   "file_chooseDestination_content": "For now, you can't choose a destination.\nThe destination will be the root of your personal files.",
@@ -112,6 +113,7 @@
   "general_signOut": "Sign out",
   "general_undo": "Undo",
   "general_user_unknown": "unknown",
+  "general_viewInBrowser": "View in browser",
   "news": "News",
   "news_articlePreview_subtitle": "published on {published} by {author}",
   "news_authorView": "by {author}",
@@ -143,6 +145,5 @@
   "signIn_form_signIn": "Sign in",
   "signIn_signInScreen_about": "Das Hasso-Plattner-Institut für Digital Engineering entwickelt unter der Leitung von Prof. Dr. Christoph Meinel zusammen mit MINT-EC, dem nationalen Excellence-Schulnetzwerk von über 300 Schulen bundesweit und unterstützt vom Bundesministerium für Bildung und Forschung die HPI Schul-Cloud. Sie soll die technische Grundlage schaffen, dass Lehrkräfte und Schüler in jedem Unterrichtsfach auch moderne digitale Lehr- und Lerninhalte nutzen können, und zwar so, wie Apps über Smartphones oder Tablets nutzbar sind.",
   "signIn_signInScreen_moreInformation": "scroll down for more information",
-  "signIn_signInScreen_placeholder": "There could go some other information down here.",
   "signIn_signOutScreen_message": "Signing out…"
 }

@@ -79,7 +79,7 @@ class File implements Entity<File>, Comparable<File> {
   static Future<List<File>> fetchList(FilePath path) async {
     final files = await services.api.get(
       'fileStorage',
-      parameters: {
+      queryParameters: {
         'owner': path.ownerId.value,
         if (path.parentId != null) 'parent': path.parentId.value,
       },
