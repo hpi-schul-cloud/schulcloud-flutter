@@ -111,6 +111,14 @@ class _AssignmentsScreenState extends State<AssignmentsScreen>
                         assignment: assignments[index],
                         onCourseClicked: (courseId) =>
                             setFilter('courseId', {courseId}),
+                        onOverdueClicked: () {
+                          setFilter(
+                            'dueAt',
+                            DateRangeFilterSelection(
+                              end: LocalDate.today() - Period(days: 1),
+                            ),
+                          );
+                        },
                         setFlagFilterCallback: setFlagFilter,
                       ),
                     ),
@@ -131,23 +139,22 @@ class AssignmentCard extends StatelessWidget {
   const AssignmentCard({
     @required this.assignment,
     @required this.onCourseClicked,
+    @required this.onOverdueClicked,
     @required this.setFlagFilterCallback,
   })  : assert(assignment != null),
         assert(onCourseClicked != null),
+        assert(onOverdueClicked != null),
         assert(setFlagFilterCallback != null);
 
   final Assignment assignment;
   final OnCourseClicked onCourseClicked;
+  final VoidCallback onOverdueClicked;
   final SetFlagFilterCallback<Assignment> setFlagFilterCallback;
-
-  void _showAssignmentDetailsScreen(BuildContext context) {
-    context.navigator.pushNamed('/homework/${assignment.id}');
-  }
 
   @override
   Widget build(BuildContext context) {
     return FancyCard(
-      onTap: () => _showAssignmentDetailsScreen(context),
+      onTap: () => context.navigator.pushNamed('/homework/${assignment.id}'),
       omitBottomPadding: true,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -199,7 +206,7 @@ class AssignmentCard extends StatelessWidget {
             color: context.theme.errorColor,
           ),
           label: Text(s.assignment_assignment_overdue),
-          onPressed: () {},
+          onPressed: onOverdueClicked,
         ),
       if (assignment.isArchived)
         FlagFilterPreviewChip(
