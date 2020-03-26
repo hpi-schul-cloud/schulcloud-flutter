@@ -4,6 +4,7 @@ import 'package:hive/hive.dart';
 import 'package:dartx/dartx.dart';
 import 'package:meta/meta.dart';
 import 'package:schulcloud/app/app.dart';
+import 'package:time_machine/time_machine.dart';
 
 part 'data.g.dart';
 
@@ -11,15 +12,21 @@ part 'data.g.dart';
 class Course implements Entity<Course> {
   Course({
     @required this.id,
+    @required this.createdAt,
+    @required this.updatedAt,
     @required this.name,
     this.description,
     @required this.teacherIds,
     @required this.color,
+    this.archivedBy = const [],
   })  : assert(id != null),
+        assert(createdAt != null),
+        assert(updatedAt != null),
         assert(name != null),
         assert(description?.isBlank != true),
         assert(teacherIds != null),
         assert(color != null),
+        assert(archivedBy != null),
         lessons = LazyIds<Lesson>(
           collectionId: 'lessons of course $id',
           fetcher: () async => Lesson.fetchList(courseId: id),
@@ -32,10 +39,13 @@ class Course implements Entity<Course> {
   Course.fromJson(Map<String, dynamic> data)
       : this(
           id: Id<Course>(data['_id']),
+          createdAt: (data['createdAt'] as String).parseInstant(),
+          updatedAt: (data['updatedAt'] as String).parseInstant(),
           name: data['name'],
           description: (data['description'] as String).blankToNull,
           teacherIds: (data['teacherIds'] as List<dynamic>).castIds<User>(),
           color: (data['color'] as String).hexToColor,
+          archivedBy: (data['archived'] as List<dynamic> ?? []).castIds<User>(),
         );
 
   static Future<Course> fetch(Id<Course> id) async =>
@@ -44,6 +54,11 @@ class Course implements Entity<Course> {
   @override
   @HiveField(0)
   final Id<Course> id;
+
+  @HiveField(5)
+  final Instant createdAt;
+  @HiveField(6)
+  final Instant updatedAt;
 
   @HiveField(1)
   final String name;
@@ -56,6 +71,10 @@ class Course implements Entity<Course> {
 
   @HiveField(4)
   final Color color;
+
+  @HiveField(7)
+  final List<Id<User>> archivedBy;
+  bool get isArchived => archivedBy.contains(services.storage.userId);
 
   final LazyIds<Lesson> lessons;
   final LazyIds<Lesson> visibleLessons;

@@ -16,11 +16,11 @@ class AssignmentsScreen extends SortFilterWidget<Assignment> {
   static final sortFilterConfig = SortFilter<Assignment>(
     sorters: {
       'createdAt': Sorter<Assignment>.simple(
-        (s) => s.assignment_assignment_property_createdAt,
+        (s) => s.general_entity_property_createdAt,
         selector: (assignment) => assignment.createdAt,
       ),
       'updatedAt': Sorter<Assignment>.simple(
-        (s) => s.assignment_assignment_property_updatedAt,
+        (s) => s.general_entity_property_updatedAt,
         selector: (assignment) => assignment.updatedAt,
       ),
       'availableAt': Sorter<Assignment>.simple(
@@ -42,10 +42,10 @@ class AssignmentsScreen extends SortFilterWidget<Assignment> {
         defaultSelection: DateRangeFilterSelection(start: LocalDate.today()),
       ),
       'more': FlagsFilter<Assignment>(
-        (s) => s.assignment_assignment_property_more,
+        (s) => s.general_entity_property_more,
         filters: {
           'isArchived': FlagFilter<Assignment>(
-            (s) => s.assignment_assignment_property_isArchived,
+            (s) => s.general_entity_property_isArchived,
             selector: (assignment) => assignment.isArchived,
             defaultSelection: false,
           ),
