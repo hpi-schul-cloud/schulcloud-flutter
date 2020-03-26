@@ -13,7 +13,7 @@ class CoursesScreen extends SortFilterWidget<Course> {
 
   static final sortFilterConfig = SortFilter<Course>(
     sorters: {
-      'name': Sorter<Course>.simple(
+      'name': Sorter<Course>.name(
         (s) => s.general_entity_property_name,
         selector: (course) => course.name,
       ),
