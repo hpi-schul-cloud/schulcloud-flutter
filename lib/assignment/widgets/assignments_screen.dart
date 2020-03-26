@@ -101,7 +101,7 @@ class _AssignmentsScreenState extends State<AssignmentsScreen>
                           EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                       child: AssignmentCard(
                         assignment: assignments[index],
-                        setFlagFilterCallback: setFlatFilter,
+                        setFlagFilterCallback: setFlagFilter,
                       ),
                     ),
                     childCount: assignments.length,

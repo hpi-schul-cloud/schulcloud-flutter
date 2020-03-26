@@ -331,7 +331,7 @@ mixin SortFilterStateMixin<W extends SortFilterWidget<T>, T> on State<W> {
   }
 
   // ignore: avoid_positional_boolean_parameters
-  void setFlatFilter(String key, bool value) {
+  void setFlagFilter(String key, bool value) {
     updateSortFilterSelection(
         sortFilterSelection.withFlagsFilterSelection('more', key, value));
   }
