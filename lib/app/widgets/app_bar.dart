@@ -187,6 +187,7 @@ class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
       return title;
     } else {
       return Column(
+        mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           title,
@@ -317,6 +318,7 @@ class _AnimatedAppBarState extends State<_AnimatedAppBar> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = context.theme;
     final backgroundColor =
         _lerpColor(_parent.backgroundColor, _child.backgroundColor);
     final color = backgroundColor.contrastColor;
@@ -327,10 +329,7 @@ class _AnimatedAppBarState extends State<_AnimatedAppBar> {
     final toolbar = NavigationToolbar(
       leading: _buildLeading(),
       centerMiddle: false,
-      middle: DefaultTextStyle(
-        style: context.theme.textTheme.title.copyWith(color: color),
-        child: _buildTitle(),
-      ),
+      middle: _AppBarTitleBox(child: _buildTitle(theme, color)),
       trailing: _buildActions(),
     );
     Widget appBar = ClipRect(
@@ -401,22 +400,35 @@ class _AnimatedAppBarState extends State<_AnimatedAppBar> {
     return null;
   }
 
-  Widget _buildTitle() {
+  Widget _buildTitle(ThemeData theme, Color color) {
+    Widget buildTitle(AppBar appBar) {
+      return DefaultTextStyle(
+        style: theme.textTheme.title.copyWith(color: color),
+        softWrap: false,
+        overflow: TextOverflow.ellipsis,
+        child: Semantics(
+          namesRoute: theme.platform != TargetPlatform.iOS,
+          header: true,
+          child: _AppBarTitleBox(child: appBar.title),
+        ),
+      );
+    }
+
     return Stack(
-      fit: StackFit.loose,
+      fit: StackFit.passthrough,
       children: <Widget>[
         Opacity(
           opacity: _fadeOutHalf(),
           child: Transform.translate(
             offset: Offset(_lerpDouble(0, -20), 0),
-            child: _parent.title,
+            child: buildTitle(_parent),
           ),
         ),
         Opacity(
           opacity: _fadeInHalf(),
           child: Transform.translate(
             offset: Offset(_lerpDouble(20, 0), 0),
-            child: _child.title,
+            child: buildTitle(_child),
           ),
         ),
       ],
@@ -501,41 +513,6 @@ class _AnimatedAppBarState extends State<_AnimatedAppBar> {
       Color.lerp(parent, child, _animationValue);
   double _fadeOutHalf() => _halfInterval.transform(1 - _animationValue);
   double _fadeInHalf() => _halfInterval.transform(_animationValue);
-}
-
-class CrossFadeTransition extends StatelessWidget {
-  const CrossFadeTransition({
-    Key key,
-    @required this.value,
-    @required this.firstChild,
-    @required this.secondChild,
-  })  : assert(value != null),
-        assert(firstChild != null),
-        assert(secondChild != null),
-        super(key: key);
-
-  static const _halfInterval = Interval(0.5, 1);
-
-  final double value;
-  final Widget firstChild;
-  final Widget secondChild;
-
-  @override
-  Widget build(BuildContext context) {
-    return Stack(
-      fit: StackFit.loose,
-      children: <Widget>[
-        Opacity(
-          opacity: _halfInterval.transform(1 - value),
-          child: firstChild,
-        ),
-        Opacity(
-          opacity: _halfInterval.transform(value),
-          child: secondChild,
-        ),
-      ],
-    );
-  }
 }
 
 class _ActionsLayout extends MultiChildRenderObjectWidget {
@@ -671,4 +648,47 @@ class _ToolbarContainerLayout extends SingleChildLayoutDelegate {
 
   @override
   bool shouldRelayout(_ToolbarContainerLayout oldDelegate) => false;
+}
+
+// Direct copy from material/app_bar.dart
+// Layout the AppBar's title with unconstrained height, vertically
+// center it within its (NavigationToolbar) parent, and allow the
+// parent to constrain the title's actual height.
+class _AppBarTitleBox extends SingleChildRenderObjectWidget {
+  const _AppBarTitleBox({Key key, @required Widget child})
+      : assert(child != null),
+        super(key: key, child: child);
+
+  @override
+  _RenderAppBarTitleBox createRenderObject(BuildContext context) {
+    return _RenderAppBarTitleBox(
+      textDirection: Directionality.of(context),
+    );
+  }
+
+  @override
+  void updateRenderObject(
+      BuildContext context, _RenderAppBarTitleBox renderObject) {
+    renderObject.textDirection = Directionality.of(context);
+  }
+}
+
+class _RenderAppBarTitleBox extends RenderAligningShiftedBox {
+  _RenderAppBarTitleBox({
+    RenderBox child,
+    TextDirection textDirection,
+  }) : super(
+          child: child,
+          alignment: Alignment.center,
+          textDirection: textDirection,
+        );
+
+  @override
+  void performLayout() {
+    final BoxConstraints innerConstraints =
+        constraints.copyWith(maxHeight: double.infinity);
+    child.layout(innerConstraints, parentUsesSize: true);
+    size = constraints.constrain(child.size);
+    alignChild();
+  }
 }
