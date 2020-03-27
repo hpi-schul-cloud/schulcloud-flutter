@@ -86,6 +86,7 @@ class User implements Entity<User> {
   @HiveField(9)
   final List<Id<Role>> roleIds;
   bool get isTeacher => hasRole(Role.teacherName);
+  bool get isNotTeacher => !isTeacher;
   bool hasRole(String name) {
     // TODO(marcelgarus): Remove the hard-coded mapping and use runtime lookup when upgrading flutter_cached and flattening is supported.
     final id = {

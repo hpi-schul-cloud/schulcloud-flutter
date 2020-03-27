@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:black_hole_flutter/black_hole_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cached/flutter_cached.dart';
@@ -21,6 +23,8 @@ class AssignmentDetailScreen extends StatefulWidget {
 
 class _AssignmentDetailScreenState extends State<AssignmentDetailScreen>
     with TickerProviderStateMixin {
+  TabController _controller;
+
   @override
   Widget build(BuildContext context) {
     final s = context.s;
@@ -33,11 +37,15 @@ class _AssignmentDetailScreenState extends State<AssignmentDetailScreen>
           controller: services.storage.userId.controller,
           builder: (context, update) {
             final user = update.data;
-            final showSubmissionTab =
-                assignment.isPrivate || user?.isTeacher == false;
-            final showFeedbackTab =
-                assignment.isPublic && user?.isTeacher == false;
-            final showSubmissionsTab = assignment.isPublic &&
+            final showSubmissionTab = assignment != null &&
+                user != null &&
+                (assignment.isPrivate || user.isNotTeacher);
+            final showFeedbackTab = assignment != null &&
+                assignment.isPublic &&
+                user != null &&
+                user.isNotTeacher;
+            final showSubmissionsTab = assignment != null &&
+                assignment.isPublic &&
                 (user?.isTeacher == true || assignment.hasPublicSubmissions);
 
             final tabs = [
@@ -51,8 +59,17 @@ class _AssignmentDetailScreenState extends State<AssignmentDetailScreen>
               initialTabIndex = null;
             }
 
+            if (_controller == null || _controller.length != tabs.length) {
+              _controller = TabController(
+                initialIndex: min(initialTabIndex ?? 0, tabs.length - 1),
+                length: tabs.length,
+                vsync: this,
+              );
+            }
+
             return FancyTabbedScaffold(
               initialTabIndex: initialTabIndex,
+              controller: _controller,
               appBarBuilder: (_) => FancyAppBar(
                 title: Text(assignment.name),
                 subtitle: _buildSubtitle(context, assignment.courseId),
@@ -61,6 +78,7 @@ class _AssignmentDetailScreenState extends State<AssignmentDetailScreen>
                     _buildArchiveAction(context, assignment),
                 ],
                 bottom: TabBar(
+                  controller: _controller,
                   tabs: [
                     Tab(text: s.assignment_assignmentDetails_details),
                     if (showSubmissionTab)

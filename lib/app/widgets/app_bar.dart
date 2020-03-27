@@ -115,7 +115,6 @@ class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
     final double toolbarOpacity =
         ((visibleMainHeight - _bottomHeight) / kToolbarHeight).clamp(0.0, 1.0);
 
-    // Custom:
     final theme = context.theme;
     final backgroundColor =
         this.backgroundColor ?? theme.scaffoldBackgroundColor;
@@ -130,7 +129,7 @@ class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
         canPop ? (useCloseButton ? CloseButton() : BackButton()) : null;
 
     final Widget appBar = AppBar(
-      // We rely on this in [AnimatedAppBar]
+      // We rely on an explicitly provided leading in [_AnimatedAppBar].
       leading: leading,
       automaticallyImplyLeading: false,
       title: DefaultTextStyle.merge(
@@ -173,7 +172,7 @@ class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
       final fromAppBar = appBarFromContext(fromContext);
       final toAppBar = appBarFromContext(toContext);
 
-      return AnimatedAppBar(
+      return _AnimatedAppBar(
         parentAppBar:
             direction == HeroFlightDirection.push ? fromAppBar : toAppBar,
         childAppBar:
@@ -277,8 +276,8 @@ class _FloatingAppBarState extends State<_FloatingAppBar> {
   Widget build(BuildContext context) => widget.child;
 }
 
-class AnimatedAppBar extends StatefulWidget {
-  const AnimatedAppBar({
+class _AnimatedAppBar extends StatefulWidget {
+  const _AnimatedAppBar({
     @required this.parentAppBar,
     @required this.childAppBar,
     @required this.animation,
@@ -296,7 +295,7 @@ class AnimatedAppBar extends StatefulWidget {
 
 const _halfInterval = Interval(0.5, 1);
 
-class _AnimatedAppBarState extends State<AnimatedAppBar> {
+class _AnimatedAppBarState extends State<_AnimatedAppBar> {
   double get _animationValue => widget.animation.value;
   AppBar get _parent => widget.parentAppBar;
   AppBar get _child => widget.childAppBar;
@@ -343,7 +342,7 @@ class _AnimatedAppBarState extends State<AnimatedAppBar> {
         ),
       ),
     );
-    // TODO: bottom
+    appBar = _addBottom(appBar, backgroundColor);
     appBar = Align(
       alignment: Alignment.topCenter,
       child: SafeArea(
@@ -443,6 +442,57 @@ class _AnimatedAppBarState extends State<AnimatedAppBar> {
       wrapActions(_parent, opacity: _fadeOutHalf()),
       wrapActions(_child, opacity: _fadeInHalf()),
     ]);
+  }
+
+  Widget _addBottom(Widget appBar, Color backgroundColor) {
+    assert(_parent.bottom == null,
+        "bottom in the parent's FancyAppBar is not yet supported.");
+    if (_parent.bottom == null && _child.bottom == null) {
+      return appBar;
+    }
+
+    final bottomHeight = _child.bottom.preferredSize.height;
+    final visibleBottomHeight = _lerpDouble(0, bottomHeight);
+    return Stack(
+      children: <Widget>[
+        if (_child.bottom != null) ...[
+          Positioned(
+            left: 0,
+            right: 0,
+            bottom: 0,
+            child: _child.bottom,
+          ),
+          Positioned(
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    backgroundColor.withOpacity(1 - _fadeInHalf()),
+                    backgroundColor.withAlpha(0),
+                  ],
+                  stops: [
+                    kToolbarHeight / (kToolbarHeight + visibleBottomHeight),
+                    1
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
+        Positioned(
+          left: 0,
+          top: 0,
+          right: 0,
+          child: appBar,
+        ),
+      ],
+    );
   }
 
   double _lerpDouble(double parent, double child) =>
