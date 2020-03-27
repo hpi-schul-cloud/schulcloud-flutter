@@ -9,7 +9,6 @@ import 'package:schulcloud/course/course.dart';
 
 import '../data.dart';
 import '../service.dart';
-import 'app_bar.dart';
 import 'file_tile.dart';
 import 'upload_fab.dart';
 
@@ -96,12 +95,12 @@ class FileBrowser extends StatelessWidget {
   }
 
   Widget _buildStandalone(BuildContext context) {
-    FileBrowserAppBar buildLoadingErrorAppBar(
+    FancyAppBar buildLoadingErrorAppBar(
       dynamic error, [
       Color backgroundColor,
     ]) {
-      return FileBrowserAppBar(
-        title: error?.toString() ?? context.s.general_loading,
+      return FancyAppBar(
+        title: Text(error?.toString() ?? context.s.general_loading),
         backgroundColor: backgroundColor,
       );
     }
@@ -117,8 +116,8 @@ class FileBrowser extends StatelessWidget {
 
           final course = update.data;
           if (path.parentId == null) {
-            return FileBrowserAppBar(
-              title: course.name,
+            return FancyAppBar(
+              title: Text(course.name),
               backgroundColor: course.color,
             );
           }
@@ -131,8 +130,8 @@ class FileBrowser extends StatelessWidget {
               }
 
               final parent = update.data;
-              return FileBrowserAppBar(
-                title: parent.name,
+              return FancyAppBar(
+                title: Text(parent.name),
                 backgroundColor: course.color,
               );
             },
@@ -148,11 +147,11 @@ class FileBrowser extends StatelessWidget {
           }
 
           final parent = update.data;
-          return FileBrowserAppBar(title: parent.name);
+          return FancyAppBar(title: Text(parent.name));
         },
       );
     } else if (isOwnerMe) {
-      appBar = FileBrowserAppBar(title: context.s.file_files_my);
+      appBar = FancyAppBar(title: Text(context.s.file_files_my));
     }
 
     return Scaffold(
