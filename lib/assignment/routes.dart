@@ -20,6 +20,7 @@ final assignmentRoutes = FancyRoute(
   routes: [
     FancyRoute(
       matcher: Matcher.path('{assignmentId}'),
+      onlySwipeFromEdge: true,
       builder: (_, result) {
         var tab = result.uri.fragment;
         tab = tab.isNotEmpty && tab.startsWith(_activeTabPrefix)

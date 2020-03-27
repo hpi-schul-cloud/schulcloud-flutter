@@ -1,14 +1,15 @@
 // This is a stripped-down implementation of [CupertinoPageRoute] that allows
-// for swiping back anywhere on the page.
+// for swiping back anywhere on the page unless onlySwipeFromEdge is true.
 
 import 'dart:math';
 import 'dart:ui' show lerpDouble;
 
-import 'package:flutter/material.dart';
+import 'package:flutter/animation.dart' show Curves;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
-import 'package:flutter/animation.dart' show Curves;
+import 'package:flutter/material.dart';
 
+const double _kBackGestureWidth = 48;
 const double _kMinFlingVelocity = 1; // Screen widths per second.
 
 // An eyeballed value for the maximum time it takes for a page to animate forward
@@ -33,11 +34,15 @@ final Animatable<Offset> _kMiddleLeftTween = Tween<Offset>(
 
 class FancyPageRoute<T> extends PageRoute<T> {
   FancyPageRoute({
+    this.onlySwipeFromEdge = false,
     @required this.builder,
     RouteSettings settings,
-  })  : assert(builder != null),
+  })  : assert(onlySwipeFromEdge != null),
+        assert(builder != null),
         assert(opaque),
         super(settings: settings, fullscreenDialog: false);
+
+  final bool onlySwipeFromEdge;
 
   /// Builds the primary contents of the route.
   final WidgetBuilder builder;
@@ -136,6 +141,7 @@ class FancyPageRoute<T> extends PageRoute<T> {
         // match finger motions.
         linearTransition: isPopGestureInProgress(route),
         child: _FancyBackGestureDetector<T>(
+          onlySwipeFromEdge: (route as FancyPageRoute).onlySwipeFromEdge,
           enabledCallback: () => _isPopGestureEnabled<T>(route),
           onStartPopGesture: () => _startPopGesture<T>(route),
           child: child,
@@ -215,13 +221,17 @@ class FancyPageTransition extends StatelessWidget {
 class _FancyBackGestureDetector<T> extends StatefulWidget {
   const _FancyBackGestureDetector({
     Key key,
+    this.onlySwipeFromEdge = false,
     @required this.enabledCallback,
     @required this.onStartPopGesture,
     @required this.child,
-  })  : assert(enabledCallback != null),
+  })  : assert(onlySwipeFromEdge != null),
+        assert(enabledCallback != null),
         assert(onStartPopGesture != null),
         assert(child != null),
         super(key: key);
+
+  final bool onlySwipeFromEdge;
 
   final Widget child;
 
@@ -305,16 +315,31 @@ class _FancyBackGestureDetectorState<T>
   @override
   Widget build(BuildContext context) {
     assert(debugCheckHasDirectionality(context));
+    // For devices with notches, the drag area needs to be larger on the side
+    // that has the notch.
+    double dragAreaWidth = Directionality.of(context) == TextDirection.ltr
+        ? MediaQuery.of(context).padding.left
+        : MediaQuery.of(context).padding.right;
+    dragAreaWidth = max(dragAreaWidth, _kBackGestureWidth);
+
+    final listener = Listener(
+      onPointerDown: _handlePointerDown,
+      behavior: HitTestBehavior.translucent,
+    );
     return Stack(
       fit: StackFit.passthrough,
       children: <Widget>[
         widget.child,
-        Positioned.fill(
-          child: Listener(
-            onPointerDown: _handlePointerDown,
-            behavior: HitTestBehavior.translucent,
-          ),
-        ),
+        if (widget.onlySwipeFromEdge)
+          PositionedDirectional(
+            start: 0,
+            width: dragAreaWidth,
+            top: 0,
+            bottom: 0,
+            child: listener,
+          )
+        else
+          Positioned.fill(child: listener),
       ],
     );
   }

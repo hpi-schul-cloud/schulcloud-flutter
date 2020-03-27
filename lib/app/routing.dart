@@ -26,24 +26,27 @@ typedef FancyRouteBuilder = Widget Function(
 class FancyRoute extends Route {
   FancyRoute({
     Matcher matcher = const Matcher.any(),
+    bool onlySwipeFromEdge = false,
     FancyRouteBuilder builder,
     FancyRouteBuilder topLevelBuilder,
     List<FancyRoute> routes = const [],
   })  : assert(!(builder != null && topLevelBuilder != null)),
         super(
           matcher: matcher,
-          builder: _buildFancyRouteBuilder(builder) ??
+          builder: _buildFancyRouteBuilder(builder, onlySwipeFromEdge) ??
               _buildTopLevelRouteBuilder(topLevelBuilder),
           routes: routes,
         );
 
-  static RouteBuilder _buildFancyRouteBuilder(FancyRouteBuilder builder) {
+  static RouteBuilder _buildFancyRouteBuilder(
+      FancyRouteBuilder builder, bool onlySwipeFromEdge) {
     if (builder == null) {
       return null;
     }
 
     return (result) {
       return FancyPageRoute(
+        onlySwipeFromEdge: onlySwipeFromEdge,
         builder: (context) => builder(context, result),
         settings: result.settings,
       );
