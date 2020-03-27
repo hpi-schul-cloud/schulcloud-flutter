@@ -133,7 +133,7 @@ class _AssignmentsScreenState extends State<AssignmentsScreen>
   }
 }
 
-typedef OnCourseClicked = void Function(Id<Course> courseId);
+typedef CourseClickedCallback = void Function(Id<Course> courseId);
 
 class AssignmentCard extends StatelessWidget {
   const AssignmentCard({
@@ -147,7 +147,7 @@ class AssignmentCard extends StatelessWidget {
         assert(setFlagFilterCallback != null);
 
   final Assignment assignment;
-  final OnCourseClicked onCourseClicked;
+  final CourseClickedCallback onCourseClicked;
   final VoidCallback onOverdueClicked;
   final SetFlagFilterCallback<Assignment> setFlagFilterCallback;
 
