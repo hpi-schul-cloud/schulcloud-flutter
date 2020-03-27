@@ -17,26 +17,26 @@ class NewsDashboardCard extends StatelessWidget {
       title: s.news_dashboardCard,
       footerButtonText: s.news_dashboardCard_all,
       onFooterButtonPressed: () => context.navigator.pushNamed('/news'),
-      child: FancyCachedBuilder<List<Article>>.handleLoading(
-        controller: services.storage.root.news.populatedController,
-        builder: (context, articles, isFetching) {
-          if (articles.isEmpty) {
-            return Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16),
-              child: Text(s.news_dashboardCard_empty),
+      child: CollectionBuilder.populated<Article>(
+        collection: services.storage.root.news,
+        builder: handleEdgeCases(handleEmptyState(
+          emptyStateBuilder: (context) => Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16),
+            child: Text(s.news_dashboardCard_empty),
+          ),
+          builder: (context, articles, isFetching) {
+            articles
+                .sort((a1, a2) => -a1.publishedAt.compareTo(a2.publishedAt));
+            articles = articles.take(articleCount).toList();
+
+            return Column(
+              children: <Widget>[
+                for (final article in articles)
+                  _buildArticlePreview(context, article),
+              ],
             );
-          }
-
-          articles.sort((a1, a2) => -a1.publishedAt.compareTo(a2.publishedAt));
-          articles = articles.take(articleCount).toList();
-
-          return Column(
-            children: <Widget>[
-              for (final article in articles)
-                _buildArticlePreview(context, article),
-            ],
-          );
-        },
+          },
+        )),
       ),
     );
   }

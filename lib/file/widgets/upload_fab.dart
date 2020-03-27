@@ -74,9 +74,9 @@ class _UploadFabState extends State<UploadFab> {
 
   @override
   Widget build(BuildContext context) {
-    return FancyCachedBuilder<User>(
-      controller: services.storage.userId.controller,
-      builder: (context, user, _) {
+    return EntityBuilder<User>(
+      id: services.storage.userId,
+      builder: handleEdgeCases((context, user, _) {
         if (user == null || !user.hasPermission(Permission.fileStorageCreate)) {
           return SizedBox();
         }
@@ -85,7 +85,7 @@ class _UploadFabState extends State<UploadFab> {
           onPressed: () => _startUpload(context),
           child: Icon(Icons.file_upload),
         );
-      },
+      }),
     );
   }
 }

@@ -24,12 +24,12 @@ class _AssignmentDetailScreenState extends State<AssignmentDetailScreen>
   Widget build(BuildContext context) {
     final s = context.s;
 
-    return FancyCachedBuilder<Assignment>.handleLoading(
-      controller: widget.assignmentId.controller,
-      builder: (context, assignment, isFetching) {
-        return FancyCachedBuilder<User>.handleLoading(
-          controller: services.storage.userId.controller,
-          builder: (context, user, isFetching) {
+    return EntityBuilder<Assignment>(
+      id: widget.assignmentId,
+      builder: handleEdgeCases((context, assignment, _) {
+        return EntityBuilder<User>(
+          id: services.storage.userId,
+          builder: handleEdgeCases((context, user, isFetching) {
             final showSubmissionTab =
                 assignment.isPrivate || user?.isTeacher == false;
             final showFeedbackTab =
@@ -78,9 +78,9 @@ class _AssignmentDetailScreenState extends State<AssignmentDetailScreen>
                 if (showSubmissionsTab) _SubmissionsTab(),
               ],
             );
-          },
+          }),
         );
-      },
+      }),
     );
   }
 
@@ -89,15 +89,15 @@ class _AssignmentDetailScreenState extends State<AssignmentDetailScreen>
       return null;
     }
 
-    return FancyCachedBuilder<Course>(
-      controller: courseId.controller,
-      builder: (context, course, _) {
+    return EntityBuilder<Course>(
+      id: courseId,
+      builder: handleEdgeCases((context, course, _) {
         return Row(children: <Widget>[
           CourseColorDot(course),
           SizedBox(width: 8),
           Text(course?.name ?? context.s.general_loading),
         ]);
-      },
+      }),
     );
   }
 
@@ -216,7 +216,7 @@ class _SubmissionTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FancyCachedBuilder<Submission>(
+    return FetchStreamBuilder<Submission>(
       controller: assignment.mySubmission,
       builder: (context, submission, isFetching) {
         // TODO(JonasWanke): differentiate between loading and no submission
@@ -257,9 +257,9 @@ class _SubmissionTab extends StatelessWidget {
 
     final s = context.s;
 
-    return FancyCachedBuilder<User>(
-      controller: services.storage.userId.controller,
-      builder: (context, user, isFetching) {
+    return EntityBuilder<User>(
+      id: services.storage.userId,
+      builder: handleEdgeCases((context, user, isFetching) {
         String labelText;
         if (submission == null &&
             user.hasPermission(Permission.submissionsCreate)) {
@@ -283,7 +283,7 @@ class _SubmissionTab extends StatelessWidget {
             ),
           ),
         );
-      },
+      }),
     );
   }
 }
@@ -299,7 +299,7 @@ class _FeedbackTab extends StatelessWidget {
   Widget build(BuildContext context) {
     final s = context.s;
 
-    return FancyCachedBuilder<Submission>(
+    return FetchStreamBuilder<Submission>(
       controller: assignment.mySubmission,
       builder: (_, submission, isFetching) {
         return TabContent(

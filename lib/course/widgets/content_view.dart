@@ -2,7 +2,6 @@ import 'dart:math';
 
 import 'package:black_hole_flutter/black_hole_flutter.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_cached/flutter_cached.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:schulcloud/app/app.dart';
 
@@ -53,9 +52,9 @@ class _ComponentView extends StatelessWidget {
       );
     }
     if (component is NexboardComponent) {
-      return FancyCachedBuilder<User>.handleLoading(
-        controller: services.storage.userId.controller,
-        builder: (context, user, _) {
+      return EntityBuilder<User>(
+        id: services.storage.userId,
+        builder: handleEdgeCases((context, user, fetch) {
           // https://github.com/schul-cloud/schulcloud-client/blob/90e7d1f70be4b0e8224f9e18525a7ef1c7ff297a/views/topic/components/content-neXboard.hbs#L3-L4
           final url =
               '${component.url}?disableConference=true&username=${user.avatarInitials}';
@@ -64,7 +63,7 @@ class _ComponentView extends StatelessWidget {
             url: url,
             child: _ExternalContentWebView(url),
           );
-        },
+        }),
       );
     }
 

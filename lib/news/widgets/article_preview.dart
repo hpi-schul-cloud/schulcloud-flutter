@@ -51,9 +51,9 @@ class ArticlePreview extends StatelessWidget {
               article?.title,
               style: theme.textTheme.display2,
             ),
-            FancyCachedBuilder<User>(
-              controller: article.authorId.controller,
-              builder: (_, author, __) {
+            EntityBuilder<User>(
+              id: article.authorId,
+              builder: handleEdgeCases((context, author, __) {
                 final authorName =
                     author?.displayName ?? context.s.general_placeholder;
 
@@ -65,7 +65,7 @@ class ArticlePreview extends StatelessWidget {
                   emphasis: TextEmphasis.medium,
                   style: theme.textTheme.subtitle,
                 );
-              },
+              }),
             ),
             SizedBox(height: 4),
             FancyText.preview(

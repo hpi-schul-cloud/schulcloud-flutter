@@ -19,9 +19,9 @@ class CourseCard extends StatelessWidget {
           Text(course.name),
           SizedBox(width: 16),
           Expanded(
-            child: FancyCachedBuilder<List<User>>(
-              controller: course.teacherIds.controller,
-              builder: (_, teachers, __) {
+            child: FetchStreamBuilder<User>(
+              collection: course.teacherIds.resolveAll(),
+              builder: handleListEdgeCases((_, teachers, __) {
                 return FancyText(
                   teachers
                       ?.where((teacher) => teacher != null)
@@ -30,7 +30,7 @@ class CourseCard extends StatelessWidget {
                   maxLines: 1,
                   emphasis: TextEmphasis.medium,
                 );
-              },
+              }),
             ),
           ),
         ],

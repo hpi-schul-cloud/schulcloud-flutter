@@ -1,7 +1,4 @@
-import 'package:hive/hive.dart';
-import 'package:meta/meta.dart';
 import 'package:schulcloud/app/app.dart';
-import 'package:time_machine/time_machine.dart';
 
 part 'data.g.dart';
 

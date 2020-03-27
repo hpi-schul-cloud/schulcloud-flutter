@@ -27,7 +27,8 @@ void _showStackTrace(
 }
 
 class PinkStripedErrorWidget extends StatelessWidget {
-  const PinkStripedErrorWidget(this.error, this.stackTrace);
+  const PinkStripedErrorWidget(this.error, this.stackTrace)
+      : assert(error != null);
 
   final dynamic error;
   final StackTrace stackTrace;
@@ -64,7 +65,9 @@ class PinkStripedErrorWidget extends StatelessWidget {
         ),
         padding: EdgeInsets.all(8),
         child: GestureDetector(
-          onLongPress: () => _showStackTrace(context, error, stackTrace),
+          onLongPress: () => stackTrace == null
+              ? null
+              : _showStackTrace(context, error, stackTrace),
           child: SafeArea(
             child: Center(
               child: Text(

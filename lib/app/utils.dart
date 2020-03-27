@@ -5,6 +5,7 @@ import 'dart:ui';
 import 'package:dartx/dartx.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:hive_cache/hive_cache.dart';
 import 'package:html/parser.dart';
 import 'package:http/http.dart';
 import 'package:schulcloud/generated/l10n.dart';
@@ -142,3 +143,8 @@ class LazyMap<K, V> {
 
   V operator [](K key) => _map.putIfAbsent(key, () => createValueForKey(key));
 }
+
+/// Converts the given dynamically typed list into a strongly typed [List] of
+/// [Id]'s of for the entity type [E].
+List<Id<E>> parseIds<E extends Entity<E>>(dynamic list) =>
+    (list as List<dynamic>)?.cast<String>()?.map((id) => Id<E>(id))?.toList();

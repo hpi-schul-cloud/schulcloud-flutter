@@ -22,9 +22,9 @@ class FileTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FancyCachedBuilder<File>.handleLoading(
-      controller: fileId.controller,
-      builder: (context, file, isFetching) {
+    return EntityBuilder<File>(
+      id: fileId,
+      builder: handleEdgeCases((context, file, _) {
         final subtitle = [
           if (file.isActualFile) file.sizeAsString,
           if (file.updatedAt != null) file.updatedAt.shortDateTimeString,
@@ -37,7 +37,7 @@ class FileTile extends StatelessWidget {
           onTap: onTapHandler(file) == null ? null : () => onTapHandler(file),
           onLongPress: () => FileMenu.show(context, file),
         );
-      },
+      }),
     );
   }
 }

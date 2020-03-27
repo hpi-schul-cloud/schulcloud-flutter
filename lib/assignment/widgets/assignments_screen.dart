@@ -84,43 +84,45 @@ class _AssignmentsScreenState extends State<AssignmentsScreen> {
     final s = context.s;
 
     return Scaffold(
-      body: FancyCachedBuilder.list<Assignment>(
-        appBar: FancyAppBar(
-          title: Text(context.s.assignment),
-          actions: <Widget>[
-            IconButton(
-              icon: Icon(Icons.sort),
-              onPressed: () => _showSortFilterSheet(context),
-            ),
-          ],
-        ),
-        controller: services.storage.root.assignments.populatedController,
-        emptyStateBuilder: (_, __) => EmptyStateScreen(
-          text: s.assignment_assignmentsScreen_empty,
-          actions: <Widget>[
-            SecondaryButton(
-              onPressed: () => _showSortFilterSheet(context),
-              child: Text(s.assignment_assignmentsScreen_empty_editFilters),
-            ),
-          ],
-        ),
-        builder: (context, allAssignments, isFetching) {
-          final assignments = _sortFilter.apply(allAssignments);
-
-          return ListView.builder(
-            itemCount: assignments.length,
-            itemBuilder: (_, index) => Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              child: AssignmentCard(
-                assignment: assignments[index],
-                setFlagFilterCallback: (key, value) {
-                  setState(() => _sortFilter =
-                      _sortFilter.withFlagsFilterSelection('more', key, value));
-                },
+      body: CollectionBuilder.populated<Assignment>(
+        collection: services.storage.root.assignments,
+        builder: handleListEdgeCases(
+          appBar: FancyAppBar(
+            title: Text(context.s.assignment),
+            actions: <Widget>[
+              IconButton(
+                icon: Icon(Icons.sort),
+                onPressed: () => _showSortFilterSheet(context),
               ),
-            ),
-          );
-        },
+            ],
+          ),
+          emptyStateBuilder: (context) => EmptyStateScreen(
+            text: s.assignment_assignmentsScreen_empty,
+            actions: <Widget>[
+              SecondaryButton(
+                onPressed: () => _showSortFilterSheet(context),
+                child: Text(s.assignment_assignmentsScreen_empty_editFilters),
+              ),
+            ],
+          ),
+          builder: (context, allAssignments, fetch) {
+            final assignments = _sortFilter.apply(allAssignments);
+
+            return ListView.builder(
+              itemCount: assignments.length,
+              itemBuilder: (_, index) => Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                child: AssignmentCard(
+                  assignment: assignments[index],
+                  setFlagFilterCallback: (key, value) {
+                    setState(() => _sortFilter = _sortFilter
+                        .withFlagsFilterSelection('more', key, value));
+                  },
+                ),
+              ),
+            );
+          },
+        ),
       ),
     );
   }
@@ -193,16 +195,16 @@ class AssignmentCard extends StatelessWidget {
 
     return <Widget>[
       if (assignment.courseId != null)
-        FancyCachedBuilder<Course>(
-          controller: assignment.courseId.controller,
-          builder: (_, course, __) {
+        EntityBuilder<Course>(
+          id: assignment.courseId,
+          builder: handleEdgeCases((context, course, fetch) {
             return CourseChip(
               course,
               onPressed: () {
                 // TODO(JonasWanke): filter list by course, https://github.com/schul-cloud/schulcloud-flutter/issues/145
               },
             );
-          },
+          }),
         ),
       if (assignment.isOverdue)
         ActionChip(

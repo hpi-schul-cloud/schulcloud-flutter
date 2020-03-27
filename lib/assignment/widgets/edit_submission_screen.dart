@@ -12,19 +12,19 @@ class EditSubmissionScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FancyCachedBuilder<Assignment>.handleLoading(
-      controller: assignmentId.controller,
-      builder: (_, assignment, __) {
-        return FancyCachedBuilder<Submission>.handleLoading(
-          controller: assignment.mySubmission,
-          builder: (_, submission, __) {
+    return EntityBuilder<Assignment>(
+      id: assignmentId,
+      builder: handleEdgeCases((context, assignment, fetch) {
+        return LazyIdBuilder<Submission>(
+          lazyId: assignment.mySubmission,
+          builder: (context, submission, fetch) {
             return EditSubmissionForm(
               assignment: assignment,
               submission: submission,
             );
           },
         );
-      },
+      }),
     );
   }
 }

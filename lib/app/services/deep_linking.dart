@@ -10,7 +10,7 @@ import '../logger.dart';
 class DeepLinkingService {
   DeepLinkingService._(Uri initial)
       : _subject = BehaviorSubject<Uri>.seeded(initial) {
-    Observable(getUriLinksStream())
+    getUriLinksStream()
         .doOnData((uri) => logger.i('Received deep link: $uri'))
         // We can't use pipe as we're also adding items manually
         .listen(_subject.add);

@@ -33,9 +33,9 @@ class _CalendarDashboardCardState extends State<CalendarDashboardCard> {
       omitHorizontalPadding: true,
       color: context.theme.primaryColor
           .withOpacity(context.theme.isDark ? 0.5 : 0.12),
-      child: FancyCachedBuilder<List<Event>>.handleLoading(
-        controller: services.get<CalendarBloc>().fetchTodaysEvents(),
-        builder: (context, events, isFetching) {
+      child: FetchStreamBuilder<List<Event>>(
+        stream: services.get<CalendarBloc>().fetchTodaysEvents(),
+        builder: handleEdgeCases((context, events) {
           final now = Instant.now();
           events = events.where((e) => e.end > now).toList();
           _subscription?.cancel();
@@ -62,7 +62,7 @@ class _CalendarDashboardCardState extends State<CalendarDashboardCard> {
           return Column(
             children: events.map((e) => _EventPreview(e)).toList(),
           );
-        },
+        }),
       ),
     );
   }

@@ -72,9 +72,9 @@ class FileBrowser extends StatelessWidget {
   }
 
   Widget _buildEmbedded(BuildContext context) {
-    return FancyCachedBuilder<List<Id<File>>>(
-      controller: path.files.controller,
-      builder: (context, fileIds, isFetching) {
+    return CollectionBuilder<File>(
+      collection: path.files,
+      builder: handleEdgeCases((context, fileIds, _) {
         logger.w('Files were updated to $fileIds.');
         if (fileIds?.isEmpty ?? true) {
           return _buildEmptyState(context);
@@ -85,7 +85,7 @@ class FileBrowser extends StatelessWidget {
           onOpenDirectory: (directory) => _openDirectory(context, directory),
           onDownloadFile: (file) => _downloadFile(context, file),
         );
-      },
+      }),
     );
   }
 
@@ -102,9 +102,9 @@ class FileBrowser extends StatelessWidget {
 
     Widget appBar;
     if (isOwnerCourse) {
-      appBar = FancyCachedBuilder<Course>.handleLoading(
-        controller: path.ownerId.controller,
-        builder: (context, course, _) {
+      appBar = EntityBuilder<Course>(
+        id: path.ownerId,
+        builder: handleEdgeCases((context, course, fetch) {
           if (path.parentId == null) {
             return FileBrowserAppBar(
               title: course.name,
@@ -112,21 +112,23 @@ class FileBrowser extends StatelessWidget {
             );
           }
 
-          return FancyCachedBuilder<File>.handleLoading(
-            controller: path.parentId.controller,
-            builder: (context, parentDirectory, _) {
+          return EntityBuilder<File>(
+            id: path.parentId,
+            builder: handleEdgeCases((context, parentDirectory, fetch) {
               return FileBrowserAppBar(
                 title: parentDirectory.name,
                 backgroundColor: course.color,
               );
-            },
+            }),
           );
-        },
+        }),
       );
     } else if (path.parentId != null) {
-      appBar = FancyCachedBuilder<File>.handleLoading(
-        controller: path.parentId.controller,
-        builder: (context, parent, _) => FileBrowserAppBar(title: parent.name),
+      appBar = EntityBuilder<File>(
+        id: path.parentId,
+        builder: handleEdgeCases(
+          (_, parent, __) => FileBrowserAppBar(title: parent.name),
+        ),
       );
     } else if (isOwnerMe) {
       appBar = FileBrowserAppBar(title: context.s.file_files_my);
@@ -138,16 +140,19 @@ class FileBrowser extends StatelessWidget {
         child: appBar,
       ),
       floatingActionButton: UploadFab(path: path),
-      body: FancyCachedBuilder.list<Id<File>>(
-        controller: path.files.controller,
-        emptyStateBuilder: (context, _) => _buildEmptyState(context),
-        builder: (context, fileIds, isFetching) {
-          return FileList(
-            fileIds,
-            onOpenDirectory: (directory) => _openDirectory(context, directory),
-            onDownloadFile: (file) => _downloadFile(context, file),
-          );
-        },
+      body: CollectionBuilder<File>(
+        collection: path.files,
+        builder: handleEdgeCases(handleEmptyState(
+          emptyStateBuilder: _buildEmptyState,
+          builder: (context, fileIds, isFetching) {
+            return FileList(
+              fileIds,
+              onOpenDirectory: (directory) =>
+                  _openDirectory(context, directory),
+              onDownloadFile: (file) => _downloadFile(context, file),
+            );
+          },
+        )),
       ),
     );
   }

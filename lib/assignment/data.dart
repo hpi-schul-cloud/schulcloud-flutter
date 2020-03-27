@@ -1,10 +1,7 @@
 import 'package:flutter_cached/flutter_cached.dart';
-import 'package:hive/hive.dart';
-import 'package:meta/meta.dart';
 import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/course/course.dart';
 import 'package:schulcloud/file/file.dart';
-import 'package:time_machine/time_machine.dart';
 
 part 'data.g.dart';
 
@@ -61,9 +58,13 @@ class Assignment implements Entity<Assignment> {
           lessonId: Id<Lesson>.orNull(data['lessonId']),
           isPrivate: data['private'] ?? false,
           hasPublicSubmissions: data['publicSubmissions'] ?? false,
-          archivedBy: (data['archived'] as List<dynamic> ?? []).castIds<User>(),
+          archivedBy: (data['archived'] as List<dynamic> ?? [])
+              .cast<String>()
+              .toIds<User>(),
           teamSubmissions: data['teamSubmissions'] ?? false,
-          fileIds: (data['fileIds'] as List<dynamic> ?? []).castIds<File>(),
+          fileIds: (data['fileIds'] as List<dynamic> ?? [])
+              .cast<String>()
+              .toIds<File>(),
         );
 
   static Future<Assignment> fetch(Id<Assignment> id) async =>
@@ -143,24 +144,21 @@ class Assignment implements Entity<Assignment> {
 
   Future<Assignment> toggleArchived() => update(isArchived: !isArchived);
 
-  // TODO(marcelgarus): create some kind of LazyId.
-  CacheController<Submission> get mySubmission {
-    return SimpleCacheController(
-      fetcher: () async {
-        final data = await services.api.get('submissions', parameters: {
-          'homeworkId': id.value,
-          'studentId': services.storage.userIdString.getValue(),
-        }).parseJsonList();
-        // For a single student, there's at most one submission per assignment.
-        final submissionData =
-            data.singleWhere((_) => true, orElse: () => null);
-        return submissionData == null
-            ? null
-            : Submission.fromJson(submissionData);
-      },
-      saveToCache: HiveCache.put,
-      loadFromCache: () => throw NotInCacheException(),
-    );
+  // I'm so looking forward to typedefs for non-function-types:
+  // https://github.com/dart-lang/language/issues/65
+  // Then this could just become a CachedFetchStream<Submission>.
+  StreamAndData<Submission, CachedFetchStreamData<dynamic>> get mySubmission {
+    return FetchStream.create(() async {
+      final data = await services.api.get('submissions', parameters: {
+        'homeworkId': id.value,
+        'studentId': services.storage.userIdString.getValue(),
+      }).parseJsonList();
+      // For a single student, there's at most one submission per assignment.
+      final submissionData = data.singleWhere((_) => true, orElse: () => null);
+      return submissionData == null
+          ? null
+          : Submission.fromJson(submissionData);
+    }).cached(save: HiveCache.put, load: () => null);
   }
 }
 
@@ -191,7 +189,7 @@ class Submission implements Entity<Submission> {
           comment: data['comment'],
           grade: data['grade'],
           gradeComment: data['gradeComment'],
-          fileIds: (data['fileIds'] as List<dynamic> ?? []).castIds<File>(),
+          fileIds: parseIds(data['fileIds']),
         );
 
   static Future<Submission> fetch(Id<Submission> id) async =>

@@ -21,17 +21,17 @@ class _LessonScreenState extends State<LessonScreen> {
   Widget build(BuildContext context) {
     final s = context.s;
 
-    return FancyCachedBuilder<Lesson>.handleLoading(
-      controller: widget.lessonId.controller,
-      builder: (context, lesson, isFetching) {
+    return EntityBuilder<Lesson>(
+      id: widget.lessonId,
+      builder: handleEdgeCases((context, lesson, fetch) {
         final contents = lesson.visibleContents.toList();
 
         return FancyScaffold(
           appBar: FancyAppBar(
             title: Text(lesson.name),
-            subtitle: FancyCachedBuilder<Course>(
-              controller: widget.courseId.controller,
-              builder: (_, course, __) => FancyText(course?.name),
+            subtitle: EntityBuilder<Course>(
+              id: widget.courseId,
+              builder: handleError((_, course, __) => FancyText(course?.name)),
             ),
           ),
           sliver: contents.isEmpty
@@ -59,7 +59,7 @@ class _LessonScreenState extends State<LessonScreen> {
                   ),
                 ),
         );
-      },
+      }),
     );
   }
 }

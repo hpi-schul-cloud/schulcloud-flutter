@@ -12,9 +12,9 @@ class CourseDetailsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FancyCachedBuilder<Course>.handleLoading(
-      controller: courseId.controller,
-      builder: (_, course, isFetching) {
+    return EntityBuilder<Course>(
+      id: courseId,
+      builder: handleEdgeCases((_, course, fetch) {
         return FancyScaffold(
           appBar: FancyAppBar(
             title: Text(course.name),
@@ -45,33 +45,33 @@ class CourseDetailsScreen extends StatelessWidget {
             ]),
           ),
         );
-      },
+      }),
     );
   }
 
   Widget _buildLessonsSliver(BuildContext context, Course course) {
-    return FancyCachedBuilder<List<Lesson>>.handleLoading(
-      controller: course.lessons.populatedController,
-      builder: (context, lessons, isFetching) {
-        lessons.sort();
+    return CollectionBuilder.populated<Lesson>(
+      collection: course.lessons,
+      builder: handleListEdgeCases(
+        emptyStateBuilder: (_) => EmptyStateScreen(
+          text: context.s.course_detailsScreen_empty,
+        ),
+        builder: (context, lessons, _) {
+          lessons.sort();
 
-        if (lessons.isEmpty) {
-          return EmptyStateScreen(
-            text: context.s.course_detailsScreen_empty,
+          return Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              for (final lesson in lessons)
+                ListTile(
+                  title: Text(lesson.name),
+                  onTap: () => context.navigator
+                      .pushNamed('/courses/$courseId/topics/${lesson.id}'),
+                ),
+            ],
           );
-        }
-        return Column(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            for (final lesson in lessons)
-              ListTile(
-                title: Text(lesson.name),
-                onTap: () => context.navigator
-                    .pushNamed('/courses/$courseId/topics/${lesson.id}'),
-              ),
-          ],
-        );
-      },
+        },
+      ),
     );
   }
 }

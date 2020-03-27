@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:hive/hive.dart';
+import 'package:hive_cache/hive_cache.dart';
 import 'package:meta/meta.dart';
 import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/assignment/assignment.dart';
@@ -46,7 +47,8 @@ class User implements Entity<User> {
           avatarBackgroundColor:
               (data['avatarBackgroundColor'] as String).hexToColor,
           permissions: (data['permissions'] as List<dynamic>).cast<String>(),
-          roleIds: (data['roles'] as List<dynamic>).castIds<Role>(),
+          roleIds:
+              (data['roles'] as List<dynamic>).cast<String>().toIds<Role>(),
         );
 
   static Future<User> fetch(Id<User> id) async =>
@@ -99,29 +101,29 @@ class Root implements Entity<Root> {
   @override
   final id = Id<Root>('root');
 
-  final courses = LazyIds<Course>(
-    collectionId: 'courses',
+  final courses = Collection<Course>(
+    id: 'courses',
     fetcher: () async => (await services.api.get('courses').parseJsonList())
         .map((data) => Course.fromJson(data))
         .toList(),
   );
 
-  final assignments = LazyIds<Assignment>(
-    collectionId: 'assignments',
+  final assignments = Collection<Assignment>(
+    id: 'assignments',
     fetcher: () async => (await services.api.get('homework').parseJsonList())
         .map((data) => Assignment.fromJson(data))
         .toList(),
   );
 
-  final submissions = LazyIds<Submission>(
-    collectionId: 'submissions',
+  final submissions = Collection<Submission>(
+    id: 'submissions',
     fetcher: () async => (await services.api.get('submissions').parseJsonList())
         .map((data) => Submission.fromJson(data))
         .toList(),
   );
 
-  final events = LazyIds<Event>(
-    collectionId: 'events',
+  final events = Collection<Event>(
+    id: 'events',
     fetcher: () async {
       // We have to set the "all" query parameter because otherwise — you
       // guessed it — no events are being returned at all 😂
@@ -133,8 +135,8 @@ class Root implements Entity<Root> {
     },
   );
 
-  final news = LazyIds<Article>(
-    collectionId: 'articles',
+  final news = Collection<Article>(
+    id: 'articles',
     fetcher: () async => (await services.api.get('news').parseJsonList())
         .map((data) => Article.fromJson(data))
         .toList(),
@@ -158,7 +160,7 @@ class Role implements Entity<Role> {
           id: Id<Role>(data['_id']),
           name: data['name'],
           displayName: data['displayName'],
-          roleIds: (data['roles'] as List<dynamic>).castIds<Role>(),
+          roleIds: parseIds<Role>(data['roles']),
         );
 
   static const teacherName = 'teacher';

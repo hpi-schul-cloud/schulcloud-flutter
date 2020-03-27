@@ -20,9 +20,9 @@ class ArticleScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FancyCachedBuilder<Article>.handleLoading(
-      controller: articleId.controller,
-      builder: (context, article, isFetching) {
+    return EntityBuilder<Article>(
+      id: articleId,
+      builder: handleEdgeCases((context, article, isFetching) {
         return Scaffold(
           body: LayoutBuilder(
             builder: (ctx, constraints) {
@@ -45,7 +45,7 @@ class ArticleScreen extends StatelessWidget {
             },
           ),
         );
-      },
+      }),
     );
   }
 }
@@ -123,9 +123,9 @@ class _ArticleViewState extends State<ArticleView> {
   }
 
   Widget _buildAuthorView(BuildContext context) {
-    return FancyCachedBuilder.handleLoading(
-      controller: widget.article.authorId.controller,
-      builder: (_, author, __) => AuthorView(author: author),
+    return EntityBuilder<User>(
+      id: widget.article.authorId,
+      builder: handleEdgeCases((_, author, __) => AuthorView(author: author)),
     );
   }
 

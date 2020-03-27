@@ -1,5 +1,4 @@
 import 'package:flutter/widgets.dart';
-import 'package:flutter_cached/flutter_cached.dart';
 import 'package:grec_minimal/grec_minimal.dart';
 import 'package:meta/meta.dart';
 import 'package:schulcloud/app/app.dart';
@@ -12,13 +11,13 @@ import 'data.dart';
 class CalendarBloc {
   const CalendarBloc();
 
-  CacheController<List<Event>> fetchTodaysEvents() {
+  Stream<List<Event>> fetchTodaysEvents() {
     // The great, thoughtfully designed Calendar API presents us with daily
     // challenges, such as: How do I get today's events?
     // And the simple but ingenious answer to that is:
     // 1. Download all events (every time). (≈ 50 kb using the demo account)
     // 2. Implement your own logic to filter them. Have fun 😊
-    return services.storage.root.events.populatedController.map((events) {
+    return services.storage.root.events.resolve().resolveAll().map((events) {
       return events
           .map(_getTodaysInstanceOrNull)
           .where((e) => e != null)

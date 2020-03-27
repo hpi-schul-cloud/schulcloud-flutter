@@ -42,7 +42,7 @@ packages:
       name: black_hole_flutter
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.2.0"
+    version: "0.2.1"
   boolean_selector:
     dependency: transitive
     description:
@@ -268,10 +268,12 @@ packages:
   flutter_cached:
     dependency: "direct main"
     description:
-      name: flutter_cached
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "4.2.7"
+      path: "."
+      ref: c6d7e8d
+      resolved-ref: c6d7e8d6f5a357a68c02d61630f224882007bf44
+      url: "git://github.com/marcelgarus/flutter_cached"
+    source: git
+    version: "5.0.0"
   flutter_deep_linking:
     dependency: "direct main"
     description:
@@ -407,9 +409,11 @@ packages:
   hive_cache:
     dependency: "direct main"
     description:
-      name: hive_cache
-      url: "https://pub.dartlang.org"
-    source: hosted
+      path: "."
+      ref: "08ee9df"
+      resolved-ref: "08ee9dfc4a31791acbc3f6c882b39056160bd0a1"
+      url: "git://github.com/marcelgarus/hive_cache"
+    source: git
     version: "1.0.0"
   hive_flutter:
     dependency: "direct main"
@@ -769,7 +773,7 @@ packages:
       name: rxdart
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.22.6"
+    version: "0.23.1"
   screen:
     dependency: transitive
     description:

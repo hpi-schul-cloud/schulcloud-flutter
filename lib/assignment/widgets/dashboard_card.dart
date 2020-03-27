@@ -17,9 +17,9 @@ class AssignmentDashboardCard extends StatelessWidget {
       title: s.assignment_dashboardCard,
       footerButtonText: s.assignment_dashboardCard_all,
       onFooterButtonPressed: () => context.navigator.pushNamed('/homework'),
-      child: FancyCachedBuilder<List<Assignment>>.handleLoading(
-        controller: services.storage.root.assignments.populatedController,
-        builder: (context, assignments, isFetching) {
+      child: CollectionBuilder.populated<Assignment>(
+        collection: services.storage.root.assignments,
+        builder: handleEdgeCases((context, assignments, isFetching) {
           // Only show open assignments that are due in the next week
           final start = LocalDate.today();
           final end = start.addDays(7);
@@ -59,7 +59,7 @@ class AssignmentDashboardCard extends StatelessWidget {
               ),
             ],
           );
-        },
+        }),
       ),
     );
   }
@@ -82,9 +82,11 @@ class _CourseAssignmentCountTile extends StatelessWidget {
       return _buildListTile(context, null, shouldHaveCourse: false);
     }
 
-    return FancyCachedBuilder<Course>(
-      controller: courseId.controller,
-      builder: (context, course, _) => _buildListTile(context, course),
+    return EntityBuilder<Course>(
+      id: courseId,
+      builder: handleEdgeCases(
+        (context, course, _) => _buildListTile(context, course),
+      ),
     );
   }
 

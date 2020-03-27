@@ -1,8 +1,3 @@
-import 'dart:ui';
-
-import 'package:hive/hive.dart';
-import 'package:dartx/dartx.dart';
-import 'package:meta/meta.dart';
 import 'package:schulcloud/app/app.dart';
 
 part 'data.g.dart';
@@ -20,12 +15,12 @@ class Course implements Entity<Course> {
         assert(description?.isBlank != true),
         assert(teacherIds != null),
         assert(color != null),
-        lessons = LazyIds<Lesson>(
-          collectionId: 'lessons of course $id',
+        lessons = Collection<Lesson>(
+          id: 'lessons of course $id',
           fetcher: () async => Lesson.fetchList(courseId: id),
         ),
-        visibleLessons = LazyIds<Lesson>(
-          collectionId: 'visible lessons of course $id',
+        visibleLessons = Collection<Lesson>(
+          id: 'visible lessons of course $id',
           fetcher: () async => Lesson.fetchList(courseId: id, hidden: false),
         );
 
@@ -34,7 +29,9 @@ class Course implements Entity<Course> {
           id: Id<Course>(data['_id']),
           name: data['name'],
           description: (data['description'] as String).blankToNull,
-          teacherIds: (data['teacherIds'] as List<dynamic>).castIds<User>(),
+          teacherIds: (data['teacherIds'] as List<dynamic>)
+              .cast<String>()
+              .toIds<User>(),
           color: (data['color'] as String).hexToColor,
         );
 
@@ -57,8 +54,8 @@ class Course implements Entity<Course> {
   @HiveField(4)
   final Color color;
 
-  final LazyIds<Lesson> lessons;
-  final LazyIds<Lesson> visibleLessons;
+  final Collection<Lesson> lessons;
+  final Collection<Lesson> visibleLessons;
 }
 
 extension CourseId on Id<Course> {
