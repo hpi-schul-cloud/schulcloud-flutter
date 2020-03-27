@@ -2,6 +2,7 @@ import 'dart:math' as math;
 import 'dart:ui' as ui;
 
 import 'package:black_hole_flutter/black_hole_flutter.dart';
+import 'package:dartx/dartx.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -444,16 +445,27 @@ class _AnimatedAppBarState extends State<_AnimatedAppBar> {
           child: Row(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: appBar.actions,
+            // The AccountButton and its padding will always be there, so we
+            // don't animate them.
+            children: appBar.actions.dropLast(3),
           ),
         ),
       );
     }
 
-    return _ActionsLayout(children: <Widget>[
-      wrapActions(_parent, opacity: _fadeOutHalf()),
-      wrapActions(_child, opacity: _fadeInHalf()),
-    ]);
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: <Widget>[
+        _ActionsLayout(children: <Widget>[
+          wrapActions(_parent, opacity: _fadeOutHalf()),
+          wrapActions(_child, opacity: _fadeInHalf()),
+        ]),
+        SizedBox(width: 8),
+        AccountButton(),
+        SizedBox(width: 8),
+      ],
+    );
   }
 
   Widget _addBottom(Widget appBar, Color backgroundColor) {
