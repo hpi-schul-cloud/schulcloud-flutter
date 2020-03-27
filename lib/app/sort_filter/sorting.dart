@@ -1,9 +1,9 @@
+import 'package:characters/characters.dart';
+import 'package:dartx/dartx.dart';
 import 'package:flutter/material.dart';
 import 'package:schulcloud/app/app.dart';
 
 import 'filtering.dart';
-
-typedef Comparator<T> = int Function(T a, T b);
 
 extension ComparatorOrder<T> on Comparator<T> {
   Comparator<T> withOrder(SortOrder order) {
@@ -58,6 +58,30 @@ class Sorter<T> {
               return -1;
             }
             return selectorA.compareTo(selectorB);
+          },
+        );
+
+  /// A specialized [Sorter] for names.
+  ///
+  /// Unlike a normal [Sorter], it also performs case-insensitive comparison and
+  /// tries to detect names with a single leading emoji (which is then ignored).
+  Sorter.name(
+    L10nStringGetter titleGetter, {
+    String webQueryKey,
+    @required Selector<T, String> selector,
+  }) : this.simple(
+          titleGetter,
+          webQueryKey: webQueryKey,
+          selector: (item) {
+            var name = Characters(selector(item) ?? '');
+            name = name.toLowerCase();
+            // Try to detect names starting with a single emoji.
+            if (name.length >= 2 &&
+                name.first.length > 1 &&
+                name.second.length == 1) {
+              name = name.skip(1);
+            }
+            return name.toString().trim();
           },
         );
 
