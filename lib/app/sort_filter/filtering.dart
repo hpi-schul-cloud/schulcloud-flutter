@@ -223,7 +223,7 @@ class CategoryFilter<T, C> extends Filter<T, Set<C>> {
                   if (isSelected) {
                     updater({...selection, category});
                   } else {
-                    updater(selection.whereNot((c) => c == category).toSet());
+                    updater(selection.toSet().difference({category}));
                   }
                 },
                 label: categoryLabelBuilder(context, category),
