@@ -4,7 +4,6 @@ import 'package:meta/meta.dart';
 import 'package:streaming_shared_preferences/streaming_shared_preferences.dart';
 
 import '../app.dart';
-import '../hive.dart';
 
 /// A service that offers storage of app-wide data.
 class StorageService {
