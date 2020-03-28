@@ -15,14 +15,14 @@ class EditSubmissionScreen extends StatelessWidget {
     return EntityBuilder<Assignment>(
       id: assignmentId,
       builder: handleEdgeCases((context, assignment, fetch) {
-        return LazyIdBuilder<Submission>(
-          lazyId: assignment.mySubmission,
-          builder: (context, submission, fetch) {
+        return ConnectionBuilder.populated<Submission>(
+          connection: assignment.mySubmission,
+          builder: handleEdgeCases((context, submission, fetch) {
             return EditSubmissionForm(
               assignment: assignment,
               submission: submission,
             );
-          },
+          }),
         );
       }),
     );
