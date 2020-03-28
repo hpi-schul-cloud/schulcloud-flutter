@@ -431,8 +431,7 @@ class _AnimatedAppBarState extends State<_AnimatedAppBar> {
   }
 
   static const _actionsCurve = Interval(0.2, 0.8);
-  static const _actionsScrimStartCurve = Interval(0, 0.2);
-  static const _actionsScrimEndCurve = Interval(0.8, 1);
+  static const _actionsScrimCurve = Interval(0, 0.2);
   Widget _buildActions(Color backgroundColor) {
     Widget wrapActions(AppBar appBar, {double opacity}) {
       return Opacity(
@@ -467,9 +466,9 @@ class _AnimatedAppBarState extends State<_AnimatedAppBar> {
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       colors: [
-                        backgroundColor.withOpacity(math.max(
-                          _actionsScrimStartCurve.transform(_animationValue),
-                          _actionsScrimEndCurve.transform(_animationValue),
+                        backgroundColor.withOpacity(math.min(
+                          _actionsScrimCurve.transform(_animationValue),
+                          _actionsScrimCurve.transform(1 - _animationValue),
                         )),
                         backgroundColor.withAlpha(0),
                       ],
