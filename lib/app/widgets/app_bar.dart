@@ -457,10 +457,11 @@ class _AnimatedAppBarState extends State<_AnimatedAppBar> {
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        _ActionsLayout(children: <Widget>[
-          wrapActions(_parent, opacity: _fadeOutHalf()),
-          wrapActions(_child, opacity: _fadeInHalf()),
-        ]),
+        _ActionsLayout(
+          parentActions: wrapActions(_parent, opacity: _fadeOutHalf()),
+          childActions: wrapActions(_child, opacity: _fadeInHalf()),
+          animationValue: _animationValue,
+        ),
         SizedBox(width: 8),
         AccountButton(),
         SizedBox(width: 8),
@@ -528,12 +529,27 @@ class _AnimatedAppBarState extends State<_AnimatedAppBar> {
 }
 
 class _ActionsLayout extends MultiChildRenderObjectWidget {
-  _ActionsLayout({List<Widget> children = const []})
-      : super(children: children);
+  _ActionsLayout({
+    @required Widget parentActions,
+    @required Widget childActions,
+    @required this.animationValue,
+  })  : assert(parentActions != null),
+        assert(childActions != null),
+        assert(animationValue != null),
+        assert(0 <= animationValue && animationValue <= 1),
+        super(children: [parentActions, childActions]);
+
+  final double animationValue;
 
   @override
   RenderObject createRenderObject(BuildContext context) {
-    return _RenderActionsLayout();
+    return _RenderActionsLayout(animationValue: animationValue);
+  }
+
+  @override
+  void updateRenderObject(
+      BuildContext context, covariant _RenderActionsLayout renderObject) {
+    renderObject.animationValue = animationValue;
   }
 }
 
@@ -543,6 +559,23 @@ class _RenderActionsLayout extends RenderBox
     with
         ContainerRenderObjectMixin<RenderBox, _ActionsLayoutParentData>,
         RenderBoxContainerDefaultsMixin<RenderBox, _ActionsLayoutParentData> {
+  _RenderActionsLayout({@required double animationValue})
+      : assert(animationValue != null),
+        assert(0 <= animationValue && animationValue <= 1),
+        _animationValue = animationValue;
+
+  double _animationValue;
+  double get animationValue => _animationValue;
+  set animationValue(double value) {
+    assert(value != null);
+    assert(0 <= value && value <= 1);
+    if (_animationValue == value) {
+      return;
+    }
+    _animationValue = value;
+    markNeedsLayout();
+  }
+
   @override
   void setupParentData(RenderObject child) {
     if (child.parentData is! _ActionsLayoutParentData) {
@@ -550,81 +583,72 @@ class _RenderActionsLayout extends RenderBox
     }
   }
 
+  RenderBox get _parentActions => firstChild;
+  RenderBox get _childActions {
+    final _ActionsLayoutParentData parentData = _parentActions.parentData;
+    return parentData.nextSibling;
+  }
+
+  double _overflow;
+  bool get _hasOverflow => _overflow > precisionErrorTolerance;
+
   @override
   double computeMinIntrinsicWidth(double height) {
-    var width = 0.0;
-    RenderBox child = firstChild;
-    while (child != null) {
-      width = math.max(width, child.getMinIntrinsicWidth(height));
-      final _ActionsLayoutParentData childParentData = child.parentData;
-      child = childParentData.nextSibling;
-    }
-    return width;
+    return _lerpDouble(
+      _parentActions.getMinIntrinsicWidth(height),
+      _childActions.getMinIntrinsicWidth(height),
+    );
   }
 
   @override
   double computeMaxIntrinsicWidth(double height) {
-    var width = 0.0;
-    RenderBox child = firstChild;
-    while (child != null) {
-      width = math.max(width, child.getMaxIntrinsicWidth(height));
-      final _ActionsLayoutParentData childParentData = child.parentData;
-      child = childParentData.nextSibling;
-    }
-    return width;
+    return _lerpDouble(
+      _parentActions.getMaxIntrinsicWidth(height),
+      _childActions.getMaxIntrinsicWidth(height),
+    );
   }
 
   @override
   double computeMinIntrinsicHeight(double width) {
-    var height = 0.0;
-    RenderBox child = firstChild;
-    while (child != null) {
-      height = math.max(height, child.getMinIntrinsicHeight(width));
-      final _ActionsLayoutParentData childParentData = child.parentData;
-      child = childParentData.nextSibling;
-    }
-    return height;
+    return _lerpDouble(
+      _parentActions.getMinIntrinsicHeight(width),
+      _childActions.getMinIntrinsicHeight(width),
+    );
   }
 
   @override
   double computeMaxIntrinsicHeight(double width) {
-    var height = 0.0;
-    RenderBox child = firstChild;
-    while (child != null) {
-      height = math.max(height, child.getMaxIntrinsicHeight(width));
-      final _ActionsLayoutParentData childParentData = child.parentData;
-      child = childParentData.nextSibling;
-    }
-    return height;
+    return _lerpDouble(
+      _parentActions.getMaxIntrinsicHeight(width),
+      _childActions.getMaxIntrinsicHeight(width),
+    );
   }
 
   @override
   void performLayout() {
     assert(!sizedByParent);
 
-    var width = 0.0;
-    var height = 0.0;
+    final parentActions = _parentActions
+      ..layout(constraints.heightConstraints(), parentUsesSize: true);
+    final childActions = _childActions
+      ..layout(constraints.heightConstraints(), parentUsesSize: true);
+    size = Size(
+      _lerpDouble(parentActions.size.width, childActions.size.width),
+      math.max(parentActions.size.height, childActions.size.height),
+    );
 
-    RenderBox child = firstChild;
-    while (child != null) {
-      child.layout(constraints.heightConstraints(), parentUsesSize: true);
-      width = math.max(width, child.size.width);
-      height = math.max(height, child.size.height);
+    final maxChildWidth =
+        math.max(parentActions.size.width, childActions.size.width);
+    _overflow = maxChildWidth - size.width;
 
-      final _ActionsLayoutParentData childParentData = child.parentData;
-      child = childParentData.nextSibling;
-    }
-    size = Size(width, height);
-
-    child = firstChild;
-    while (child != null) {
-      final _ActionsLayoutParentData childParentData = child.parentData;
-      // ignore: cascade_invocations
-      childParentData.offset =
-          Offset(width - child.size.width, (height - child.size.height) / 2);
-
-      child = childParentData.nextSibling;
-    }
+    (parentActions.parentData as _ActionsLayoutParentData).offset = Offset(
+      size.width - parentActions.size.width,
+      (size.height - parentActions.size.height) / 2,
+    );
+    (childActions.parentData as _ActionsLayoutParentData).offset = Offset(
+      size.width - childActions.size.width,
+      (size.height - childActions.size.height) / 2,
+    );
   }
 
   @override
@@ -634,8 +658,21 @@ class _RenderActionsLayout extends RenderBox
 
   @override
   void paint(PaintingContext context, Offset offset) {
-    defaultPaint(context, offset);
+    if (!_hasOverflow) {
+      defaultPaint(context, offset);
+      return;
+    }
+
+    if (size.width <= 0) {
+      return;
+    }
+
+    context.pushClipRect(
+        needsCompositing, offset, Offset.zero & size, defaultPaint);
   }
+
+  double _lerpDouble(double parent, double child) =>
+      ui.lerpDouble(parent, child, animationValue);
 }
 
 // Direct copy from material/app_bar.dart
