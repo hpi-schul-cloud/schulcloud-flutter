@@ -75,7 +75,6 @@ class FileBrowser extends StatelessWidget {
     return CollectionBuilder<File>(
       collection: path.files,
       builder: handleEdgeCases((context, fileIds, _) {
-        logger.w('Files were updated to $fileIds.');
         if (fileIds?.isEmpty ?? true) {
           return _buildEmptyState(context);
         }
@@ -90,24 +89,18 @@ class FileBrowser extends StatelessWidget {
   }
 
   Widget _buildStandalone(BuildContext context) {
-    FileBrowserAppBar buildLoadingErrorAppBar(
-      dynamic error, [
-      Color backgroundColor,
-    ]) {
-      return FileBrowserAppBar(
-        title: error?.toString() ?? context.s.general_loading,
-        backgroundColor: backgroundColor,
-      );
-    }
-
     Widget appBar;
     if (isOwnerCourse) {
       appBar = EntityBuilder<Course>(
         id: path.ownerId,
-        builder: handleEdgeCases((context, course, fetch) {
+        builder: (context, snapshot, fetch) {
+          final course = snapshot.data;
+
           if (path.parentId == null) {
             return FileBrowserAppBar(
-              title: course.name,
+              title: course?.name ??
+                  snapshot.error?.toString() ??
+                  context.s.general_loading,
               backgroundColor: course.color,
             );
           }
@@ -117,11 +110,11 @@ class FileBrowser extends StatelessWidget {
             builder: handleEdgeCases((context, parentDirectory, fetch) {
               return FileBrowserAppBar(
                 title: parentDirectory.name,
-                backgroundColor: course.color,
+                backgroundColor: course?.color ?? Colors.white,
               );
             }),
           );
-        }),
+        },
       );
     } else if (path.parentId != null) {
       appBar = EntityBuilder<File>(
