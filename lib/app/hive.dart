@@ -87,7 +87,22 @@ class TypeId {
 }
 
 Future<void> initializeHive() async {
-  await HiveCache.initialize();
+  try {
+    await HiveCache.initialize();
+  } catch (e, st) {
+    logger.e(
+      "An error occurred while initializing the HiveCache. We'll just "
+      'delete the cache and carry on.',
+      e,
+      st,
+    );
+    // Maybe the app got updated since the last time it ran, the [HiveCache] is
+    // still filled with data from the previous version and some types got
+    // deleted, causing the cache data to be corrupted. But no biggie — we just
+    // delete the `cache.hive` file and carry on.
+    await HiveCache.delete();
+    await HiveCache.initialize();
+  }
 
   HiveCache
     // General:
