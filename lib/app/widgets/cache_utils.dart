@@ -6,13 +6,7 @@ import '../logger.dart';
 import 'app_bar.dart';
 import 'error_widgets.dart';
 
-typedef FetchableDataBuilder<T> = Widget Function(
-  BuildContext,
-  T,
-  FetchCallback,
-);
-
-FetchableBuilder<T> handleError<T>(FetchableDataBuilder<T> builder) {
+FetchableBuilder<AsyncSnapshot<T>> handleError<T>(FetchableBuilder<T> builder) {
   return (context, snapshot, fetch) {
     // There is no error. We can just call the builder.
     if (!snapshot.hasError) {
@@ -62,7 +56,7 @@ FetchableBuilder<T> handleError<T>(FetchableDataBuilder<T> builder) {
   };
 }
 
-FetchableDataBuilder<T> handleLoading<T>(FetchableDataBuilder<T> builder) {
+FetchableBuilder<T> handleLoading<T>(FetchableBuilder<T> builder) {
   return (context, data, fetch) {
     return data == null
         ? Center(child: CircularProgressIndicator())
@@ -70,10 +64,10 @@ FetchableDataBuilder<T> handleLoading<T>(FetchableDataBuilder<T> builder) {
   };
 }
 
-FetchableDataBuilder<T> handleLoadingAndPullToRefresh<T>({
+FetchableBuilder<T> handleLoadingAndPullToRefresh<T>({
   NestedScrollViewHeaderSliversBuilder headerSliverBuilder,
   FancyAppBar appBar,
-  @required FetchableDataBuilder<T> builder,
+  @required FetchableBuilder<T> builder,
 }) {
   assert(
     headerSliverBuilder == null || appBar == null,
@@ -87,7 +81,7 @@ FetchableDataBuilder<T> handleLoadingAndPullToRefresh<T>({
       headerSliverBuilder:
           headerSliverBuilder ?? (_, __) => [if (appBar != null) appBar],
       body: RefreshIndicator(
-        onRefresh: fetch,
+        onRefresh: () => fetch(force: true),
         child: data == null
             ? Center(child: CircularProgressIndicator())
             : builder(context, data, fetch),
@@ -96,9 +90,9 @@ FetchableDataBuilder<T> handleLoadingAndPullToRefresh<T>({
   };
 }
 
-FetchableDataBuilder<List<T>> handleEmptyState<T>({
+FetchableBuilder<List<T>> handleEmptyState<T>({
   @required WidgetBuilder emptyStateBuilder,
-  @required FetchableDataBuilder<List<T>> builder,
+  @required FetchableBuilder<List<T>> builder,
 }) {
   return (context, items, fetch) {
     return items.isEmpty
@@ -109,15 +103,16 @@ FetchableDataBuilder<List<T>> handleEmptyState<T>({
 
 // Common combinations of the handlers above.
 
-FetchableBuilder<T> handleEdgeCases<T>(FetchableDataBuilder<T> builder) {
+FetchableBuilder<AsyncSnapshot<T>> handleEdgeCases<T>(
+    FetchableBuilder<T> builder) {
   return handleError(handleLoading(builder));
 }
 
-FetchableBuilder<List<T>> handleListEdgeCases<T>({
+FetchableBuilder<AsyncSnapshot<List<T>>> handleListEdgeCases<T>({
   NestedScrollViewHeaderSliversBuilder headerSliverBuilder,
   FancyAppBar appBar,
   @required WidgetBuilder emptyStateBuilder,
-  @required FetchableDataBuilder<List<T>> builder,
+  @required FetchableBuilder<List<T>> builder,
 }) {
   return handleError(handleLoadingAndPullToRefresh(
     headerSliverBuilder: headerSliverBuilder,
@@ -129,11 +124,12 @@ FetchableBuilder<List<T>> handleListEdgeCases<T>({
   ));
 }
 
-FetchableBuilder<T> handleErrorAndLoadingAndPullToRefreshAndEmptyState<T>({
+FetchableBuilder<AsyncSnapshot<T>>
+    handleErrorAndLoadingAndPullToRefreshAndEmptyState<T>({
   NestedScrollViewHeaderSliversBuilder headerSliverBuilder,
   FancyAppBar appBar,
   @required WidgetBuilder emptyStateBuilder,
-  @required FetchableDataBuilder<T> builder,
+  @required FetchableBuilder<T> builder,
 }) {
   assert(
     headerSliverBuilder == null || appBar == null,
