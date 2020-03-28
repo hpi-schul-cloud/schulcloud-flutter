@@ -216,9 +216,9 @@ class _SubmissionTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FetchStreamBuilder<Submission>(
-      controller: assignment.mySubmission,
-      builder: (context, submission, isFetching) {
+    return ConnectionBuilder.populated<Submission>(
+      connection: assignment.mySubmission,
+      builder: handleEdgeCases((context, submission, isFetching) {
         // TODO(JonasWanke): differentiate between loading and no submission
         return Stack(
           children: <Widget>[
@@ -230,7 +230,7 @@ class _SubmissionTab extends StatelessWidget {
             _buildOverlay(context, submission),
           ],
         );
-      },
+      }),
     );
   }
 
@@ -299,9 +299,9 @@ class _FeedbackTab extends StatelessWidget {
   Widget build(BuildContext context) {
     final s = context.s;
 
-    return FetchStreamBuilder<Submission>(
-      controller: assignment.mySubmission,
-      builder: (_, submission, isFetching) {
+    return ConnectionBuilder.populated<Submission>(
+      connection: assignment.mySubmission,
+      builder: handleEdgeCases((context, submission, isFetching) {
         return TabContent(
           pageStorageKey: PageStorageKey<String>('feedback'),
           omitHorizontalPadding: true,
@@ -324,7 +324,7 @@ class _FeedbackTab extends StatelessWidget {
             ]),
           ),
         );
-      },
+      }),
     );
   }
 }
