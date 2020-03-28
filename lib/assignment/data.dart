@@ -7,7 +7,7 @@ part 'data.g.dart';
 
 @HiveType(typeId: TypeId.assignment)
 class Assignment implements Entity<Assignment> {
-  const Assignment({
+  Assignment({
     @required this.id,
     @required this.name,
     @required this.schoolId,
@@ -35,7 +35,22 @@ class Assignment implements Entity<Assignment> {
         assert(hasPublicSubmissions != null),
         assert(archivedBy != null),
         assert(teamSubmissions != null),
-        assert(fileIds != null);
+        assert(fileIds != null),
+        mySubmission = Connection<Submission>(
+          id: 'my submission to $id',
+          fetcher: () async {
+            final data = await services.api.get('submissions', parameters: {
+              'homeworkId': id.value,
+              'studentId': services.storage.userIdString.getValue(),
+            }).parseJsonList();
+            // For a single student, there's at most one submission per assignment.
+            final submissionData =
+                data.singleWhere((_) => true, orElse: () => null);
+            return submissionData == null
+                ? null
+                : Submission.fromJson(submissionData);
+          },
+        );
 
   Assignment.fromJson(Map<String, dynamic> data)
       : this(
@@ -147,19 +162,7 @@ class Assignment implements Entity<Assignment> {
   // I'm so looking forward to typedefs for non-function-types:
   // https://github.com/dart-lang/language/issues/65
   // Then this could just become a CachedFetchStream<Submission>.
-  StreamAndData<Submission, CachedFetchStreamData<dynamic>> get mySubmission {
-    return FetchStream.create(() async {
-      final data = await services.api.get('submissions', parameters: {
-        'homeworkId': id.value,
-        'studentId': services.storage.userIdString.getValue(),
-      }).parseJsonList();
-      // For a single student, there's at most one submission per assignment.
-      final submissionData = data.singleWhere((_) => true, orElse: () => null);
-      return submissionData == null
-          ? null
-          : Submission.fromJson(submissionData);
-    }).cached(save: HiveCache.put, load: () => null);
-  }
+  final Connection<Submission> mySubmission;
 }
 
 @HiveType(typeId: TypeId.submission)
