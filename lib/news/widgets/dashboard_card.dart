@@ -24,9 +24,9 @@ class NewsDashboardCard extends StatelessWidget {
             padding: EdgeInsets.symmetric(horizontal: 16),
             child: Text(s.news_dashboardCard_empty),
           ),
-          builder: (context, articles, isFetching) {
-            articles
-                .sort((a1, a2) => -a1.publishedAt.compareTo(a2.publishedAt));
+          builder: (context, unorderedArticles, isFetching) {
+            var articles = unorderedArticles.toList()
+              ..sort((a1, a2) => -a1.publishedAt.compareTo(a2.publishedAt));
             articles = articles.take(articleCount).toList();
 
             return Column(
