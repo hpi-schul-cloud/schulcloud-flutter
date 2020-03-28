@@ -331,7 +331,7 @@ class _AnimatedAppBarState extends State<_AnimatedAppBar> {
       leading: _buildLeading(),
       centerMiddle: false,
       middle: _AppBarTitleBox(child: _buildTitle(theme, color)),
-      trailing: _buildActions(),
+      trailing: _buildActions(backgroundColor),
     );
     Widget appBar = ClipRect(
       child: CustomSingleChildLayout(
@@ -436,7 +436,10 @@ class _AnimatedAppBarState extends State<_AnimatedAppBar> {
     );
   }
 
-  Widget _buildActions() {
+  static const _actionsCurve = Interval(0.2, 0.8);
+  static const _actionsScrimStartCurve = Interval(0, 0.2);
+  static const _actionsScrimEndCurve = Interval(0.8, 1);
+  Widget _buildActions(Color backgroundColor) {
     Widget wrapActions(AppBar appBar, {double opacity}) {
       return Opacity(
         opacity: opacity,
@@ -457,11 +460,31 @@ class _AnimatedAppBarState extends State<_AnimatedAppBar> {
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        _ActionsLayout(
-          parentActions: wrapActions(_parent, opacity: _fadeOutHalf()),
-          childActions: wrapActions(_child, opacity: _fadeInHalf()),
-          animationValue: _animationValue,
-        ),
+        if (_parent.actions.length > 3 || _child.actions.length > 3)
+          Stack(
+            children: <Widget>[
+              _ActionsLayout(
+                parentActions: wrapActions(_parent, opacity: _fadeOutHalf()),
+                childActions: wrapActions(_child, opacity: _fadeInHalf()),
+                animationValue: _actionsCurve.transform(_animationValue),
+              ),
+              Positioned.fill(
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [
+                        backgroundColor.withOpacity(math.max(
+                          _actionsScrimStartCurve.transform(_animationValue),
+                          _actionsScrimEndCurve.transform(_animationValue),
+                        )),
+                        backgroundColor.withAlpha(0),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
         SizedBox(width: 8),
         AccountButton(),
         SizedBox(width: 8),
