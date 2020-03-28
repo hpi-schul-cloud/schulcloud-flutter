@@ -2,6 +2,7 @@
   "@@locale": "en",
   "app_emptyState_retry": "Try again",
   "app_error_conflict": "Your changes conflict with changes someone else did at the same time.",
+  "app_error_general": "A general server error occurred.",
   "app_error_noConnection": "No connection to the server.",
   "app_error_noPermission": "You don't have the permission to do that.",
   "app_error_rateLimit": "Too many requests. Try again in {timeToWait}.",
