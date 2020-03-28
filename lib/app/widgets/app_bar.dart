@@ -402,37 +402,31 @@ class _AnimatedAppBarState extends State<_AnimatedAppBar> {
   }
 
   Widget _buildTitle(ThemeData theme, Color color) {
-    Widget buildTitle(AppBar appBar) {
-      return DefaultTextStyle(
-        style: theme.textTheme.title.copyWith(color: color),
-        softWrap: false,
-        overflow: TextOverflow.ellipsis,
-        child: Semantics(
-          namesRoute: theme.platform != TargetPlatform.iOS,
-          header: true,
-          child: _AppBarTitleBox(child: appBar.title),
-        ),
-      );
-    }
-
-    return Stack(
-      fit: StackFit.passthrough,
-      children: <Widget>[
-        Opacity(
-          opacity: _fadeOutHalf(),
-          child: Transform.translate(
-            offset: Offset(_lerpDouble(0, -20), 0),
-            child: buildTitle(_parent),
+    return SizedBox(
+      height: 0,
+      child: Stack(
+        fit: StackFit.passthrough,
+        children: <Widget>[
+          Positioned.fill(
+            child: _TitleWrapper(
+              opacity: _fadeOutHalf(),
+              offsetX: _lerpDouble(0, -20),
+              theme: theme,
+              color: color,
+              child: _parent.title,
+            ),
           ),
-        ),
-        Opacity(
-          opacity: _fadeInHalf(),
-          child: Transform.translate(
-            offset: Offset(_lerpDouble(20, 0), 0),
-            child: buildTitle(_child),
+          Positioned.fill(
+            child: _TitleWrapper(
+              opacity: _fadeInHalf(),
+              offsetX: _lerpDouble(20, 0),
+              theme: theme,
+              color: color,
+              child: _child.title,
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
@@ -549,6 +543,51 @@ class _AnimatedAppBarState extends State<_AnimatedAppBar> {
       Color.lerp(parent, child, _animationValue);
   double _fadeOutHalf() => _halfInterval.transform(1 - _animationValue);
   double _fadeInHalf() => _halfInterval.transform(_animationValue);
+}
+
+class _TitleWrapper extends StatelessWidget {
+  const _TitleWrapper({
+    Key key,
+    @required this.opacity,
+    @required this.offsetX,
+    @required this.theme,
+    @required this.color,
+    @required this.child,
+  })  : assert(opacity != null),
+        assert(offsetX != null),
+        assert(theme != null),
+        assert(color != null),
+        assert(child != null),
+        super(key: key);
+
+  final double opacity;
+  final double offsetX;
+  final ThemeData theme;
+  final Color color;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return Align(
+      alignment: Alignment.centerLeft,
+      child: Opacity(
+        opacity: opacity,
+        child: Transform.translate(
+          offset: Offset(offsetX, 0),
+          child: DefaultTextStyle(
+            style: theme.textTheme.title.copyWith(color: color),
+            softWrap: false,
+            overflow: TextOverflow.ellipsis,
+            child: Semantics(
+              namesRoute: theme.platform != TargetPlatform.iOS,
+              header: true,
+              child: _AppBarTitleBox(child: child),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
 }
 
 class _ActionsLayout extends MultiChildRenderObjectWidget {
