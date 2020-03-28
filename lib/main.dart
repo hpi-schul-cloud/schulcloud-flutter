@@ -54,7 +54,7 @@ const _schulCloudYellow = MaterialColor(0xffe2661d, {
 const schulCloudAppConfig = AppConfig(
   name: 'sc',
   host: 'schul-cloud.org',
-  title: 'Schul-Cloud',
+  title: 'HPI Schul-Cloud',
   primaryColor: _schulCloudRed,
   secondaryColor: _schulCloudOrange,
   accentColor: _schulCloudYellow,
