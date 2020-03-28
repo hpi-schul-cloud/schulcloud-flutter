@@ -33,9 +33,9 @@ class _CalendarDashboardCardState extends State<CalendarDashboardCard> {
       omitHorizontalPadding: true,
       color: context.theme.primaryColor
           .withOpacity(context.theme.isDark ? 0.5 : 0.12),
-      child: FetchStreamBuilder<List<Event>>(
-        stream: services.get<CalendarBloc>().fetchTodaysEvents(),
-        builder: handleEdgeCases((context, events) {
+      child: CollectionBuilder.populated<Event>(
+        collection: services.get<CalendarBloc>().todaysEvents,
+        builder: handleEdgeCases((context, events, _) {
           final now = Instant.now();
           events = events.where((e) => e.end > now).toList();
           _subscription?.cancel();
