@@ -66,8 +66,10 @@ class StorageService {
     );
   }
 
-  // TODO(marcelgarus): clear the HiveCache
-  Future<void> clear() => Future.wait([_prefs.clear()]);
+  Future<void> clear() => Future.wait([
+        _prefs.clear(),
+        HiveCache.delete(),
+      ]);
 }
 
 extension StorageServiceGetIt on GetIt {
