@@ -1,12 +1,13 @@
 export 'dart:ui' show Color, hashList;
 
-export 'package:time_machine/time_machine.dart' show Instant;
+export 'package:black_hole_flutter/black_hole_flutter.dart';
 export 'package:dartx/dartx.dart';
 export 'package:dartx/dartx_io.dart';
 export 'package:hive/hive.dart'
     show HiveType, HiveField, TypeAdapter, BinaryReader, BinaryWriter;
 export 'package:hive_cache/hive_cache.dart';
 export 'package:meta/meta.dart';
+export 'package:time_machine/time_machine.dart' show Instant;
 
 export 'app_config.dart';
 export 'data.dart';
