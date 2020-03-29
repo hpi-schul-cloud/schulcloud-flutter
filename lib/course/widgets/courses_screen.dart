@@ -57,7 +57,10 @@ class _CoursesScreenState extends State<CoursesScreen>
       body: CollectionBuilder.populated<Course>(
         collection: services.storage.root.courses,
         builder: handleListEdgeCases(
-          appBar: FancyAppBar(title: Text(context.s.course)),
+          appBar: FancyAppBar(
+            title: Text(context.s.course),
+            actions: <Widget>[SortFilterIconButton(showSortFilterSheet)],
+          ),
           emptyStateBuilder: (_) => EmptyStateScreen(
             text: context.s.course_coursesScreen_empty,
           ),
@@ -66,10 +69,6 @@ class _CoursesScreenState extends State<CoursesScreen>
 
             return CustomScrollView(
               slivers: <Widget>[
-                FancyAppBar(
-                  title: Text(s.course),
-                  actions: <Widget>[SortFilterIconButton(showSortFilterSheet)],
-                ),
                 if (courses.isEmpty)
                   SortFilterEmptyState(
                     showSortFilterSheet,

@@ -81,29 +81,34 @@ class _AssignmentsScreenState extends State<AssignmentsScreen>
             title: Text(s.assignment),
             actions: <Widget>[SortFilterIconButton(showSortFilterSheet)],
           ),
-          emptyStateBuilder: (context) => SortFilterEmptyState(
-            showSortFilterSheet,
-            text: s.assignment_assignmentsScreen_empty,
+          emptyStateBuilder: (context) => EmptyStateScreen(
+            text: context.s.assignment_assignmentsScreen_empty,
           ),
           builder: (context, allAssignments, fetch) {
             final assignments = sortFilterSelection.apply(allAssignments);
             return CustomScrollView(
               slivers: <Widget>[
-                SliverList(
-                  delegate: SliverChildBuilderDelegate(
-                    (_, index) => Padding(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 8,
+                if (assignments.isEmpty)
+                  SortFilterEmptyState(
+                    showSortFilterSheet,
+                    text: s.assignment_assignmentsScreen_empty,
+                  )
+                else
+                  SliverList(
+                    delegate: SliverChildBuilderDelegate(
+                      (_, index) => Padding(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 8,
+                        ),
+                        child: AssignmentCard(
+                          assignment: assignments[index],
+                          setFlagFilterCallback: setFlagFilter,
+                        ),
                       ),
-                      child: AssignmentCard(
-                        assignment: assignments[index],
-                        setFlagFilterCallback: setFlagFilter,
-                      ),
+                      childCount: assignments.length,
                     ),
-                    childCount: assignments.length,
                   ),
-                ),
               ],
             );
           },
