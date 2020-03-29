@@ -4,6 +4,14 @@ import 'package:schulcloud/file/file.dart';
 
 part 'data.g.dart';
 
+class NoSubmissionException extends FancyException {
+  NoSubmissionException()
+      : super(
+          isGlobal: false,
+          messageBuilder: (context) => context.s.assignment_error_noSubmission,
+        );
+}
+
 @HiveType(typeId: TypeId.assignment)
 class Assignment implements Entity<Assignment> {
   Assignment({
@@ -46,7 +54,7 @@ class Assignment implements Entity<Assignment> {
             final submissionData =
                 data.singleWhere((_) => true, orElse: () => null);
             return submissionData == null
-                ? null
+                ? (throw NoSubmissionException())
                 : Submission.fromJson(submissionData);
           },
         );
