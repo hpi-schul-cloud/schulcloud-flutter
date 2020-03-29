@@ -51,12 +51,12 @@ class CourseDetailsScreen extends StatelessWidget {
   Widget _buildLessonsSliver(BuildContext context, Course course) {
     return CollectionBuilder.populated<Lesson>(
       collection: course.lessons,
-      builder: handleListEdgeCases(
+      builder: handleError(handleLoading(handleEmptyState(
         emptyStateBuilder: (_) => EmptyStateScreen(
           text: context.s.course_detailsScreen_empty,
         ),
         builder: (context, lessons, _) {
-          lessons.sort();
+          lessons = lessons.sorted();
 
           return Column(
             mainAxisSize: MainAxisSize.min,
@@ -70,7 +70,7 @@ class CourseDetailsScreen extends StatelessWidget {
             ],
           );
         },
-      ),
+      ))),
     );
   }
 }
