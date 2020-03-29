@@ -65,6 +65,7 @@
   "assignment_editSubmission_teamSubmissionNotSupported": "Team submissions are not yet supported in this app.",
   "assignment_editSubmission_text": "Text submission",
   "assignment_editSubmission_text_errorEmpty": "Your submission may not be empty.",
+  "assignment_error_noSubmission": "No submission.",
   "calendar_dashboardCard": "Schedule",
   "calendar_dashboardCard_empty": "No more events for the rest of the day!",
   "course": "Courses",
