@@ -88,7 +88,7 @@ class Event implements Entity<Event> {
           // Recurrence rules might be of different type, though until now I've
           // only seen 'rrule'.
           if ((r['type'] as String).toLowerCase() != 'rrule') {
-            debugPrint('Event ${json['_id']} has a recurrence of unknown type '
+            logger.w('Event ${json['_id']} has a recurrence of unknown type '
                 '${r['type']}');
             return null;
           }
@@ -99,7 +99,7 @@ class Event implements Entity<Event> {
           // They could have different frequencies (maybe?), but I only
           // encountered 'WEEKLY'.
           if ((attributes['freq'] as String).toLowerCase() != 'weekly') {
-            debugPrint('Event ${json['_id']} has a recurrence of unknown '
+            logger.w('Event ${json['_id']} has a recurrence of unknown '
                 'frequency ${attributes['freq']}');
             return null;
           }

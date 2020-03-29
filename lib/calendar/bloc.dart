@@ -107,7 +107,7 @@ class CalendarBloc {
     if (rulesIntersectingTodaysDayOfWeek.isEmpty) {
       return null;
     } else if (rulesIntersectingTodaysDayOfWeek.length > 1) {
-      debugPrint("Multiple recurrence rules found for today's day of week. "
+      logger.e("Multiple recurrence rules found for today's day of week. "
           'Currently, only the first is taken into account.');
     }
 
