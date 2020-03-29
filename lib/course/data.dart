@@ -1,4 +1,5 @@
 import 'package:schulcloud/app/app.dart';
+import 'package:time_machine/time_machine.dart';
 
 part 'data.g.dart';
 
@@ -6,11 +7,16 @@ part 'data.g.dart';
 class Course implements Entity<Course> {
   Course({
     @required this.id,
+    @required this.createdAt,
+    @required this.updatedAt,
     @required this.name,
     this.description,
     @required this.teacherIds,
     @required this.color,
+    @required this.isArchived,
   })  : assert(id != null),
+        assert(createdAt != null),
+        assert(updatedAt != null),
         assert(name != null),
         assert(description?.isBlank != true),
         assert(teacherIds != null),
@@ -27,12 +33,15 @@ class Course implements Entity<Course> {
   Course.fromJson(Map<String, dynamic> data)
       : this(
           id: Id<Course>(data['_id']),
+          createdAt: (data['createdAt'] as String).parseInstant(),
+          updatedAt: (data['updatedAt'] as String).parseInstant(),
           name: data['name'],
           description: (data['description'] as String).blankToNull,
           teacherIds: (data['teacherIds'] as List<dynamic>)
               .cast<String>()
               .toIds<User>(),
           color: (data['color'] as String).hexToColor,
+          isArchived: data['isArchived'],
         );
 
   static Future<Course> fetch(Id<Course> id) async =>
@@ -41,6 +50,11 @@ class Course implements Entity<Course> {
   @override
   @HiveField(0)
   final Id<Course> id;
+
+  @HiveField(5)
+  final Instant createdAt;
+  @HiveField(6)
+  final Instant updatedAt;
 
   @HiveField(1)
   final String name;
@@ -53,6 +67,9 @@ class Course implements Entity<Course> {
 
   @HiveField(4)
   final Color color;
+
+  @HiveField(7)
+  final bool isArchived;
 
   final Collection<Lesson> lessons;
   final Collection<Lesson> visibleLessons;
@@ -97,13 +114,16 @@ class Lesson implements Entity<Lesson>, Comparable<Lesson> {
     Id<Course> courseId,
     bool hidden,
   }) async {
-    final jsonList = await services.api.get('lessons', parameters: {
-      if (courseId != null) 'courseId': courseId.value,
-      if (hidden == true)
-        'hidden': 'true'
-      else if (hidden == false)
-        'hidden[\$ne]': 'true',
-    }).parseJsonList();
+    final jsonList = await services.api.get(
+      'lessons',
+      queryParameters: {
+        if (courseId != null) 'courseId': courseId.value,
+        if (hidden == true)
+          'hidden': 'true'
+        else if (hidden == false)
+          'hidden[\$ne]': 'true',
+      },
+    ).parseJsonList();
     return jsonList.map((data) => Lesson.fromJson(data)).toList();
   }
 
@@ -182,10 +202,12 @@ abstract class Component {
 
     return componentFactory(data['content'] ?? {});
   }
-  static final _componentFactories = {
+  static final Map<String, Component Function(Map<String, dynamic> json)>
+      _componentFactories = {
     'text': (content) => TextComponent.fromJson(content),
     'Etherpad': (content) => EtherpadComponent.fromJson(content),
     'neXboard': (content) => NexboardComponent.fromJson(content),
+    'resources': (content) => ResourcesComponent.fromJson(content),
   };
 }
 
@@ -252,4 +274,56 @@ class NexboardComponent extends Component {
 
   @HiveField(1)
   final String description;
+}
+
+@HiveType(typeId: TypeId.resourcesComponent)
+class ResourcesComponent extends Component {
+  ResourcesComponent({
+    @required this.resources,
+  }) : assert(resources != null);
+
+  factory ResourcesComponent.fromJson(Map<String, dynamic> data) {
+    return ResourcesComponent(
+      resources: (data['resources'] as List<dynamic> ?? [])
+          .map((r) => Resource.fromJson(r))
+          .toList(),
+    );
+  }
+
+  @HiveField(0)
+  final List<Resource> resources;
+}
+
+@HiveType(typeId: TypeId.resource)
+class Resource {
+  Resource({
+    @required this.url,
+    @required this.title,
+    this.description,
+    @required this.client,
+  })  : assert(url != null),
+        assert(title != null && title.isNotBlank),
+        assert(description?.isBlank != true),
+        assert(client != null);
+
+  factory Resource.fromJson(Map<String, dynamic> data) {
+    return Resource(
+      url: data['url'],
+      title: (data['title'] as String).blankToNull,
+      description: (data['description'] as String).blankToNull,
+      client: data['client'],
+    );
+  }
+
+  @HiveField(0)
+  final String url;
+
+  @HiveField(1)
+  final String title;
+
+  @HiveField(2)
+  final String description;
+
+  @HiveField(3)
+  final String client;
 }

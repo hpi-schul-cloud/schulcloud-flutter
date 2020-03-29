@@ -92,7 +92,7 @@ class AccountDialog extends StatelessWidget {
       builder: handleEdgeCases((context, user, fetch) {
         return ListTile(
           leading: AccountAvatar(),
-          title: FancyText(user?.name),
+          title: FancyText(user?.displayName),
           subtitle: FancyText(user?.email),
         );
       }),

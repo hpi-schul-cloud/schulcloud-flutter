@@ -16,10 +16,10 @@ class NoSubmissionException extends FancyException {
 class Assignment implements Entity<Assignment> {
   Assignment({
     @required this.id,
-    @required this.name,
     @required this.schoolId,
     @required this.createdAt,
     @required this.updatedAt,
+    @required this.name,
     @required this.availableAt,
     this.dueAt,
     @required this.teacherId,
@@ -32,10 +32,10 @@ class Assignment implements Entity<Assignment> {
     @required this.teamSubmissions,
     this.fileIds = const [],
   })  : assert(id != null),
-        assert(name != null),
         assert(schoolId != null),
         assert(createdAt != null),
         assert(updatedAt != null),
+        assert(name != null),
         assert(availableAt != null),
         assert(teacherId != null),
         assert(isPrivate != null),
@@ -46,10 +46,14 @@ class Assignment implements Entity<Assignment> {
         mySubmission = Connection<Submission>(
           id: 'my submission to $id',
           fetcher: () async {
-            final data = await services.api.get('submissions', parameters: {
-              'homeworkId': id.value,
-              'studentId': services.storage.userIdString.getValue(),
-            }).parseJsonList();
+            final data = await services.api.get(
+              'submissions',
+              queryParameters: {
+                'homeworkId': id.value,
+                'studentId': services.storage.userIdString.getValue(),
+              },
+            ).parseJsonList();
+
             // For a single student, there's at most one submission per assignment.
             final submissionData =
                 data.singleWhere((_) => true, orElse: () => null);
@@ -63,11 +67,11 @@ class Assignment implements Entity<Assignment> {
       : this(
           id: Id<Assignment>(data['_id']),
           schoolId: data['schoolId'],
+          createdAt: (data['createdAt'] as String).parseInstant(),
+          updatedAt: (data['updatedAt'] as String).parseInstant(),
           teacherId: Id<User>(data['teacherId']),
           name: data['name'],
           description: data['description'],
-          createdAt: (data['createdAt'] as String).parseInstant(),
-          updatedAt: (data['updatedAt'] as String).parseInstant(),
           availableAt: (data['availableDate'] as String).parseInstant(),
           dueAt: (data['dueDate'] as String)?.parseInstant(),
           courseId: data['courseId'] != null
@@ -98,9 +102,6 @@ class Assignment implements Entity<Assignment> {
   @HiveField(0)
   final Id<Assignment> id;
 
-  @HiveField(1)
-  final String name;
-
   @HiveField(2)
   final String schoolId;
 
@@ -108,6 +109,9 @@ class Assignment implements Entity<Assignment> {
   final Instant createdAt;
   @HiveField(19)
   final Instant updatedAt;
+
+  @HiveField(1)
+  final String name;
 
   @HiveField(13)
   final Instant availableAt;

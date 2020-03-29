@@ -79,11 +79,13 @@ class TypeId {
   static const textComponent = 72;
   static const etherpadComponent = 74;
   static const nexboardComponent = 75;
+  static const resourcesComponent = 76;
+  static const resource = 77;
 
   static const article = 56;
 
   static const file = 53;
-  static const filePath = 76;
+  static const filePath = 78;
 }
 
 Future<void> initializeHive() async {
@@ -127,6 +129,8 @@ Future<void> initializeHive() async {
     ..registerAdapter(TextComponentAdapter())
     ..registerAdapter(EtherpadComponentAdapter())
     ..registerAdapter(NexboardComponentAdapter())
+    ..registerAdapter(ResourcesComponentAdapter())
+    ..registerAdapter(ResourceAdapter())
     // News module:
     ..registerEntityType(ArticleAdapter(), Article.fetch)
     // Files module:

@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:dartx/dartx.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_cache/hive_cache.dart';
 import 'package:meta/meta.dart';
@@ -13,13 +14,13 @@ part 'data.g.dart';
 
 @HiveType(typeId: TypeId.user)
 class User implements Entity<User> {
-  User({
+  const User({
     @required this.id,
     @required this.firstName,
     @required this.lastName,
     @required this.email,
     @required this.schoolId,
-    @required this.displayName,
+    String displayName,
     @required this.avatarInitials,
     @required this.avatarBackgroundColor,
     @required this.permissions,
@@ -29,7 +30,7 @@ class User implements Entity<User> {
         assert(lastName != null),
         assert(email != null),
         assert(schoolId != null),
-        assert(displayName != null),
+        displayName = displayName ?? '$firstName $lastName',
         assert(avatarInitials != null),
         assert(avatarBackgroundColor != null),
         assert(permissions != null),
@@ -64,8 +65,7 @@ class User implements Entity<User> {
   @HiveField(2)
   final String lastName;
 
-  String get name => '$firstName $lastName';
-  String get shortName => '${firstName[0]}. $lastName';
+  String get shortName => '${firstName.chars.first}. $lastName';
 
   @HiveField(3)
   final String email;
@@ -129,7 +129,7 @@ class Root implements Entity<Root> {
       // guessed it — no events are being returned at all 😂
       final jsonResponse = await services.api.get(
         'calendar',
-        parameters: {'all': 'true'},
+        queryParameters: {'all': 'true'},
       ).parseJsonList(isServicePaginated: false);
       return jsonResponse.map((data) => Event.fromJson(data)).toList();
     },

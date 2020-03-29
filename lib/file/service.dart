@@ -40,7 +40,10 @@ class FileService {
     /// just viewing its JSON representation.
     final response = await services.api.get(
       'fileStorage/signedUrl',
-      parameters: {'download': null, 'file': file.id.toString()},
+      queryParameters: {
+        'download': null,
+        'file': file.id.value,
+      },
     );
     final signedUrl = json.decode(response.body)['url'];
 

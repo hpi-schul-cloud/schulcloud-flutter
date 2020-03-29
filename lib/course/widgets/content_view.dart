@@ -66,9 +66,91 @@ class _ComponentView extends StatelessWidget {
         }),
       );
     }
+    if (component is ResourcesComponent) {
+      return Column(
+        children: <Widget>[
+          for (final resource in component.resources) ...[
+            // Space before the first card is intended as that's the only
+            // spacing between the first card and the content's title.
+            SizedBox(height: 16),
+            _ResourceCard(resource),
+          ],
+        ],
+      );
+    }
 
     assert(component is UnsupportedComponent);
     return EmptyStateScreen(text: context.s.course_contentView_unsupported);
+  }
+}
+
+class _ResourceCard extends StatelessWidget {
+  const _ResourceCard(this.resource) : assert(resource != null);
+
+  final Resource resource;
+
+  @override
+  Widget build(BuildContext context) {
+    return FancyCard(
+      omitHorizontalPadding: true,
+      omitBottomPadding: true,
+      onTap: () => tryLaunchingUrl(resource.url),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          _buildContent(context),
+          _buildFooter(context),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildContent(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.fromLTRB(16, 0, 16, 16),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Row(
+            children: <Widget>[
+              Expanded(
+                child: Text(
+                  resource.title,
+                  style: context.textTheme.subhead,
+                ),
+              ),
+              Icon(Icons.open_in_new),
+            ],
+          ),
+          if (resource.description != null) ...[
+            SizedBox(height: 4),
+            FancyText.preview(
+              resource.description,
+              maxLines: null,
+              textType: TextType.plain,
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _buildFooter(BuildContext context) {
+    final theme = context.theme;
+
+    return Container(
+      decoration: BoxDecoration(
+        border: Border(top: BorderSide(color: theme.dividerColor)),
+        color: theme.disabledOnBackground,
+      ),
+      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      child: FancyText(
+        context.s.course_resourceCard_via(resource.client),
+        emphasis: TextEmphasis.medium,
+      ),
+    );
   }
 }
 

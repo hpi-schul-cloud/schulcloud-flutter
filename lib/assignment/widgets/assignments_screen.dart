@@ -7,20 +7,19 @@ import 'package:time_machine/time_machine.dart';
 
 import '../data.dart';
 
-class AssignmentsScreen extends StatefulWidget {
+class AssignmentsScreen extends SortFilterWidget<Assignment> {
   AssignmentsScreen({
     SortFilterSelection<Assignment> sortFilterSelection,
-  }) : initialSortFilterSelection =
-            sortFilterSelection ?? sortFilterConfig.defaultSelection;
+  }) : super(sortFilterSelection ?? sortFilterConfig.defaultSelection);
 
   static final sortFilterConfig = SortFilter<Assignment>(
     sorters: {
       'createdAt': Sorter<Assignment>.simple(
-        (s) => s.assignment_assignment_property_createdAt,
+        (s) => s.general_entity_property_createdAt,
         selector: (assignment) => assignment.createdAt,
       ),
       'updatedAt': Sorter<Assignment>.simple(
-        (s) => s.assignment_assignment_property_updatedAt,
+        (s) => s.general_entity_property_updatedAt,
         selector: (assignment) => assignment.updatedAt,
       ),
       'availableAt': Sorter<Assignment>.simple(
@@ -42,10 +41,10 @@ class AssignmentsScreen extends StatefulWidget {
         defaultSelection: DateRangeFilterSelection(start: LocalDate.today()),
       ),
       'more': FlagsFilter<Assignment>(
-        (s) => s.assignment_assignment_property_more,
+        (s) => s.general_entity_property_more,
         filters: {
           'isArchived': FlagFilter<Assignment>(
-            (s) => s.assignment_assignment_property_isArchived,
+            (s) => s.general_entity_property_isArchived,
             selector: (assignment) => assignment.isArchived,
             defaultSelection: false,
           ),
@@ -63,22 +62,13 @@ class AssignmentsScreen extends StatefulWidget {
       ),
     },
   );
-  final SortFilterSelection<Assignment> initialSortFilterSelection;
 
   @override
   _AssignmentsScreenState createState() => _AssignmentsScreenState();
 }
 
-class _AssignmentsScreenState extends State<AssignmentsScreen> {
-  SortFilterSelection<Assignment> _sortFilter;
-
-  @override
-  void initState() {
-    super.initState();
-
-    _sortFilter ??= widget.initialSortFilterSelection;
-  }
-
+class _AssignmentsScreenState extends State<AssignmentsScreen>
+    with SortFilterStateMixin<AssignmentsScreen, Assignment> {
   @override
   Widget build(BuildContext context) {
     final s = context.s;
@@ -88,51 +78,37 @@ class _AssignmentsScreenState extends State<AssignmentsScreen> {
         collection: services.storage.root.assignments,
         builder: handleListEdgeCases(
           appBar: FancyAppBar(
-            title: Text(context.s.assignment),
-            actions: <Widget>[
-              IconButton(
-                icon: Icon(Icons.sort),
-                onPressed: () => _showSortFilterSheet(context),
-              ),
-            ],
+            title: Text(s.assignment),
+            actions: <Widget>[SortFilterIconButton(showSortFilterSheet)],
           ),
-          emptyStateBuilder: (context) => EmptyStateScreen(
+          emptyStateBuilder: (context) => SortFilterEmptyState(
+            showSortFilterSheet,
             text: s.assignment_assignmentsScreen_empty,
-            actions: <Widget>[
-              SecondaryButton(
-                onPressed: () => _showSortFilterSheet(context),
-                child: Text(s.assignment_assignmentsScreen_empty_editFilters),
-              ),
-            ],
           ),
           builder: (context, allAssignments, fetch) {
-            final assignments = _sortFilter.apply(allAssignments);
-
-            return ListView.builder(
-              itemCount: assignments.length,
-              itemBuilder: (_, index) => Padding(
-                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                child: AssignmentCard(
-                  assignment: assignments[index],
-                  setFlagFilterCallback: (key, value) {
-                    setState(() => _sortFilter = _sortFilter
-                        .withFlagsFilterSelection('more', key, value));
-                  },
+            final assignments = sortFilterSelection.apply(allAssignments);
+            return CustomScrollView(
+              slivers: <Widget>[
+                SliverList(
+                  delegate: SliverChildBuilderDelegate(
+                    (_, index) => Padding(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 8,
+                      ),
+                      child: AssignmentCard(
+                        assignment: assignments[index],
+                        setFlagFilterCallback: setFlagFilter,
+                      ),
+                    ),
+                    childCount: assignments.length,
+                  ),
                 ),
-              ),
+              ],
             );
           },
         ),
       ),
-    );
-  }
-
-  void _showSortFilterSheet(BuildContext context) {
-    _sortFilter.showSheet(
-      context: context,
-      callback: (selection) {
-        setState(() => _sortFilter = selection);
-      },
     );
   }
 }

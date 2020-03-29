@@ -4,6 +4,7 @@ import 'dart:ui';
 
 import 'package:dartx/dartx.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_deep_linking/flutter_deep_linking.dart';
 import 'package:get_it/get_it.dart';
 import 'package:hive_cache/hive_cache.dart';
 import 'package:html/parser.dart';
@@ -13,11 +14,13 @@ import 'package:url_launcher/url_launcher.dart';
 
 import 'app_config.dart';
 import 'exception.dart';
+import 'logger.dart';
+import 'services/api_network.dart';
 import 'services/network.dart';
 
 final services = GetIt.instance;
 
-extension FancyContext on BuildContext {
+extension ContextWithLocalization on BuildContext {
   S get s => S.of(this);
 }
 
@@ -100,15 +103,31 @@ extension LegenWaitForItDaryString on String {
 
 /// Tries launching a url.
 Future<bool> tryLaunchingUrl(String url) async {
-  final resolved =
-      Uri.parse(services.config.baseWebUrl).resolve(url).toString();
-  if (await canLaunch(resolved)) {
-    await launch(resolved);
+  logger.i("Trying to launch url '$url'…");
+  final resolved = Uri.parse(services.config.baseWebUrl).resolve(url);
+  if (resolved.host == services.config.host) {
+    final result = Matcher.path('content/redirect/{id}')
+        .evaluate(PartialUri.fromUri(resolved));
+    if (result.isMatch) {
+      final response = await services.api.head(
+        'content/redirect/${result.parameters['id']}',
+        followRedirects: false,
+      );
+      final redirect = response.headers['location'];
+      logger.d("Resolved content redirect: '$redirect'");
+      return tryLaunchingUrl(redirect);
+    }
+  }
+
+  final string = resolved.toString();
+  if (await canLaunch(string)) {
+    await launch(string);
     return true;
   }
   return false;
 }
 
+// TODO(marcelgarus): remove
 String exceptionMessage(dynamic error) {
   if (error is ServerError && error.body.message != null) {
     return error.body.message;
@@ -135,6 +154,7 @@ class PermissionNotGranted<T> extends FancyException {
         );
 }
 
+// TODO(marcelgarus): remove
 class LazyMap<K, V> {
   LazyMap(this.createValueForKey) : assert(createValueForKey != null);
 

@@ -46,6 +46,9 @@ class FancyPrinter extends LogPrinter {
     if (message == null) {
       return null;
     }
+    if (message is String) {
+      return message;
+    }
     try {
       return JsonEncoder.withIndent('  ').convert(message);
       // ignore: avoid_catching_errors
