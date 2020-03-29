@@ -16,6 +16,7 @@ class CoursesScreen extends StatelessWidget {
             text: context.s.course_coursesScreen_empty,
           ),
           builder: (context, courses, isFetching) {
+            courses = List.from(courses);
             return ListView.builder(
               padding: EdgeInsets.fromLTRB(16, 8, 16, 16),
               itemCount: courses.length,
