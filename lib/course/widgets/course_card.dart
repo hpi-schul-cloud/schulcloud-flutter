@@ -19,10 +19,9 @@ class CourseCard extends StatelessWidget {
           Text(course.name),
           SizedBox(width: 16),
           Expanded(
-            child: StreamBuilder<List<User>>(
-              // TODO(marcelgarus): This is a memory leak. We shouldn't manually call `resolve` or `resolveAll` inside build methods without also calling dispose on the resulting stream.
-              stream: course.teacherIds.resolveAll(),
-              builder: (context, stream) => handleError((_, teachers, __) {
+            child: EntityListBuilder<User>(
+              ids: course.teacherIds,
+              builder: handleError((_, teachers, __) {
                 return FancyText(
                   teachers
                       ?.where((teacher) => teacher != null)
@@ -31,8 +30,7 @@ class CourseCard extends StatelessWidget {
                   maxLines: 1,
                   emphasis: TextEmphasis.medium,
                 );
-                // TODO(marcelgarus): This is also ugly.
-              })(context, stream, ({force}) async {}),
+              }),
             ),
           ),
         ],
