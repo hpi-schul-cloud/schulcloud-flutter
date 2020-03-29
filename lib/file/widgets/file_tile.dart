@@ -29,12 +29,13 @@ class FileTile extends StatelessWidget {
           if (file.isActualFile) file.sizeAsString,
           if (file.updatedAt != null) file.updatedAt.shortDateTimeString,
         ].join(', ');
+        final onTap = onTapHandler(file);
 
         return ListTile(
           title: Text(file.name),
           subtitle: Text(subtitle),
           leading: FileThumbnail(file: file),
-          onTap: onTapHandler(file) == null ? null : () => onTapHandler(file),
+          onTap: onTap == null ? null : () => onTap(file),
           onLongPress: () => FileMenu.show(context, file),
         );
       }),
