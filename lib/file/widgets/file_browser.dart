@@ -43,8 +43,9 @@ class FileBrowser extends StatelessWidget {
     } else if (isOwnerMe) {
       context.navigator.pushNamed('/files/my/${file.id}');
     } else {
-      logger.e(
-          'Unknown owner: ${path.ownerId} (type: ${path.ownerId.runtimeType}) while trying to open directory ${file.id}');
+      logger.e('Unknown owner: ${path.ownerId} (type: '
+          '${path.ownerId.runtimeType}) while trying to open directory '
+          '${file.id}');
     }
   }
 
@@ -74,17 +75,17 @@ class FileBrowser extends StatelessWidget {
   Widget _buildEmbedded(BuildContext context) {
     return CollectionBuilder<File>(
       collection: path.files,
-      builder: handleEdgeCases((context, fileIds, _) {
-        if (fileIds?.isEmpty ?? true) {
-          return _buildEmptyState(context);
-        }
-        return FileList(
-          fileIds,
-          primary: false,
-          onOpenDirectory: (directory) => _openDirectory(context, directory),
-          onDownloadFile: (file) => _downloadFile(context, file),
-        );
-      }),
+      builder: handleEdgeCases(handleEmptyState(
+        emptyStateBuilder: _buildEmptyState,
+        builder: (context, fileIds, _) {
+          return FileList(
+            fileIds,
+            primary: false,
+            onOpenDirectory: (directory) => _openDirectory(context, directory),
+            onDownloadFile: (file) => _downloadFile(context, file),
+          );
+        },
+      )),
     );
   }
 
@@ -101,7 +102,7 @@ class FileBrowser extends StatelessWidget {
               title: course?.name ??
                   snapshot.error?.toString() ??
                   context.s.general_loading,
-              backgroundColor: course.color,
+              backgroundColor: course?.color,
             );
           }
 
