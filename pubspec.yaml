@@ -46,7 +46,7 @@ dependencies:
   hive_cache:
     git:
       url: git://github.com/marcelgarus/hive_cache
-      ref: c1bce1e
+      ref: 58642c7
   hive_flutter: ^0.3.0+1
   html: ^0.14.0+3
   http: ^0.12.0
