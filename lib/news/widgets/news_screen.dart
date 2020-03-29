@@ -21,6 +21,7 @@ class NewsScreen extends StatelessWidget {
               ..sort((a1, a2) => a2.publishedAt.compareTo(a1.publishedAt));
 
             return ListView.builder(
+              padding: EdgeInsets.only(top: 8),
               itemCount: articles.length,
               itemBuilder: (context, index) {
                 return Padding(
