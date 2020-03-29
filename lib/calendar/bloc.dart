@@ -4,7 +4,7 @@ import 'package:meta/meta.dart';
 import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/calendar/calendar.dart';
 import 'package:time_machine/time_machine.dart';
-import 'package:flutter_cached/flutter_cached.dart';
+import 'package:hive_cache/hive_cache.dart';
 
 import 'data.dart';
 
