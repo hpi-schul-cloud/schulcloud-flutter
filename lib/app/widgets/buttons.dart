@@ -32,29 +32,41 @@ class PrimaryButton extends StatelessWidget {
   }
 }
 
-class SecondaryButton extends StatelessWidget {
+class SecondaryButton extends FancyOutlineButton {
   const SecondaryButton({
     Key key,
-    this.isEnabled,
-    @required this.onPressed,
-    @required this.child,
-    this.isLoading = false,
-  })  : assert(child != null),
-        assert(isLoading != null),
-        super(key: key);
-
-  final bool isEnabled;
-  final VoidCallback onPressed;
-  final Widget child;
-  final bool isLoading;
-
-  @override
-  Widget build(BuildContext context) {
-    return FancyOutlineButton(
-      isEnabled: isEnabled,
-      onPressed: onPressed,
-      isLoading: isLoading,
-      child: child,
-    );
-  }
+    bool isEnabled,
+    @required VoidCallback onPressed,
+    @required Widget child,
+    bool isLoading = false,
+  }) : super(
+          key: key,
+          isEnabled: isEnabled,
+          onPressed: onPressed,
+          child: child,
+          isLoading: isLoading,
+        );
+  const SecondaryButton.icon({
+    Key key,
+    bool isEnabled,
+    @required VoidCallback onPressed,
+    @required Widget icon,
+    @required Widget label,
+    bool isLoading = false,
+    Color textColor,
+    Color color,
+    BorderSide borderSide,
+    Color highlightedBorderColor,
+  }) : super.icon(
+          key: key,
+          isEnabled: isEnabled,
+          onPressed: onPressed,
+          icon: icon,
+          label: label,
+          isLoading: isLoading,
+          textColor: textColor,
+          color: color,
+          borderSide: borderSide,
+          highlightedBorderColor: highlightedBorderColor,
+        );
 }

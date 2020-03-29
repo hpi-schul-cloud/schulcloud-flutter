@@ -141,7 +141,9 @@
   "signIn_form_password_error": "Enter a password",
   "signIn_form_password": "Password",
   "signIn_form_signIn": "Sign in",
-  "signIn_signInScreen_about": "Das Hasso-Plattner-Institut für Digital Engineering entwickelt unter der Leitung von Prof. Dr. Christoph Meinel zusammen mit MINT-EC, dem nationalen Excellence-Schulnetzwerk von über 300 Schulen bundesweit und unterstützt vom Bundesministerium für Bildung und Forschung die HPI Schul-Cloud. Sie soll die technische Grundlage schaffen, dass Lehrkräfte und Schüler in jedem Unterrichtsfach auch moderne digitale Lehr- und Lerninhalte nutzen können, und zwar so, wie Apps über Smartphones oder Tablets nutzbar sind.",
+  "signIn_signInScreen_faq": "FAQ",
+  "signIn_signInScreen_faq_getAccountQ": "How do I get an account?",
+  "signIn_signInScreen_faq_getAccountA": "Please contact your school's administrator to get an account for the {brand}.",
   "signIn_signInScreen_moreInformation": "scroll down for more information",
   "signIn_signOutScreen_message": "Signing out…"
 }
