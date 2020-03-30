@@ -13,29 +13,22 @@ import 'storage.dart';
 class ApiNetworkService {
   const ApiNetworkService();
 
-  String _url(String path) {
-    assert(path != null);
-    return '${services.get<AppConfig>().baseApiUrl}/$path';
-  }
-
   NetworkService get _network => services.network;
 
-  Map<String, String> _getHeaders() {
-    final storage = services.storage;
-    return {
-      if (storage.hasToken)
-        'Authorization': 'Bearer ${storage.token.getValue()}',
-    };
-  }
-
-  /// Makes an http get request to the api.
+  /// Makes an HTTP GET request to the api.
   Future<http.Response> get(
     String path, {
     Map<String, String> queryParameters = const {},
   }) {
+    final user = services.storage.userFromCache;
     return _network.get(
       _url(path),
-      queryParameters: queryParameters,
+      queryParameters: {
+        // For better server performance.
+        if (user != null)
+          'schoolId': user.schoolId,
+        ...queryParameters,
+      },
       headers: _getHeaders(),
     );
   }
@@ -49,7 +42,7 @@ class ApiNetworkService {
     );
   }
 
-  /// Makes an http patch request to the api.
+  /// Makes an HTTP PATCH request to the api.
   Future<http.Response> patch(String path, {Map<String, dynamic> body}) {
     return _network.patch(
       _url(path),
@@ -58,7 +51,7 @@ class ApiNetworkService {
     );
   }
 
-  /// Makes an http delete request to the api.
+  /// Makes an HTTP DELETE request to the api.
   Future<http.Response> delete(String path) {
     return _network.delete(_url(path), headers: _getHeaders());
   }
@@ -70,6 +63,21 @@ class ApiNetworkService {
       headers: _getHeaders(),
       followRedirects: followRedirects,
     );
+  }
+
+  String _url(String path) {
+    assert(path != null);
+    assert(path.isNotEmpty);
+    assert(!path.startsWith('/'));
+    return '${services.get<AppConfig>().baseApiUrl}/$path';
+  }
+
+  Map<String, String> _getHeaders() {
+    final storage = services.storage;
+    return {
+      if (storage.hasToken)
+        'Authorization': 'Bearer ${storage.token.getValue()}',
+    };
   }
 }
 

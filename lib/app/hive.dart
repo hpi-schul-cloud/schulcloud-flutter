@@ -188,8 +188,9 @@ class HiveCacheImpl {
         'registered the type $E?');
   }
 
+  bool get isInitialized => _box != null;
   Future<void> initialize() async {
-    assert(_box == null, 'initialize was already called');
+    assert(!isInitialized, 'initialize was already called');
     _box = await Hive.openBox('cache');
   }
 
