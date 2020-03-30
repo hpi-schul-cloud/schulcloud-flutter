@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:rxdart/rxdart.dart';
 import 'package:get_it/get_it.dart';
 
 import '../logger.dart';
@@ -14,6 +15,8 @@ class SnackBarRequest {
       completer;
   final SnackBar snackBar;
 }
+
+typedef LoadingMessageBuilder<T> = String Function(T update);
 
 /// A service that offers displaying app-wide [SnackBar]s at the bottom.
 class SnackBarService {
@@ -48,8 +51,9 @@ class SnackBarService {
   }
 
   Future<ScaffoldFeatureController<SnackBar, SnackBarClosedReason>> showLoading(
-      Stream<String> messages) {
-    return show(SnackBar(
+      Stream<String> messages) async {
+    ScaffoldFeatureController<SnackBar, SnackBarClosedReason> controller;
+    return controller = await show(SnackBar(
       duration: Duration(days: 1),
       content: Row(
         children: <Widget>[
@@ -62,7 +66,7 @@ class SnackBarService {
           SizedBox(width: 8),
           Expanded(
             child: StreamBuilder<String>(
-              stream: messages,
+              stream: Observable(messages).doOnDone(() => controller.close()),
               builder: (_, snapshot) {
                 return Text(snapshot.data ?? '');
               },
@@ -94,6 +98,39 @@ class SnackBarService {
       controller.close();
       await showMessageBriefly(failureMessage);
     }
+  }
+
+  Future<void> performMultiAction<T>({
+    @required Stream<T> action,
+    @required LoadingMessageBuilder<T> loadingMessageBuilder,
+    @required String successMessage,
+    @required String failureMessage,
+  }) async {
+    final updateMessages = StreamController<String>();
+    await showLoading(updateMessages.stream);
+
+    var hasError = false;
+    Observable(action)
+        .doOnData((update) => updateMessages.add(loadingMessageBuilder(update)))
+        .listen(
+      (update) {},
+      onError: (e, st) async {
+        logger.e("Multi action couldn't be performed.", e, st);
+        hasError = true;
+        await updateMessages.close();
+        await showMessageBriefly(failureMessage);
+      },
+      onDone: () {
+        if (hasError) {
+          // We already closed updateMessages and showed an error message.
+          return;
+        }
+
+        updateMessages.close();
+        showMessageBriefly(successMessage);
+      },
+      cancelOnError: true,
+    );
   }
 }
 
