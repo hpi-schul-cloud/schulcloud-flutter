@@ -37,9 +37,7 @@ class Course implements Entity<Course> {
           updatedAt: (data['updatedAt'] as String).parseInstant(),
           name: data['name'],
           description: (data['description'] as String).blankToNull,
-          teacherIds: (data['teacherIds'] as List<dynamic>)
-              .cast<String>()
-              .toIds<User>(),
+          teacherIds: parseIds(data['teacherIds']),
           color: (data['color'] as String).hexToColor,
           isArchived: data['isArchived'],
         );

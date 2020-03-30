@@ -111,7 +111,7 @@ class FileBrowser extends StatelessWidget {
             builder: handleEdgeCases((context, parentDirectory, fetch) {
               return FileBrowserAppBar(
                 title: parentDirectory.name,
-                backgroundColor: course?.color ?? Colors.white,
+                backgroundColor: course?.color,
               );
             }),
           );

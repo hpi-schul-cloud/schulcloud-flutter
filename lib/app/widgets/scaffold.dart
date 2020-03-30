@@ -33,7 +33,6 @@ class FancyScaffold extends StatelessWidget {
             padding: _paddingForScaffold(
                 context, omitHorizontalPadding, omitTopPadding),
             sliver: MediaQuery.removePadding(
-              removeTop: true,
               removeLeft: true,
               removeRight: true,
               context: context,

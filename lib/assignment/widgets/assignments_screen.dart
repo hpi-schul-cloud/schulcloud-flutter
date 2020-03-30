@@ -178,7 +178,7 @@ class AssignmentCard extends StatelessWidget {
       if (assignment.courseId != null)
         EntityBuilder<Course>(
           id: assignment.courseId,
-          builder: handleEdgeCases((context, course, fetch) {
+          builder: handleError((context, course, fetch) {
             return CourseChip(
               course,
               onPressed: () {

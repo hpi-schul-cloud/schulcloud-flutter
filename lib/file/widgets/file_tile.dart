@@ -35,7 +35,7 @@ class FileTile extends StatelessWidget {
           title: Text(file.name),
           subtitle: Text(subtitle),
           leading: FileThumbnail(file: file),
-          onTap: onTap == null ? null : () => onTap(file),
+          onTap: onTap?.partial(file),
           onLongPress: () => FileMenu.show(context, file),
         );
       }),

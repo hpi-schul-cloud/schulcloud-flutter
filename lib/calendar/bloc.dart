@@ -10,29 +10,25 @@ import 'data.dart';
 
 @immutable
 class CalendarBloc {
-  CalendarBloc()
-      : todaysEvents = Collection<Event>(
-          id: "today's events",
-          fetcher: () async {
-            // The great, thoughtfully designed Calendar API presents us with
-            // daily challenges, such as: How do I get today's events?
-            // And the simple but ingenious answer to that is:
-            // 1. Download all events (every time). (≈ 50 kb using the demo
-            //    account)
-            // 2. Implement your own logic to filter them. Have fun 😊
-            final eventIds = services.storage.root.events.resolve();
-            final events = await eventIds.resolveAll().first;
-            eventIds.dispose();
-
-            return events
-                .map(_getTodaysInstanceOrNull)
-                .where((e) => e != null)
-                .toList()
-                  ..sort((e1, e2) => e1.start.compareTo(e2.start));
-          },
-        );
-
-  final Collection<Event> todaysEvents;
+  final Collection<Event> todaysEvents = Collection<Event>(
+    id: "today's events",
+    fetcher: () async {
+      // The great, thoughtfully designed Calendar API presents us with
+      // daily challenges, such as: How do I get today's events?
+      // And the simple but ingenious answer to that is:
+      // 1. Download all events (every time). (≈ 50 kb using the demo
+      //    account)
+      // 2. Implement your own logic to filter them. Have fun 😊
+      final eventIds = services.storage.root.events.resolve();
+      final events = await eventIds.resolveAll().first;
+      eventIds.dispose();
+      return events
+          .map(_getTodaysInstanceOrNull)
+          .where((e) => e != null)
+          .toList()
+            ..sort((e1, e2) => e1.start.compareTo(e2.start));
+    },
+  );
 
   /// Returns the raw event if it occurs today or an instance of the recurring
   /// event taking place today.
@@ -107,7 +103,7 @@ class CalendarBloc {
     if (rulesIntersectingTodaysDayOfWeek.isEmpty) {
       return null;
     } else if (rulesIntersectingTodaysDayOfWeek.length > 1) {
-      logger.e("Multiple recurrence rules found for today's day of week. "
+      logger.w("Multiple recurrence rules found for today's day of week. "
           'Currently, only the first is taken into account.');
     }
 

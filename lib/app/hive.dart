@@ -116,7 +116,7 @@ Future<void> initializeHive() async {
     ..registerEntityType(RoleAdapter(),
         (id) => throw UnsupportedError('Roles cannot be fetched by id yet.'))
     // Assignments module:
-    ..registerEntityType<Assignment>(AssignmentAdapter(), Assignment.fetch)
+    ..registerEntityType(AssignmentAdapter(), Assignment.fetch)
     ..registerEntityType(SubmissionAdapter(), Submission.fetch)
     // Calendar module:
     ..registerEntityType(EventAdapter(), Event.fetch)

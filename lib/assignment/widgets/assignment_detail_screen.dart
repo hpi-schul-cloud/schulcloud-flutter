@@ -91,7 +91,7 @@ class _AssignmentDetailScreenState extends State<AssignmentDetailScreen>
 
     return EntityBuilder<Course>(
       id: courseId,
-      builder: handleEdgeCases((context, course, _) {
+      builder: handleError((context, course, _) {
         return Row(children: <Widget>[
           CourseColorDot(course),
           SizedBox(width: 8),

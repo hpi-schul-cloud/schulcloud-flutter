@@ -53,7 +53,7 @@ class ArticlePreview extends StatelessWidget {
             ),
             EntityBuilder<User>(
               id: article.authorId,
-              builder: handleEdgeCases((context, author, __) {
+              builder: handleError((context, author, __) {
                 final authorName =
                     author?.displayName ?? context.s.general_placeholder;
 

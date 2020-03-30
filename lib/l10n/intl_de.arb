@@ -2,7 +2,7 @@
   "@@locale": "de",
   "app_emptyState_retry": "Nochmal versuchen",
   "app_error_conflict": "Deine Änderungen können nicht gespeichert werden, weil jemand anderes zur selben Zeit etwas geändert hat.",
-  "app_error_general": "Ein genereller Serverfehler ist aufgetreten.",
+  "app_error_internal": "Ein unbekannter Serverfehler ist aufgetreten.",
   "app_error_noConnection": "Es konnte keine Verbindung zum Server aufgebaut werden.",
   "app_error_noPermission": "Du hast keine Berechtigung dazu.",
   "app_error_rateLimit": "Zu viele Versuche. Versuche es erneut in {timeToWait}.",

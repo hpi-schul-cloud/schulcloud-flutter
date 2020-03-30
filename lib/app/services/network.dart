@@ -110,9 +110,9 @@ class TooManyRequestsError extends ServerError {
   final Duration timeToWait;
 }
 
-class GeneralServerError extends ServerError {
-  GeneralServerError(ErrorBody body)
-      : super(body, (context) => context.s.app_error_general);
+class InternalServerError extends ServerError {
+  InternalServerError(ErrorBody body)
+      : super(body, (context) => context.s.app_error_internal);
 }
 
 /// A service that offers making network request to arbitrary servers.
@@ -231,7 +231,7 @@ class NetworkService {
     }
 
     if (response.statusCode == 500) {
-      throw GeneralServerError(body);
+      throw InternalServerError(body);
     }
 
     throw UnimplementedError(

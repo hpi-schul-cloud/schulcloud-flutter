@@ -124,32 +124,5 @@ FetchableBuilder<AsyncSnapshot<List<T>>> handleListEdgeCases<T>({
   ));
 }
 
-FetchableBuilder<AsyncSnapshot<T>>
-    handleErrorAndLoadingAndPullToRefreshAndEmptyState<T>({
-  NestedScrollViewHeaderSliversBuilder headerSliverBuilder,
-  FancyAppBar appBar,
-  @required WidgetBuilder emptyStateBuilder,
-  @required FetchableBuilder<T> builder,
-}) {
-  assert(
-    headerSliverBuilder == null || appBar == null,
-    'You cannot provide both a headerSliverBuilder and an appBar to '
-    'handlePullToRefresh. If you want to display both, include the app bar in '
-    'the result of the headerSliverBuilder.',
-  );
 
-  return handleError(handleLoadingAndPullToRefresh(
-    builder: (context, data, fetch) {
-      return NestedScrollView(
-        headerSliverBuilder:
-            headerSliverBuilder ?? (_, __) => [if (appBar != null) appBar],
-        body: RefreshIndicator(
-          onRefresh: fetch,
-          child: data == null
-              ? Center(child: CircularProgressIndicator())
-              : builder(context, data, fetch),
-        ),
-      );
-    },
-  ));
 }

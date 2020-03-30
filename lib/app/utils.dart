@@ -154,17 +154,7 @@ class PermissionNotGranted<T> extends FancyException {
         );
 }
 
-// TODO(marcelgarus): remove
-class LazyMap<K, V> {
-  LazyMap(this.createValueForKey) : assert(createValueForKey != null);
-
-  final Map<K, V> _map = {};
-  final V Function(K key) createValueForKey;
-
-  V operator [](K key) => _map.putIfAbsent(key, () => createValueForKey(key));
-}
-
 /// Converts the given dynamically typed list into a strongly typed [List] of
-/// [Id]'s of for the entity type [E].
+/// [Id]s for the entity type [E].
 List<Id<E>> parseIds<E extends Entity<E>>(dynamic list) =>
-    (list as List<dynamic>)?.cast<String>()?.map((id) => Id<E>(id))?.toList();
+    (list as List<dynamic>)?.cast<String>()?.toIds<E>() ?? [];

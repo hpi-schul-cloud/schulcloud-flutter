@@ -84,13 +84,9 @@ class Assignment implements Entity<Assignment> {
           lessonId: Id<Lesson>.orNull(data['lessonId']),
           isPrivate: data['private'] ?? false,
           hasPublicSubmissions: data['publicSubmissions'] ?? false,
-          archivedBy: (data['archived'] as List<dynamic> ?? [])
-              .cast<String>()
-              .toIds<User>(),
+          archivedBy: parseIds(data['archived']),
           teamSubmissions: data['teamSubmissions'] ?? false,
-          fileIds: (data['fileIds'] as List<dynamic> ?? [])
-              .cast<String>()
-              .toIds<File>(),
+          fileIds: parseIds(data['fileIds']),
         );
 
   static Future<Assignment> fetch(Id<Assignment> id) async =>

@@ -48,8 +48,7 @@ class User implements Entity<User> {
           avatarBackgroundColor:
               (data['avatarBackgroundColor'] as String).hexToColor,
           permissions: (data['permissions'] as List<dynamic>).cast<String>(),
-          roleIds:
-              (data['roles'] as List<dynamic>).cast<String>().toIds<Role>(),
+          roleIds: parseIds(data['roles']),
         );
 
   static Future<User> fetch(Id<User> id) async =>
@@ -160,7 +159,7 @@ class Role implements Entity<Role> {
           id: Id<Role>(data['_id']),
           name: data['name'],
           displayName: data['displayName'],
-          roleIds: parseIds<Role>(data['roles']),
+          roleIds: parseIds(data['roles']),
         );
 
   static const teacherName = 'teacher';
