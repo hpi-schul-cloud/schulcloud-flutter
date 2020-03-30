@@ -7,10 +7,27 @@ import 'package:meta/meta.dart';
 import 'package:time_machine/time_machine.dart';
 import 'package:time_machine/time_machine_text_patterns.dart';
 
-final logger = Logger(printer: FancyPrinter());
+import 'error_reporting.dart';
 
-/// A [LogPrinter] similar to [PrettyPrinter], but with less vertical space.
-class FancyPrinter extends LogPrinter {
+final logger = Logger(
+  filter: _FancyFilter(),
+  printer: _FancyPrinter(),
+);
+
+class _FancyFilter extends LogFilter {
+  static const _prodMinLevel = Level.error;
+
+  @override
+  bool shouldLog(LogEvent event) {
+    if (!isInDebugMode) {
+      return event.level.index >= _prodMinLevel.index;
+    }
+    return true;
+  }
+}
+
+/// A [LogPrinter] similar to [PrettyPrinter], but using less vertical space.
+class _FancyPrinter extends LogPrinter {
   static final levelEmojis = {
     Level.verbose: '💤',
     Level.debug: '🐛',
