@@ -13,12 +13,16 @@ class SignInBrowser extends InAppBrowser {
   VoidCallback signedInCallback;
 
   @override
-  Future onLoadStart(String url) async {
+  Future onLoadStop(String url) async {
+    // For iOS we need to to this on LoadStop, cause otherwise the redirect
+    // will not be handled
+    logger.i(url);
     final firstPathSegment = Uri.parse(url).pathSegments.first;
     if (firstPathSegment == 'dashboard') {
-      logger.i('Signing in…');
+      logger.i('Signing in at ' + firstPathSegment);
 
       final jwt = await CookieManager().getCookie(url: url, name: 'jwt');
+      
       final userIdJson = json
           .decode(String.fromCharCodes(base64Decode(jwt.value.split('.')[1])));
       await services.storage.setUserInfo(
