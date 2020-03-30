@@ -33,13 +33,15 @@ class FancyPrinter extends LogPrinter {
   void log(LogEvent event) {
     final messageStr = stringifyMessage(event.message) ?? '';
     final timeStr = timeFormat.format(Instant.now().inLocalZone().clockTime);
+
+    final level = event.error is AssertionError ? Level.wtf : event.level;
+
     String stackTraceStr;
-    if (event.stackTrace != null ||
-        [Level.error, Level.wtf].contains(event.level)) {
+    if (event.stackTrace != null || [Level.error, Level.wtf].contains(level)) {
       stackTraceStr = _formatStackTrace(event.stackTrace ?? StackTrace.current);
     }
     final errorStr = stringifyMessage(event.error);
-    formatAndPrint(event.level, messageStr, timeStr, errorStr, stackTraceStr);
+    formatAndPrint(level, messageStr, timeStr, errorStr, stackTraceStr);
   }
 
   String stringifyMessage(dynamic message) {
