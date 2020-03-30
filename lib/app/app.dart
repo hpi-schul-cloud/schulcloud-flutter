@@ -1,9 +1,11 @@
 export 'app_config.dart';
 export 'data.dart';
 export 'datetime_utils.dart';
+export 'error_reporting.dart';
 export 'hive.dart';
 export 'logger.dart';
 export 'services/api_network.dart';
+export 'services/deep_linking.dart';
 export 'services/network.dart';
 export 'services/snack_bar.dart';
 export 'services/storage.dart';
