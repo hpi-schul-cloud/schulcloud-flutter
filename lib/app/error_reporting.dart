@@ -57,7 +57,7 @@ bool get isInDebugMode {
   return inDebugMode;
 }
 
-const _logerLevelToSentryLevel = {
+const _loggerLevelToSentryLevel = {
   Level.verbose: SeverityLevel.debug,
   Level.debug: SeverityLevel.debug,
   Level.info: SeverityLevel.info,
@@ -68,7 +68,7 @@ const _logerLevelToSentryLevel = {
 };
 Future<void> _reportLogEvent(LogEvent event) async {
   await reportEvent(Event(
-    level: _logerLevelToSentryLevel[event.level],
+    level: _loggerLevelToSentryLevel[event.level],
     message: event.message,
     exception: event.error,
     stackTrace: event.stackTrace,
