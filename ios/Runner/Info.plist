@@ -41,6 +41,15 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
+	<key>NSCameraUsageDescription</key>
+	<string>Upload your fotos as part of your homework</string>
+	<key>NSAppleMusicUsageDescription</key>
+	<string>Upload music as part of homework or your private files</string>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>fetch</string>
+		<string>remote-notification</string>
+	</array>
 	<key>io.flutter.embedded_views_preview</key>
 	<string>true</string>
 </dict>
