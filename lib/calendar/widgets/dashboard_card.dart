@@ -35,7 +35,7 @@ class _CalendarDashboardCardState extends State<CalendarDashboardCard> {
           .withOpacity(context.theme.isDark ? 0.5 : 0.12),
       child: CollectionBuilder.populated<Event>(
         collection: services.get<CalendarBloc>().todaysEvents,
-        builder: handleEdgeCases((context, events, _) {
+        builder: defaultLoading(error((context, events, _) {
           final now = Instant.now();
           events = events.where((e) => e.end > now).toList();
           _subscription?.cancel();
@@ -62,7 +62,7 @@ class _CalendarDashboardCardState extends State<CalendarDashboardCard> {
           return Column(
             children: events.map((e) => _EventPreview(e)).toList(),
           );
-        }),
+        })),
       ),
     );
   }

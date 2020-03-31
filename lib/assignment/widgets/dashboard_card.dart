@@ -19,7 +19,7 @@ class AssignmentDashboardCard extends StatelessWidget {
       onFooterButtonPressed: () => context.navigator.pushNamed('/homework'),
       child: CollectionBuilder.populated<Assignment>(
         collection: services.storage.root.assignments,
-        builder: handleEdgeCases((context, assignments, isFetching) {
+        builder: defaultLoading(error((context, assignments, isFetching) {
           // Only show open assignments that are due in the next week
           final start = LocalDate.today();
           final end = start.addDays(7);
@@ -59,7 +59,7 @@ class AssignmentDashboardCard extends StatelessWidget {
               ),
             ],
           );
-        }),
+        })),
       ),
     );
   }
@@ -84,9 +84,9 @@ class _CourseAssignmentCountTile extends StatelessWidget {
 
     return EntityBuilder<Course>(
       id: courseId,
-      builder: handleEdgeCases(
+      builder: defaultLoading(error(
         (context, course, _) => _buildListTile(context, course),
-      ),
+      )),
     );
   }
 

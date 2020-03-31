@@ -76,7 +76,7 @@ class _UploadFabState extends State<UploadFab> {
   Widget build(BuildContext context) {
     return EntityBuilder<User>(
       id: services.storage.userId,
-      builder: handleEdgeCases((context, user, _) {
+      builder: defaultLoading(error((context, user, _) {
         if (user == null || !user.hasPermission(Permission.fileStorageCreate)) {
           return SizedBox();
         }
@@ -85,7 +85,7 @@ class _UploadFabState extends State<UploadFab> {
           onPressed: () => _startUpload(context),
           child: Icon(Icons.file_upload),
         );
-      }),
+      })),
     );
   }
 }

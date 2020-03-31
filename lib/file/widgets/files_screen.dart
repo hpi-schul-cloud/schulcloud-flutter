@@ -34,7 +34,7 @@ class _CoursesList extends StatelessWidget {
       title: context.s.file_files_course,
       child: CollectionBuilder.populated<Course>(
         collection: services.storage.root.courses,
-        builder: handleEdgeCases((context, courses, _) {
+        builder: defaultLoading(error((context, courses, _) {
           return GridView.extent(
             primary: false,
             shrinkWrap: true,
@@ -46,7 +46,7 @@ class _CoursesList extends StatelessWidget {
               for (var course in courses) _CourseCard(course: course),
             ],
           );
-        }),
+        })),
       ),
     );
   }

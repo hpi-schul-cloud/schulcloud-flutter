@@ -22,7 +22,7 @@ class ArticleScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return EntityBuilder<Article>(
       id: articleId,
-      builder: handleEdgeCases((context, article, isFetching) {
+      builder: defaultLoading(error((context, article, isFetching) {
         return Scaffold(
           body: LayoutBuilder(
             builder: (ctx, constraints) {
@@ -45,7 +45,7 @@ class ArticleScreen extends StatelessWidget {
             },
           ),
         );
-      }),
+      })),
     );
   }
 }
@@ -125,7 +125,9 @@ class _ArticleViewState extends State<ArticleView> {
   Widget _buildAuthorView(BuildContext context) {
     return EntityBuilder<User>(
       id: widget.article.authorId,
-      builder: handleEdgeCases((_, author, __) => AuthorView(author: author)),
+      builder: defaultLoading(error(
+        (_, author, __) => AuthorView(author: author),
+      )),
     );
   }
 

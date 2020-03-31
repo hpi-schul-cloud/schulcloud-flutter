@@ -15,7 +15,7 @@ class AccountAvatar extends StatelessWidget {
   Widget build(BuildContext context) {
     return EntityBuilder<User>(
       id: services.storage.userId,
-      builder: handleError((context, user, fetch) {
+      builder: error((context, user, fetch) {
         final backgroundColor =
             user?.avatarBackgroundColor ?? context.theme.primaryColor;
 

@@ -76,43 +76,45 @@ class _AssignmentsScreenState extends State<AssignmentsScreen>
     return Scaffold(
       body: CollectionBuilder.populated<Assignment>(
         collection: services.storage.root.assignments,
-        builder: handleListEdgeCases(
+        builder: defaultLoading(error(refresh(
           appBar: FancyAppBar(
             title: Text(s.assignment),
             actions: <Widget>[SortFilterIconButton(showSortFilterSheet)],
           ),
-          emptyStateBuilder: (context) => EmptyStateScreen(
-            text: context.s.assignment_assignmentsScreen_empty,
-          ),
-          builder: (context, allAssignments, fetch) {
-            final assignments = sortFilterSelection.apply(allAssignments);
-            return CustomScrollView(
-              slivers: <Widget>[
-                if (assignments.isEmpty)
-                  SortFilterEmptyState(
-                    showSortFilterSheet,
-                    text: s.assignment_assignmentsScreen_empty,
-                  )
-                else
-                  SliverList(
-                    delegate: SliverChildBuilderDelegate(
-                      (_, index) => Padding(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 8,
+          builder: empty(
+            emptyStateBuilder: (context) => EmptyStateScreen(
+              text: context.s.assignment_assignmentsScreen_empty,
+            ),
+            builder: (context, allAssignments, fetch) {
+              final assignments = sortFilterSelection.apply(allAssignments);
+              return CustomScrollView(
+                slivers: <Widget>[
+                  if (assignments.isEmpty)
+                    SortFilterEmptyState(
+                      showSortFilterSheet,
+                      text: s.assignment_assignmentsScreen_empty,
+                    )
+                  else
+                    SliverList(
+                      delegate: SliverChildBuilderDelegate(
+                        (_, index) => Padding(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 8,
+                          ),
+                          child: AssignmentCard(
+                            assignment: assignments[index],
+                            setFlagFilterCallback: setFlagFilter,
+                          ),
                         ),
-                        child: AssignmentCard(
-                          assignment: assignments[index],
-                          setFlagFilterCallback: setFlagFilter,
-                        ),
+                        childCount: assignments.length,
                       ),
-                      childCount: assignments.length,
                     ),
-                  ),
-              ],
-            );
-          },
-        ),
+                ],
+              );
+            },
+          ),
+        ))),
       ),
     );
   }
@@ -178,7 +180,7 @@ class AssignmentCard extends StatelessWidget {
       if (assignment.courseId != null)
         EntityBuilder<Course>(
           id: assignment.courseId,
-          builder: handleError((context, course, fetch) {
+          builder: error((context, course, fetch) {
             return CourseChip(
               course,
               onPressed: () {

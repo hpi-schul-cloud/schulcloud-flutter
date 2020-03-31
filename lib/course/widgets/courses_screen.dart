@@ -56,40 +56,42 @@ class _CoursesScreenState extends State<CoursesScreen>
     return Scaffold(
       body: CollectionBuilder.populated<Course>(
         collection: services.storage.root.courses,
-        builder: handleListEdgeCases(
+        builder: defaultLoading(error(refresh(
           appBar: FancyAppBar(
             title: Text(context.s.course),
             actions: <Widget>[SortFilterIconButton(showSortFilterSheet)],
           ),
-          emptyStateBuilder: (_) => EmptyStateScreen(
-            text: context.s.course_coursesScreen_empty,
-          ),
-          builder: (context, allCourses, isFetching) {
-            final courses = sortFilterSelection.apply(allCourses);
+          builder: empty(
+            emptyStateBuilder: (_) => EmptyStateScreen(
+              text: context.s.course_coursesScreen_empty,
+            ),
+            builder: (context, allCourses, isFetching) {
+              final courses = sortFilterSelection.apply(allCourses);
 
-            return CustomScrollView(
-              slivers: <Widget>[
-                if (courses.isEmpty)
-                  SortFilterEmptyState(
-                    showSortFilterSheet,
-                    text: s.course_coursesScreen_empty,
-                  )
-                else
-                  SliverList(
-                    delegate: SliverChildBuilderDelegate((_, index) {
-                      return Padding(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 8,
-                        ),
-                        child: CourseCard(courses[index]),
-                      );
-                    }, childCount: courses.length),
-                  ),
-              ],
-            );
-          },
-        ),
+              return CustomScrollView(
+                slivers: <Widget>[
+                  if (courses.isEmpty)
+                    SortFilterEmptyState(
+                      showSortFilterSheet,
+                      text: s.course_coursesScreen_empty,
+                    )
+                  else
+                    SliverList(
+                      delegate: SliverChildBuilderDelegate((_, index) {
+                        return Padding(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 8,
+                          ),
+                          child: CourseCard(courses[index]),
+                        );
+                      }, childCount: courses.length),
+                    ),
+                ],
+              );
+            },
+          ),
+        ))),
       ),
     );
   }
