@@ -4,6 +4,7 @@ import 'dart:ui';
 
 import 'package:device_info/device_info.dart';
 import 'package:flutter/foundation.dart';
+import 'package:logger/logger.dart';
 import 'package:package_info/package_info.dart';
 import 'package:sentry/sentry.dart' hide User;
 import 'package:system_info/system_info.dart';
@@ -22,41 +23,64 @@ Future<void> runWithErrorReporting(Future<void> Function() body) async {
   await runZoned<Future<void>>(
     () async {
       FlutterError.onError = (details) async {
-        if (_isInDebugMode) {
+        if (isInDebugMode) {
           FlutterError.dumpErrorToConsole(details);
-        } else {
-          await reportEvent(Event(
-            exception: details.exception,
-            stackTrace: details.stack,
-            tags: {'source': 'flutter'},
-          ));
         }
+        await reportEvent(Event(
+          exception: details.exception,
+          stackTrace: details.stack,
+          tags: {'source': 'flutter'},
+        ));
       };
 
+      Logger.addLogListener(_reportLogEvent);
       await body();
+      Logger.removeLogListener(_reportLogEvent);
     },
     // ignore: avoid_types_on_closure_parameters
     onError: (dynamic error, StackTrace stackTrace) async {
-      if (_isInDebugMode) {
+      if (isInDebugMode) {
         logger.e('Uncaught exception', error, stackTrace);
-      } else {
-        await reportEvent(Event(
-          exception: error,
-          stackTrace: stackTrace,
-          tags: {'source': 'dart'},
-        ));
       }
+      await reportEvent(Event(
+        exception: error,
+        stackTrace: stackTrace,
+        tags: {'source': 'dart'},
+      ));
     },
   );
 }
 
-bool get _isInDebugMode {
+bool get isInDebugMode {
   bool inDebugMode = false;
   assert(inDebugMode = true);
   return inDebugMode;
 }
 
+const _loggerLevelToSentryLevel = {
+  Level.verbose: SeverityLevel.debug,
+  Level.debug: SeverityLevel.debug,
+  Level.info: SeverityLevel.info,
+  Level.warning: SeverityLevel.warning,
+  Level.error: SeverityLevel.error,
+  Level.wtf: SeverityLevel.fatal,
+  Level.nothing: SeverityLevel.debug,
+};
+Future<void> _reportLogEvent(LogEvent event) async {
+  await reportEvent(Event(
+    level: _loggerLevelToSentryLevel[event.level],
+    message: event.message,
+    exception: event.error,
+    stackTrace: event.stackTrace,
+    tags: {'source': 'logger'},
+  ));
+}
+
 Future<bool> reportEvent(Event event) async {
+  if (isInDebugMode) {
+    return true;
+  }
+
   StorageService storage;
   try {
     await services.isReady<StorageService>();
@@ -80,7 +104,7 @@ Future<bool> reportEvent(Event event) async {
   User user = HiveCache.isInitialized ? storage.userFromCache : null;
   final fullEvent = Event(
     release: packageInfo.version,
-    environment: _isInDebugMode ? 'debug' : 'production',
+    environment: isInDebugMode ? 'debug' : 'production',
     message: event.message,
     exception: event.exception,
     stackTrace: event.stackTrace,
