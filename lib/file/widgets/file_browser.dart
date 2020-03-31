@@ -75,7 +75,7 @@ class FileBrowser extends StatelessWidget {
   Widget _buildEmbedded(BuildContext context) {
     return CollectionBuilder<File>(
       collection: path.files,
-      builder: defaultLoading(error(empty(
+      builder: handleLoadingErrorEmpty(
         emptyStateBuilder: _buildEmptyState,
         builder: (context, fileIds, _) {
           return FileList(
@@ -85,7 +85,7 @@ class FileBrowser extends StatelessWidget {
             onDownloadFile: (file) => _downloadFile(context, file),
           );
         },
-      ))),
+      ),
     );
   }
 
@@ -108,21 +108,21 @@ class FileBrowser extends StatelessWidget {
 
           return EntityBuilder<File>(
             id: path.parentId,
-            builder: defaultLoading(error((context, parentDirectory, fetch) {
+            builder: handleLoadingError((context, parentDirectory, fetch) {
               return FileBrowserAppBar(
                 title: parentDirectory.name,
                 backgroundColor: course?.color,
               );
-            })),
+            }),
           );
         },
       );
     } else if (path.parentId != null) {
       appBar = EntityBuilder<File>(
         id: path.parentId,
-        builder: defaultLoading(error(
+        builder: handleLoadingError(
           (_, parent, __) => FileBrowserAppBar(title: parent.name),
-        )),
+        ),
       );
     } else if (isOwnerMe) {
       appBar = FileBrowserAppBar(title: context.s.file_files_my);
@@ -136,7 +136,7 @@ class FileBrowser extends StatelessWidget {
       floatingActionButton: UploadFab(path: path),
       body: CollectionBuilder<File>(
         collection: path.files,
-        builder: defaultLoading(error(empty(
+        builder: handleLoadingErrorEmpty(
           emptyStateBuilder: _buildEmptyState,
           builder: (context, fileIds, isFetching) {
             return FileList(
@@ -146,7 +146,7 @@ class FileBrowser extends StatelessWidget {
               onDownloadFile: (file) => _downloadFile(context, file),
             );
           },
-        ))),
+        ),
       ),
     );
   }

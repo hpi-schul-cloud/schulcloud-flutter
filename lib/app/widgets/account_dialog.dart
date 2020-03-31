@@ -89,13 +89,13 @@ class AccountDialog extends StatelessWidget {
   Widget _buildAccountTile(BuildContext context) {
     return EntityBuilder<User>(
       id: services.storage.userId,
-      builder: defaultLoading(error((context, user, fetch) {
+      builder: handleLoadingError((context, user, fetch) {
         return ListTile(
           leading: AccountAvatar(),
           title: FancyText(user?.displayName),
           subtitle: FancyText(user?.email),
         );
-      })),
+      }),
     );
   }
 }

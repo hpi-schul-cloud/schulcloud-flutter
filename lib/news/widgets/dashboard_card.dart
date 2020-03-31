@@ -19,7 +19,7 @@ class NewsDashboardCard extends StatelessWidget {
       onFooterButtonPressed: () => context.navigator.pushNamed('/news'),
       child: CollectionBuilder.populated<Article>(
         collection: services.storage.root.news,
-        builder: defaultLoading(error(empty(
+        builder: handleLoadingErrorEmpty(
           emptyStateBuilder: (context) => Padding(
             padding: EdgeInsets.symmetric(horizontal: 16),
             child: Text(s.news_dashboardCard_empty),
@@ -36,7 +36,7 @@ class NewsDashboardCard extends StatelessWidget {
               ],
             );
           },
-        ))),
+        ),
       ),
     );
   }

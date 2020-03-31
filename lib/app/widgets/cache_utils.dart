@@ -6,7 +6,7 @@ import '../logger.dart';
 import 'app_bar.dart';
 import 'error_widgets.dart';
 
-FetchableBuilder<CacheSnapshot<T>> error<T>(FetchableBuilder<T> builder) {
+FetchableBuilder<CacheSnapshot<T>> handleError<T>(FetchableBuilder<T> builder) {
   return (context, snapshot, fetch) {
     if (snapshot == null) {
       builder(context, null, fetch);
@@ -60,26 +60,16 @@ FetchableBuilder<CacheSnapshot<T>> error<T>(FetchableBuilder<T> builder) {
   };
 }
 
-FetchableBuilder<CacheSnapshot<T>> loading<T>({
-  @required WidgetBuilder loadingBuilder,
-  @required FetchableBuilder<CacheSnapshot<T>> builder,
-}) {
+FetchableBuilder<CacheSnapshot<T>> handleLoading<T>(
+    FetchableBuilder<CacheSnapshot<T>> builder) {
   return (context, snapshot, fetch) {
-    return snapshot == null
-        ? loadingBuilder(context)
+    return (!snapshot.hasData && !snapshot.hasError)
+        ? Center(child: CircularProgressIndicator())
         : builder(context, snapshot, fetch);
   };
 }
 
-FetchableBuilder<CacheSnapshot<T>> defaultLoading<T>(
-    FetchableBuilder<CacheSnapshot<T>> builder) {
-  return loading(
-    loadingBuilder: (_) => Center(child: CircularProgressIndicator()),
-    builder: builder,
-  );
-}
-
-FetchableBuilder<T> refresh<T>({
+FetchableBuilder<T> handleRefresh<T>({
   NestedScrollViewHeaderSliversBuilder headerSliverBuilder,
   FancyAppBar appBar,
   @required FetchableBuilder<T> builder,
@@ -105,7 +95,7 @@ FetchableBuilder<T> refresh<T>({
   };
 }
 
-FetchableBuilder<List<T>> empty<T>({
+FetchableBuilder<List<T>> handleEmpty<T>({
   @required WidgetBuilder emptyStateBuilder,
   @required FetchableBuilder<List<T>> builder,
 }) {
@@ -115,3 +105,33 @@ FetchableBuilder<List<T>> empty<T>({
         : builder(context, items, fetch);
   };
 }
+
+// Compositional shortcuts.
+
+FetchableBuilder<CacheSnapshot<T>> handleLoadingError<T>(
+        FetchableBuilder<T> builder) =>
+    handleLoading(handleError(builder));
+
+FetchableBuilder<CacheSnapshot<List<T>>> handleLoadingErrorEmpty<T>({
+  @required WidgetBuilder emptyStateBuilder,
+  @required FetchableBuilder<List<T>> builder,
+}) =>
+    handleLoadingError(handleEmpty(
+      emptyStateBuilder: emptyStateBuilder,
+      builder: builder,
+    ));
+
+FetchableBuilder<CacheSnapshot<List<T>>> handleLoadingErrorRefreshEmpty<T>({
+  NestedScrollViewHeaderSliversBuilder headerSliverBuilder,
+  FancyAppBar appBar,
+  @required WidgetBuilder emptyStateBuilder,
+  @required FetchableBuilder<List<T>> builder,
+}) =>
+    handleLoadingError(handleRefresh(
+      headerSliverBuilder: headerSliverBuilder,
+      appBar: appBar,
+      builder: handleEmpty(
+        emptyStateBuilder: emptyStateBuilder,
+        builder: builder,
+      ),
+    ));

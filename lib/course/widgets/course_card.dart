@@ -21,7 +21,7 @@ class CourseCard extends StatelessWidget {
           Expanded(
             child: EntityListBuilder<User>(
               ids: course.teacherIds,
-              builder: error((_, teachers, __) {
+              builder: handleError((_, teachers, __) {
                 return FancyText(
                   teachers
                       ?.where((teacher) => teacher != null)

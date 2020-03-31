@@ -14,17 +14,17 @@ class EditSubmissionScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return EntityBuilder<Assignment>(
       id: assignmentId,
-      builder: defaultLoading(error((context, assignment, fetch) {
+      builder: handleLoadingError((context, assignment, fetch) {
         return ConnectionBuilder.populated<Submission>(
           connection: assignment.mySubmission,
-          builder: defaultLoading(error((context, submission, fetch) {
+          builder: handleLoadingError((context, submission, fetch) {
             return EditSubmissionForm(
               assignment: assignment,
               submission: submission,
             );
-          })),
+          }),
         );
-      })),
+      }),
     );
   }
 }

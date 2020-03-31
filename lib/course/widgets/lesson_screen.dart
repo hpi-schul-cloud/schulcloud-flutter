@@ -23,7 +23,7 @@ class _LessonScreenState extends State<LessonScreen> {
 
     return EntityBuilder<Lesson>(
       id: widget.lessonId,
-      builder: defaultLoading(error((context, lesson, fetch) {
+      builder: handleLoadingError((context, lesson, fetch) {
         final contents = lesson.visibleContents.toList();
 
         return FancyScaffold(
@@ -31,7 +31,7 @@ class _LessonScreenState extends State<LessonScreen> {
             title: Text(lesson.name),
             subtitle: EntityBuilder<Course>(
               id: widget.courseId,
-              builder: error((_, course, __) => FancyText(course?.name)),
+              builder: handleError((_, course, __) => FancyText(course?.name)),
             ),
           ),
           sliver: contents.isEmpty
@@ -59,7 +59,7 @@ class _LessonScreenState extends State<LessonScreen> {
                   ),
                 ),
         );
-      })),
+      }),
     );
   }
 }

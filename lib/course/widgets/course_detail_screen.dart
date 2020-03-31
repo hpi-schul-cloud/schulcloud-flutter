@@ -12,7 +12,7 @@ class CourseDetailsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return EntityBuilder<Course>(
       id: courseId,
-      builder: defaultLoading(error((_, course, fetch) {
+      builder: handleLoadingError((_, course, fetch) {
         return FancyScaffold(
           appBar: FancyAppBar(
             title: Text(course.name),
@@ -43,14 +43,14 @@ class CourseDetailsScreen extends StatelessWidget {
             ]),
           ),
         );
-      })),
+      }),
     );
   }
 
   Widget _buildLessonsSliver(BuildContext context, Course course) {
     return CollectionBuilder.populated<Lesson>(
       collection: course.lessons,
-      builder: defaultLoading(error(empty(
+      builder: handleLoadingErrorEmpty(
         emptyStateBuilder: (_) => EmptyStateScreen(
           text: context.s.course_detailsScreen_empty,
         ),
@@ -69,7 +69,7 @@ class CourseDetailsScreen extends StatelessWidget {
             ],
           );
         },
-      ))),
+      ),
     );
   }
 }

@@ -26,10 +26,10 @@ class _AssignmentDetailScreenState extends State<AssignmentDetailScreen>
 
     return EntityBuilder<Assignment>(
       id: widget.assignmentId,
-      builder: defaultLoading(error((context, assignment, _) {
+      builder: handleLoadingError((context, assignment, _) {
         return EntityBuilder<User>(
           id: services.storage.userId,
-          builder: defaultLoading(error((context, user, isFetching) {
+          builder: handleLoadingError((context, user, isFetching) {
             final showSubmissionTab =
                 assignment.isPrivate || user?.isTeacher == false;
             final showFeedbackTab =
@@ -78,9 +78,9 @@ class _AssignmentDetailScreenState extends State<AssignmentDetailScreen>
                 if (showSubmissionsTab) _SubmissionsTab(),
               ],
             );
-          })),
+          }),
         );
-      })),
+      }),
     );
   }
 
@@ -91,7 +91,7 @@ class _AssignmentDetailScreenState extends State<AssignmentDetailScreen>
 
     return EntityBuilder<Course>(
       id: courseId,
-      builder: error((context, course, _) {
+      builder: handleError((context, course, _) {
         return Row(children: <Widget>[
           CourseColorDot(course),
           SizedBox(width: 8),
@@ -218,7 +218,7 @@ class _SubmissionTab extends StatelessWidget {
   Widget build(BuildContext context) {
     return ConnectionBuilder.populated<Submission>(
       connection: assignment.mySubmission,
-      builder: defaultLoading(error((context, submission, isFetching) {
+      builder: handleLoadingError((context, submission, isFetching) {
         // TODO(JonasWanke): differentiate between loading and no submission
         return Stack(
           children: <Widget>[
@@ -230,7 +230,7 @@ class _SubmissionTab extends StatelessWidget {
             _buildOverlay(context, submission),
           ],
         );
-      })),
+      }),
     );
   }
 
@@ -259,7 +259,7 @@ class _SubmissionTab extends StatelessWidget {
 
     return EntityBuilder<User>(
       id: services.storage.userId,
-      builder: defaultLoading(error((context, user, isFetching) {
+      builder: handleLoadingError((context, user, isFetching) {
         String labelText;
         if (submission == null &&
             user.hasPermission(Permission.submissionsCreate)) {
@@ -283,7 +283,7 @@ class _SubmissionTab extends StatelessWidget {
             ),
           ),
         );
-      })),
+      }),
     );
   }
 }
@@ -301,7 +301,7 @@ class _FeedbackTab extends StatelessWidget {
 
     return ConnectionBuilder.populated<Submission>(
       connection: assignment.mySubmission,
-      builder: defaultLoading(error((context, submission, isFetching) {
+      builder: handleLoadingError((context, submission, isFetching) {
         return TabContent(
           pageStorageKey: PageStorageKey<String>('feedback'),
           omitHorizontalPadding: true,
@@ -324,7 +324,7 @@ class _FeedbackTab extends StatelessWidget {
             ]),
           ),
         );
-      })),
+      }),
     );
   }
 }

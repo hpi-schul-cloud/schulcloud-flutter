@@ -76,12 +76,12 @@ class _AssignmentsScreenState extends State<AssignmentsScreen>
     return Scaffold(
       body: CollectionBuilder.populated<Assignment>(
         collection: services.storage.root.assignments,
-        builder: defaultLoading(error(refresh(
+        builder: handleLoadingError(handleRefresh(
           appBar: FancyAppBar(
             title: Text(s.assignment),
             actions: <Widget>[SortFilterIconButton(showSortFilterSheet)],
           ),
-          builder: empty(
+          builder: handleEmpty(
             emptyStateBuilder: (context) => EmptyStateScreen(
               text: context.s.assignment_assignmentsScreen_empty,
             ),
@@ -114,7 +114,7 @@ class _AssignmentsScreenState extends State<AssignmentsScreen>
               );
             },
           ),
-        ))),
+        )),
       ),
     );
   }
@@ -180,7 +180,7 @@ class AssignmentCard extends StatelessWidget {
       if (assignment.courseId != null)
         EntityBuilder<Course>(
           id: assignment.courseId,
-          builder: error((context, course, fetch) {
+          builder: handleError((context, course, fetch) {
             return CourseChip(
               course,
               onPressed: () {

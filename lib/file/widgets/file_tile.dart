@@ -24,7 +24,7 @@ class FileTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return EntityBuilder<File>(
       id: fileId,
-      builder: defaultLoading(error((context, file, _) {
+      builder: handleLoadingError((context, file, _) {
         final subtitle = [
           if (file.isActualFile) file.sizeAsString,
           if (file.updatedAt != null) file.updatedAt.shortDateTimeString,
@@ -38,7 +38,7 @@ class FileTile extends StatelessWidget {
           onTap: onTap?.partial(file),
           onLongPress: () => FileMenu.show(context, file),
         );
-      })),
+      }),
     );
   }
 }
