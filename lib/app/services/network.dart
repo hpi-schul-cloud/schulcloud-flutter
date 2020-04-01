@@ -102,6 +102,11 @@ class AuthenticationError extends ServerError {
         );
 }
 
+class BadRequestError extends ServerError {
+  BadRequestError(ErrorBody body)
+      : super(body, (context) => context.s.app_error_badRequest);
+}
+
 class TooManyRequestsError extends ServerError {
   TooManyRequestsError(ErrorBody body, {@required this.timeToWait})
       : assert(timeToWait != null),
@@ -187,6 +192,7 @@ class NetworkService {
     assert(followRedirects != null);
 
     http.Response response;
+    logger.v('Network: $method $url');
     try {
       response = await _makeCall(
         method,
@@ -208,6 +214,10 @@ class NetworkService {
 
     final error = ErrorBody.fromJson(json.decode(response.body));
     logger.w('Network ${response.statusCode}: $method $url', error);
+
+    if (response.statusCode == 400) {
+      throw BadRequestError(error);
+    }
 
     if (response.statusCode == 401) {
       throw AuthenticationError(error);
