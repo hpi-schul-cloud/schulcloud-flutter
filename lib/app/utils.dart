@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:ui';
 
+import 'package:collection/collection.dart';
 import 'package:dartx/dartx.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_deep_linking/flutter_deep_linking.dart';
@@ -158,3 +159,10 @@ class PermissionNotGranted<T> extends FancyException {
 /// [Id]s for the entity type [E].
 List<Id<E>> parseIds<E extends Entity<E>>(dynamic list) =>
     (list as List<dynamic>)?.cast<String>()?.toIds<E>() ?? [];
+
+extension DeepEquality<T> on Iterable<T> {
+  bool deeplyEquals(Iterable<T> other, {bool unordered = false}) => (unordered
+          ? DeepCollectionEquality.unordered()
+          : DeepCollectionEquality())
+      .equals(this, other);
+}

@@ -138,4 +138,26 @@ class Event implements Entity<Event> {
       recurrence: recurrence,
     );
   }
+
+  @override
+  bool operator ==(Object other) =>
+      other is Event &&
+      id == other.id &&
+      title == other.title &&
+      description == other.description &&
+      location == other.location &&
+      start == other.start &&
+      end == other.end &&
+      allDay == other.allDay &&
+      recurrence.deeplyEquals(other.recurrence, unordered: true);
+  @override
+  int get hashCode => hashList([
+        id,
+        title,
+        description,
+        location,
+        start,
+        end,
+        allDay,
+      ]);
 }

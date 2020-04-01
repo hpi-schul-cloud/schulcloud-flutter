@@ -49,4 +49,23 @@ class Article implements Entity<Article> {
 
   @HiveField(7)
   final String content;
+
+  @override
+  bool operator ==(Object other) =>
+      other is Article &&
+      id == other.id &&
+      title == other.title &&
+      authorId == other.authorId &&
+      publishedAt == other.publishedAt &&
+      imageUrl == other.imageUrl &&
+      content == other.content;
+  @override
+  int get hashCode => hashList([
+        id,
+        title,
+        authorId,
+        publishedAt,
+        imageUrl,
+        content,
+      ]);
 }

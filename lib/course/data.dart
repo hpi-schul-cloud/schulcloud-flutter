@@ -71,6 +71,28 @@ class Course implements Entity<Course> {
 
   final Collection<Lesson> lessons;
   final Collection<Lesson> visibleLessons;
+
+  @override
+  bool operator ==(Object other) =>
+      other is Course &&
+      id == other.id &&
+      createdAt == other.createdAt &&
+      updatedAt == other.updatedAt &&
+      name == other.name &&
+      description == other.description &&
+      teacherIds.deeplyEquals(other.teacherIds, unordered: true) &&
+      color == other.color &&
+      isArchived == other.isArchived;
+  @override
+  int get hashCode => hashList([
+        id,
+        createdAt,
+        updatedAt,
+        name,
+        description,
+        color,
+        isArchived,
+      ]);
 }
 
 extension CourseId on Id<Course> {
@@ -149,6 +171,18 @@ class Lesson implements Entity<Lesson>, Comparable<Lesson> {
   int compareTo(Lesson other) => position.compareTo(other.position);
 
   String get webUrl => '${courseId.webUrl}/topics/$id';
+
+  @override
+  bool operator ==(Object other) =>
+      other is Lesson &&
+      id == other.id &&
+      courseId == other.courseId &&
+      name == other.name &&
+      contents.deeplyEquals(other.contents, unordered: true) &&
+      isHidden == other.isHidden &&
+      position == other.position;
+  @override
+  int get hashCode => hashList([id, courseId, name, isHidden, position]);
 }
 
 @HiveType(typeId: TypeId.content)
@@ -187,6 +221,16 @@ class Content implements Entity<Content> {
 
   @HiveField(6)
   final Component component;
+
+  @override
+  bool operator ==(Object other) =>
+      other is Content &&
+      id == other.id &&
+      title == other.title &&
+      isHidden == other.isHidden &&
+      component == other.component;
+  @override
+  int get hashCode => hashList([id, title, isHidden, component]);
 }
 
 abstract class Component {
@@ -228,6 +272,12 @@ class TextComponent extends Component {
 
   @HiveField(0)
   final String text;
+
+  @override
+  bool operator ==(Object other) =>
+      other is TextComponent && text == other.text;
+  @override
+  int get hashCode => text.hashCode;
 }
 
 @HiveType(typeId: TypeId.etherpadComponent)
@@ -250,6 +300,14 @@ class EtherpadComponent extends Component {
 
   @HiveField(1)
   final String description;
+
+  @override
+  bool operator ==(Object other) =>
+      other is EtherpadComponent &&
+      url == other.url &&
+      description == other.description;
+  @override
+  int get hashCode => hashList([url, description]);
 }
 
 @HiveType(typeId: TypeId.nexboardComponent)
@@ -272,6 +330,14 @@ class NexboardComponent extends Component {
 
   @HiveField(1)
   final String description;
+
+  @override
+  bool operator ==(Object other) =>
+      other is EtherpadComponent &&
+      url == other.url &&
+      description == other.description;
+  @override
+  int get hashCode => hashList([url, description]);
 }
 
 @HiveType(typeId: TypeId.resourcesComponent)
@@ -290,6 +356,12 @@ class ResourcesComponent extends Component {
 
   @HiveField(0)
   final List<Resource> resources;
+
+  @override
+  bool operator ==(Object other) =>
+      other is ResourcesComponent && resources.deeplyEquals(other.resources);
+  @override
+  int get hashCode => resources.hashCode;
 }
 
 @HiveType(typeId: TypeId.resource)
@@ -324,4 +396,14 @@ class Resource {
 
   @HiveField(3)
   final String client;
+
+  @override
+  bool operator ==(Object other) =>
+      other is Resource &&
+      url == other.url &&
+      title == other.title &&
+      description == other.description &&
+      client == other.client;
+  @override
+  int get hashCode => hashList([url, title, description, client]);
 }

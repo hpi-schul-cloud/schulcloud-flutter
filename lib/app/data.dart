@@ -94,6 +94,33 @@ class User implements Entity<User> {
     }[name];
     return id != null && roleIds.contains(Id<Role>(id));
   }
+
+  @override
+  bool operator ==(Object other) =>
+      other is User &&
+      id == other.id &&
+      firstName == other.firstName &&
+      lastName == other.lastName &&
+      email == other.email &&
+      schoolId == other.schoolId &&
+      displayName == other.displayName &&
+      avatarInitials == other.avatarInitials &&
+      avatarBackgroundColor == other.avatarBackgroundColor &&
+      permissions.deeplyEquals(other.permissions, unordered: true) &&
+      roleIds.deeplyEquals(other.roleIds, unordered: true);
+  @override
+  int get hashCode => hashList([
+        id,
+        firstName,
+        lastName,
+        email,
+        schoolId,
+        displayName,
+        avatarInitials,
+        avatarBackgroundColor,
+        permissions,
+        roleIds
+      ]);
 }
 
 class Root implements Entity<Root> {
@@ -140,6 +167,11 @@ class Root implements Entity<Root> {
         .map((data) => Article.fromJson(data))
         .toList(),
   );
+
+  @override
+  bool operator ==(Object other) => other is Root;
+  @override
+  int get hashCode => 42;
 }
 
 @HiveType(typeId: TypeId.role)
@@ -176,6 +208,16 @@ class Role implements Entity<Role> {
 
   @HiveField(3)
   final List<Id<Role>> roleIds;
+
+  @override
+  bool operator ==(Object other) =>
+      other is Role &&
+      id == other.id &&
+      name == other.name &&
+      displayName == other.displayName &&
+      roleIds.deeplyEquals(other.roleIds, unordered: true);
+  @override
+  int get hashCode => hashList([id, name, displayName, roleIds]);
 }
 
 @immutable

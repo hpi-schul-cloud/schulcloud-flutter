@@ -170,6 +170,43 @@ class Assignment implements Entity<Assignment> {
   // https://github.com/dart-lang/language/issues/65
   // Then this could just become a CachedFetchStream<Submission>.
   final Connection<Submission> mySubmission;
+
+  @override
+  bool operator ==(Object other) =>
+      other is Assignment &&
+      id == other.id &&
+      schoolId == other.schoolId &&
+      createdAt == other.createdAt &&
+      updatedAt == other.updatedAt &&
+      name == other.name &&
+      availableAt == other.availableAt &&
+      dueAt == other.dueAt &&
+      description == other.description &&
+      teacherId == other.teacherId &&
+      courseId == other.courseId &&
+      lessonId == other.lessonId &&
+      isPrivate == other.isPrivate &&
+      hasPublicSubmissions == other.hasPublicSubmissions &&
+      archivedBy.deeplyEquals(other.archivedBy, unordered: true) &&
+      teamSubmissions == other.teamSubmissions &&
+      fileIds.deeplyEquals(other.fileIds, unordered: true);
+  @override
+  int get hashCode => hashList([
+        id,
+        schoolId,
+        createdAt,
+        updatedAt,
+        name,
+        availableAt,
+        dueAt,
+        description,
+        teacherId,
+        courseId,
+        lessonId,
+        isPrivate,
+        hasPublicSubmissions,
+        teamSubmissions,
+      ]);
 }
 
 @HiveType(typeId: TypeId.submission)
@@ -261,4 +298,26 @@ class Submission implements Entity<Submission> {
   }
 
   Future<void> delete() => services.network.delete('submissions/$id');
+
+  @override
+  bool operator ==(Object other) =>
+      other is Submission &&
+      id == other.id &&
+      schoolId == other.schoolId &&
+      assignmentId == other.assignmentId &&
+      studentId == other.studentId &&
+      comment == other.comment &&
+      grade == other.grade &&
+      gradeComment == other.gradeComment &&
+      fileIds.deeplyEquals(other.fileIds, unordered: true);
+  @override
+  int get hashCode => hashList([
+        id,
+        schoolId,
+        assignmentId,
+        studentId,
+        comment,
+        grade,
+        gradeComment,
+      ]);
 }
