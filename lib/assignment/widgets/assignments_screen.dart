@@ -76,7 +76,7 @@ class _AssignmentsScreenState extends State<AssignmentsScreen>
     return Scaffold(
       body: CollectionBuilder.populated<Assignment>(
         collection: services.storage.root.assignments,
-        builder: handleLoadingErrorRefreshEmptyFiltered(
+        builder: handleLoadingErrorRefreshEmptyFilter(
           appBar: FancyAppBar(
             title: Text(s.assignment),
             actions: <Widget>[SortFilterIconButton(showSortFilterSheet)],

@@ -56,7 +56,7 @@ class _CoursesScreenState extends State<CoursesScreen>
     return Scaffold(
       body: CollectionBuilder.populated<Course>(
         collection: services.storage.root.courses,
-        builder: handleLoadingErrorRefreshEmptyFiltered(
+        builder: handleLoadingErrorRefreshEmptyFilter(
           appBar: FancyAppBar(
             title: Text(context.s.course),
             actions: <Widget>[SortFilterIconButton(showSortFilterSheet)],

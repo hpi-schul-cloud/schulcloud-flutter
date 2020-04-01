@@ -151,7 +151,7 @@ FetchableBuilder<CacheSnapshot<List<T>>> handleLoadingErrorRefreshEmpty<T>({
     ));
 
 FetchableBuilder<CacheSnapshot<List<T>>>
-    handleLoadingErrorRefreshEmptyFiltered<T>({
+    handleLoadingErrorRefreshEmptyFilter<T>({
   NestedScrollViewHeaderSliversBuilder headerSliverBuilder,
   FancyAppBar appBar,
   @required WidgetBuilder emptyStateBuilder,
