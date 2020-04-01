@@ -120,9 +120,11 @@ class FileBrowser extends StatelessWidget {
     } else if (path.parentId != null) {
       appBar = EntityBuilder<File>(
         id: path.parentId,
-        builder: handleLoadingError(
-          (_, parent, __) => FileBrowserAppBar(title: parent.name),
-        ),
+        builder: handleError((context, parent, __) {
+          return FileBrowserAppBar(
+            title: parent?.name ?? context.s.general_loading,
+          );
+        }),
       );
     } else if (isOwnerMe) {
       appBar = FileBrowserAppBar(title: context.s.file_files_my);
