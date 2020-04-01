@@ -18,23 +18,23 @@ class FileTile extends StatelessWidget {
   final void Function(File file) onOpenDirectory;
   final void Function(File file) onDownloadFile;
   void Function(File file) onTapHandler(File file) =>
-      file.isDirectory ? onOpenDirectory : onDownloadFile;
+      file == null ? null : file.isDirectory ? onOpenDirectory : onDownloadFile;
 
   @override
   Widget build(BuildContext context) {
     return EntityBuilder<File>(
       id: fileId,
-      builder: handleLoadingError((context, file, _) {
+      builder: handleError((context, file, _) {
         final subtitle = [
-          if (file.isActualFile) file.sizeAsString,
-          if (file.updatedAt != null) file.updatedAt.shortDateTimeString,
-        ].join(', ');
+          if (file?.isActualFile == true) file.sizeAsString,
+          if (file?.updatedAt != null) file.updatedAt.shortDateTimeString,
+        ].join(', ').blankToNull;
         final onTap = onTapHandler(file);
 
         return ListTile(
-          title: Text(file.name),
-          subtitle: Text(subtitle),
-          leading: FileThumbnail(file: file),
+          title: FancyText(file?.name),
+          subtitle: FancyText(subtitle),
+          leading: file == null ? null : FileThumbnail(file: file),
           onTap: onTap?.partial(file),
           onLongPress: () => FileMenu.show(context, file),
         );
