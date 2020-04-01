@@ -8,7 +8,6 @@ import 'package:logger/logger.dart';
 import 'package:package_info/package_info.dart';
 import 'package:sentry/sentry.dart' hide User;
 import 'package:system_info/system_info.dart';
-import 'package:hive_cache/hive_cache.dart';
 
 import 'app_config.dart';
 import 'data.dart';
@@ -101,10 +100,7 @@ Future<bool> reportEvent(Event event) async {
 
   final packageInfo = await PackageInfo.fromPlatform();
   final platformString = defaultTargetPlatform.toString();
-  User user = await storage.userId
-      .resolve()
-      .first
-      .timeout(Duration(milliseconds: 100), onTimeout: () => null);
+  User user = await storage.userFromCache;
   final fullEvent = Event(
     release: packageInfo.version,
     environment: isInDebugMode ? 'debug' : 'production',
