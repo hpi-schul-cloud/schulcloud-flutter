@@ -7,47 +7,40 @@ import '../app.dart';
 
 /// A service that offers storage of app-wide data.
 class StorageService {
-  StorageService._({
-    StreamingSharedPreferences prefs,
-    @required this.userIdString,
-    @required this.token,
-    @required this.root,
-  }) : _prefs = prefs;
+  StorageService._({StreamingSharedPreferences prefs})
+      : _prefs = prefs,
+        userIdString = prefs.getString('userId', defaultValue: ''),
+        token = prefs.getString('token', defaultValue: ''),
+        errorReportingEnabled = prefs.getBool(
+          'settings_privacy_errorReporting_enabled',
+          defaultValue: true,
+        );
 
   static Future<StorageService> create() async {
-    StreamingSharedPreferences prefs;
-    Preference<String> userIdString;
-    Preference<String> token;
-
-    await Future.wait([
-      () async {
-        prefs = await StreamingSharedPreferences.instance;
-        userIdString = prefs.getString('userId', defaultValue: '');
-        token = prefs.getString('token', defaultValue: '');
-      }(),
-    ]);
-
-    final root = Root();
-
     return StorageService._(
-      prefs: prefs,
-      userIdString: userIdString,
-      token: token,
-      root: root,
+      prefs: await StreamingSharedPreferences.instance,
     );
   }
 
+  final Root root = Root();
   final StreamingSharedPreferences _prefs;
 
   final Preference<String> userIdString;
   Id<User> get userId => Id<User>(userIdString.getValue());
+  Future<User> get userFromCache async {
+    if (userId == null) {
+      return null;
+    }
+    return userId
+        .loadFromCache()
+        .first
+        .timeout(Duration(milliseconds: 100), onTimeout: () => null);
+  }
 
   final Preference<String> token;
   bool get hasToken => token.getValue().isNotEmpty;
   bool get isSignedIn => hasToken;
   bool get isSignedOut => !isSignedIn;
-
-  final Root root;
 
   Future<void> setUserInfo({
     @required String userId,
@@ -65,6 +58,8 @@ class StorageService {
       value: token,
     );
   }
+
+  final Preference<bool> errorReportingEnabled;
 
   Future<void> clear() => Future.wait([
         _prefs.clear(),

@@ -263,9 +263,15 @@ class NetworkService {
     assert(followRedirects != null);
 
     var uri = Uri.parse(url);
-    assert(uri.queryParameters.isEmpty,
-        'Please add query parameters via the queryParameters argument!');
-    uri = uri.replace(queryParameters: queryParameters);
+    if (uri.queryParameters.isNotEmpty) {
+      assert(
+        queryParameters.isEmpty,
+        'Please add query parameters either via the queryParameters argument '
+        'or via the provided url, but not both!',
+      );
+    } else {
+      uri = uri.replace(queryParameters: queryParameters);
+    }
 
     final request = http.Request(method, uri)
       ..followRedirects = followRedirects;
