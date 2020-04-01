@@ -149,7 +149,7 @@ packages:
     source: hosted
     version: "3.2.1"
   collection:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: collection
       url: "https://pub.dartlang.org"
@@ -269,8 +269,8 @@ packages:
     dependency: transitive
     description:
       path: "."
-      ref: "8926819"
-      resolved-ref: "89268199d36427fb26eb297156664625fc8074b5"
+      ref: eb4153f
+      resolved-ref: eb4153fe48297545f3e37b7175bd4f350347910e
       url: "git://github.com/marcelgarus/flutter_cached"
     source: git
     version: "5.0.0"
@@ -410,8 +410,8 @@ packages:
     dependency: "direct main"
     description:
       path: "."
-      ref: "076c51b"
-      resolved-ref: "076c51be47d1863e57687db4db689c36b5e00b6a"
+      ref: "3b0825e"
+      resolved-ref: "3b0825e94f0541b59073669157ad8bcb438cd9eb"
       url: "git://github.com/marcelgarus/hive_cache"
     source: git
     version: "1.0.0"
@@ -550,6 +550,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.12.6"
+  maybe:
+    dependency: transitive
+    description:
+      name: maybe
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.4.0"
   meta:
     dependency: "direct main"
     description:
