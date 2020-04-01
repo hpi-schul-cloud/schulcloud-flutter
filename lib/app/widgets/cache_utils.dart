@@ -3,6 +3,7 @@ import 'package:hive_cache/hive_cache.dart';
 
 import '../exception.dart';
 import '../logger.dart';
+import '../sort_filter/sort_filter.dart';
 import 'app_bar.dart';
 import 'error_widgets.dart';
 
@@ -106,6 +107,19 @@ FetchableBuilder<List<T>> handleEmpty<T>({
   };
 }
 
+FetchableBuilder<List<T>> handleFilter<T>({
+  @required SortFilterSelection<T> sortFilterSelection,
+  @required WidgetBuilder filteredEmptyStateBuilder,
+  @required FetchableBuilder<List<T>> builder,
+}) {
+  return (context, items, fetch) {
+    final filtered = sortFilterSelection.apply(items);
+    return filtered.isEmpty
+        ? filteredEmptyStateBuilder(context)
+        : builder(context, filtered, fetch);
+  };
+}
+
 // Compositional shortcuts.
 
 FetchableBuilder<CacheSnapshot<T>> handleLoadingError<T>(
@@ -135,3 +149,23 @@ FetchableBuilder<CacheSnapshot<List<T>>> handleLoadingErrorRefreshEmpty<T>({
         builder: builder,
       ),
     ));
+
+FetchableBuilder<CacheSnapshot<List<T>>>
+    handleLoadingErrorRefreshEmptyFiltered<T>({
+  NestedScrollViewHeaderSliversBuilder headerSliverBuilder,
+  FancyAppBar appBar,
+  @required WidgetBuilder emptyStateBuilder,
+  @required SortFilterSelection<T> sortFilterSelection,
+  @required WidgetBuilder filteredEmptyStateBuilder,
+  @required FetchableBuilder<List<T>> builder,
+}) =>
+        handleLoadingErrorRefreshEmpty<T>(
+          headerSliverBuilder: headerSliverBuilder,
+          appBar: appBar,
+          emptyStateBuilder: emptyStateBuilder,
+          builder: handleFilter(
+            sortFilterSelection: sortFilterSelection,
+            filteredEmptyStateBuilder: filteredEmptyStateBuilder,
+            builder: builder,
+          ),
+        );

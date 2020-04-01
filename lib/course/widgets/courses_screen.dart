@@ -56,17 +56,19 @@ class _CoursesScreenState extends State<CoursesScreen>
     return Scaffold(
       body: CollectionBuilder.populated<Course>(
         collection: services.storage.root.courses,
-        builder: handleLoadingErrorRefreshEmpty(
+        builder: handleLoadingErrorRefreshEmptyFiltered(
           appBar: FancyAppBar(
             title: Text(context.s.course),
             actions: <Widget>[SortFilterIconButton(showSortFilterSheet)],
           ),
-          emptyStateBuilder: (_) => EmptyStateScreen(
+          emptyStateBuilder: (context) => EmptyStateScreen(
             text: context.s.course_coursesScreen_empty,
           ),
-          builder: (context, allCourses, isFetching) {
-            final courses = sortFilterSelection.apply(allCourses);
-
+          sortFilterSelection: sortFilterSelection,
+          filteredEmptyStateBuilder: (context) => EmptyStateScreen(
+            text: context.s.course_coursesScreen_emptyFiltered,
+          ),
+          builder: (context, courses, isFetching) {
             return CustomScrollView(
               slivers: <Widget>[
                 if (courses.isEmpty)

@@ -76,45 +76,46 @@ class _AssignmentsScreenState extends State<AssignmentsScreen>
     return Scaffold(
       body: CollectionBuilder.populated<Assignment>(
         collection: services.storage.root.assignments,
-        builder: handleLoadingError(handleRefresh(
+        builder: handleLoadingErrorRefreshEmptyFiltered(
           appBar: FancyAppBar(
             title: Text(s.assignment),
             actions: <Widget>[SortFilterIconButton(showSortFilterSheet)],
           ),
-          builder: handleEmpty(
-            emptyStateBuilder: (context) => EmptyStateScreen(
-              text: context.s.assignment_assignmentsScreen_empty,
-            ),
-            builder: (context, allAssignments, fetch) {
-              final assignments = sortFilterSelection.apply(allAssignments);
-              return CustomScrollView(
-                slivers: <Widget>[
-                  if (assignments.isEmpty)
-                    SortFilterEmptyState(
-                      showSortFilterSheet,
-                      text: s.assignment_assignmentsScreen_empty,
-                    )
-                  else
-                    SliverList(
-                      delegate: SliverChildBuilderDelegate(
-                        (_, index) => Padding(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 8,
-                          ),
-                          child: AssignmentCard(
-                            assignment: assignments[index],
-                            setFlagFilterCallback: setFlagFilter,
-                          ),
-                        ),
-                        childCount: assignments.length,
-                      ),
-                    ),
-                ],
-              );
-            },
+          emptyStateBuilder: (context) => EmptyStateScreen(
+            text: context.s.assignment_assignmentsScreen_empty,
           ),
-        )),
+          sortFilterSelection: sortFilterSelection,
+          filteredEmptyStateBuilder: (context) => EmptyStateScreen(
+            text: context.s.assignment_assignmentsScreen_emptyFiltered,
+          ),
+          builder: (context, assignments, fetch) {
+            return CustomScrollView(
+              slivers: <Widget>[
+                if (assignments.isEmpty)
+                  SortFilterEmptyState(
+                    showSortFilterSheet,
+                    text: s.assignment_assignmentsScreen_empty,
+                  )
+                else
+                  SliverList(
+                    delegate: SliverChildBuilderDelegate(
+                      (_, index) => Padding(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 8,
+                        ),
+                        child: AssignmentCard(
+                          assignment: assignments[index],
+                          setFlagFilterCallback: setFlagFilter,
+                        ),
+                      ),
+                      childCount: assignments.length,
+                    ),
+                  ),
+              ],
+            );
+          },
+        ),
       ),
     );
   }
