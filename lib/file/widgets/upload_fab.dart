@@ -14,7 +14,7 @@ class UploadFab extends StatelessWidget {
   Widget build(BuildContext context) {
     return EntityBuilder<User>(
       id: services.storage.userId,
-      builder: handleLoadingError((context, user, _) {
+      builder: handleError((context, user, _) {
         if (user == null || !user.hasPermission(Permission.fileStorageCreate)) {
           return SizedBox();
         }

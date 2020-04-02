@@ -35,39 +35,34 @@ class _CalendarDashboardCardState extends State<CalendarDashboardCard> {
           .withOpacity(context.theme.isDark ? 0.5 : 0.12),
       child: CollectionBuilder.populated<Event>(
         collection: services.get<CalendarBloc>().todaysEvents,
-        builder: (context, snapshot, fetch) {
-          logger.d('Snapshot = $snapshot. data = ${snapshot.data}. '
-              'error = ${snapshot.error}');
+        builder: handleLoadingError((context, events, _) {
+          final now = Instant.now();
+          events = events.where((e) => e.end > now).toList();
+          _subscription?.cancel();
 
-          return handleLoadingError<List<Event>>((context, events, _) {
-            final now = Instant.now();
-            events = events.where((e) => e.end > now).toList();
-            _subscription?.cancel();
-
-            if (events.isEmpty) {
-              return Padding(
-                padding: EdgeInsets.symmetric(horizontal: 16),
-                child: Center(
-                  child: FancyText(
-                    s.calendar_dashboardCard_empty,
-                    emphasis: TextEmphasis.medium,
-                    textAlign: TextAlign.center,
-                  ),
+          if (events.isEmpty) {
+            return Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16),
+              child: Center(
+                child: FancyText(
+                  s.calendar_dashboardCard_empty,
+                  emphasis: TextEmphasis.medium,
+                  textAlign: TextAlign.center,
                 ),
-              );
-            }
-
-            // Update this widget when the current event is over.
-            final nextEnd = events.map((e) => e.end).min();
-            _subscription =
-                Future.delayed(Instant.now().timeUntil(nextEnd).toDuration)
-                    .asStream()
-                    .listen((_) => setState(() {}));
-            return Column(
-              children: events.map((e) => _EventPreview(e)).toList(),
+              ),
             );
-          })(context, snapshot, fetch);
-        },
+          }
+
+          // Update this widget when the current event is over.
+          final nextEnd = events.map((e) => e.end).min();
+          _subscription =
+              Future.delayed(Instant.now().timeUntil(nextEnd).toDuration)
+                  .asStream()
+                  .listen((_) => setState(() {}));
+          return Column(
+            children: events.map((e) => _EventPreview(e)).toList(),
+          );
+        }),
       ),
     );
   }

@@ -42,7 +42,7 @@ packages:
       name: black_hole_flutter
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.2.3"
+    version: "0.2.5"
   boolean_selector:
     dependency: transitive
     description:
@@ -431,8 +431,8 @@ packages:
     dependency: "direct main"
     description:
       path: "."
-      ref: "22851f9"
-      resolved-ref: "22851f9649c790286b413536e60ee660f1fb8ee5"
+      ref: "5d7abc0"
+      resolved-ref: "5d7abc0bb69802b0af5af60ebdedff26090089a7"
       url: "git://github.com/marcelgarus/hive_cache"
     source: git
     version: "1.0.0"

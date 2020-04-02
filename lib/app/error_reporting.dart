@@ -4,6 +4,7 @@ import 'dart:ui';
 
 import 'package:device_info/device_info.dart';
 import 'package:flutter/foundation.dart';
+import 'package:hive_cache/hive_cache.dart';
 import 'package:logger/logger.dart';
 import 'package:package_info/package_info.dart';
 import 'package:sentry/sentry.dart' hide User;
@@ -100,7 +101,7 @@ Future<bool> reportEvent(Event event) async {
 
   final packageInfo = await PackageInfo.fromPlatform();
   final platformString = defaultTargetPlatform.toString();
-  User user = await storage.userFromCache;
+  User user = HiveCache.isInitialized ? await storage.userFromCache : null;
   final fullEvent = Event(
     release: packageInfo.version,
     environment: isInDebugMode ? 'debug' : 'production',

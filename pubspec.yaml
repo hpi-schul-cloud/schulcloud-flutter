@@ -21,7 +21,7 @@ dependencies:
     sdk: flutter
 
   analyzer: ^0.39.4
-  black_hole_flutter: ^0.2.3
+  black_hole_flutter: ^0.2.4
   collection: ^1.14.11
   cupertino_icons: ^0.1.2
   dartx: ^0.2.0
@@ -48,7 +48,7 @@ dependencies:
   hive_cache:
     git:
       url: git://github.com/marcelgarus/hive_cache
-      ref: 22851f9
+      ref: 5d7abc0
   hive_flutter: ^0.3.0+1
   html: ^0.14.0+3
   http: ^0.12.0

@@ -178,11 +178,18 @@ class Lesson implements Entity<Lesson>, Comparable<Lesson> {
       id == other.id &&
       courseId == other.courseId &&
       name == other.name &&
-      contents.deeplyEquals(other.contents, unordered: true) &&
+      contents.deeplyEquals(other.contents) &&
       isHidden == other.isHidden &&
       position == other.position;
   @override
-  int get hashCode => hashList([id, courseId, name, isHidden, position]);
+  int get hashCode => hashList([
+        id,
+        courseId,
+        name,
+        hashList(contents),
+        isHidden,
+        position,
+      ]);
 }
 
 @HiveType(typeId: TypeId.content)

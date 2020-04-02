@@ -27,14 +27,14 @@ class FileTile extends StatelessWidget {
       builder: handleError((context, file, _) {
         final subtitle = [
           if (file?.isActualFile == true) file.sizeAsString,
-          if (file?.updatedAt != null) file.updatedAt.shortDateTimeString,
+          if (file != null) file.updatedAt.shortDateTimeString,
         ].join(', ').blankToNull;
         final onTap = onTapHandler(file);
 
         return ListTile(
           title: FancyText(file?.name),
           subtitle: FancyText(subtitle),
-          leading: file == null ? null : FileThumbnail(file: file),
+          leading: file == null ? SizedBox() : FileThumbnail(file: file),
           onTap: onTap?.partial(file),
           onLongPress: () => FileMenu.show(context, file),
         );

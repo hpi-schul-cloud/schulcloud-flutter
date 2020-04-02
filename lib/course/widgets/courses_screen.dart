@@ -68,26 +68,20 @@ class _CoursesScreenState extends State<CoursesScreen>
           filteredEmptyStateBuilder: (context) => EmptyStateScreen(
             text: context.s.course_coursesScreen_emptyFiltered,
           ),
-          builder: (context, courses, isFetching) {
+          builder: (context, courses, fetch) {
             return CustomScrollView(
               slivers: <Widget>[
-                if (courses.isEmpty)
-                  SortFilterEmptyState(
-                    showSortFilterSheet,
-                    text: s.course_coursesScreen_empty,
-                  )
-                else
-                  SliverList(
-                    delegate: SliverChildBuilderDelegate((_, index) {
-                      return Padding(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 8,
-                        ),
-                        child: CourseCard(courses[index]),
-                      );
-                    }, childCount: courses.length),
-                  ),
+                SliverList(
+                  delegate: SliverChildBuilderDelegate((_, index) {
+                    return Padding(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 8,
+                      ),
+                      child: CourseCard(courses[index]),
+                    );
+                  }, childCount: courses.length),
+                ),
               ],
             );
           },

@@ -85,33 +85,28 @@ class _AssignmentsScreenState extends State<AssignmentsScreen>
             text: context.s.assignment_assignmentsScreen_empty,
           ),
           sortFilterSelection: sortFilterSelection,
-          filteredEmptyStateBuilder: (context) => EmptyStateScreen(
-            text: context.s.assignment_assignmentsScreen_emptyFiltered,
+          filteredEmptyStateBuilder: (context) => SortFilterEmptyState(
+            showSortFilterSheet,
+            text: s.assignment_assignmentsScreen_emptyFiltered,
           ),
           builder: (context, assignments, fetch) {
             return CustomScrollView(
               slivers: <Widget>[
-                if (assignments.isEmpty)
-                  SortFilterEmptyState(
-                    showSortFilterSheet,
-                    text: s.assignment_assignmentsScreen_empty,
-                  )
-                else
-                  SliverList(
-                    delegate: SliverChildBuilderDelegate(
-                      (_, index) => Padding(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 8,
-                        ),
-                        child: AssignmentCard(
-                          assignment: assignments[index],
-                          setFlagFilterCallback: setFlagFilter,
-                        ),
+                SliverList(
+                  delegate: SliverChildBuilderDelegate(
+                    (_, index) => Padding(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 8,
                       ),
-                      childCount: assignments.length,
+                      child: AssignmentCard(
+                        assignment: assignments[index],
+                        setFlagFilterCallback: setFlagFilter,
+                      ),
                     ),
+                    childCount: assignments.length,
                   ),
+                ),
               ],
             );
           },
