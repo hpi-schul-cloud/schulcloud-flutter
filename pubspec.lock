@@ -283,8 +283,8 @@ packages:
     dependency: transitive
     description:
       path: "."
-      ref: eb4153f
-      resolved-ref: eb4153fe48297545f3e37b7175bd4f350347910e
+      ref: "72220b1"
+      resolved-ref: "72220b1bd4af9be245e79eb1da994134811564a7"
       url: "git://github.com/marcelgarus/flutter_cached"
     source: git
     version: "5.0.0"
@@ -431,8 +431,8 @@ packages:
     dependency: "direct main"
     description:
       path: "."
-      ref: "5d7abc0"
-      resolved-ref: "5d7abc0bb69802b0af5af60ebdedff26090089a7"
+      ref: "4684ada"
+      resolved-ref: "4684adabb6bfbb974f8c54d3545a9c15a6a93283"
       url: "git://github.com/marcelgarus/hive_cache"
     source: git
     version: "1.0.0"
