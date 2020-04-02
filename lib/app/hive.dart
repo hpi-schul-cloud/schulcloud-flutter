@@ -101,9 +101,8 @@ Future<void> initializeHive() async {
     // Maybe the app got updated since the last time it ran, the [HiveCache] is
     // still filled with data from the previous version and some types got
     // deleted, causing the cache data to be corrupted. But no biggie — we just
-    // delete the `cache.hive` file and carry on.
-    await HiveCache.delete();
-    await HiveCache.initialize();
+    // clear the HiveCache and carry on.
+    await HiveCache.clear();
   }
 
   HiveCache

@@ -63,7 +63,7 @@ class StorageService {
 
   Future<void> clear() => Future.wait([
         _prefs.clear(),
-        HiveCache.delete(),
+        HiveCache.clear(),
       ]);
 }
 
