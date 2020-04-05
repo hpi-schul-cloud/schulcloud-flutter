@@ -118,8 +118,6 @@ class User implements Entity<User> {
         displayName,
         avatarInitials,
         avatarBackgroundColor,
-        permissions,
-        roleIds
       ]);
 }
 

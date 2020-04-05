@@ -58,15 +58,16 @@ class _CoursesScreenState extends State<CoursesScreen>
         collection: services.storage.root.courses,
         builder: handleLoadingErrorRefreshEmptyFilter(
           appBar: FancyAppBar(
-            title: Text(context.s.course),
+            title: Text(s.course),
             actions: <Widget>[SortFilterIconButton(showSortFilterSheet)],
           ),
           emptyStateBuilder: (context) => EmptyStateScreen(
-            text: context.s.course_coursesScreen_empty,
+            text: s.course_coursesScreen_empty,
           ),
           sortFilterSelection: sortFilterSelection,
-          filteredEmptyStateBuilder: (context) => EmptyStateScreen(
-            text: context.s.course_coursesScreen_emptyFiltered,
+          filteredEmptyStateBuilder: (context) => SortFilterEmptyState(
+            showSortFilterSheet,
+            text: s.course_coursesScreen_emptyFiltered,
           ),
           builder: (context, courses, fetch) {
             return CustomScrollView(

@@ -29,13 +29,11 @@ class _AssignmentDetailScreenState extends State<AssignmentDetailScreen>
       builder: handleLoadingError((context, assignment, _) {
         return EntityBuilder<User>(
           id: services.storage.userId,
-          builder: handleLoadingError((context, user, isFetching) {
-            final showSubmissionTab =
-                assignment.isPrivate || user?.isTeacher == false;
-            final showFeedbackTab =
-                assignment.isPublic && user?.isTeacher == false;
+          builder: handleLoadingError((context, user, fetch) {
+            final showSubmissionTab = assignment.isPrivate || !user.isTeacher;
+            final showFeedbackTab = assignment.isPublic && !user.isTeacher;
             final showSubmissionsTab = assignment.isPublic &&
-                (user?.isTeacher == true || assignment.hasPublicSubmissions);
+                (user.isTeacher || assignment.hasPublicSubmissions);
 
             final tabs = [
               'extended',
@@ -54,7 +52,7 @@ class _AssignmentDetailScreenState extends State<AssignmentDetailScreen>
                 title: Text(assignment.name),
                 subtitle: _buildSubtitle(context, assignment.courseId),
                 actions: <Widget>[
-                  if (user?.hasPermission(Permission.assignmentEdit) == true)
+                  if (user.hasPermission(Permission.assignmentEdit))
                     _buildArchiveAction(context, assignment),
                 ],
                 bottom: TabBar(
