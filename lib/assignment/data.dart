@@ -150,7 +150,7 @@ class Assignment implements Entity<Assignment> {
     }
 
     return Assignment.fromJson(
-        await services.network.patch('homework/$id', body: request).json)
+        await services.api.patch('homework/$id', body: request).json)
       ..saveToCache();
   }
 
@@ -270,7 +270,7 @@ class Submission implements Entity<Submission> {
     };
 
     return Submission.fromJson(
-        await services.network.post('submissions', body: request).json)
+        await services.api.post('submissions', body: request).json)
       ..saveToCache();
   }
 
@@ -283,11 +283,11 @@ class Submission implements Entity<Submission> {
     }
 
     return Submission.fromJson(
-        await services.network.patch('submissions/$id', body: request).json)
+        await services.api.patch('submissions/$id', body: request).json)
       ..saveToCache();
   }
 
-  Future<void> delete() => services.network.delete('submissions/$id');
+  Future<void> delete() => services.api.delete('submissions/$id');
 
   @override
   bool operator ==(Object other) =>
