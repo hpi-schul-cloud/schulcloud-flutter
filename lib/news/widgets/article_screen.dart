@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_cached/flutter_cached.dart';
 import 'package:provider/provider.dart';
 import 'package:schulcloud/app/app.dart';
 
@@ -21,18 +20,9 @@ class ArticleScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CachedRawBuilder<Article>(
-      controller: articleId.controller,
-      builder: (context, update) {
-        if (!update.hasData) {
-          return Center(
-            child: update.hasError
-                ? ErrorScreen(update.error, update.stackTrace)
-                : CircularProgressIndicator(),
-          );
-        }
-
-        final article = update.data;
+    return EntityBuilder<Article>(
+      id: articleId,
+      builder: handleLoadingError((context, article, isFetching) {
         return Scaffold(
           body: LayoutBuilder(
             builder: (ctx, constraints) {
@@ -55,7 +45,7 @@ class ArticleScreen extends StatelessWidget {
             },
           ),
         );
-      },
+      }),
     );
   }
 }
@@ -133,18 +123,11 @@ class _ArticleViewState extends State<ArticleView> {
   }
 
   Widget _buildAuthorView(BuildContext context) {
-    return CachedRawBuilder(
-      controller: widget.article.authorId.controller,
-      builder: (_, update) {
-        if (!update.hasData) {
-          return Center(
-              child: update.hasError
-                  ? Text(update.error.toString())
-                  : CircularProgressIndicator());
-        }
-
-        return AuthorView(author: update.data);
-      },
+    return EntityBuilder<User>(
+      id: widget.article.authorId,
+      builder: handleLoadingError(
+        (_, author, __) => AuthorView(author: author),
+      ),
     );
   }
 

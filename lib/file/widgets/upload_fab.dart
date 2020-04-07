@@ -1,6 +1,5 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_cached/flutter_cached.dart';
 import 'package:schulcloud/app/app.dart';
 
 import '../data.dart';
@@ -13,11 +12,10 @@ class UploadFab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CachedRawBuilder<User>(
-      controller: services.storage.userId.controller,
-      builder: (context, update) {
-        if (update.hasNoData ||
-            !update.data.hasPermission(Permission.fileStorageCreate)) {
+    return EntityBuilder<User>(
+      id: services.storage.userId,
+      builder: handleError((context, user, _) {
+        if (user == null || !user.hasPermission(Permission.fileStorageCreate)) {
           return SizedBox();
         }
 
@@ -31,7 +29,7 @@ class UploadFab extends StatelessWidget {
           },
           child: Icon(Icons.file_upload),
         );
-      },
+      }),
     );
   }
 }

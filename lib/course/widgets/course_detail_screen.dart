@@ -1,7 +1,4 @@
-import 'package:black_hole_flutter/black_hole_flutter.dart';
-import 'package:dartx/dartx.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_cached/flutter_cached.dart';
 import 'package:schulcloud/app/app.dart';
 
 import '../data.dart';
@@ -13,16 +10,9 @@ class CourseDetailsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CachedRawBuilder<Course>(
-      controller: courseId.controller,
-      builder: (_, update) {
-        final course = update.data;
-        if (update.hasError) {
-          return ErrorScreen(update.error, update.stackTrace);
-        } else if (!update.hasData) {
-          return Center(child: CircularProgressIndicator());
-        }
-
+    return EntityBuilder<Course>(
+      id: courseId,
+      builder: handleLoadingError((_, course, fetch) {
         return FancyScaffold(
           appBar: FancyAppBar(
             title: Text(course.name),
@@ -53,38 +43,33 @@ class CourseDetailsScreen extends StatelessWidget {
             ]),
           ),
         );
-      },
+      }),
     );
   }
 
   Widget _buildLessonsSliver(BuildContext context, Course course) {
-    return CachedRawBuilder<List<Lesson>>(
-      controller: course.visibleLessons.controller,
-      builder: (context, update) {
-        if (update.hasError) {
-          return ErrorBanner(update.error, update.stackTrace);
-        } else if (!update.hasData) {
-          return Center(child: CircularProgressIndicator());
-        }
+    return CollectionBuilder.populated<Lesson>(
+      collection: course.lessons,
+      builder: handleLoadingErrorEmpty(
+        emptyStateBuilder: (_) => EmptyStateScreen(
+          text: context.s.course_detailsScreen_empty,
+        ),
+        builder: (context, lessons, _) {
+          lessons = lessons.sorted();
 
-        final lessons = update.data.sorted();
-        if (lessons.isEmpty) {
-          return EmptyStateScreen(
-            text: context.s.course_detailsScreen_empty,
+          return Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              for (final lesson in lessons)
+                ListTile(
+                  title: Text(lesson.name),
+                  onTap: () => context.navigator
+                      .pushNamed('/courses/$courseId/topics/${lesson.id}'),
+                ),
+            ],
           );
-        }
-        return Column(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            for (final lesson in lessons)
-              ListTile(
-                title: Text(lesson.name),
-                onTap: () => context.navigator
-                    .pushNamed('/courses/$courseId/topics/${lesson.id}'),
-              ),
-          ],
-        );
-      },
+        },
+      ),
     );
   }
 }

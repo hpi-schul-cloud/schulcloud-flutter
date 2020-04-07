@@ -1,6 +1,5 @@
 import 'package:black_hole_flutter/black_hole_flutter.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_cached/flutter_cached.dart';
 import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/assignment/assignment.dart';
 import 'package:schulcloud/course/course.dart';
@@ -75,30 +74,31 @@ class _AssignmentsScreenState extends State<AssignmentsScreen>
     final s = context.s;
 
     return Scaffold(
-      body: CachedBuilder<List<Assignment>>(
-        controller: services.storage.root.assignments.controller,
-        errorBannerBuilder: (_, error, st) => ErrorBanner(error, st),
-        errorScreenBuilder: (_, error, st) => ErrorScreen(error, st),
-        builder: (context, allAssignments) {
-          final assignments = sortFilterSelection.apply(allAssignments);
-
-          return CustomScrollView(
-            slivers: <Widget>[
-              FancyAppBar(
-                title: Text(s.assignment),
-                actions: <Widget>[SortFilterIconButton(showSortFilterSheet)],
-              ),
-              if (assignments.isEmpty)
-                SortFilterEmptyState(
-                  showSortFilterSheet,
-                  text: s.assignment_assignmentsScreen_empty,
-                )
-              else
+      body: CollectionBuilder.populated<Assignment>(
+        collection: services.storage.root.assignments,
+        builder: handleLoadingErrorRefreshEmptyFilter(
+          appBar: FancyAppBar(
+            title: Text(s.assignment),
+            actions: <Widget>[SortFilterIconButton(showSortFilterSheet)],
+          ),
+          emptyStateBuilder: (context) => EmptyStateScreen(
+            text: context.s.assignment_assignmentsScreen_empty,
+          ),
+          sortFilterSelection: sortFilterSelection,
+          filteredEmptyStateBuilder: (context) => SortFilterEmptyState(
+            showSortFilterSheet,
+            text: s.assignment_assignmentsScreen_emptyFiltered,
+          ),
+          builder: (context, assignments, fetch) {
+            return CustomScrollView(
+              slivers: <Widget>[
                 SliverList(
                   delegate: SliverChildBuilderDelegate(
                     (_, index) => Padding(
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 8,
+                      ),
                       child: AssignmentCard(
                         assignment: assignments[index],
                         setFlagFilterCallback: setFlagFilter,
@@ -107,9 +107,10 @@ class _AssignmentsScreenState extends State<AssignmentsScreen>
                     childCount: assignments.length,
                   ),
                 ),
-            ],
-          );
-        },
+              ],
+            );
+          },
+        ),
       ),
     );
   }
@@ -173,16 +174,16 @@ class AssignmentCard extends StatelessWidget {
 
     return <Widget>[
       if (assignment.courseId != null)
-        CachedRawBuilder<Course>(
-          controller: assignment.courseId.controller,
-          builder: (_, update) {
+        EntityBuilder<Course>(
+          id: assignment.courseId,
+          builder: handleError((context, course, fetch) {
             return CourseChip(
-              update.data,
+              course,
               onPressed: () {
                 // TODO(JonasWanke): filter list by course, https://github.com/schul-cloud/schulcloud-flutter/issues/145
               },
             );
-          },
+          }),
         ),
       if (assignment.isOverdue)
         ActionChip(

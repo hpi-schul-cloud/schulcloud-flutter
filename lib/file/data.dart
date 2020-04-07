@@ -1,8 +1,5 @@
-import 'package:hive/hive.dart';
-import 'package:meta/meta.dart';
 import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/course/course.dart';
-import 'package:time_machine/time_machine.dart';
 
 part 'data.g.dart';
 
@@ -21,8 +18,8 @@ class FilePath {
   @HiveField(1)
   final Id<File> parentId;
 
-  LazyIds<File> get files => LazyIds<File>(
-        collectionId: 'files of $ownerId in directory $parentId',
+  Collection<File> get files => Collection<File>(
+        id: 'files of $ownerId in directory $parentId',
         fetcher: () => File.fetchList(this),
       );
 
@@ -35,6 +32,14 @@ class FilePath {
 
   @override
   String toString() => '$ownerId/${parentId ?? 'root'}';
+
+  @override
+  bool operator ==(Object other) =>
+      other is FilePath &&
+      ownerId == other.ownerId &&
+      parentId == other.parentId;
+  @override
+  int get hashCode => hashList([ownerId, parentId]);
 }
 
 @HiveType(typeId: TypeId.file)
@@ -53,8 +58,8 @@ class File implements Entity<File>, Comparable<File> {
         assert(createdAt != null),
         assert(updatedAt != null),
         assert(isDirectory != null),
-        files = LazyIds<File>(
-          collectionId: 'files in directory $id',
+        files = Collection<File>(
+          id: 'files in directory $id',
           fetcher: () => File.fetchList(path.copyWith(parentId: id)),
         );
 
@@ -75,6 +80,9 @@ class File implements Entity<File>, Comparable<File> {
           isDirectory: data['isDirectory'],
           size: data['size'],
         );
+
+  static Future<File> fetch(Id<File> id) async =>
+      File.fromJson(await services.api.get('files/$id').json);
 
   static Future<List<File>> fetchList(FilePath path) async {
     final files = await services.api.get(
@@ -119,7 +127,7 @@ class File implements Entity<File>, Comparable<File> {
   final int size;
   String get sizeAsString => formatFileSize(size);
 
-  final LazyIds<File> files;
+  final Collection<File> files;
 
   @override
   int compareTo(File other) {
@@ -161,8 +169,31 @@ class File implements Entity<File>, Comparable<File> {
   }
 
   Future<void> delete() => services.api.delete('fileStorage/$id');
+
+  @override
+  bool operator ==(Object other) =>
+      other is File &&
+      id == other.id &&
+      name == other.name &&
+      path == other.path &&
+      createdAt == other.createdAt &&
+      updatedAt == other.updatedAt &&
+      isDirectory == other.isDirectory &&
+      mimeType == other.mimeType &&
+      size == other.size;
+  @override
+  int get hashCode => hashList([
+        id,
+        name,
+        path,
+        createdAt,
+        updatedAt,
+        isDirectory,
+        mimeType,
+        size,
+      ]);
 }
 
 extension FileLoading on Id<dynamic> {
-  LazyIds<File> files([Id<File> parentId]) => FilePath(this, parentId).files;
+  Collection<File> files([Id<File> parentId]) => FilePath(this, parentId).files;
 }

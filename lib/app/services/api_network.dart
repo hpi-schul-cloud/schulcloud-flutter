@@ -19,8 +19,8 @@ class ApiNetworkService {
   Future<http.Response> get(
     String path, {
     Map<String, String> queryParameters = const {},
-  }) {
-    final user = services.storage.userFromCache;
+  }) async {
+    final user = await services.storage.userFromCache;
     return _network.get(
       _url(path),
       queryParameters: {

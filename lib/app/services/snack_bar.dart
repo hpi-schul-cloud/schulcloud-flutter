@@ -66,7 +66,7 @@ class SnackBarService {
           SizedBox(width: 8),
           Expanded(
             child: StreamBuilder<String>(
-              stream: Observable(messages).doOnDone(() => controller.close()),
+              stream: messages.doOnDone(() => controller.close()),
               builder: (_, snapshot) {
                 return Text(snapshot.data ?? '');
               },
@@ -110,7 +110,7 @@ class SnackBarService {
     await showLoading(updateMessages.stream);
 
     var hasError = false;
-    Observable(action)
+    action
         .doOnData((update) => updateMessages.add(loadingMessageBuilder(update)))
         .listen(
       (update) {},

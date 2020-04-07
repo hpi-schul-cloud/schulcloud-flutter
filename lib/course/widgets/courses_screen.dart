@@ -1,5 +1,3 @@
-import 'package:black_hole_flutter/black_hole_flutter.dart';
-import 'package:flutter_cached/flutter_cached.dart';
 import 'package:flutter/material.dart';
 import 'package:schulcloud/app/app.dart';
 
@@ -56,37 +54,39 @@ class _CoursesScreenState extends State<CoursesScreen>
     final s = context.s;
 
     return Scaffold(
-      body: CachedBuilder<List<Course>>(
-        controller: services.storage.root.courses.controller,
-        errorBannerBuilder: (_, error, st) => ErrorBanner(error, st),
-        errorScreenBuilder: (_, error, st) => ErrorScreen(error, st),
-        builder: (context, allCourses) {
-          final courses = sortFilterSelection.apply(allCourses);
-
-          return CustomScrollView(
-            slivers: <Widget>[
-              FancyAppBar(
-                title: Text(s.course),
-                actions: <Widget>[SortFilterIconButton(showSortFilterSheet)],
-              ),
-              if (courses.isEmpty)
-                SortFilterEmptyState(
-                  showSortFilterSheet,
-                  text: s.course_coursesScreen_empty,
-                )
-              else
+      body: CollectionBuilder.populated<Course>(
+        collection: services.storage.root.courses,
+        builder: handleLoadingErrorRefreshEmptyFilter(
+          appBar: FancyAppBar(
+            title: Text(s.course),
+            actions: <Widget>[SortFilterIconButton(showSortFilterSheet)],
+          ),
+          emptyStateBuilder: (context) => EmptyStateScreen(
+            text: s.course_coursesScreen_empty,
+          ),
+          sortFilterSelection: sortFilterSelection,
+          filteredEmptyStateBuilder: (context) => SortFilterEmptyState(
+            showSortFilterSheet,
+            text: s.course_coursesScreen_emptyFiltered,
+          ),
+          builder: (context, courses, fetch) {
+            return CustomScrollView(
+              slivers: <Widget>[
                 SliverList(
                   delegate: SliverChildBuilderDelegate((_, index) {
                     return Padding(
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 8,
+                      ),
                       child: CourseCard(courses[index]),
                     );
                   }, childCount: courses.length),
                 ),
-            ],
-          );
-        },
+              ],
+            );
+          },
+        ),
       ),
     );
   }

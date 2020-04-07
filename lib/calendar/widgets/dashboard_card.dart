@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:black_hole_flutter/black_hole_flutter.dart';
 import 'package:dartx/dartx.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_cached/flutter_cached.dart';
 import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/dashboard/widgets/dashboard_card.dart';
 import 'package:time_machine/time_machine.dart';
@@ -34,20 +33,13 @@ class _CalendarDashboardCardState extends State<CalendarDashboardCard> {
       omitHorizontalPadding: true,
       color: context.theme.primaryColor
           .withOpacity(context.theme.isDark ? 0.5 : 0.12),
-      child: CachedRawBuilder<List<Event>>(
-        controller: services.get<CalendarBloc>().fetchTodaysEvents(),
-        builder: (context, update) {
-          if (!update.hasData) {
-            return Center(
-              child: update.hasError
-                  ? Text(update.error.toString())
-                  : CircularProgressIndicator(),
-            );
-          }
-
+      child: CollectionBuilder.populated<Event>(
+        collection: services.get<CalendarBloc>().todaysEvents,
+        builder: handleLoadingError((context, events, _) {
           final now = Instant.now();
-          final events = update.data.where((e) => e.end > now);
+          events = events.where((e) => e.end > now).toList();
           _subscription?.cancel();
+
           if (events.isEmpty) {
             return Padding(
               padding: EdgeInsets.symmetric(horizontal: 16),
@@ -70,7 +62,7 @@ class _CalendarDashboardCardState extends State<CalendarDashboardCard> {
           return Column(
             children: events.map((e) => _EventPreview(e)).toList(),
           );
-        },
+        }),
       ),
     );
   }

@@ -5,8 +5,24 @@ import 'package:schulcloud/app/app.dart';
 
 import 'data.dart';
 
-class InvalidSignInSyntaxError implements Exception {
-  InvalidSignInSyntaxError({this.isEmailValid, this.isPasswordValid});
+class InvalidSignInSyntaxError extends FancyException {
+  InvalidSignInSyntaxError({
+    this.isEmailValid,
+    this.isPasswordValid,
+  })  : assert(!isEmailValid || !isPasswordValid),
+        super(
+          isGlobal: false,
+          messageBuilder: (context) {
+            if (!isEmailValid) {
+              return context.s.signIn_form_email_error;
+            } else if (!isPasswordValid) {
+              return context.s.signIn_form_password_error;
+            }
+            throw StateError('Email or password needs to be invalid for an '
+                'InvalidSignInSyntaxError to be thrown.');
+          },
+        );
+
   final bool isEmailValid;
   final bool isPasswordValid;
 }

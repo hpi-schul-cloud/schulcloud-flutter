@@ -4,7 +4,6 @@ import 'package:meta/meta.dart';
 import 'package:streaming_shared_preferences/streaming_shared_preferences.dart';
 
 import '../app.dart';
-import '../hive.dart';
 
 /// A service that offers storage of app-wide data.
 class StorageService {
@@ -28,7 +27,15 @@ class StorageService {
 
   final Preference<String> userIdString;
   Id<User> get userId => Id<User>(userIdString.getValue());
-  User get userFromCache => userId == null ? null : HiveCache.get(userId);
+  Future<User> get userFromCache async {
+    if (userId == null) {
+      return null;
+    }
+    return userId
+        .loadFromCache()
+        .first
+        .timeout(Duration(milliseconds: 100), onTimeout: () => null);
+  }
 
   final Preference<String> token;
   bool get hasToken => token.getValue().isNotEmpty;
@@ -54,8 +61,10 @@ class StorageService {
 
   final Preference<bool> errorReportingEnabled;
 
-  // TODO(marcelgarus): clear the HiveCache
-  Future<void> clear() => _prefs.clear();
+  Future<void> clear() => Future.wait([
+        _prefs.clear(),
+        HiveCache.clear(),
+      ]);
 }
 
 extension StorageServiceGetIt on GetIt {

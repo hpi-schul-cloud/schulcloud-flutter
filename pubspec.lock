@@ -42,7 +42,7 @@ packages:
       name: black_hole_flutter
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.2.3"
+    version: "0.2.5"
   boolean_selector:
     dependency: transitive
     description:
@@ -70,7 +70,7 @@ packages:
       name: build_daemon
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.1.3"
+    version: "2.1.4"
   build_resolvers:
     dependency: "direct dev"
     description:
@@ -91,7 +91,7 @@ packages:
       name: build_runner_core
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "4.5.2"
+    version: "4.5.3"
   built_collection:
     dependency: transitive
     description:
@@ -149,7 +149,7 @@ packages:
     source: hosted
     version: "3.2.1"
   collection:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: collection
       url: "https://pub.dartlang.org"
@@ -280,12 +280,14 @@ packages:
     source: hosted
     version: "1.0.6"
   flutter_cached:
-    dependency: "direct main"
+    dependency: transitive
     description:
-      name: flutter_cached
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "4.2.7"
+      path: "."
+      ref: "72220b1"
+      resolved-ref: "72220b1bd4af9be245e79eb1da994134811564a7"
+      url: "git://github.com/marcelgarus/flutter_cached"
+    source: git
+    version: "5.0.0"
   flutter_deep_linking:
     dependency: "direct main"
     description:
@@ -377,7 +379,7 @@ packages:
       name: font_awesome_flutter
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "8.7.0"
+    version: "8.8.1"
   fuchsia_remote_debug_protocol:
     dependency: transitive
     description: flutter
@@ -428,9 +430,11 @@ packages:
   hive_cache:
     dependency: "direct main"
     description:
-      name: hive_cache
-      url: "https://pub.dartlang.org"
-    source: hosted
+      path: "."
+      ref: "41cf50d"
+      resolved-ref: "41cf50d29ef642aaa3070fc9e700480fdafe39b1"
+      url: "git://github.com/marcelgarus/hive_cache"
+    source: git
     version: "1.0.0"
   hive_flutter:
     dependency: "direct main"
@@ -475,7 +479,7 @@ packages:
       name: http_parser
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "3.1.3"
+    version: "3.1.4"
   image:
     dependency: transitive
     description:
@@ -567,6 +571,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.12.6"
+  maybe:
+    dependency: transitive
+    description:
+      name: maybe
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.4.0"
   meta:
     dependency: "direct main"
     description:
@@ -629,7 +640,7 @@ packages:
       name: package_config
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.9.2"
+    version: "1.9.3"
   package_info:
     dependency: "direct main"
     description:
@@ -790,7 +801,7 @@ packages:
       name: rxdart
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.22.6"
+    version: "0.23.1"
   screen:
     dependency: transitive
     description:
