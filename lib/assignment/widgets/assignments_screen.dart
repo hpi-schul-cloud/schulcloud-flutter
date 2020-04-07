@@ -40,11 +40,10 @@ class AssignmentsScreen extends SortFilterWidget<Assignment> {
         selector: (assignment) => assignment.dueAt?.inLocalZone()?.calendarDate,
         defaultSelection: DateRangeFilterSelection(start: LocalDate.today()),
       ),
-      'courseId': CategoryFilter<Assignment, Id<Course>>(
+      'courseId': CategoryFilter<Assignment, Course>(
         (s) => s.assignment_assignment_property_course,
         selector: (assignment) => assignment.courseId,
-        categoriesController: services.storage.root.courses.controller
-            .map((courses) => courses.map((c) => c.id)),
+        categoriesCollection: services.storage.root.courses,
         categoryLabelBuilder: (_, courseId) => CourseName(courseId),
         webQueryParser: (value) => Id<Course>(value),
       ),

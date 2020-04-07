@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_cached/flutter_cached.dart';
 import 'package:schulcloud/app/app.dart';
 
 import '../data.dart';
@@ -16,9 +15,9 @@ class CourseName extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CachedRawBuilder<Course>(
-      controller: courseId.controller,
-      builder: (_, update) {
+    return EntityBuilder<Course>(
+      id: courseId,
+      builder: (_, update, __) {
         final course = update.data;
 
         return Row(

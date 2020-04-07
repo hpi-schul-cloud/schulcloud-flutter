@@ -1,15 +1,14 @@
 import 'package:black_hole_flutter/black_hole_flutter.dart';
-import 'package:dartx/dartx.dart';
 import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_cached/flutter_cached.dart';
+import 'package:hive_cache/hive_cache.dart';
 import 'package:intl/intl.dart';
 import 'package:time_machine/time_machine.dart';
 import 'package:time_machine/time_machine_text_patterns.dart';
 
 import '../datetime_utils.dart';
 import '../utils.dart';
-import '../widgets/error_widgets.dart';
+import '../widgets/cache_utils.dart';
 import 'sort_filter.dart';
 
 typedef Test<T, D> = bool Function(T item, D data);
@@ -158,40 +157,40 @@ typedef CategoryLabelBuilder<C> = Widget Function(
     BuildContext context, C category);
 typedef WebQueryCategoryParser<C> = C Function(String value);
 
-class CategoryFilter<T, C> extends Filter<T, Set<C>> {
+class CategoryFilter<T, C extends Entity<C>> extends Filter<T, Set<Id<C>>> {
   const CategoryFilter(
     L10nStringGetter titleGetter, {
     @required this.selector,
-    @required this.categoriesController,
+    @required this.categoriesCollection,
     @required this.categoryLabelBuilder,
     this.defaultSelection = const {},
     this.webQueryKey,
     @required this.webQueryParser,
   })  : assert(selector != null),
-        assert(categoriesController != null),
+        assert(categoriesCollection != null),
         assert(categoryLabelBuilder != null),
         assert(defaultSelection != null),
         assert(webQueryParser != null),
         super(titleGetter);
 
-  final Selector<T, C> selector;
-  final CacheController<Iterable<C>> categoriesController;
-  final CategoryLabelBuilder<C> categoryLabelBuilder;
+  final Selector<T, Id<C>> selector;
+  final Collection<C> categoriesCollection;
+  final CategoryLabelBuilder<Id<C>> categoryLabelBuilder;
 
   @override
-  final Set<C> defaultSelection;
+  final Set<Id<C>> defaultSelection;
 
   final String webQueryKey;
-  final WebQueryCategoryParser<C> webQueryParser;
+  final WebQueryCategoryParser<Id<C>> webQueryParser;
 
   @override
-  Set<C> tryParseWebQuery(Map<String, String> query, String key) {
+  Set<Id<C>> tryParseWebQuery(Map<String, String> query, String key) {
     final queryValue = query[webQueryKey ?? key];
     return queryValue.split(',').map(webQueryParser).toSet();
   }
 
   @override
-  bool filter(T item, Set<C> selection) {
+  bool filter(T item, Set<Id<C>> selection) {
     final category = selector(item);
     return category == null ||
         selection.isEmpty ||
@@ -201,22 +200,15 @@ class CategoryFilter<T, C> extends Filter<T, Set<C>> {
   @override
   Widget buildWidget(
     BuildContext context,
-    Set<C> selection,
-    DataChangeCallback<Set<C>> updater,
+    Set<Id<C>> selection,
+    DataChangeCallback<Set<Id<C>>> updater,
   ) {
-    return CachedRawBuilder<Iterable<C>>(
-      controller: categoriesController,
-      builder: (context, update) {
-        if (update.hasError) {
-          return ErrorBanner(update.error, update.stackTrace);
-        } else if (update.hasNoData) {
-          return Center(child: CircularProgressIndicator());
-        }
-
-        final categories = update.data;
+    return CollectionBuilder<C>(
+      collection: categoriesCollection,
+      builder: handleLoadingError((context, categoryIds, _) {
         return ChipGroup(
           children: <Widget>[
-            for (final category in categories)
+            for (final category in categoryIds)
               FilterChip(
                 selected: selection.contains(category),
                 onSelected: (isSelected) {
@@ -230,7 +222,7 @@ class CategoryFilter<T, C> extends Filter<T, Set<C>> {
               )
           ],
         );
-      },
+      }),
     );
   }
 }
