@@ -5,8 +5,14 @@ import 'package:flutter/widgets.dart';
 import 'package:get_it/get_it.dart';
 import 'package:http/http.dart' as http;
 
+import '../exception.dart';
 import '../logger.dart';
+import '../utils.dart';
 
+/// The API server returns error data as JSON when an error occurs. We parse
+/// this data because it's helpful for debugging (there's a message, a code
+/// which may be different from the actual HTTP status code, and several more
+/// fields).
 @immutable
 class ErrorBody {
   const ErrorBody({
@@ -53,29 +59,65 @@ class ErrorBody {
 }
 
 @immutable
-class NoConnectionToServerError implements Exception {}
+class NoConnectionToServerError extends FancyException {
+  NoConnectionToServerError(dynamic error, StackTrace stackTrace)
+      : super(
+          isGlobal: true,
+          messageBuilder: (context) => context.s.app_error_noConnection,
+          originalException: error,
+          stackTrace: stackTrace,
+        );
+}
 
 @immutable
-class ServerError implements Exception {
-  const ServerError(this.body) : assert(body != null);
+class ServerError extends FancyException {
+  ServerError(
+    this.body,
+    ErrorMessageBuilder messageBuilder, {
+    bool isGlobal = false,
+    dynamic error,
+    StackTrace stackTrace,
+  })  : assert(body != null),
+        super(
+          isGlobal: isGlobal,
+          messageBuilder: messageBuilder,
+          originalException: error,
+          stackTrace: stackTrace,
+        );
 
   final ErrorBody body;
 }
 
 class ConflictError extends ServerError {
-  const ConflictError(ErrorBody body) : super(body);
+  ConflictError(ErrorBody body)
+      : super(body, (context) => context.s.app_error_conflict);
 }
 
 class AuthenticationError extends ServerError {
-  const AuthenticationError(ErrorBody body) : super(body);
+  AuthenticationError(ErrorBody body)
+      : super(
+          body,
+          (context) => context.s.app_error_tokenExpired,
+          isGlobal: true,
+        );
+}
+
+class BadRequestError extends ServerError {
+  BadRequestError(ErrorBody body)
+      : super(body, (context) => context.s.app_error_badRequest);
 }
 
 class TooManyRequestsError extends ServerError {
-  const TooManyRequestsError(ErrorBody body, {@required this.timeToWait})
+  TooManyRequestsError(ErrorBody body, {@required this.timeToWait})
       : assert(timeToWait != null),
-        super(body);
+        super(body, (context) => context.s.app_error_rateLimit(timeToWait));
 
   final Duration timeToWait;
+}
+
+class InternalServerError extends ServerError {
+  InternalServerError(ErrorBody body)
+      : super(body, (context) => context.s.app_error_internal);
 }
 
 /// A service that offers making network request to arbitrary servers.
@@ -150,6 +192,7 @@ class NetworkService {
     assert(followRedirects != null);
 
     http.Response response;
+    logger.v('Network: $method $url');
     try {
       response = await _makeCall(
         method,
@@ -159,9 +202,9 @@ class NetworkService {
         body: body,
         followRedirects: followRedirects,
       );
-    } on SocketException catch (e) {
+    } on SocketException catch (e, st) {
       logger.w('No server connection', e);
-      throw NoConnectionToServerError();
+      throw NoConnectionToServerError(e, st);
     }
 
     // Succeed if its a 2xx or 3xx status code.
@@ -171,6 +214,10 @@ class NetworkService {
 
     final error = ErrorBody.fromJson(json.decode(response.body));
     logger.w('Network ${response.statusCode}: $method $url', error);
+
+    if (response.statusCode == 400) {
+      throw BadRequestError(error);
+    }
 
     if (response.statusCode == 401) {
       throw AuthenticationError(error);
@@ -193,6 +240,10 @@ class NetworkService {
       throw TooManyRequestsError(error, timeToWait: timeToWait);
     }
 
+    if (response.statusCode == 500) {
+      throw InternalServerError(body);
+    }
+
     throw UnimplementedError(
         'We should handle status code ${response.statusCode}. '
         'Response body: ${response.body}');
@@ -212,9 +263,15 @@ class NetworkService {
     assert(followRedirects != null);
 
     var uri = Uri.parse(url);
-    assert(uri.queryParameters.isEmpty,
-        'Please add query parameters via the queryParameters argument!');
-    uri = uri.replace(queryParameters: queryParameters);
+    if (uri.queryParameters.isNotEmpty) {
+      assert(
+        queryParameters.isEmpty,
+        'Please add query parameters either via the queryParameters argument '
+        'or via the provided url, but not both!',
+      );
+    } else {
+      uri = uri.replace(queryParameters: queryParameters);
+    }
 
     final request = http.Request(method, uri)
       ..followRedirects = followRedirects;

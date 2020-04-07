@@ -1,6 +1,5 @@
 import 'package:black_hole_flutter/black_hole_flutter.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_cached/flutter_cached.dart';
 import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/dashboard/dashboard.dart';
 
@@ -18,34 +17,26 @@ class NewsDashboardCard extends StatelessWidget {
       title: s.news_dashboardCard,
       footerButtonText: s.news_dashboardCard_all,
       onFooterButtonPressed: () => context.navigator.pushNamed('/news'),
-      child: CachedRawBuilder<List<Article>>(
-        controller: services.storage.root.news.controller,
-        builder: (context, update) {
-          if (!update.hasData) {
-            return update.hasError
-                ? ErrorBanner(update.error, update.stackTrace)
-                : Center(child: CircularProgressIndicator());
-          }
+      child: CollectionBuilder.populated<Article>(
+        collection: services.storage.root.news,
+        builder: handleLoadingErrorEmpty(
+          emptyStateBuilder: (context) => Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16),
+            child: Text(s.news_dashboardCard_empty),
+          ),
+          builder: (context, unorderedArticles, isFetching) {
+            var articles = unorderedArticles.toList()
+              ..sort((a1, a2) => -a1.publishedAt.compareTo(a2.publishedAt));
+            articles = articles.take(articleCount).toList();
 
-          Iterable<Article> articles = update.data;
-          if (articles.isEmpty) {
-            return Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16),
-              child: Text(s.news_dashboardCard_empty),
+            return Column(
+              children: <Widget>[
+                for (final article in articles)
+                  _buildArticlePreview(context, article),
+              ],
             );
-          }
-
-          articles = update.data
-            ..sort((a1, a2) => -a1.publishedAt.compareTo(a2.publishedAt));
-          articles = articles.take(articleCount);
-
-          return Column(
-            children: <Widget>[
-              for (final article in articles)
-                _buildArticlePreview(context, article),
-            ],
-          );
-        },
+          },
+        ),
       ),
     );
   }

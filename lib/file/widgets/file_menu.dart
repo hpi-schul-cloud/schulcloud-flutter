@@ -27,7 +27,7 @@ class FileMenu extends StatelessWidget {
       builder: (_) => RenameDialog(oldName: file.name),
     );
 
-    if (newName == null) {
+    if (newName == null || newName == file.name) {
       return;
     }
 

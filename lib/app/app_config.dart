@@ -96,7 +96,6 @@ class AppConfig {
 
   TextTheme _createTextTheme(Brightness brightness) {
     return TextTheme(
-      title: TextStyle(fontWeight: FontWeight.bold),
       body1: TextStyle(fontSize: 16),
       body2: TextStyle(fontSize: 16),
       button: TextStyle(

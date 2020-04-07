@@ -1,21 +1,21 @@
 import 'package:black_hole_flutter/black_hole_flutter.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_cached/flutter_cached.dart';
+import 'package:hive_cache/hive_cache.dart';
 
 import '../data.dart';
 import '../services/storage.dart';
 import '../utils.dart';
 import 'account_dialog.dart';
+import 'cache_utils.dart';
 
 class AccountAvatar extends StatelessWidget {
   const AccountAvatar();
 
   @override
   Widget build(BuildContext context) {
-    return CachedRawBuilder<User>(
-      controller: services.storage.userId.controller,
-      builder: (context, update) {
-        final user = update.data;
+    return EntityBuilder<User>(
+      id: services.storage.userId,
+      builder: handleError((context, user, fetch) {
         final backgroundColor =
             user?.avatarBackgroundColor ?? context.theme.primaryColor;
 
@@ -27,7 +27,7 @@ class AccountAvatar extends StatelessWidget {
             style: TextStyle(color: backgroundColor.highEmphasisOnColor),
           ),
         );
-      },
+      }),
     );
   }
 }

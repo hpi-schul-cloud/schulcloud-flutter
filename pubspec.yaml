@@ -21,14 +21,15 @@ dependencies:
     sdk: flutter
 
   analyzer: ^0.39.4
-  black_hole_flutter: ^0.2.2
+  black_hole_flutter: ^0.2.4
+  collection: ^1.14.11
   cupertino_icons: ^0.1.2
   dartx: ^0.2.0
   datetime_picker_formfield: ^1.0.0
+  device_info: ^0.4.2+1
   file_picker: ^1.4.3+2
   flare_flutter: ^1.5.8
   flutter_absolute_path: ^1.0.6
-  flutter_cached: ^4.2.4
   flutter_deep_linking: ^0.1.0
   # The current version of flutter_downloader, 1.2.1, causes the build to fail. Until this is fixed, we rely on an older version.
   flutter_downloader: 1.1.9
@@ -44,7 +45,10 @@ dependencies:
   get_it: 4.0.0-beta3
   grec_minimal: ^0.0.3
   hive: ^1.2.0
-  hive_cache: ^1.0.0
+  hive_cache:
+    git:
+      url: git://github.com/marcelgarus/hive_cache
+      ref: 5fc7fc9
   hive_flutter: ^0.3.0+1
   html: ^0.14.0+3
   http: ^0.12.0
@@ -59,13 +63,15 @@ dependencies:
   path_provider: ^1.1.0
   permission_handler: ^3.3.0
   provider: ^4.0.0
-  rxdart: ^0.22.3
+  rxdart: ^0.23.1
+  sentry: ^3.0.1
   share:
     git:
       url: https://github.com/d-silveira/flutter-share.git
       ref: 1f8b139
   sprintf: ^4.0.2
   streaming_shared_preferences: ^1.0.1
+  system_info: ^0.1.2
   time_machine: ^0.9.12
   transparent_image: ^1.0.0
   uni_links: ^0.2.0
