@@ -116,7 +116,7 @@ class _AssignmentsScreenState extends State<AssignmentsScreen>
   }
 }
 
-class AssignmentCard extends StatelessWidget {
+class AssignmentCard extends StatefulWidget {
   const AssignmentCard({
     @required this.assignment,
     @required this.setFlagFilterCallback,
@@ -126,8 +126,15 @@ class AssignmentCard extends StatelessWidget {
   final Assignment assignment;
   final SetFlagFilterCallback<Assignment> setFlagFilterCallback;
 
+  @override
+  _AssignmentCardState createState() => _AssignmentCardState();
+}
+
+class _AssignmentCardState extends State<AssignmentCard> {
+  Course _course;
+
   void _showAssignmentDetailsScreen(BuildContext context) {
-    context.navigator.pushNamed('/homework/${assignment.id}');
+    context.navigator.pushNamed('/homework/${widget.assignment.id}');
   }
 
   @override
@@ -153,15 +160,15 @@ class AssignmentCard extends StatelessWidget {
       children: <Widget>[
         Expanded(
           child: FancyText(
-            assignment.name,
+            widget.assignment.name,
             style: context.textTheme.subhead,
             maxLines: 2,
           ),
         ),
-        if (assignment.dueAt != null) ...[
+        if (widget.assignment.dueAt != null) ...[
           SizedBox(width: 8),
           Text(
-            assignment.dueAt.shortDateTimeString,
+            widget.assignment.dueAt.shortDateTimeString,
             style: context.textTheme.caption,
           ),
         ],
@@ -169,23 +176,37 @@ class AssignmentCard extends StatelessWidget {
     );
   }
 
+  Widget _buildCourseChip(BuildContext context) {
+    if (_course != null) {
+      return CourseChip(
+        _course,
+        onPressed: () {
+          // TODO(JonasWanke): filter list by course, https://github.com/schul-cloud/schulcloud-flutter/issues/145
+        },
+      );
+    }
+    return widget.assignment.courseId != null
+        ? EntityBuilder<Course>(
+            id: widget.assignment.courseId,
+            builder: handleError((context, course, fetch) {
+              _course ??= course;
+              return CourseChip(
+                course,
+                onPressed: () {
+                  // TODO(JonasWanke): filter list by course, https://github.com/schul-cloud/schulcloud-flutter/issues/145
+                },
+              );
+            }),
+          )
+        : null;
+  }
+
   List<Widget> _buildChips(BuildContext context) {
     final s = context.s;
 
     return <Widget>[
-      if (assignment.courseId != null)
-        EntityBuilder<Course>(
-          id: assignment.courseId,
-          builder: handleError((context, course, fetch) {
-            return CourseChip(
-              course,
-              onPressed: () {
-                // TODO(JonasWanke): filter list by course, https://github.com/schul-cloud/schulcloud-flutter/issues/145
-              },
-            );
-          }),
-        ),
-      if (assignment.isOverdue)
+      _buildCourseChip(context),
+      if (widget.assignment.isOverdue)
         ActionChip(
           avatar: Icon(
             Icons.flag,
@@ -194,19 +215,19 @@ class AssignmentCard extends StatelessWidget {
           label: Text(s.assignment_assignment_overdue),
           onPressed: () {},
         ),
-      if (assignment.isArchived)
+      if (widget.assignment.isArchived)
         FlagFilterPreviewChip(
           icon: Icons.archive,
           label: s.assignment_assignment_isArchived,
           flag: 'isArchived',
-          callback: setFlagFilterCallback,
+          callback: widget.setFlagFilterCallback,
         ),
-      if (assignment.isPrivate)
+      if (widget.assignment.isPrivate)
         FlagFilterPreviewChip(
           icon: Icons.lock,
           label: s.assignment_assignment_isPrivate,
           flag: 'isPrivate',
-          callback: setFlagFilterCallback,
+          callback: widget.setFlagFilterCallback,
         ),
     ];
   }
