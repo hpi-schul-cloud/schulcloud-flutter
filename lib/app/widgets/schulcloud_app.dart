@@ -13,7 +13,6 @@ import 'package:schulcloud/file/file.dart';
 import '../app_config.dart';
 import '../logger.dart';
 import '../routing.dart';
-import '../services/navigator_observer.dart';
 import '../services/snack_bar.dart';
 import '../services/storage.dart';
 import '../utils.dart';
@@ -36,7 +35,9 @@ class SchulCloudApp extends StatelessWidget {
           : services.get<AppConfig>().webUrl('login'),
       onGenerateRoute: router.onGenerateRoute,
       navigatorObservers: [
-        LoggingNavigatorObserver(),
+        LoggingNavigatorObserver(
+          logger: (message) => logger.d('Navigator: $message'),
+        ),
         HeroController(),
       ],
       localizationsDelegates: [
@@ -226,7 +227,9 @@ class _TabContentState extends State<_TabContent> {
         initialRoute: widget.initialRoute,
         onGenerateRoute: router.onGenerateRoute,
         observers: [
-          LoggingNavigatorObserver(),
+          LoggingNavigatorObserver(
+            logger: (message) => logger.d('Navigator: $message'),
+          ),
           HeroController(),
         ],
       ),
