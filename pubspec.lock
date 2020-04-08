@@ -431,8 +431,8 @@ packages:
     dependency: "direct main"
     description:
       path: "."
-      ref: "41cf50d"
-      resolved-ref: "41cf50d29ef642aaa3070fc9e700480fdafe39b1"
+      ref: "5fc7fc9"
+      resolved-ref: "5fc7fc958e28d4379d7d62d2049d1d266f1a18b7"
       url: "git://github.com/marcelgarus/hive_cache"
     source: git
     version: "1.0.0"

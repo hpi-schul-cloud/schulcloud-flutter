@@ -241,7 +241,7 @@ class NetworkService {
     }
 
     if (response.statusCode == 500) {
-      throw InternalServerError(body);
+      throw InternalServerError(error);
     }
 
     throw UnimplementedError(
