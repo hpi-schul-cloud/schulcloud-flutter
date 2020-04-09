@@ -17,7 +17,7 @@ import 'services/storage.dart';
 import 'utils.dart';
 
 final _sentry = SentryClient(
-    dsn: 'https://f5a0d14ac2aa4587beeddaa3db21ba44@sentry.schul-cloud.dev/11');
+    dsn: 'https://2d9dda495b8f4626b01e28e24c19a9b5@sentry.schul-cloud.dev/7');
 
 Future<void> runWithErrorReporting(Future<void> Function() body) async {
   await runZoned<Future<void>>(
