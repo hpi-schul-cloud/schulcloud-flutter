@@ -176,36 +176,11 @@ class _AssignmentCardState extends State<AssignmentCard> {
     );
   }
 
-  Widget _buildCourseChip(BuildContext context) {
-    if (_course != null) {
-      return CourseChip(
-        _course,
-        onPressed: () {
-          // TODO(JonasWanke): filter list by course, https://github.com/schul-cloud/schulcloud-flutter/issues/145
-        },
-      );
-    }
-    return widget.assignment.courseId != null
-        ? EntityBuilder<Course>(
-            id: widget.assignment.courseId,
-            builder: handleError((context, course, fetch) {
-              _course ??= course;
-              return CourseChip(
-                course,
-                onPressed: () {
-                  // TODO(JonasWanke): filter list by course, https://github.com/schul-cloud/schulcloud-flutter/issues/145
-                },
-              );
-            }),
-          )
-        : null;
-  }
-
   List<Widget> _buildChips(BuildContext context) {
     final s = context.s;
 
     return <Widget>[
-      _buildCourseChip(context),
+      if (widget.assignment.courseId != null) _buildCourseChip(context),
       if (widget.assignment.isOverdue)
         ActionChip(
           avatar: Icon(
@@ -230,5 +205,30 @@ class _AssignmentCardState extends State<AssignmentCard> {
           callback: widget.setFlagFilterCallback,
         ),
     ];
+  }
+
+  Widget _buildCourseChip(BuildContext context) {
+    if (_course != null) {
+      return CourseChip(
+        _course,
+        onPressed: () {
+          // TODO(JonasWanke): filter list by course, https://github.com/schul-cloud/schulcloud-flutter/issues/145
+        },
+      );
+    }
+    return widget.assignment.courseId != null
+        ? EntityBuilder<Course>(
+            id: widget.assignment.courseId,
+            builder: handleError((context, course, fetch) {
+              _course ??= course;
+              return CourseChip(
+                course,
+                onPressed: () {
+                  // TODO(JonasWanke): filter list by course, https://github.com/schul-cloud/schulcloud-flutter/issues/145
+                },
+              );
+            }),
+          )
+        : null;
   }
 }
