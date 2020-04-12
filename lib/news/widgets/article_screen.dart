@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:schulcloud/app/app.dart';
+import 'package:schulcloud/app/widgets/account_avatar.dart';
 
 import '../data.dart';
 import 'article_image.dart';
@@ -24,19 +25,19 @@ class ArticleScreen extends StatelessWidget {
       id: articleId,
       builder: handleLoadingError((context, article, isFetching) {
         return Scaffold(
+          appBar: _buildAppBar(context, article),
           body: LayoutBuilder(
             builder: (ctx, constraints) {
               final width = constraints.maxWidth;
-              final margin = width < 500 ? 0 : width * 0.08;
+              final margin = width < 500 ? 0.0 : width * 0.08;
               final padding = (width * 0.06).clamp(32.0, 64.0);
 
               return Provider<ArticleTheme>(
                 create: (_) =>
                     ArticleTheme(darkColor: Colors.purple, padding: padding),
                 child: ListView(
-                  padding: MediaQuery.of(context).padding +
-                      EdgeInsets.symmetric(horizontal: margin.toDouble()) +
-                      EdgeInsets.symmetric(vertical: 16),
+                  padding:
+                      EdgeInsets.symmetric(horizontal: margin, vertical: 16),
                   children: <Widget>[
                     ArticleView(article),
                   ],
@@ -46,6 +47,19 @@ class ArticleScreen extends StatelessWidget {
           ),
         );
       }),
+    );
+  }
+
+  AppBar _buildAppBar(BuildContext context, Article article) {
+    return AppBar(
+      elevation: 0,
+      backgroundColor: context.theme.scaffoldBackgroundColor,
+      iconTheme: IconThemeData(color: context.theme.contrastColor),
+      actions: <Widget>[
+        SizedBox(width: 8),
+        AccountButton(),
+        SizedBox(width: 8),
+      ],
     );
   }
 }
