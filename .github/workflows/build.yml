@@ -172,8 +172,13 @@ jobs:
 
       - name: Store Google Play credentials in a file
         run: echo "${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_KEY }}" > ./android/fastlane/googlePlay-serviceAccount.json
+      - name: Store Google Play upload key in a file
+        run: echo "${{ secrets.GOOGLE_PLAY_UPLOAD_KEY }}" | base64 --decode > ./android/upload.keystore.jks
       - name: Build AAB with updated version
         uses: JonasWanke/unicorn@70d7e89
+        env:
+          UPLOAD_KEY_STORE_PASSWORD: ${{ secrets.GOOGLE_PLAY_UPLOAD_KEY_STORE_PASSWORD }}
+          UPLOAD_KEY_KEY_PASSWORD: ${{ secrets.GOOGLE_PLAY_UPLOAD_KEY_KEY_PASSWORD }}
       - name: Deploy to Google Play (internal track)
         uses: maierj/fastlane-action@v1.4.0
         with:
