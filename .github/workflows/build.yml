@@ -119,8 +119,8 @@ jobs:
           name: apk-${{ matrix.flavor }}
           path: build/app/outputs/apk/${{ matrix.flavor }}/release
 
-  deploy-internal:
-    name: Deploy internal
+  deploy-canary:
+    name: Deploy canary
     needs: install
     # We have to use macOS for hardware acceleration on Android emulators
     runs-on: macos-10.15
@@ -157,7 +157,7 @@ jobs:
         run: |
           brew update && brew install imagemagick
           flutter pub global activate screenshots
-      # TODO(JonasWanke): enabled when this issue is fixed: https://github.com/flutter/flutter/issues/36244
+      # TODO(JonasWanke): enable screenshots when this issue is fixed: https://github.com/flutter/flutter/issues/36244
       # - name: Take screenshots
       #   run: flutter pub global run screenshots:main -v -f sc
       # - name: Upload screenshots as artifact
@@ -169,3 +169,13 @@ jobs:
       #   with:
       #     name: tmp-screenshots
       #     path: /tmp/screenshots
+
+      - name: Store Google Play credentials in a file
+        run: echo "${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_KEY }}" > ./android/fastlane/googlePlay-serviceAccount.json
+      - name: Build AAB with updated version
+        uses: JonasWanke/unicorn@70d7e89
+      - name: Deploy to Google Play (internal track)
+        uses: maierj/fastlane-action@v1.4.0
+        with:
+          lane: canary
+          subdirectory: android

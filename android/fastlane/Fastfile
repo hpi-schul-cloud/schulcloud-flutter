@@ -16,19 +16,9 @@
 default_platform(:android)
 
 platform :android do
-  desc "Runs all the tests"
-  lane :test do
-    gradle(task: "test")
-  end
-
-  desc "Submit a new Beta Build to Crashlytics Beta"
-  lane :beta do
-    # gradle(task: "clean assembleRelease")
-    Dir.chdir("../..") do
-      # We're now at the root of this repository.
-      sh("flutter", "build", "appbundle")
-    end
-
+  desc "Upload a new canary build"
+  lane :canary do
+    # Building the AAB and preparing metadata is done by 🦄 Unicorn
     upload_to_play_store(
       aab: "../build/app/outputs/bundle/scRelease/app-sc-release.aab"
     )
