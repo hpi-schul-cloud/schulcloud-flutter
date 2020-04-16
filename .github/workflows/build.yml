@@ -197,7 +197,7 @@ jobs:
           path: .
 
       - name: Store Google Play credentials in a file
-        run: echo "${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_KEY }}" > ./android/fastlane/googlePlay-serviceAccount.json
+        run: echo "${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_KEY }}" | base64 --decode > ./android/fastlane/googlePlay-serviceAccount.json
       - name: Store Google Play upload key in a file
         run: echo "${{ secrets.GOOGLE_PLAY_UPLOAD_KEY }}" | base64 --decode > ./android/upload.keystore.jks
       - name: Build AAB with updated version
