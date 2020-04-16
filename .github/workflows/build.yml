@@ -110,8 +110,12 @@ jobs:
       # The default (sc) flavor doesn't have a special main.dart-suffix
       - if: matrix.flavor == 'sc'
         run: flutter build apk --flavor=sc
+        env:
+          RELEASE_USE_DEBUG_KEY: true
       - if: matrix.flavor != 'sc'
         run: flutter build apk --target=lib/main_${{ matrix.flavor }}.dart --flavor=${{ matrix.flavor }}
+        env:
+          RELEASE_USE_DEBUG_KEY: true
 
       - name: Upload APK as artifact
         uses: actions/upload-artifact@v1
