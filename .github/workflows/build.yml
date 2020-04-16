@@ -201,7 +201,7 @@ jobs:
       - name: Store Google Play upload key in a file
         run: echo "${{ secrets.GOOGLE_PLAY_UPLOAD_KEY }}" | base64 --decode > ./android/upload.keystore.jks
       - name: Build AAB with updated version
-        uses: JonasWanke/unicorn@70d7e89
+        uses: JonasWanke/unicorn@fix/google-play-deployment
         env:
           UPLOAD_KEY_STORE_PASSWORD: ${{ secrets.GOOGLE_PLAY_UPLOAD_KEY_STORE_PASSWORD }}
           UPLOAD_KEY_KEY_PASSWORD: ${{ secrets.GOOGLE_PLAY_UPLOAD_KEY_KEY_PASSWORD }}
