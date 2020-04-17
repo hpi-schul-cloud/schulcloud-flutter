@@ -70,8 +70,8 @@ unicorn {
                     currentVersion.copy(preRelease = "$CANARY.${canaryRelease + 1}")
                 }
                 val versionCode = version.versionCode()
-
-                Flutter.buildAppBundle(this, flavor = "sc", buildNumber = versionCode, buildName = version)
+                Action.setOutput("version", version)
+                Action.setOutput("versionCode", versionCode)
 
                 val commit = git.getHeadCommit(this)
                 Fastlane.saveChangelog(
