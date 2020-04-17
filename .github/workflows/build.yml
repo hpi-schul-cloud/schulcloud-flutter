@@ -181,6 +181,7 @@ jobs:
       matrix:
         flavor: ["sc"]
       fail-fast: false
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
     steps:
       - name: Install Java 12
         uses: actions/setup-java@v1
