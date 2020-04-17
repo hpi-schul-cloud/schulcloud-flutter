@@ -78,8 +78,8 @@ unicorn {
                     this,
                     versionCode,
                     contents = mapOf(
-                        Locale.US to "Canary deployment of commit ${commit.id}:\n${commit.fullMessage}",
-                        Locale.GERMANY to "Canary-Deployment von Commit ${commit.id}:\n${commit.fullMessage}"
+                        Locale.US to "Canary deployment of commit ${commit.name}:\n${commit.fullMessage}",
+                        Locale.GERMANY to "Canary-Deployment von Commit ${commit.name}:\n${commit.fullMessage}"
                     ),
                     directory = projectDir.resolve("android/fastlane")
                 )
