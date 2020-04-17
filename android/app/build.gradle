@@ -39,6 +39,15 @@ android {
         versionName flutterVersionName
     }
 
+    signingConfigs {
+        release {
+            storeFile rootProject.file('upload.keystore.jks')
+            storePassword System.getenv("UPLOAD_KEY_STORE_PASSWORD")
+            keyAlias "schulcloud"
+            keyPassword System.getenv("UPLOAD_KEY_KEY_PASSWORD")
+        }
+    }
+
     buildTypes {
         debug {
             applicationIdSuffix ".debug"
@@ -47,10 +56,7 @@ android {
             if (System.getenv("RELEASE_USE_DEBUG_KEY") == "true") {
                 signingConfig signingConfigs.debug
             } else {
-                storeFile rootProject.file('upload.keystore.jks')
-                storePassword System.getenv("UPLOAD_KEY_STORE_PASSWORD")
-                keyAlias "schulcloud"
-                keyPassword System.getenv("UPLOAD_KEY_KEY_PASSWORD")
+                signingConfig signingConfigs.release
             }
         }
     }
