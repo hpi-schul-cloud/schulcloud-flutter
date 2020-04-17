@@ -70,8 +70,8 @@ unicorn {
                     currentVersion.copy(preRelease = "$CANARY.${canaryRelease + 1}")
                 }
                 val versionCode = version.versionCode()
-                Action.setOutput("version", version)
-                Action.setOutput("versionCode", versionCode)
+                Action.setOutput("version", version.toString())
+                Action.setOutput("versionCode", versionCode.toString())
 
                 val commit = git.getHeadCommit(this)
                 Fastlane.saveChangelog(
