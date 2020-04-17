@@ -204,7 +204,7 @@ jobs:
 
       - id: unicorn
         name: Determine new version & generate changelog
-        uses: JonasWanke/unicorn@fix/google-play-deployment
+        uses: JonasWanke/unicorn@ad66dae
         with:
           repo-token: "${{ secrets.UNICORN_TOKEN }}"
       - name: Build AAB
