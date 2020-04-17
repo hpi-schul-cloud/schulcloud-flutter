@@ -34,7 +34,7 @@ fun SemVer.versionCode(): Int {
         previewBaseCode * 1000 + previewVersion
     } else 0
 
-    return ((major * 100 + minor) * 100 + patch) * 100 + previewCode
+    return ((major * 100 + minor) * 100 + patch) * 10000 + previewCode
 }
 
 val CANARY = "canary"
