@@ -207,7 +207,7 @@ jobs:
         uses: JonasWanke/unicorn@fix/google-play-deployment
         with:
           repo-token: "${{ secrets.UNICORN_TOKEN }}"
-      - name: Build AAB with updated version
+      - name: Build AAB
         run: |
           flutter build appbundle \
             --flavor=sc \
