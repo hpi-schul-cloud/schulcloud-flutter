@@ -20,6 +20,7 @@ platform :android do
   lane :uploadCanary do
     # Building the AAB and preparing metadata is done by 🦄 Unicorn
     upload_to_play_store(
+      track: "internal",
       aab: "../build/app/outputs/bundle/scRelease/app-sc-release.aab"
     )
   end
