@@ -193,8 +193,6 @@ jobs:
       - run: 'echo "PATH: $PATH"'
       - run: 'echo "FLUTTER_HOME: $FLUTTER_HOME"'
       - run: ls $FLUTTER_HOME
-      - run: ls /home/runner/work/_temp/_github_home
-      - run: ls /home/runner/work/_temp/_github_workflow
       - name: Checkout source
         uses: actions/download-artifact@v1
         with:
