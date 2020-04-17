@@ -215,6 +215,8 @@ jobs:
         env:
           UPLOAD_KEY_STORE_PASSWORD: ${{ secrets.GOOGLE_PLAY_UPLOAD_KEY_STORE_PASSWORD }}
           UPLOAD_KEY_KEY_PASSWORD: ${{ secrets.GOOGLE_PLAY_UPLOAD_KEY_KEY_PASSWORD }}
+        # Flutter doesn't find the generated .aab-file, but it should
+        continue-on-error: true
       - name: Deploy to Google Play (internal track)
         uses: maierj/fastlane-action@v1.4.0
         with:
