@@ -220,5 +220,5 @@ jobs:
       - name: Deploy to Google Play (internal track)
         uses: maierj/fastlane-action@v1.4.0
         with:
-          lane: canary
+          lane: uploadCanary
           subdirectory: android

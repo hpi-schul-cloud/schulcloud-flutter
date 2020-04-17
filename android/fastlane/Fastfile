@@ -17,7 +17,7 @@ default_platform(:android)
 
 platform :android do
   desc "Upload a new canary build"
-  lane :canary do
+  lane :uploadCanary do
     # Building the AAB and preparing metadata is done by 🦄 Unicorn
     upload_to_play_store(
       aab: "../build/app/outputs/bundle/scRelease/app-sc-release.aab"
