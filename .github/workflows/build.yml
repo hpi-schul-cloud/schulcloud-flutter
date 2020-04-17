@@ -190,9 +190,6 @@ jobs:
         uses: subosito/flutter-action@v1
         with:
           channel: "stable"
-      - run: 'echo "PATH: $PATH"'
-      - run: 'echo "FLUTTER_HOME: $FLUTTER_HOME"'
-      - run: ls $FLUTTER_HOME
       - name: Checkout source
         uses: actions/download-artifact@v1
         with:
@@ -203,13 +200,15 @@ jobs:
         run: echo "${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_KEY }}" | base64 --decode > ./android/fastlane/googlePlay-serviceAccount.json
       - name: Store Google Play upload key in a file
         run: echo "${{ secrets.GOOGLE_PLAY_UPLOAD_KEY }}" | base64 --decode > ./android/upload.keystore.jks
+
       - id: unicorn
-        name: Build AAB with updated version
+        name: Determine new version & generate changelog
         uses: JonasWanke/unicorn@fix/google-play-deployment
         with:
           repo-token: "${{ secrets.UNICORN_TOKEN }}"
-      - run: >
-          flutter build apk
+      - name: Build AAB with updated version
+        run: >
+          flutter build appbundle
             --flavor=sc
             --build-number=${{ steps.unicorn.outputs.versionCode }}
             --build-name=${{ steps.unicorn.outputs.version }}
