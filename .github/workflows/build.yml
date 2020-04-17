@@ -207,10 +207,10 @@ jobs:
         with:
           repo-token: "${{ secrets.UNICORN_TOKEN }}"
       - name: Build AAB with updated version
-        run: >
-          flutter build appbundle
-            --flavor=sc
-            --build-number=${{ steps.unicorn.outputs.versionCode }}
+        run: |
+          flutter build appbundle \
+            --flavor=sc \
+            --build-number=${{ steps.unicorn.outputs.versionCode }} \
             --build-name=${{ steps.unicorn.outputs.version }}
         env:
           UPLOAD_KEY_STORE_PASSWORD: ${{ secrets.GOOGLE_PLAY_UPLOAD_KEY_STORE_PASSWORD }}
