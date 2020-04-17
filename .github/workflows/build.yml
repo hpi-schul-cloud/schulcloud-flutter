@@ -193,11 +193,15 @@ jobs:
       - run: 'echo "PATH: $PATH"'
       - run: 'echo "FLUTTER_HOME: $FLUTTER_HOME"'
       - run: ls $FLUTTER_HOME
+      - run: ls /home/runner/work/_temp/_github_home
+      - run: ls /home/runner/work/_temp/_github_workflow
       - name: Checkout source
         uses: actions/download-artifact@v1
         with:
           name: source
           path: .
+      - run: |
+          cp -r $FLUTTER_HOME /home/runner/work/_temp/_github_home/flutter
 
       - name: Store Google Play credentials in a file
         run: echo "${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_KEY }}" | base64 --decode > ./android/fastlane/googlePlay-serviceAccount.json
@@ -208,6 +212,7 @@ jobs:
         with:
           repo-token: "${{ secrets.UNICORN_TOKEN }}"
         env:
+          FLUTTER_HOME: /github/home/flutter
           UPLOAD_KEY_STORE_PASSWORD: ${{ secrets.GOOGLE_PLAY_UPLOAD_KEY_STORE_PASSWORD }}
           UPLOAD_KEY_KEY_PASSWORD: ${{ secrets.GOOGLE_PLAY_UPLOAD_KEY_KEY_PASSWORD }}
       - name: Deploy to Google Play (internal track)
