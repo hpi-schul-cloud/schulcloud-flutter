@@ -190,6 +190,9 @@ jobs:
         uses: subosito/flutter-action@v1
         with:
           channel: "stable"
+      - run: 'echo "PATH: $PATH"'
+      - run: 'echo "FLUTTER_HOME: $FLUTTER_HOME"'
+      - run: ls $FLUTTER_HOME
       - name: Checkout source
         uses: actions/download-artifact@v1
         with:
