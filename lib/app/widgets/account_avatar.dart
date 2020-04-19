@@ -36,7 +36,7 @@ class DemoTag extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: Color.lerp(Colors.white, Colors.orange, 0.5),
+      color: Colors.orange.withOpacity(0.5),
       borderRadius: BorderRadius.circular(8),
       child: Padding(
         padding: EdgeInsets.all(4),
