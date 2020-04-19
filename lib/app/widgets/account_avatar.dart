@@ -56,18 +56,18 @@ class AccountAvatar extends StatelessWidget {
   Widget build(BuildContext context) {
     return EntityBuilder<User>(
       id: services.storage.userId,
-      builder: handleError((context, user, fetch) {
+      builder: (context, snapshot, fetch) {
         final backgroundColor =
             snapshot.data?.avatarBackgroundColor ?? context.theme.primaryColor;
         return CircleAvatar(
           backgroundColor: backgroundColor,
           maxRadius: 16,
           child: Text(
-            user?.avatarInitials ?? '…',
+            snapshot.data?.avatarInitials ?? snapshot.hasError ? 'X' : '…',
             style: TextStyle(color: backgroundColor.highEmphasisOnColor),
           ),
         );
-      }),
+      },
     );
   }
 }
