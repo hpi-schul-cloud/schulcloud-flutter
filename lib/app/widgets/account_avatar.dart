@@ -69,7 +69,14 @@ class AccountButton extends StatelessWidget {
       },
       child: Padding(
         padding: EdgeInsets.all(8),
-        child: AccountAvatar(),
+        child: ValueListenableBuilder<Set<Banner>>(
+          valueListenable: services.banners,
+          builder: (context, banners, _) {
+            return banners.contains(Banners.demo)
+                ? Center(child: DemoTag())
+                : AccountAvatar();
+          },
+        ),
       ),
     );
   }
