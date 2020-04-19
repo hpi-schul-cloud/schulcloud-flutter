@@ -18,7 +18,7 @@ import '../services/banner.dart';
 import '../services/snack_bar.dart';
 import '../services/storage.dart';
 import '../utils.dart';
-import 'offline_banner.dart';
+import 'banners.dart';
 
 class SchulCloudApp extends StatelessWidget {
   static final navigatorKey = GlobalKey<NavigatorState>();
@@ -131,18 +131,9 @@ class SignedInScreenState extends ReceiveShareState<SignedInScreen>
           return Bannered(
             banners: <Widget>[
               if (banners.contains(Banners.offline)) OfflineBanner(),
+              if (banners.contains(Banners.tokenExpired)) TokenExpiredBanner(),
             ],
             child: child,
-          );
-          return Column(
-            children: <Widget>[
-              // Child has a key (the _scaffoldKey) so it doesn't rebuild even
-              // if banners change.
-              Expanded(
-                key: ValueKey('child'),
-                child: child,
-              ),
-            ],
           );
         },
         child: Scaffold(
