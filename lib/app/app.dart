@@ -17,6 +17,7 @@ export 'exception.dart';
 export 'hive.dart';
 export 'logger.dart';
 export 'services/api_network.dart';
+export 'services/banner.dart';
 export 'services/deep_linking.dart';
 export 'services/network.dart';
 export 'services/snack_bar.dart';

@@ -89,6 +89,7 @@ Future<void> main({AppConfig appConfig = schulCloudAppConfig}) async {
           'timeZone': timeZone,
         });
       }, instanceName: 'ignored')
+      ..registerSingleton(BannerService())
       ..registerSingleton(SnackBarService())
       ..registerSingleton(NetworkService())
       ..registerSingleton(ApiNetworkService())
