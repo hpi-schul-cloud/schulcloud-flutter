@@ -60,7 +60,13 @@ const schulCloudAppConfig = AppConfig(
 );
 
 Future<void> main({AppConfig appConfig = schulCloudAppConfig}) async {
-  WidgetsFlutterBinding.ensureInitialized();
+  // Show loading screen.
+  runApp(Container(
+    color: Colors.white,
+    alignment: Alignment.center,
+    child: CircularProgressIndicator(),
+  ));
+
   await runWithErrorReporting(() async {
     Logger.level = Level.debug;
     logger
@@ -116,9 +122,25 @@ Future<void> main({AppConfig appConfig = schulCloudAppConfig}) async {
             );
           }
 
-          return SchulCloudApp();
-        },
-      ),
-    );
+    // Set demo banner based on current user.
+    // TODO(marcelgarus): dipose id stream.
+    services.storage.userIdString
+        .map((idString) => Id<User>(idString))
+        .listen((userId) {
+      userId.resolve().listen((user) {
+        // TODO(marcelgarus): Don't hardcode role id.
+        final isDemo =
+            user?.roleIds?.contains(Id<Role>('0000d186816abba584714d02')) ??
+                false;
+        if (isDemo) {
+          services.banners.add(Banners.demo);
+        } else {
+          services.banners.remove(Banners.demo);
+        }
+      });
+    });
+
+    logger.d('Running…');
+    runApp(SchulCloudApp());
   });
 }
