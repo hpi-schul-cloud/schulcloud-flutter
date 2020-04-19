@@ -41,7 +41,7 @@ class DemoTag extends StatelessWidget {
       child: Padding(
         padding: EdgeInsets.all(4),
         child: Text(
-          'DEMO', // TODO: localize
+          context.s.app_demo.toUpperCase(),
           style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
         ),
       ),
