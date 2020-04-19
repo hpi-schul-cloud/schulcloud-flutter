@@ -32,6 +32,23 @@ class AccountAvatar extends StatelessWidget {
   }
 }
 
+class DemoTag extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: Color.lerp(Colors.white, Colors.orange, 0.5),
+      borderRadius: BorderRadius.circular(8),
+      child: Padding(
+        padding: EdgeInsets.all(4),
+        child: Text(
+          'DEMO', // TODO: localize
+          style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+        ),
+      ),
+    );
+  }
+}
+
 class AccountButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
