@@ -109,18 +109,8 @@ Future<void> main({AppConfig appConfig = schulCloudAppConfig}) async {
       yield EmptyStateLicense();
     });
 
-    logger.d('Running…');
-    runApp(
-      FutureBuilder<void>(
-        future: services.allReady(),
-        builder: (_, snapshot) {
-          if (!snapshot.hasData) {
-            return Container(
-              color: Colors.white,
-              alignment: Alignment.center,
-              child: CircularProgressIndicator(),
-            );
-          }
+    logger.d('Waiting for services.');
+    await services.allReady();
 
     // Set demo banner based on current user.
     // TODO(marcelgarus): dipose id stream.

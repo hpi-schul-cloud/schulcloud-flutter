@@ -58,17 +58,7 @@ class AccountAvatar extends StatelessWidget {
       id: services.storage.userId,
       builder: handleError((context, user, fetch) {
         final backgroundColor =
-            user?.avatarBackgroundColor ?? context.theme.primaryColor;
-        // TODO(marcelgarus): Don't hardcode role id.
-        final isDemo =
-            user?.roleIds?.contains(Id<Role>('0000d186816abba584714d02')) ??
-                false;
-
-        if (isDemo) {
-          services.banners.add(Banners.demo);
-        } else {
-          services.banners.remove(Banners.demo);
-        }
+            snapshot.data?.avatarBackgroundColor ?? context.theme.primaryColor;
         return CircleAvatar(
           backgroundColor: backgroundColor,
           maxRadius: 16,
