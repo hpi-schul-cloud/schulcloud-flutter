@@ -212,18 +212,21 @@ class NetworkService {
 
     // Succeed if its a 2xx or 3xx status code.
     if (response.statusCode ~/ 100 == 2 || response.statusCode ~/ 100 == 3) {
+      services.banners.remove(Banners.tokenExpired);
       return response;
     }
 
     final error = ErrorBody.fromJson(json.decode(response.body));
     logger.w('Network ${response.statusCode}: $method $url', error);
 
+    if (response.statusCode == 401) {
+      services.banners.add(Banners.tokenExpired);
+      throw AuthenticationError(error);
+    }
+    services.banners.remove(Banners.tokenExpired);
+
     if (response.statusCode == 400) {
       throw BadRequestError(error);
-    }
-
-    if (response.statusCode == 401) {
-      throw AuthenticationError(error);
     }
 
     if (response.statusCode == 409 && error.className == 'conflict') {
