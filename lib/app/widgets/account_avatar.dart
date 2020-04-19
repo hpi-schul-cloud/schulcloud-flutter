@@ -1,8 +1,9 @@
 import 'package:black_hole_flutter/black_hole_flutter.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide Banner;
 import 'package:hive_cache/hive_cache.dart';
 
 import '../data.dart';
+import '../services/banner.dart';
 import '../services/storage.dart';
 import '../utils.dart';
 import 'account_dialog.dart';
@@ -18,7 +19,16 @@ class AccountAvatar extends StatelessWidget {
       builder: handleError((context, user, fetch) {
         final backgroundColor =
             user?.avatarBackgroundColor ?? context.theme.primaryColor;
+        // TODO(marcelgarus): Don't hardcode role id.
+        final isDemo =
+            user?.roleIds?.contains(Id<Role>('0000d186816abba584714d02')) ??
+                false;
 
+        if (isDemo) {
+          services.banners.add(Banners.demo);
+        } else {
+          services.banners.remove(Banners.demo);
+        }
         return CircleAvatar(
           backgroundColor: backgroundColor,
           maxRadius: 16,
