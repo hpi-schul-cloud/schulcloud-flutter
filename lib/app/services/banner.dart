@@ -1,8 +1,9 @@
 import 'package:flutter/foundation.dart';
 import 'package:get_it/get_it.dart';
 
+@immutable
 class Banner {
-  const Banner(this.name);
+  const Banner(this.name) : assert(name != null);
 
   final String name;
 

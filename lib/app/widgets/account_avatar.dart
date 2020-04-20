@@ -7,7 +7,6 @@ import '../services/banner.dart';
 import '../services/storage.dart';
 import '../utils.dart';
 import 'account_dialog.dart';
-import 'cache_utils.dart';
 
 class AccountButton extends StatelessWidget {
   @override
@@ -63,7 +62,7 @@ class AccountAvatar extends StatelessWidget {
           backgroundColor: backgroundColor,
           maxRadius: 16,
           child: Text(
-            snapshot.data?.avatarInitials ?? snapshot.hasError ? 'X' : '…',
+            snapshot.data?.avatarInitials ?? (snapshot.hasError ? 'X' : '…'),
             style: TextStyle(color: backgroundColor.highEmphasisOnColor),
           ),
         );
