@@ -34,7 +34,7 @@ class TokenExpiredBanner extends StatelessWidget {
               onPressed: () => signOut(context),
               icon: SvgPicture.asset(
                 'assets/icon_signOut.svg',
-                color: context.theme.isDark ? Colors.white : Colors.black,
+                color: context.theme.contrastColor,
                 width: 24,
               ),
             ),
