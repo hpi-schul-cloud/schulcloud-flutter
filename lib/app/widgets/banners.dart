@@ -1,6 +1,8 @@
 import 'package:banners/banners.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:schulcloud/app/app.dart';
+import 'package:schulcloud/sign_in/sign_in.dart';
 
 const _bannerPadding = EdgeInsets.symmetric(horizontal: 16, vertical: 4);
 
@@ -23,8 +25,21 @@ class TokenExpiredBanner extends StatelessWidget {
     return BannerScaffold(
       backgroundColor: Colors.orange.withOpacity(0.5),
       body: Padding(
-        padding: EdgeInsets.all(8),
-        child: Text(context.s.app_error_tokenExpired),
+        padding: _bannerPadding,
+        child: Row(
+          children: <Widget>[
+            Expanded(child: Text(context.s.app_error_tokenExpired)),
+            SizedBox(width: 16),
+            IconButton(
+              onPressed: () => signOut(context),
+              icon: SvgPicture.asset(
+                'assets/icon_signOut.svg',
+                color: context.theme.isDark ? Colors.white : Colors.black,
+                width: 24,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
