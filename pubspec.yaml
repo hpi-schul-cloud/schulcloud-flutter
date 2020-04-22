@@ -21,6 +21,7 @@ dependencies:
     sdk: flutter
 
   analyzer: ^0.39.4
+  banners: ^0.2.0
   black_hole_flutter: ^0.2.6
   collection: ^1.14.11
   cupertino_icons: ^0.1.2

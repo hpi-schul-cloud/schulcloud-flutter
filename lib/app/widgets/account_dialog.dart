@@ -6,6 +6,7 @@ import 'package:hive_cache/hive_cache.dart';
 
 import '../app_config.dart';
 import '../data.dart';
+import '../services/banner.dart';
 import '../services/storage.dart';
 import '../utils.dart';
 import 'account_avatar.dart';
@@ -65,6 +66,8 @@ class AccountDialog extends StatelessWidget {
           ),
         ),
         SizedBox(height: 8),
+        if (services.banners.value.contains(Banners.demo))
+          _buildDemoSection(context),
         _buildAccountTile(context),
         Divider(),
         ListTile(
@@ -83,6 +86,15 @@ class AccountDialog extends StatelessWidget {
         ),
         SizedBox(height: 8),
       ],
+    );
+  }
+
+  Widget _buildDemoSection(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      color: Colors.orange.withOpacity(0.5),
+      padding: EdgeInsets.all(16),
+      child: Text(context.s.app_demo_explanation),
     );
   }
 
