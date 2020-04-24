@@ -283,16 +283,14 @@ class SortFilterEmptyState extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SliverFillRemaining(
-      child: EmptyStateScreen(
-        text: text,
-        actions: <Widget>[
-          SecondaryButton(
-            onPressed: showSortFilterSheet,
-            child: Text(context.s.app_sortFilterEmptyState_editFilters),
-          ),
-        ],
-      ),
+    return EmptyStateScreen(
+      text: text,
+      actions: <Widget>[
+        SecondaryButton(
+          onPressed: showSortFilterSheet,
+          child: Text(context.s.app_sortFilterEmptyState_editFilters),
+        ),
+      ],
     );
   }
 }

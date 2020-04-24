@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hive_cache/hive_cache.dart';
+import 'package:rxdart/rxdart.dart';
 
 import '../exception.dart';
 import '../logger.dart';
@@ -27,7 +28,9 @@ FetchableBuilder<CacheSnapshot<T>> handleError<T>(FetchableBuilder<T> builder) {
     // be handled locally. If they can't handle them, they should catch
     // them nevertheless and then throw descriptive [FancyException]s
     // instead.
-    if (error is! FancyException) {
+    final correctlyHandled = error is FancyException ||
+        error is ErrorAndStacktrace && error.error is FancyException;
+    if (!correctlyHandled) {
       logger.e(
         'The following exception occurred: $error '
         'If you want to display an exception to the user, instead create '
@@ -39,7 +42,9 @@ FetchableBuilder<CacheSnapshot<T>> handleError<T>(FetchableBuilder<T> builder) {
       return PinkStripedErrorWidget(error, null);
     }
 
-    final fancyError = error as FancyException;
+    final fancyError = error is FancyException
+        ? error
+        : (error as ErrorAndStacktrace).error as FancyException;
 
     // If there is no data, then there's nothing we can display except the
     // error.

@@ -36,13 +36,20 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.4.0"
+  banners:
+    dependency: "direct main"
+    description:
+      name: banners
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.2.0"
   black_hole_flutter:
     dependency: "direct main"
     description:
       name: black_hole_flutter
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.2.5"
+    version: "0.2.6"
   boolean_selector:
     dependency: transitive
     description:

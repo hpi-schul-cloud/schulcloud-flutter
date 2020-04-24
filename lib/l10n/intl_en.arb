@@ -2,6 +2,8 @@
   "@@locale": "en",
   "app_dateRangeFilter_start": "from",
   "app_dateRangeFilter_end": "until",
+  "app_demo": "Demo",
+  "app_demo_explanation": "This is a demo account. All actions that create or change data are deactivated and not visible.",
   "app_emptyState_retry": "Try again",
   "app_error_badRequest": "The server doesn't understand us. Maybe there's an update available for the app?",
   "app_error_conflict": "Your changes conflict with changes someone else did at the same time.",

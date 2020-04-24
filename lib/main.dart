@@ -60,7 +60,13 @@ const schulCloudAppConfig = AppConfig(
 );
 
 Future<void> main({AppConfig appConfig = schulCloudAppConfig}) async {
-  WidgetsFlutterBinding.ensureInitialized();
+  // Show loading screen.
+  runApp(Container(
+    color: Colors.white,
+    alignment: Alignment.center,
+    child: CircularProgressIndicator(),
+  ));
+
   await runWithErrorReporting(() async {
     Logger.level = Level.debug;
     logger
@@ -89,6 +95,7 @@ Future<void> main({AppConfig appConfig = schulCloudAppConfig}) async {
           'timeZone': timeZone,
         });
       }, instanceName: 'ignored')
+      ..registerSingleton(BannerService())
       ..registerSingleton(SnackBarService())
       ..registerSingleton(NetworkService())
       ..registerSingleton(ApiNetworkService())
@@ -102,22 +109,31 @@ Future<void> main({AppConfig appConfig = schulCloudAppConfig}) async {
       yield EmptyStateLicense();
     });
 
-    logger.d('Running…');
-    runApp(
-      FutureBuilder<void>(
-        future: services.allReady(),
-        builder: (_, snapshot) {
-          if (!snapshot.hasData) {
-            return Container(
-              color: Colors.white,
-              alignment: Alignment.center,
-              child: CircularProgressIndicator(),
-            );
-          }
+    logger.d('Waiting for services.');
+    await services.allReady();
 
-          return SchulCloudApp();
-        },
-      ),
-    );
+    // Set demo banner based on current user.
+    // TODO(marcelgarus): dispose id stream.
+    services.storage.userIdString
+        .map((idString) => Id<User>(idString))
+        .listen((userId) {
+      userId.resolve().listen((user) {
+        // TODO(marcelgarus): Don't hardcode role id.
+        final isDemo = [
+          Id<Role>('0000d186816abba584714d00'), // demo general
+          Id<Role>('0000d186816abba584714d02'), // demo student
+          Id<Role>('0000d186816abba584714d03'), // demo teacher
+        ].any((demoRole) => user?.roleIds?.contains(demoRole) ?? false);
+
+        if (isDemo) {
+          services.banners.add(Banners.demo);
+        } else {
+          services.banners.remove(Banners.demo);
+        }
+      });
+    });
+
+    logger.d('Running…');
+    runApp(SchulCloudApp());
   });
 }

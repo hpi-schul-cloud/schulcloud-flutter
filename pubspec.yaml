@@ -1,11 +1,11 @@
 name: schulcloud
 description: A Flutter–based mobile app for the HPI Schul–Cloud.
-# Version Code: MM mm pp P nn (max: 2 100 000 000)
-# MM: Major version (0 – 21)
+# Version Code: MM mm pp P nnn (max: 2 100 000 000)
+# MM: Major version (0 – 20)
 # mm: Minor version (0 – 99)
 # pp: Patch version (0 – 99)
 # P: Preview (2: canary, 4: alpha, 5: beta, 8: RC)
-# nn: Preview version (0 – 999)
+# nnn: Preview version (0 – 999)
 #
 # e.g. 1.23.4-beta.12 ≙ 01 23 04 5 012
 version: 0.3.5
@@ -21,7 +21,8 @@ dependencies:
     sdk: flutter
 
   analyzer: ^0.39.4
-  black_hole_flutter: ^0.2.4
+  banners: ^0.2.0
+  black_hole_flutter: ^0.2.6
   collection: ^1.14.11
   cupertino_icons: ^0.1.2
   dartx: ^0.2.0

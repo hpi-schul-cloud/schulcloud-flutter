@@ -115,9 +115,12 @@ class ErrorScreen extends StatelessWidget {
       onRetry: onRetry,
       child: Padding(
         padding: EdgeInsets.only(bottom: 16),
-        child: SvgPicture.asset(
-          'assets/empty_states/broken_pen.svg',
-          height: 300,
+        child: AspectRatio(
+          aspectRatio: 4,
+          child: SvgPicture.asset(
+            'assets/empty_states/broken_pen.svg',
+            height: 300,
+          ),
         ),
       ),
     );
