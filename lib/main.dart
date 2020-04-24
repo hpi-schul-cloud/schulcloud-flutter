@@ -113,7 +113,7 @@ Future<void> main({AppConfig appConfig = schulCloudAppConfig}) async {
     await services.allReady();
 
     // Set demo banner based on current user.
-    // TODO(marcelgarus): dispose id stream.
+    // TODO(marcelgarus): dispose id stream. / use switchMap
     services.storage.userIdString
         .map((idString) => Id<User>(idString))
         .listen((userId) {
