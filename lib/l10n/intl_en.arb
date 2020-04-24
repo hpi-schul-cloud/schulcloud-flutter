@@ -1,5 +1,7 @@
 {
   "@@locale": "en",
+  "app_dateRangeFilter_start": "from",
+  "app_dateRangeFilter_end": "until",
   "app_demo": "Demo",
   "app_demo_explanation": "This is a demo account. All actions that create or change data are deactivated and not visible.",
   "app_emptyState_retry": "Try again",
@@ -32,6 +34,7 @@
   "assignment_assignment_isPrivate": "Private",
   "assignment_assignment_overdue": "Overdue",
   "assignment_assignment_property_availableAt": "Available date",
+  "assignment_assignment_property_course": "Course",
   "assignment_assignment_property_dueAt": "Due date",
   "assignment_assignment_property_hasPublicSubmissions": "Public submissions",
   "assignment_assignment_property_isPrivate": "Private assignment",
