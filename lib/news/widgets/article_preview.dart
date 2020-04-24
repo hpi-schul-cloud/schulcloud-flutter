@@ -1,6 +1,7 @@
 import 'package:black_hole_flutter/black_hole_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:rxdart/rxdart.dart';
 import 'package:schulcloud/app/app.dart';
 
 import '../data.dart';
@@ -30,6 +31,7 @@ class ArticlePreview extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = context.theme;
+    final s = context.s;
 
     return FancyCard(
       onTap: _isPlaceholder
@@ -53,19 +55,35 @@ class ArticlePreview extends StatelessWidget {
             ),
             EntityBuilder<User>(
               id: article.authorId,
-              builder: handleError((context, author, __) {
-                final authorName =
-                    author?.displayName ?? context.s.general_placeholder;
+              builder: (context, snapshot, fetch) {
+                var authorName = snapshot.data?.displayName;
+                if (snapshot.hasError &&
+                    snapshot.error is ErrorAndStacktrace &&
+                    (snapshot.error as ErrorAndStacktrace).error
+                        is ForbiddenError) {
+                  authorName = s.general_user_unknown;
+                }
 
-                return FancyText(
-                  _isPlaceholder
-                      ? null
-                      : context.s.news_articlePreview_subtitle(
-                          article.publishedAt.shortDateString, authorName),
-                  emphasis: TextEmphasis.medium,
-                  style: theme.textTheme.subtitle,
-                );
-              }),
+                if (authorName != null || !snapshot.hasError) {
+                  return FancyText(
+                    authorName == null
+                        ? null
+                        : s.news_articlePreview_subtitle(
+                            article.publishedAt.shortDateString, authorName),
+                    emphasis: TextEmphasis.medium,
+                    style: theme.textTheme.subtitle,
+                    estimatedWidth: 192,
+                  );
+                }
+
+                return handleError((_, __, ___) {
+                  assert(
+                    false,
+                    "This shouldn't be called as the handler is only called with an error.",
+                  );
+                  return null;
+                })(context, snapshot, fetch);
+              },
             ),
             SizedBox(height: 4),
             FancyText.preview(
