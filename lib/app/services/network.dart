@@ -104,6 +104,11 @@ class UnauthorizedError extends ServerError {
         );
 }
 
+class ForbiddenError extends ServerError {
+  ForbiddenError(ErrorBody body)
+      : super(body, (context) => context.s.app_error_forbidden);
+}
+
 class ConflictError extends ServerError {
   ConflictError(ErrorBody body)
       : super(body, (context) => context.s.app_error_conflict);
@@ -229,6 +234,10 @@ class NetworkService {
 
     if (response.statusCode == HttpStatus.badRequest) {
       throw BadRequestError(error);
+    }
+
+    if (response.statusCode == HttpStatus.forbidden) {
+      throw ForbiddenError(error);
     }
 
     if (response.statusCode == HttpStatus.conflict &&
