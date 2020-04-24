@@ -76,6 +76,20 @@ class _SignInFormState extends State<SignInForm> {
   Widget _buildDemoButtons(BuildContext context) {
     final s = context.s;
 
+    /// Contrary to calling the [SignInBloc]'s method directly, this method
+    /// never throws but handles failed sign in attempts gracefully by
+    /// displaying a [SnackBar].
+    Future<void> demoSignIn(Future<void> Function() signInCallback) async {
+      try {
+        await signInCallback();
+        _pushSignedInPage();
+      } on AuthenticationError {
+        context.scaffold.showSnackBar(SnackBar(
+          content: Text(context.s.signIn_form_error_demoSignInFailed),
+        ));
+      }
+    }
+
     return FillOrWrap(
       spacing: 16,
       children: <Widget>[
@@ -84,12 +98,8 @@ class _SignInFormState extends State<SignInForm> {
           isLoading: _isSigningInAsDemoStudent,
           onPressed: () async {
             setState(() => _isSigningInAsDemoStudent = true);
-            try {
-              await services.get<SignInBloc>().signInAsDemoStudent();
-              _pushSignedInPage();
-            } finally {
-              setState(() => _isSigningInAsDemoStudent = false);
-            }
+            await demoSignIn(services.get<SignInBloc>().signInAsDemoStudent);
+            setState(() => _isSigningInAsDemoStudent = false);
           },
           child: Text(s.signIn_form_demo_student),
         ),
@@ -99,12 +109,8 @@ class _SignInFormState extends State<SignInForm> {
           isLoading: _isSigningInAsDemoTeacher,
           onPressed: () async {
             setState(() => _isSigningInAsDemoTeacher = true);
-            try {
-              await services.get<SignInBloc>().signInAsDemoTeacher();
-              _pushSignedInPage();
-            } finally {
-              setState(() => _isSigningInAsDemoTeacher = false);
-            }
+            await demoSignIn(services.get<SignInBloc>().signInAsDemoTeacher);
+            setState(() => _isSigningInAsDemoTeacher = false);
           },
           child: Text(s.signIn_form_demo_teacher),
         ),
