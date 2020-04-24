@@ -219,21 +219,22 @@ class NetworkService {
     final error = ErrorBody.fromJson(json.decode(response.body));
     logger.w('Network ${response.statusCode}: $method $url', error);
 
-    if (response.statusCode == 401) {
+    if (response.statusCode == HttpStatus.unauthorized) {
       services.banners.add(Banners.tokenExpired);
       throw AuthenticationError(error);
     }
     services.banners.remove(Banners.tokenExpired);
 
-    if (response.statusCode == 400) {
+    if (response.statusCode == HttpStatus.badRequest) {
       throw BadRequestError(error);
     }
 
-    if (response.statusCode == 409 && error.className == 'conflict') {
+    if (response.statusCode == HttpStatus.conflict &&
+        error.className == 'conflict') {
       throw ConflictError(error);
     }
 
-    if (response.statusCode == 429) {
+    if (response.statusCode == HttpStatus.tooManyRequests) {
       final timeToWait = () {
         try {
           return Duration(
@@ -246,7 +247,7 @@ class NetworkService {
       throw TooManyRequestsError(error, timeToWait: timeToWait);
     }
 
-    if (response.statusCode == 500) {
+    if (response.statusCode == HttpStatus.internalServerError) {
       throw InternalServerError(error);
     }
 
