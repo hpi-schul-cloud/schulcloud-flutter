@@ -89,13 +89,14 @@ class ServerError extends FancyException {
   final ErrorBody body;
 }
 
-class ConflictError extends ServerError {
-  ConflictError(ErrorBody body)
-      : super(body, (context) => context.s.app_error_conflict);
+// 4xx
+class BadRequestError extends ServerError {
+  BadRequestError(ErrorBody body)
+      : super(body, (context) => context.s.app_error_badRequest);
 }
 
-class AuthenticationError extends ServerError {
-  AuthenticationError(ErrorBody body)
+class UnauthorizedError extends ServerError {
+  UnauthorizedError(ErrorBody body)
       : super(
           body,
           (context) => context.s.app_error_tokenExpired,
@@ -103,9 +104,9 @@ class AuthenticationError extends ServerError {
         );
 }
 
-class BadRequestError extends ServerError {
-  BadRequestError(ErrorBody body)
-      : super(body, (context) => context.s.app_error_badRequest);
+class ConflictError extends ServerError {
+  ConflictError(ErrorBody body)
+      : super(body, (context) => context.s.app_error_conflict);
 }
 
 class TooManyRequestsError extends ServerError {
@@ -116,6 +117,7 @@ class TooManyRequestsError extends ServerError {
   final Duration timeToWait;
 }
 
+// 5xx
 class InternalServerError extends ServerError {
   InternalServerError(ErrorBody body)
       : super(body, (context) => context.s.app_error_internal);
@@ -177,7 +179,7 @@ class NetworkService {
   }
 
   /// Calls the given [url] and turns various status codes and socket
-  /// exceptions into custom error types like [AuthenticationError] or
+  /// exceptions into custom error types like [UnauthorizedError] or
   /// [NoConnectionToServerError].
   Future<http.Response> _send(
     String method,
@@ -221,7 +223,7 @@ class NetworkService {
 
     if (response.statusCode == HttpStatus.unauthorized) {
       services.banners.add(Banners.tokenExpired);
-      throw AuthenticationError(error);
+      throw UnauthorizedError(error);
     }
     services.banners.remove(Banners.tokenExpired);
 
