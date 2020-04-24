@@ -84,9 +84,12 @@ class _SignInFormState extends State<SignInForm> {
           isLoading: _isSigningInAsDemoStudent,
           onPressed: () async {
             setState(() => _isSigningInAsDemoStudent = true);
-            await services.get<SignInBloc>().signInAsDemoStudent();
-            _pushSignedInPage();
-            setState(() => _isSigningInAsDemoStudent = false);
+            try {
+              await services.get<SignInBloc>().signInAsDemoStudent();
+              _pushSignedInPage();
+            } finally {
+              setState(() => _isSigningInAsDemoStudent = false);
+            }
           },
           child: Text(s.signIn_form_demo_student),
         ),
@@ -96,9 +99,12 @@ class _SignInFormState extends State<SignInForm> {
           isLoading: _isSigningInAsDemoTeacher,
           onPressed: () async {
             setState(() => _isSigningInAsDemoTeacher = true);
-            await services.get<SignInBloc>().signInAsDemoTeacher();
-            _pushSignedInPage();
-            setState(() => _isSigningInAsDemoTeacher = false);
+            try {
+              await services.get<SignInBloc>().signInAsDemoTeacher();
+              _pushSignedInPage();
+            } finally {
+              setState(() => _isSigningInAsDemoTeacher = false);
+            }
           },
           child: Text(s.signIn_form_demo_teacher),
         ),
