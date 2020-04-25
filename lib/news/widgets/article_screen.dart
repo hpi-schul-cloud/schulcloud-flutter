@@ -96,7 +96,7 @@ class _ArticleViewState extends State<ArticleView> {
         ),
         Transform.translate(
           offset: Offset(padding, -12),
-          child: _buildAuthorView(context),
+          child: AuthorView(widget.article.authorId),
         ),
         Transform.translate(
           offset: Offset(0, -20),
@@ -126,22 +126,13 @@ class _ArticleViewState extends State<ArticleView> {
         ),
         Transform.translate(
           offset: Offset(padding, -61),
-          child: _buildAuthorView(context),
+          child: AuthorView(widget.article.authorId),
         ),
         Transform.translate(
           offset: Offset(0, -48),
           child: _buildContent(context),
         ),
       ],
-    );
-  }
-
-  Widget _buildAuthorView(BuildContext context) {
-    return EntityBuilder<User>(
-      id: widget.article.authorId,
-      builder: handleLoadingError(
-        (_, author, __) => AuthorView(author: author),
-      ),
     );
   }
 

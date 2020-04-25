@@ -35,17 +35,13 @@ final router = Router(
     Route(
       matcher: Matcher.webHost(hostRegExp, isOptional: true),
       routes: [
-        Route(
-          routes: [
-            assignmentRoutes,
-            courseRoutes,
-            dashboardRoutes,
-            fileRoutes,
-            signInRoutes,
-            newsRoutes,
-            settingsRoutes,
-          ],
-        ),
+        assignmentRoutes,
+        courseRoutes,
+        dashboardRoutes,
+        fileRoutes,
+        signInRoutes,
+        newsRoutes,
+        settingsRoutes,
       ],
     ),
     Route(materialBuilder: (_, result) => NotFoundScreen(result.uri)),
