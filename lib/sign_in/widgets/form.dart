@@ -66,7 +66,7 @@ class _SignInFormState extends State<SignInForm> {
               ),
             ),
             SizedBox(height: 12),
-            _buildDemoButtons(context),
+            if (services.config.hasDemo) _buildDemoButtons(context),
           ],
         ),
       ),
