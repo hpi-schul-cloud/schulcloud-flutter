@@ -6,25 +6,34 @@ import '../data.dart';
 import 'course_color_dot.dart';
 
 class CourseChip extends StatelessWidget {
-  const CourseChip(this.course, {Key key, this.onPressed}) : super(key: key);
+  const CourseChip(this.courseId, {Key key, this.onPressed})
+      : assert(courseId != null),
+        super(key: key);
 
-  final Course course;
+  final Id<Course> courseId;
   final VoidCallback onPressed;
 
   @override
   Widget build(BuildContext context) {
-    if (onPressed == null && course == null) {
-      return Chip(
-        avatar: CourseColorDot(course),
-        label: FancyText(course?.name),
-      );
-    }
+    return EntityBuilder<Course>(
+      id: courseId,
+      builder: (_, update, __) {
+        final course = update.data;
 
-    return ActionChip(
-      avatar: CourseColorDot(course),
-      label: FancyText(course?.name),
-      onPressed: onPressed ??
-          () => context.navigator.pushNamed('/courses/${course.id}'),
+        if (onPressed == null && course == null) {
+          return Chip(
+            avatar: CourseColorDot(course),
+            label: FancyText(course?.name, estimatedWidth: 96),
+          );
+        }
+
+        return ActionChip(
+          avatar: CourseColorDot(course),
+          label: FancyText(course?.name, estimatedWidth: 96),
+          onPressed: onPressed ??
+              () => context.navigator.pushNamed('/courses/${course.id}'),
+        );
+      },
     );
   }
 }

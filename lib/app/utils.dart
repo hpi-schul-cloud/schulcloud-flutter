@@ -42,12 +42,6 @@ extension FutureResponseToJson on Future<Response> {
   }
 }
 
-/// Limits a string to a certain amount of characters.
-@Deprecated('Rather than limiting Strings to a certain amount of characters, '
-    'they should be clipped visually, for example after 3 lines')
-String limitString(String string, int maxLength) =>
-    string.length > maxLength ? '${string.substring(0, maxLength)}…' : string;
-
 /// Prints a file size given in [bytes] as a [String].
 String formatFileSize(int bytes) {
   const units = ['B', 'kB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
@@ -67,8 +61,6 @@ typedef L10nStringGetter = String Function(S);
 extension LegenWaitForItDaryString on String {
   // ignore: unnecessary_this
   String get blankToNull => this?.isBlank != false ? null : this;
-
-  String get withoutLinebreaks => replaceAll(RegExp('[\r\n]'), '');
 
   /// Removes html tags from a string.
   String get withoutHtmlTags => parse(this).documentElement.text;
@@ -94,8 +86,6 @@ extension LegenWaitForItDaryString on String {
         )
         .replaceAllMapped(RegExp('(.+)\n'), (m) => '${m[1]}<br />');
   }
-
-  String get uriComponentEncoded => Uri.encodeComponent(this ?? '');
 
   /// Converts a hex string (like '#ffdd00' or '#12c0ffee') to a [Color].
   Color get hexToColor =>
@@ -151,7 +141,7 @@ class PermissionNotGranted<T> extends FancyException {
   PermissionNotGranted()
       : super(
           isGlobal: false,
-          messageBuilder: (context) => context.s.app_error_noPermission,
+          messageBuilder: (context) => context.s.app_error_forbidden,
         );
 }
 

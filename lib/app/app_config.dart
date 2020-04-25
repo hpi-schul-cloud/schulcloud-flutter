@@ -121,6 +121,7 @@ class AppConfig {
       overline: TextStyle(
         fontWeight: FontWeight.bold,
         fontSize: 12,
+        color: brightness.disabledOnColor,
       ),
     );
   }

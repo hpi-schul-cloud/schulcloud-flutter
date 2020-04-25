@@ -19,7 +19,7 @@ class _SignOutScreenState extends State<SignOutScreen> {
     scheduleMicrotask(() async {
       try {
         await services.api.delete('authentication');
-      } on AuthenticationError {
+      } on UnauthorizedError {
         // Authentication has already expired.
       }
 

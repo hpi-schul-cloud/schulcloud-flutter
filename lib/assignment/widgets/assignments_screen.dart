@@ -40,6 +40,13 @@ class AssignmentsScreen extends SortFilterWidget<Assignment> {
         selector: (assignment) => assignment.dueAt?.inLocalZone()?.calendarDate,
         defaultSelection: DateRangeFilterSelection(start: LocalDate.today()),
       ),
+      'courseId': CategoryFilter<Assignment, Course>(
+        (s) => s.assignment_assignment_property_course,
+        selector: (assignment) => assignment.courseId,
+        categoriesCollection: services.storage.root.courses,
+        categoryLabelBuilder: (_, courseId) => CourseName(courseId),
+        webQueryParser: (value) => Id<Course>(value),
+      ),
       'more': FlagsFilter<Assignment>(
         (s) => s.general_entity_property_more,
         filters: {
@@ -101,6 +108,16 @@ class _AssignmentsScreenState extends State<AssignmentsScreen>
                       ),
                       child: AssignmentCard(
                         assignment: assignments[index],
+                        onCourseClicked: (courseId) =>
+                            setFilter('courseId', {courseId}),
+                        onOverdueClicked: () {
+                          setFilter(
+                            'dueAt',
+                            DateRangeFilterSelection(
+                              end: LocalDate.today() - Period(days: 1),
+                            ),
+                          );
+                        },
                         setFlagFilterCallback: setFlagFilter,
                       ),
                     ),
@@ -116,24 +133,28 @@ class _AssignmentsScreenState extends State<AssignmentsScreen>
   }
 }
 
+typedef CourseClickedCallback = void Function(Id<Course> courseId);
+
 class AssignmentCard extends StatelessWidget {
   const AssignmentCard({
     @required this.assignment,
+    @required this.onCourseClicked,
+    @required this.onOverdueClicked,
     @required this.setFlagFilterCallback,
   })  : assert(assignment != null),
+        assert(onCourseClicked != null),
+        assert(onOverdueClicked != null),
         assert(setFlagFilterCallback != null);
 
   final Assignment assignment;
+  final CourseClickedCallback onCourseClicked;
+  final VoidCallback onOverdueClicked;
   final SetFlagFilterCallback<Assignment> setFlagFilterCallback;
-
-  void _showAssignmentDetailsScreen(BuildContext context) {
-    context.navigator.pushNamed('/homework/${assignment.id}');
-  }
 
   @override
   Widget build(BuildContext context) {
     return FancyCard(
-      onTap: () => _showAssignmentDetailsScreen(context),
+      onTap: () => context.navigator.pushNamed('/homework/${assignment.id}'),
       omitBottomPadding: true,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -174,16 +195,10 @@ class AssignmentCard extends StatelessWidget {
 
     return <Widget>[
       if (assignment.courseId != null)
-        EntityBuilder<Course>(
-          id: assignment.courseId,
-          builder: handleError((context, course, fetch) {
-            return CourseChip(
-              course,
-              onPressed: () {
-                // TODO(JonasWanke): filter list by course, https://github.com/schul-cloud/schulcloud-flutter/issues/145
-              },
-            );
-          }),
+        CourseChip(
+          assignment.courseId,
+          key: ValueKey(assignment.courseId),
+          onPressed: () => onCourseClicked(assignment.courseId),
         ),
       if (assignment.isOverdue)
         ActionChip(
@@ -192,7 +207,7 @@ class AssignmentCard extends StatelessWidget {
             color: context.theme.errorColor,
           ),
           label: Text(s.assignment_assignment_overdue),
-          onPressed: () {},
+          onPressed: onOverdueClicked,
         ),
       if (assignment.isArchived)
         FlagFilterPreviewChip(

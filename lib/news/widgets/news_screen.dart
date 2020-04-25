@@ -17,7 +17,7 @@ class NewsScreen extends StatelessWidget {
             text: context.s.news_empty,
           ),
           builder: (context, unsortedArticles, isFetching) {
-            var articles = unsortedArticles.toList()
+            final articles = unsortedArticles.toList()
               ..sort((a1, a2) => a2.publishedAt.compareTo(a1.publishedAt));
 
             return ListView.builder(
