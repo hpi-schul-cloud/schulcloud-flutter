@@ -83,7 +83,7 @@ class _SignInFormState extends State<SignInForm> {
       try {
         await signInCallback();
         _pushSignedInPage();
-      } on AuthenticationError {
+      } on UnauthorizedError {
         context.scaffold.showSnackBar(SnackBar(
           content: Text(context.s.signIn_form_error_demoSignInFailed),
         ));
