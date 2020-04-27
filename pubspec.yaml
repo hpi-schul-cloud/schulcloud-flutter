@@ -20,7 +20,6 @@ dependencies:
   flutter_localizations:
     sdk: flutter
 
-  analyzer: ^0.39.4
   banners: ^0.2.0
   black_hole_flutter: ^0.2.6
   collection: ^1.14.11
@@ -60,7 +59,6 @@ dependencies:
   meta: ^1.1.8
   mime: ^0.9.6+3
   package_info: ^0.4.0+3
-  pedantic: ^1.8.0+1
   path_provider: ^1.1.0
   permission_handler: ^3.3.0
   provider: ^4.0.0
@@ -70,7 +68,6 @@ dependencies:
     git:
       url: https://github.com/d-silveira/flutter-share.git
       ref: 1f8b139
-  sprintf: ^4.0.2
   streaming_shared_preferences: ^1.0.1
   system_info: ^0.1.2
   time_machine: ^0.9.12
@@ -89,6 +86,7 @@ dev_dependencies:
       ref: f8bdb804da56d0863e03316842317b27f47d2bdf
       path: hive_generator
   intl_utils: ^1.0.2
+  pedantic: ^1.8.0+1
   screenshots: ^2.1.1
   # We need to use a version compatible with test_api 0.2.11 required by flutter_driver.
   test: 1.9.4

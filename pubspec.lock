@@ -9,7 +9,7 @@ packages:
     source: hosted
     version: "1.0.3"
   analyzer:
-    dependency: "direct main"
+    dependency: transitive
     description:
       name: analyzer
       url: "https://pub.dartlang.org"
@@ -705,7 +705,7 @@ packages:
     source: hosted
     version: "1.0.1"
   pedantic:
-    dependency: "direct main"
+    dependency: "direct dev"
     description:
       name: pedantic
       url: "https://pub.dartlang.org"
@@ -935,13 +935,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.5.5"
-  sprintf:
-    dependency: "direct main"
-    description:
-      name: sprintf
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "4.0.2"
   stack_trace:
     dependency: transitive
     description:
