@@ -113,24 +113,26 @@ Future<void> main({AppConfig appConfig = schulCloudAppConfig}) async {
     await services.allReady();
 
     // Set demo banner based on current user.
-    // TODO(marcelgarus): dispose id stream.
+    StreamAndData<User, CachedFetchStreamData<dynamic>> userStream;
     services.storage.userIdString
         .map((idString) => Id<User>(idString))
         .listen((userId) {
-      userId.resolve().listen((user) {
-        // TODO(marcelgarus): Don't hardcode role id.
-        final isDemo = [
-          Id<Role>('0000d186816abba584714d00'), // demo general
-          Id<Role>('0000d186816abba584714d02'), // demo student
-          Id<Role>('0000d186816abba584714d03'), // demo teacher
-        ].any((demoRole) => user?.roleIds?.contains(demoRole) ?? false);
+      userStream?.dispose();
+      userStream = userId.resolve()
+        ..listen((user) {
+          // TODO(marcelgarus): Don't hardcode role id.
+          final isDemo = [
+            Id<Role>('0000d186816abba584714d00'), // demo general
+            Id<Role>('0000d186816abba584714d02'), // demo student
+            Id<Role>('0000d186816abba584714d03'), // demo teacher
+          ].any((demoRole) => user?.roleIds?.contains(demoRole) ?? false);
 
-        if (isDemo) {
-          services.banners.add(Banners.demo);
-        } else {
-          services.banners.remove(Banners.demo);
-        }
-      });
+          if (isDemo) {
+            services.banners.add(Banners.demo);
+          } else {
+            services.banners.remove(Banners.demo);
+          }
+        });
     });
 
     logger.d('Running…');

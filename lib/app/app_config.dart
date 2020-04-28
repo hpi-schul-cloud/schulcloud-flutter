@@ -13,12 +13,14 @@ class AppConfig {
     @required this.primaryColor,
     @required this.secondaryColor,
     @required this.accentColor,
+    this.hasDemo = true,
   })  : assert(name != null),
         assert(host != null),
         assert(title != null),
         assert(primaryColor != null),
         assert(secondaryColor != null),
-        assert(accentColor != null);
+        assert(accentColor != null),
+        assert(hasDemo != null);
 
   static const darkAssets = [
     'n21/logo/logo_with_text.svg',
@@ -37,6 +39,7 @@ class AppConfig {
   final MaterialColor primaryColor;
   final MaterialColor secondaryColor;
   final MaterialColor accentColor;
+  final bool hasDemo;
 
   ThemeData createThemeData(Brightness brightness) {
     final isDark = brightness == Brightness.dark;

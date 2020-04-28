@@ -49,7 +49,7 @@ class SignInBloc {
 
     logger.i('Signing in as $email…');
 
-    // The sign in throws an exception if it wasn't successful.
+    // The sign in throws an [AuthenticationError] if it wasn't successful.
     final rawResponse = await services.api.post(
       'authentication',
       body: SignInRequest(email: email, password: password).toJson(),

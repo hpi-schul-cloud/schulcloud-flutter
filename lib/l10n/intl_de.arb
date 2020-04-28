@@ -152,7 +152,7 @@
   "signIn_form_demo_teacher": "Demo als Lehrer",
   "signIn_form_email": "E-Mail",
   "signIn_form_email_error": "E-Mail-Adresse",
-  "signIn_form_errorAuth": "E-Mail oder Passwort sind falsch.",
+  "signIn_form_error_demoSignInFailed": "Das Anmelden mit dem Demoaccount hat nicht geklappt.",
   "signIn_form_password_error": "Passwort eingeben",
   "signIn_form_password": "Passwort",
   "signIn_form_signIn": "Einloggen",

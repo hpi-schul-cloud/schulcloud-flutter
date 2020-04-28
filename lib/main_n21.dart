@@ -22,6 +22,7 @@ const n21AppConfig = AppConfig(
   primaryColor: _n21Blue,
   secondaryColor: _n21Blue,
   accentColor: _n21Blue,
+  hasDemo: false,
 );
 
 void main() => core.main(appConfig: n21AppConfig);

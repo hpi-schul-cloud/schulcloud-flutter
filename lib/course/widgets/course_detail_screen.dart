@@ -38,7 +38,6 @@ class CourseDetailsScreen extends StatelessWidget {
                 ),
                 SizedBox(height: 16),
               ],
-              // TODO(marcelgarus): use proper slivers when flutter_cached supports them
               _buildLessonsSliver(context, course),
             ]),
           ),
