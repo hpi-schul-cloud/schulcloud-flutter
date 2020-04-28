@@ -2,8 +2,8 @@
 
 ![Build & Lint](https://github.com/schul-cloud/schulcloud-flutter/workflows/Build%20&%20Lint/badge.svg)
 
-Please check our [<kbd>wiki</kbd>][wiki] for more info:
-- [Getting started](wiki)
+Please check our [wiki][wiki] for more info:
+- [Getting started][wiki]
 - [Run the app](https://github.com/schul-cloud/schulcloud-flutter/wiki/Run-the-app)
 
 Feel free to contribute :)
