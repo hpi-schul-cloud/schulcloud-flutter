@@ -2,7 +2,6 @@ import 'dart:math';
 
 import 'package:black_hole_flutter/black_hole_flutter.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_cached/flutter_cached.dart';
 import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/course/course.dart';
 import 'package:schulcloud/file/file.dart';
@@ -29,24 +28,16 @@ class _AssignmentDetailScreenState extends State<AssignmentDetailScreen>
   Widget build(BuildContext context) {
     final s = context.s;
 
-    return CachedRawBuilder<Assignment>(
-      controller: widget.assignmentId.controller,
-      builder: (context, update) {
-        final assignment = update.data;
-        return CachedRawBuilder<User>(
-          controller: services.storage.userId.controller,
-          builder: (context, update) {
-            final user = update.data;
-            final showSubmissionTab = assignment != null &&
-                user != null &&
-                (assignment.isPrivate || user.isNotTeacher);
-            final showFeedbackTab = assignment != null &&
-                assignment.isPublic &&
-                user != null &&
-                user.isNotTeacher;
-            final showSubmissionsTab = assignment != null &&
-                assignment.isPublic &&
-                (user?.isTeacher == true || assignment.hasPublicSubmissions);
+    return EntityBuilder<Assignment>(
+      id: widget.assignmentId,
+      builder: handleLoadingError((context, assignment, _) {
+        return EntityBuilder<User>(
+          id: services.storage.userId,
+          builder: handleLoadingError((context, user, fetch) {
+            final showSubmissionTab = assignment.isPrivate || !user.isTeacher;
+            final showFeedbackTab = assignment.isPublic && !user.isTeacher;
+            final showSubmissionsTab = assignment.isPublic &&
+                (user.isTeacher || assignment.hasPublicSubmissions);
 
             final tabs = [
               'extended',
@@ -72,9 +63,9 @@ class _AssignmentDetailScreenState extends State<AssignmentDetailScreen>
               controller: _controller,
               appBarBuilder: (_) => FancyAppBar(
                 title: Text(assignment.name),
-                subtitle: _buildSubtitle(context, assignment.courseId),
+                subtitle: CourseName.orNull(assignment.courseId),
                 actions: <Widget>[
-                  if (user?.hasPermission(Permission.assignmentEdit) == true)
+                  if (user.hasPermission(Permission.assignmentEdit))
                     _buildArchiveAction(context, assignment),
                 ],
                 bottom: TabBar(
@@ -99,30 +90,9 @@ class _AssignmentDetailScreenState extends State<AssignmentDetailScreen>
                 if (showSubmissionsTab) _SubmissionsTab(),
               ],
             );
-          },
+          }),
         );
-      },
-    );
-  }
-
-  Widget _buildSubtitle(BuildContext context, Id<Course> courseId) {
-    if (courseId == null) {
-      return null;
-    }
-
-    return CachedRawBuilder<Course>(
-      controller: courseId.controller,
-      builder: (context, update) {
-        return Row(children: <Widget>[
-          CourseColorDot(update.data),
-          SizedBox(width: 8),
-          Text(
-            update.data?.name ??
-                update.error?.toString() ??
-                context.s.general_loading,
-          ),
-        ]);
-      },
+      }),
     );
   }
 
@@ -241,15 +211,10 @@ class _SubmissionTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CachedRawBuilder<Submission>(
-      controller: assignment.mySubmission,
-      builder: (_, update) {
-        if (update.hasError) {
-          return ErrorScreen(update.error, update.stackTrace);
-        }
-
-        // TODO(marcelgarus): use Maybe<Submission> to differentiate between loading and no submission when updating flutter_cached
-        final submission = update.data;
+    return ConnectionBuilder.populated<Submission>(
+      connection: assignment.mySubmission,
+      builder: handleLoadingError((context, submission, isFetching) {
+        // TODO(JonasWanke): differentiate between loading and no submission
         return Stack(
           children: <Widget>[
             TabContent(
@@ -260,7 +225,7 @@ class _SubmissionTab extends StatelessWidget {
             _buildOverlay(context, submission),
           ],
         );
-      },
+      }),
     );
   }
 
@@ -287,17 +252,9 @@ class _SubmissionTab extends StatelessWidget {
 
     final s = context.s;
 
-    return CachedRawBuilder<User>(
-      controller: services.storage.userId.controller,
-      builder: (context, update) {
-        if (update.hasError) {
-          return ErrorScreen(update.error, update.stackTrace);
-        }
-        if (update.data == null) {
-          return SizedBox.shrink();
-        }
-        final user = update.data;
-
+    return EntityBuilder<User>(
+      id: services.storage.userId,
+      builder: handleLoadingError((context, user, isFetching) {
         String labelText;
         if (submission == null &&
             user.hasPermission(Permission.submissionsCreate)) {
@@ -321,7 +278,7 @@ class _SubmissionTab extends StatelessWidget {
             ),
           ),
         );
-      },
+      }),
     );
   }
 }
@@ -337,14 +294,9 @@ class _FeedbackTab extends StatelessWidget {
   Widget build(BuildContext context) {
     final s = context.s;
 
-    return CachedRawBuilder<Submission>(
-      controller: assignment.mySubmission,
-      builder: (_, update) {
-        if (update.hasError) {
-          return ErrorScreen(update.error, update.stackTrace);
-        }
-
-        final submission = update.data;
+    return ConnectionBuilder.populated<Submission>(
+      connection: assignment.mySubmission,
+      builder: handleLoadingError((context, submission, isFetching) {
         return TabContent(
           pageStorageKey: PageStorageKey<String>('feedback'),
           omitHorizontalPadding: true,
@@ -367,7 +319,7 @@ class _FeedbackTab extends StatelessWidget {
             ]),
           ),
         );
-      },
+      }),
     );
   }
 }
@@ -408,22 +360,9 @@ List<Widget> _buildFileSection(
       ),
     ],
     for (final fileId in fileIds)
-      CachedRawBuilder<File>(
-        controller: fileId.controller,
-        builder: (context, update) {
-          if (!update.hasData) {
-            return ListTile(
-              leading: update.hasNoError ? CircularProgressIndicator() : null,
-              title: FancyText(update.error?.toString()),
-            );
-          }
-
-          final file = update.data;
-          return FileTile(
-            file: file,
-            onOpen: (file) => services.files.downloadFile(file),
-          );
-        },
+      FileTile(
+        fileId,
+        onDownloadFile: services.get<FileService>().downloadFile,
       ),
   ];
 }

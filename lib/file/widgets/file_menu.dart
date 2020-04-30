@@ -27,7 +27,7 @@ class FileMenu extends StatelessWidget {
       builder: (_) => RenameDialog(oldName: file.name),
     );
 
-    if (newName == null) {
+    if (newName == null || newName == file.name) {
       return;
     }
 
@@ -77,11 +77,6 @@ class FileMenu extends StatelessWidget {
           title: Text(file.name),
           subtitle: Text(subtitle),
         ),
-        // TODO(marcelgarus): Implement offline access.
-        // ListTile(
-        //   leading: Icon(Icons.offline_pin),
-        //   title: Text(s.file_fileMenu_makeAvailableOffline),
-        // ),
         ListTile(
           leading: Icon(Icons.edit),
           title: Text(s.file_fileMenu_rename),

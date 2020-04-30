@@ -81,17 +81,13 @@ final router = Router(
     FancyRoute(
       matcher: Matcher.webHost(hostRegExp, isOptional: true),
       routes: [
-        FancyRoute(
-          routes: [
-            assignmentRoutes,
-            courseRoutes,
-            dashboardRoutes,
-            fileRoutes,
-            signInRoutes,
-            newsRoutes,
-            settingsRoutes,
-          ],
-        ),
+        assignmentRoutes,
+        courseRoutes,
+        dashboardRoutes,
+        fileRoutes,
+        signInRoutes,
+        newsRoutes,
+        settingsRoutes,
       ],
     ),
     FancyRoute(builder: (_, result) => NotFoundScreen(result.uri)),

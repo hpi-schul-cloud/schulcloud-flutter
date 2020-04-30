@@ -1,21 +1,17 @@
-import 'package:flutter_cached/flutter_cached.dart';
-import 'package:hive/hive.dart';
-import 'package:meta/meta.dart';
 import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/course/course.dart';
 import 'package:schulcloud/file/file.dart';
-import 'package:time_machine/time_machine.dart';
 
 part 'data.g.dart';
 
 @HiveType(typeId: TypeId.assignment)
 class Assignment implements Entity<Assignment> {
-  const Assignment({
+  Assignment({
     @required this.id,
-    @required this.name,
     @required this.schoolId,
     @required this.createdAt,
     @required this.updatedAt,
+    @required this.name,
     @required this.availableAt,
     this.dueAt,
     @required this.teacherId,
@@ -28,27 +24,44 @@ class Assignment implements Entity<Assignment> {
     @required this.teamSubmissions,
     this.fileIds = const [],
   })  : assert(id != null),
-        assert(name != null),
         assert(schoolId != null),
         assert(createdAt != null),
         assert(updatedAt != null),
+        assert(name != null),
         assert(availableAt != null),
         assert(teacherId != null),
         assert(isPrivate != null),
         assert(hasPublicSubmissions != null),
         assert(archivedBy != null),
         assert(teamSubmissions != null),
-        assert(fileIds != null);
+        assert(fileIds != null),
+        mySubmission = Connection<Submission>(
+          id: 'my submission to $id',
+          fetcher: () async {
+            final data = await services.api.get(
+              'submissions',
+              queryParameters: {
+                'homeworkId': id.value,
+                'studentId': services.storage.userIdString.getValue(),
+              },
+            ).parseJsonList();
+
+            // For a single student, there's at most one submission per assignment.
+            return data
+                .map((data) => Submission.fromJson(data))
+                .singleWhere((_) => true, orElse: () => null);
+          },
+        );
 
   Assignment.fromJson(Map<String, dynamic> data)
       : this(
           id: Id<Assignment>(data['_id']),
           schoolId: data['schoolId'],
+          createdAt: (data['createdAt'] as String).parseInstant(),
+          updatedAt: (data['updatedAt'] as String).parseInstant(),
           teacherId: Id<User>(data['teacherId']),
           name: data['name'],
           description: data['description'],
-          createdAt: (data['createdAt'] as String).parseInstant(),
-          updatedAt: (data['updatedAt'] as String).parseInstant(),
           availableAt: (data['availableDate'] as String).parseInstant(),
           dueAt: (data['dueDate'] as String)?.parseInstant(),
           courseId: data['courseId'] != null
@@ -61,9 +74,9 @@ class Assignment implements Entity<Assignment> {
           lessonId: Id<Lesson>.orNull(data['lessonId']),
           isPrivate: data['private'] ?? false,
           hasPublicSubmissions: data['publicSubmissions'] ?? false,
-          archivedBy: (data['archived'] as List<dynamic> ?? []).castIds<User>(),
+          archivedBy: parseIds(data['archived']),
           teamSubmissions: data['teamSubmissions'] ?? false,
-          fileIds: (data['fileIds'] as List<dynamic> ?? []).castIds<File>(),
+          fileIds: parseIds(data['fileIds']),
         );
 
   static Future<Assignment> fetch(Id<Assignment> id) async =>
@@ -75,9 +88,6 @@ class Assignment implements Entity<Assignment> {
   @HiveField(0)
   final Id<Assignment> id;
 
-  @HiveField(1)
-  final String name;
-
   @HiveField(2)
   final String schoolId;
 
@@ -85,6 +95,9 @@ class Assignment implements Entity<Assignment> {
   final Instant createdAt;
   @HiveField(19)
   final Instant updatedAt;
+
+  @HiveField(1)
+  final String name;
 
   @HiveField(13)
   final Instant availableAt;
@@ -137,27 +150,53 @@ class Assignment implements Entity<Assignment> {
     }
 
     return Assignment.fromJson(
-        await services.network.patch('homework/$id', body: request).json)
+        await services.api.patch('homework/$id', body: request).json)
       ..saveToCache();
   }
 
   Future<Assignment> toggleArchived() => update(isArchived: !isArchived);
 
-  // TODO(marcelgarus): create some kind of LazyId.
-  CacheController<Submission> get mySubmission {
-    return SimpleCacheController(
-      fetcher: () async => Submission.fromJson((await services.api.get(
-        'submissions',
-        queryParameters: {
-          'homeworkId': id.value,
-          'studentId': services.storage.userIdString.getValue(),
-        },
-      ).parseJsonList())
-          .singleWhere((_) => true, orElse: () => null)),
-      saveToCache: HiveCache.put,
-      loadFromCache: () => throw NotInCacheException(),
-    );
-  }
+  // I'm so looking forward to typedefs for non-function-types:
+  // https://github.com/dart-lang/language/issues/65
+  // Then this could just become a CachedFetchStream<Submission>.
+  final Connection<Submission> mySubmission;
+
+  @override
+  bool operator ==(Object other) =>
+      other is Assignment &&
+      id == other.id &&
+      schoolId == other.schoolId &&
+      createdAt == other.createdAt &&
+      updatedAt == other.updatedAt &&
+      name == other.name &&
+      availableAt == other.availableAt &&
+      dueAt == other.dueAt &&
+      description == other.description &&
+      teacherId == other.teacherId &&
+      courseId == other.courseId &&
+      lessonId == other.lessonId &&
+      isPrivate == other.isPrivate &&
+      hasPublicSubmissions == other.hasPublicSubmissions &&
+      archivedBy.deeplyEquals(other.archivedBy, unordered: true) &&
+      teamSubmissions == other.teamSubmissions &&
+      fileIds.deeplyEquals(other.fileIds, unordered: true);
+  @override
+  int get hashCode => hashList([
+        id,
+        schoolId,
+        createdAt,
+        updatedAt,
+        name,
+        availableAt,
+        dueAt,
+        description,
+        teacherId,
+        courseId,
+        lessonId,
+        isPrivate,
+        hasPublicSubmissions,
+        teamSubmissions,
+      ]);
 }
 
 @HiveType(typeId: TypeId.submission)
@@ -187,7 +226,7 @@ class Submission implements Entity<Submission> {
           comment: data['comment'],
           grade: data['grade'],
           gradeComment: data['gradeComment'],
-          fileIds: (data['fileIds'] as List<dynamic> ?? []).castIds<File>(),
+          fileIds: parseIds(data['fileIds']),
         );
 
   static Future<Submission> fetch(Id<Submission> id) async =>
@@ -231,7 +270,7 @@ class Submission implements Entity<Submission> {
     };
 
     return Submission.fromJson(
-        await services.network.post('submissions', body: request).json)
+        await services.api.post('submissions', body: request).json)
       ..saveToCache();
   }
 
@@ -244,9 +283,31 @@ class Submission implements Entity<Submission> {
     }
 
     return Submission.fromJson(
-        await services.network.patch('submissions/$id', body: request).json)
+        await services.api.patch('submissions/$id', body: request).json)
       ..saveToCache();
   }
 
-  Future<void> delete() => services.network.delete('submissions/$id');
+  Future<void> delete() => services.api.delete('submissions/$id');
+
+  @override
+  bool operator ==(Object other) =>
+      other is Submission &&
+      id == other.id &&
+      schoolId == other.schoolId &&
+      assignmentId == other.assignmentId &&
+      studentId == other.studentId &&
+      comment == other.comment &&
+      grade == other.grade &&
+      gradeComment == other.gradeComment &&
+      fileIds.deeplyEquals(other.fileIds, unordered: true);
+  @override
+  int get hashCode => hashList([
+        id,
+        schoolId,
+        assignmentId,
+        studentId,
+        comment,
+        grade,
+        gradeComment,
+      ]);
 }

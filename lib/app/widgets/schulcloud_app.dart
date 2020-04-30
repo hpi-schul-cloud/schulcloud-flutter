@@ -1,7 +1,8 @@
 import 'dart:async';
 
+import 'package:banners/banners.dart';
 import 'package:black_hole_flutter/black_hole_flutter.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide Banner;
 import 'package:flutter_absolute_path/flutter_absolute_path.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -13,10 +14,11 @@ import 'package:schulcloud/file/file.dart';
 import '../app_config.dart';
 import '../logger.dart';
 import '../routing.dart';
-import '../services/navigator_observer.dart';
+import '../services/banner.dart';
 import '../services/snack_bar.dart';
 import '../services/storage.dart';
 import '../utils.dart';
+import 'banners.dart';
 
 class SchulCloudApp extends StatelessWidget {
   static final navigatorKey = GlobalKey<NavigatorState>();
@@ -36,7 +38,9 @@ class SchulCloudApp extends StatelessWidget {
           : services.get<AppConfig>().webUrl('login'),
       onGenerateRoute: router.onGenerateRoute,
       navigatorObservers: [
-        LoggingNavigatorObserver(),
+        LoggingNavigatorObserver(
+          logger: (message) => logger.d('Navigator: $message'),
+        ),
         HeroController(),
       ],
       localizationsDelegates: [
@@ -121,33 +125,45 @@ class SignedInScreenState extends ReceiveShareState<SignedInScreen>
 
     return WillPopScope(
       onWillPop: _onWillPop,
-      child: Scaffold(
-        key: _scaffoldKey,
-        body: Stack(
-          fit: StackFit.expand,
-          children: <Widget>[
-            for (var i = 0; i < _BottomTab.count; i++)
-              _TabContent(
-                navigatorKey: _navigatorKeys[i],
-                initialRoute: _BottomTab.values[i].initialRoute,
-                fader: _faders[i],
-                isActive: i == _selectedTabIndex,
-              ),
-          ],
-        ),
-        bottomNavigationBar: BottomNavigationBar(
-          selectedItemColor: theme.accentColor,
-          unselectedItemColor: theme.mediumEmphasisOnBackground,
-          currentIndex: _selectedTabIndex,
-          onTap: (index) => selectTab(index, popIfAlreadySelected: true),
-          items: [
-            for (final tab in _BottomTab.values)
-              BottomNavigationBarItem(
-                icon: Icon(tab.icon, key: tab.key),
-                title: Text(tab.title(s)),
-                backgroundColor: barColor,
-              ),
-          ],
+      child: ValueListenableBuilder<Set<Banner>>(
+        valueListenable: services.banners,
+        builder: (context, banners, child) {
+          return Bannered(
+            banners: <Widget>[
+              if (banners.contains(Banners.offline)) OfflineBanner(),
+              if (banners.contains(Banners.tokenExpired)) TokenExpiredBanner(),
+            ],
+            child: child,
+          );
+        },
+        child: Scaffold(
+          key: _scaffoldKey,
+          body: Stack(
+            fit: StackFit.expand,
+            children: <Widget>[
+              for (var i = 0; i < _BottomTab.count; i++)
+                _TabContent(
+                  navigatorKey: _navigatorKeys[i],
+                  initialRoute: _BottomTab.values[i].initialRoute,
+                  fader: _faders[i],
+                  isActive: i == _selectedTabIndex,
+                ),
+            ],
+          ),
+          bottomNavigationBar: BottomNavigationBar(
+            selectedItemColor: theme.accentColor,
+            unselectedItemColor: theme.mediumEmphasisOnBackground,
+            currentIndex: _selectedTabIndex,
+            onTap: (index) => selectTab(index, popIfAlreadySelected: true),
+            items: [
+              for (final tab in _BottomTab.values)
+                BottomNavigationBarItem(
+                  icon: Icon(tab.icon, key: tab.key),
+                  title: Text(tab.title(s)),
+                  backgroundColor: barColor,
+                ),
+            ],
+          ),
         ),
       ),
     );
@@ -226,7 +242,9 @@ class _TabContentState extends State<_TabContent> {
         initialRoute: widget.initialRoute,
         onGenerateRoute: router.onGenerateRoute,
         observers: [
-          LoggingNavigatorObserver(),
+          LoggingNavigatorObserver(
+            logger: (message) => logger.d('Navigator: $message'),
+          ),
           HeroController(),
         ],
       ),

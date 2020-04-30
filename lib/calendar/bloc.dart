@@ -1,31 +1,34 @@
 import 'package:flutter/widgets.dart';
-import 'package:flutter_cached/flutter_cached.dart';
 import 'package:grec_minimal/grec_minimal.dart';
 import 'package:meta/meta.dart';
 import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/calendar/calendar.dart';
 import 'package:time_machine/time_machine.dart';
+import 'package:hive_cache/hive_cache.dart';
 
 import 'data.dart';
 
 @immutable
 class CalendarBloc {
-  const CalendarBloc();
-
-  CacheController<List<Event>> fetchTodaysEvents() {
-    // The great, thoughtfully designed Calendar API presents us with daily
-    // challenges, such as: How do I get today's events?
-    // And the simple but ingenious answer to that is:
-    // 1. Download all events (every time). (≈ 50 kb using the demo account)
-    // 2. Implement your own logic to filter them. Have fun 😊
-    return services.storage.root.events.controller.map((events) {
+  final Collection<Event> todaysEvents = Collection<Event>(
+    id: "today's events",
+    fetcher: () async {
+      // The great, thoughtfully designed Calendar API presents us with
+      // daily challenges, such as: How do I get today's events?
+      // And the simple but ingenious answer to that is:
+      // 1. Download all events (every time). (≈ 50 kb using the demo
+      //    account)
+      // 2. Implement your own logic to filter them. Have fun 😊
+      final eventIds = services.storage.root.events.resolve();
+      final events = await eventIds.resolveAll().first;
+      eventIds.dispose();
       return events
           .map(_getTodaysInstanceOrNull)
           .where((e) => e != null)
           .toList()
             ..sort((e1, e2) => e1.start.compareTo(e2.start));
-    });
-  }
+    },
+  );
 
   /// Returns the raw event if it occurs today or an instance of the recurring
   /// event taking place today.
@@ -35,7 +38,7 @@ class CalendarBloc {
   /// > **Note:** The result might be wrong if the time zone offset is changed
   ///   during the event or a recurrence. This is because we use [Period] for
   ///   the duration instead of the correct [Time] to simplify calculations.
-  Event _getTodaysInstanceOrNull(Event event) {
+  static Event _getTodaysInstanceOrNull(Event event) {
     // Dear future developer,
     // at the time of this writing, no RRULE package exists for dart. Hence we
     // try to implement a subset required for calculating recurring dates,
@@ -100,7 +103,7 @@ class CalendarBloc {
     if (rulesIntersectingTodaysDayOfWeek.isEmpty) {
       return null;
     } else if (rulesIntersectingTodaysDayOfWeek.length > 1) {
-      debugPrint("Multiple recurrence rules found for today's day of week. "
+      logger.w("Multiple recurrence rules found for today's day of week. "
           'Currently, only the first is taken into account.');
     }
 

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_cached/flutter_cached.dart';
 import 'package:provider/provider.dart';
 import 'package:schulcloud/app/app.dart';
+import 'package:schulcloud/app/widgets/account_avatar.dart';
 
 import '../data.dart';
 import 'article_image.dart';
@@ -21,32 +21,23 @@ class ArticleScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CachedRawBuilder<Article>(
-      controller: articleId.controller,
-      builder: (context, update) {
-        if (!update.hasData) {
-          return Center(
-            child: update.hasError
-                ? ErrorScreen(update.error, update.stackTrace)
-                : CircularProgressIndicator(),
-          );
-        }
-
-        final article = update.data;
+    return EntityBuilder<Article>(
+      id: articleId,
+      builder: handleLoadingError((context, article, isFetching) {
         return Scaffold(
+          appBar: _buildAppBar(context, article),
           body: LayoutBuilder(
             builder: (ctx, constraints) {
               final width = constraints.maxWidth;
-              final margin = width < 500 ? 0 : width * 0.08;
+              final margin = width < 500 ? 0.0 : width * 0.08;
               final padding = (width * 0.06).clamp(32.0, 64.0);
 
               return Provider<ArticleTheme>(
                 create: (_) =>
                     ArticleTheme(darkColor: Colors.purple, padding: padding),
                 child: ListView(
-                  padding: MediaQuery.of(context).padding +
-                      EdgeInsets.symmetric(horizontal: margin.toDouble()) +
-                      EdgeInsets.symmetric(vertical: 16),
+                  padding:
+                      EdgeInsets.symmetric(horizontal: margin, vertical: 16),
                   children: <Widget>[
                     ArticleView(article),
                   ],
@@ -55,7 +46,20 @@ class ArticleScreen extends StatelessWidget {
             },
           ),
         );
-      },
+      }),
+    );
+  }
+
+  AppBar _buildAppBar(BuildContext context, Article article) {
+    return AppBar(
+      elevation: 0,
+      backgroundColor: context.theme.scaffoldBackgroundColor,
+      iconTheme: IconThemeData(color: context.theme.contrastColor),
+      actions: <Widget>[
+        SizedBox(width: 8),
+        AccountButton(),
+        SizedBox(width: 8),
+      ],
     );
   }
 }
@@ -92,7 +96,7 @@ class _ArticleViewState extends State<ArticleView> {
         ),
         Transform.translate(
           offset: Offset(padding, -12),
-          child: _buildAuthorView(context),
+          child: AuthorView(widget.article.authorId),
         ),
         Transform.translate(
           offset: Offset(0, -20),
@@ -122,29 +126,13 @@ class _ArticleViewState extends State<ArticleView> {
         ),
         Transform.translate(
           offset: Offset(padding, -61),
-          child: _buildAuthorView(context),
+          child: AuthorView(widget.article.authorId),
         ),
         Transform.translate(
           offset: Offset(0, -48),
           child: _buildContent(context),
         ),
       ],
-    );
-  }
-
-  Widget _buildAuthorView(BuildContext context) {
-    return CachedRawBuilder(
-      controller: widget.article.authorId.controller,
-      builder: (_, update) {
-        if (!update.hasData) {
-          return Center(
-              child: update.hasError
-                  ? Text(update.error.toString())
-                  : CircularProgressIndicator());
-        }
-
-        return AuthorView(author: update.data);
-      },
     );
   }
 

@@ -2,23 +2,26 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:ui';
 
+import 'package:collection/collection.dart';
 import 'package:dartx/dartx.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_deep_linking/flutter_deep_linking.dart';
 import 'package:get_it/get_it.dart';
+import 'package:hive_cache/hive_cache.dart';
 import 'package:html/parser.dart';
 import 'package:http/http.dart';
 import 'package:schulcloud/generated/l10n.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'app_config.dart';
+import 'exception.dart';
 import 'logger.dart';
 import 'services/api_network.dart';
 import 'services/network.dart';
 
 final services = GetIt.instance;
 
-extension FancyContext on BuildContext {
+extension ContextWithLocalization on BuildContext {
   S get s => S.of(this);
 }
 
@@ -39,12 +42,6 @@ extension FutureResponseToJson on Future<Response> {
   }
 }
 
-/// Limits a string to a certain amount of characters.
-@Deprecated('Rather than limiting Strings to a certain amount of characters, '
-    'they should be clipped visually, for example after 3 lines')
-String limitString(String string, int maxLength) =>
-    string.length > maxLength ? '${string.substring(0, maxLength)}…' : string;
-
 /// Prints a file size given in [bytes] as a [String].
 String formatFileSize(int bytes) {
   const units = ['B', 'kB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
@@ -64,8 +61,6 @@ typedef L10nStringGetter = String Function(S);
 extension LegenWaitForItDaryString on String {
   // ignore: unnecessary_this
   String get blankToNull => this?.isBlank != false ? null : this;
-
-  String get withoutLinebreaks => replaceAll(RegExp('[\r\n]'), '');
 
   /// Removes html tags from a string.
   String get withoutHtmlTags => parse(this).documentElement.text;
@@ -91,8 +86,6 @@ extension LegenWaitForItDaryString on String {
         )
         .replaceAllMapped(RegExp('(.+)\n'), (m) => '${m[1]}<br />');
   }
-
-  String get uriComponentEncoded => Uri.encodeComponent(this ?? '');
 
   /// Converts a hex string (like '#ffdd00' or '#12c0ffee') to a [Color].
   Color get hexToColor =>
@@ -125,6 +118,7 @@ Future<bool> tryLaunchingUrl(String url) async {
   return false;
 }
 
+// TODO(marcelgarus): remove
 String exceptionMessage(dynamic error) {
   if (error is ServerError && error.body.message != null) {
     return error.body.message;
@@ -143,16 +137,22 @@ extension ImmutableMap<K, V> on Map<K, V> {
 }
 
 /// An error indicating that a permission wasn't granted by the user.
-class PermissionNotGranted<T> implements Exception {
-  @override
-  String toString() => "A permission wasn't granted by the user.";
+class PermissionNotGranted<T> extends FancyException {
+  PermissionNotGranted()
+      : super(
+          isGlobal: false,
+          messageBuilder: (context) => context.s.app_error_forbidden,
+        );
 }
 
-class LazyMap<K, V> {
-  LazyMap(this.createValueForKey) : assert(createValueForKey != null);
+/// Converts the given dynamically typed list into a strongly typed [List] of
+/// [Id]s for the entity type [E].
+List<Id<E>> parseIds<E extends Entity<E>>(dynamic list) =>
+    (list as List<dynamic>)?.cast<String>()?.toIds<E>() ?? [];
 
-  final Map<K, V> _map = {};
-  final V Function(K key) createValueForKey;
-
-  V operator [](K key) => _map.putIfAbsent(key, () => createValueForKey(key));
+extension DeepEquality<T> on Iterable<T> {
+  bool deeplyEquals(Iterable<T> other, {bool unordered = false}) => (unordered
+          ? DeepCollectionEquality.unordered()
+          : DeepCollectionEquality())
+      .equals(this, other);
 }

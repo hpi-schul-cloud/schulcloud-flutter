@@ -1,7 +1,4 @@
-import 'package:hive/hive.dart';
-import 'package:meta/meta.dart';
 import 'package:schulcloud/app/app.dart';
-import 'package:time_machine/time_machine.dart';
 
 part 'data.g.dart';
 
@@ -52,4 +49,23 @@ class Article implements Entity<Article> {
 
   @HiveField(7)
   final String content;
+
+  @override
+  bool operator ==(Object other) =>
+      other is Article &&
+      id == other.id &&
+      title == other.title &&
+      authorId == other.authorId &&
+      publishedAt == other.publishedAt &&
+      imageUrl == other.imageUrl &&
+      content == other.content;
+  @override
+  int get hashCode => hashList([
+        id,
+        title,
+        authorId,
+        publishedAt,
+        imageUrl,
+        content,
+      ]);
 }

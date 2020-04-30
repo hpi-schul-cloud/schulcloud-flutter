@@ -1,7 +1,6 @@
 import 'package:black_hole_flutter/black_hole_flutter.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_cached/flutter_cached.dart';
 import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/course/course.dart';
 import 'package:schulcloud/dashboard/dashboard.dart';
@@ -18,21 +17,13 @@ class AssignmentDashboardCard extends StatelessWidget {
       title: s.assignment_dashboardCard,
       footerButtonText: s.assignment_dashboardCard_all,
       onFooterButtonPressed: () => context.navigator.pushNamed('/homework'),
-      child: CachedRawBuilder<List<Assignment>>(
-        controller: services.storage.root.assignments.controller,
-        builder: (context, update) {
-          if (!update.hasData) {
-            return Center(
-              child: update.hasError
-                  ? ErrorBanner(update.error, update.stackTrace)
-                  : CircularProgressIndicator(),
-            );
-          }
-
+      child: CollectionBuilder.populated<Assignment>(
+        collection: services.storage.root.assignments,
+        builder: handleLoadingError((context, assignments, isFetching) {
           // Only show open assignments that are due in the next week
           final start = LocalDate.today();
           final end = start.addDays(7);
-          final openAssignments = update.data.where((h) {
+          final openAssignments = assignments.where((h) {
             final dueAt = h.dueAt?.inLocalZone()?.localDateTime?.calendarDate;
             return dueAt == null || (start <= dueAt && dueAt <= end);
           });
@@ -68,7 +59,7 @@ class AssignmentDashboardCard extends StatelessWidget {
               ),
             ],
           );
-        },
+        }),
       ),
     );
   }
@@ -91,17 +82,11 @@ class _CourseAssignmentCountTile extends StatelessWidget {
       return _buildListTile(context, null, shouldHaveCourse: false);
     }
 
-    return CachedRawBuilder<Course>(
-      controller: courseId.controller,
-      builder: (context, update) {
-        if (update.hasError) {
-          return ListTile(
-            title: Text(update.error.toString()),
-          );
-        }
-
-        return _buildListTile(context, update.data);
-      },
+    return EntityBuilder<Course>(
+      id: courseId,
+      builder: handleLoadingError(
+        (context, course, _) => _buildListTile(context, course),
+      ),
     );
   }
 

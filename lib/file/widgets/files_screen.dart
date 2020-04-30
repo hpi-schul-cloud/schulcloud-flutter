@@ -1,7 +1,6 @@
 import 'package:black_hole_flutter/black_hole_flutter.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_cached/flutter_cached.dart';
 import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/course/course.dart';
 
@@ -33,9 +32,9 @@ class _CoursesList extends StatelessWidget {
   Widget build(BuildContext context) {
     return FancyCard(
       title: context.s.file_files_course,
-      child: CachedRawBuilder(
-        controller: services.storage.root.courses.controller,
-        builder: (context, update) {
+      child: CollectionBuilder.populated<Course>(
+        collection: services.storage.root.courses,
+        builder: handleLoadingError((context, courses, _) {
           return GridView.extent(
             primary: false,
             shrinkWrap: true,
@@ -44,10 +43,10 @@ class _CoursesList extends StatelessWidget {
             mainAxisSpacing: 8,
             crossAxisSpacing: 8,
             children: <Widget>[
-              for (var course in update.data ?? []) _CourseCard(course: course),
+              for (var course in courses) _CourseCard(course: course),
             ],
           );
-        },
+        }),
       ),
     );
   }

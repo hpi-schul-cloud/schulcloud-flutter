@@ -1,6 +1,5 @@
 import 'package:black_hole_flutter/black_hole_flutter.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_cached/flutter_cached.dart';
 import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/assignment/assignment.dart';
 import 'package:schulcloud/course/course.dart';
@@ -8,20 +7,19 @@ import 'package:time_machine/time_machine.dart';
 
 import '../data.dart';
 
-class AssignmentsScreen extends StatefulWidget {
+class AssignmentsScreen extends SortFilterWidget<Assignment> {
   AssignmentsScreen({
     SortFilterSelection<Assignment> sortFilterSelection,
-  }) : initialSortFilterSelection =
-            sortFilterSelection ?? sortFilterConfig.defaultSelection;
+  }) : super(sortFilterSelection ?? sortFilterConfig.defaultSelection);
 
   static final sortFilterConfig = SortFilter<Assignment>(
     sorters: {
       'createdAt': Sorter<Assignment>.simple(
-        (s) => s.assignment_assignment_property_createdAt,
+        (s) => s.general_entity_property_createdAt,
         selector: (assignment) => assignment.createdAt,
       ),
       'updatedAt': Sorter<Assignment>.simple(
-        (s) => s.assignment_assignment_property_updatedAt,
+        (s) => s.general_entity_property_updatedAt,
         selector: (assignment) => assignment.updatedAt,
       ),
       'availableAt': Sorter<Assignment>.simple(
@@ -42,11 +40,18 @@ class AssignmentsScreen extends StatefulWidget {
         selector: (assignment) => assignment.dueAt?.inLocalZone()?.calendarDate,
         defaultSelection: DateRangeFilterSelection(start: LocalDate.today()),
       ),
+      'courseId': CategoryFilter<Assignment, Course>(
+        (s) => s.assignment_assignment_property_course,
+        selector: (assignment) => assignment.courseId,
+        categoriesCollection: services.storage.root.courses,
+        categoryLabelBuilder: (_, courseId) => CourseName(courseId),
+        webQueryParser: (value) => Id<Course>(value),
+      ),
       'more': FlagsFilter<Assignment>(
-        (s) => s.assignment_assignment_property_more,
+        (s) => s.general_entity_property_more,
         filters: {
           'isArchived': FlagFilter<Assignment>(
-            (s) => s.assignment_assignment_property_isArchived,
+            (s) => s.general_entity_property_isArchived,
             selector: (assignment) => assignment.isArchived,
             defaultSelection: false,
           ),
@@ -64,111 +69,92 @@ class AssignmentsScreen extends StatefulWidget {
       ),
     },
   );
-  final SortFilterSelection<Assignment> initialSortFilterSelection;
 
   @override
   _AssignmentsScreenState createState() => _AssignmentsScreenState();
 }
 
-class _AssignmentsScreenState extends State<AssignmentsScreen> {
-  SortFilterSelection<Assignment> _sortFilter;
-
-  @override
-  void initState() {
-    super.initState();
-
-    _sortFilter ??= widget.initialSortFilterSelection;
-  }
-
+class _AssignmentsScreenState extends State<AssignmentsScreen>
+    with SortFilterStateMixin<AssignmentsScreen, Assignment> {
   @override
   Widget build(BuildContext context) {
     final s = context.s;
 
     return Scaffold(
-      body: CachedBuilder<List<Assignment>>(
-        controller: services.storage.root.assignments.controller,
-        errorBannerBuilder: (_, error, st) => ErrorBanner(error, st),
-        errorScreenBuilder: (_, error, st) => ErrorScreen(error, st),
-        builder: (context, allAssignments) {
-          final assignments = _sortFilter.apply(allAssignments);
-
-          return CustomScrollView(
-            slivers: <Widget>[
-              FancyAppBar(
-                title: Text(context.s.assignment),
-                actions: <Widget>[
-                  IconButton(
-                    icon: Icon(Icons.sort),
-                    onPressed: () => _showSortFilterSheet(context),
-                  ),
-                ],
-              ),
-              if (assignments.isEmpty)
-                SliverFillRemaining(
-                  child: EmptyStateScreen(
-                    text: s.assignment_assignmentsScreen_empty,
-                    actions: <Widget>[
-                      SecondaryButton(
-                        onPressed: () => _showSortFilterSheet(context),
-                        child: Text(
-                          s.assignment_assignmentsScreen_empty_editFilters,
-                        ),
-                      ),
-                    ],
-                  ),
-                )
-              else
+      body: CollectionBuilder.populated<Assignment>(
+        collection: services.storage.root.assignments,
+        builder: handleLoadingErrorRefreshEmptyFilter(
+          appBar: FancyAppBar(
+            title: Text(s.assignment),
+            actions: <Widget>[SortFilterIconButton(showSortFilterSheet)],
+          ),
+          emptyStateBuilder: (context) => EmptyStateScreen(
+            text: context.s.assignment_assignmentsScreen_empty,
+          ),
+          sortFilterSelection: sortFilterSelection,
+          filteredEmptyStateBuilder: (context) => SortFilterEmptyState(
+            showSortFilterSheet,
+            text: s.assignment_assignmentsScreen_emptyFiltered,
+          ),
+          builder: (context, assignments, fetch) {
+            return CustomScrollView(
+              slivers: <Widget>[
                 SliverList(
                   delegate: SliverChildBuilderDelegate(
                     (_, index) => Padding(
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 8,
+                      ),
                       child: AssignmentCard(
                         assignment: assignments[index],
-                        setFlagFilterCallback: (key, value) {
-                          setState(() => _sortFilter = _sortFilter
-                              .withFlagsFilterSelection('more', key, value));
+                        onCourseClicked: (courseId) =>
+                            setFilter('courseId', {courseId}),
+                        onOverdueClicked: () {
+                          setFilter(
+                            'dueAt',
+                            DateRangeFilterSelection(
+                              end: LocalDate.today() - Period(days: 1),
+                            ),
+                          );
                         },
+                        setFlagFilterCallback: setFlagFilter,
                       ),
                     ),
                     childCount: assignments.length,
                   ),
                 ),
-            ],
-          );
-        },
+              ],
+            );
+          },
+        ),
       ),
-    );
-  }
-
-  void _showSortFilterSheet(BuildContext context) {
-    _sortFilter.showSheet(
-      context: context,
-      callback: (selection) {
-        setState(() => _sortFilter = selection);
-      },
     );
   }
 }
 
+typedef CourseClickedCallback = void Function(Id<Course> courseId);
+
 class AssignmentCard extends StatelessWidget {
   const AssignmentCard({
     @required this.assignment,
+    @required this.onCourseClicked,
+    @required this.onOverdueClicked,
     @required this.setFlagFilterCallback,
   })  : assert(assignment != null),
+        assert(onCourseClicked != null),
+        assert(onOverdueClicked != null),
         assert(setFlagFilterCallback != null);
 
   final Assignment assignment;
+  final CourseClickedCallback onCourseClicked;
+  final VoidCallback onOverdueClicked;
   final SetFlagFilterCallback<Assignment> setFlagFilterCallback;
-
-  void _showAssignmentDetailsScreen(BuildContext context) {
-    context.navigator.pushNamed('/homework/${assignment.id}');
-  }
 
   @override
   Widget build(BuildContext context) {
     return FancyCard(
-      onTap: () => _showAssignmentDetailsScreen(context),
+      onTap: () => context.navigator.pushNamed('/homework/${assignment.id}'),
       omitBottomPadding: true,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -209,16 +195,10 @@ class AssignmentCard extends StatelessWidget {
 
     return <Widget>[
       if (assignment.courseId != null)
-        CachedRawBuilder<Course>(
-          controller: assignment.courseId.controller,
-          builder: (_, update) {
-            return CourseChip(
-              update.data,
-              onPressed: () {
-                // TODO(JonasWanke): filter list by course, https://github.com/schul-cloud/schulcloud-flutter/issues/145
-              },
-            );
-          },
+        CourseChip(
+          assignment.courseId,
+          key: ValueKey(assignment.courseId),
+          onPressed: () => onCourseClicked(assignment.courseId),
         ),
       if (assignment.isOverdue)
         ActionChip(
@@ -227,7 +207,7 @@ class AssignmentCard extends StatelessWidget {
             color: context.theme.errorColor,
           ),
           label: Text(s.assignment_assignment_overdue),
-          onPressed: () {},
+          onPressed: onOverdueClicked,
         ),
       if (assignment.isArchived)
         FlagFilterPreviewChip(

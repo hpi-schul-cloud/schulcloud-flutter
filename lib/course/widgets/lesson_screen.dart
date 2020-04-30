@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_cached/flutter_cached.dart';
 import 'package:schulcloud/app/app.dart';
 
 import '../data.dart';
@@ -22,23 +21,17 @@ class _LessonScreenState extends State<LessonScreen> {
   Widget build(BuildContext context) {
     final s = context.s;
 
-    return CachedRawBuilder<Lesson>(
-      controller: widget.lessonId.controller,
-      builder: (context, update) {
-        if (update.hasError) {
-          return ErrorScreen(update.error, update.stackTrace);
-        } else if (update.hasNoData) {
-          return Center(child: CircularProgressIndicator());
-        }
-
-        final lesson = update.data;
+    return EntityBuilder<Lesson>(
+      id: widget.lessonId,
+      builder: handleLoadingError((context, lesson, fetch) {
         final contents = lesson.visibleContents.toList();
+
         return FancyScaffold(
           appBar: FancyAppBar(
             title: Text(lesson.name),
-            subtitle: CachedRawBuilder<Course>(
-              controller: widget.courseId.controller,
-              builder: (_, update) => FancyText(update.data?.name),
+            subtitle: EntityBuilder<Course>(
+              id: widget.courseId,
+              builder: handleError((_, course, __) => FancyText(course?.name)),
             ),
           ),
           sliver: contents.isEmpty
@@ -66,7 +59,7 @@ class _LessonScreenState extends State<LessonScreen> {
                   ),
                 ),
         );
-      },
+      }),
     );
   }
 }

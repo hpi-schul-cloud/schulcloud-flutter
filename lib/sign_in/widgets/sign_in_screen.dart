@@ -21,7 +21,7 @@ class SignInScreen extends StatelessWidget {
   }
 
   List<Widget> _buildContent(BuildContext context) {
-    final mediaQuery = MediaQuery.of(context);
+    final mediaQuery = context.mediaQuery;
     final theme = context.theme;
     final s = context.s;
 
@@ -51,9 +51,32 @@ class SignInScreen extends StatelessWidget {
         slantTop: 0,
         child: Padding(
           padding: EdgeInsets.all(16),
-          child: Text(
-            s.signIn_signInScreen_about,
-            textAlign: TextAlign.justify,
+          child: Column(
+            children: <Widget>[
+              Text(
+                s.signIn_signInScreen_faq_getAccountQ,
+                style: theme.textTheme.title
+                    .copyWith(color: theme.primaryColor.contrastColor),
+              ),
+              SizedBox(height: 4),
+              Text(
+                s.signIn_signInScreen_faq_getAccountA(services.config.title),
+              ),
+              SizedBox(height: 8),
+              Align(
+                alignment: Alignment.centerRight,
+                child: SecondaryButton.icon(
+                  textColor: theme.primaryColor.contrastColor,
+                  borderSide:
+                      BorderSide(color: theme.primaryColor.contrastColor),
+                  highlightedBorderColor: theme.primaryColor.contrastColor,
+                  onPressed: () =>
+                      tryLaunchingUrl('https://blog.schul-cloud.org/faq'),
+                  icon: Icon(Icons.help_outline),
+                  label: Text(s.signIn_signInScreen_faq),
+                ),
+              ),
+            ],
           ),
         ),
       ),

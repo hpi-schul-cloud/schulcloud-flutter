@@ -2,7 +2,6 @@ import 'package:black_hole_flutter/black_hole_flutter.dart';
 import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_cached/flutter_cached.dart';
 import 'package:pedantic/pedantic.dart';
 import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/course/course.dart';
@@ -43,8 +42,9 @@ class FileBrowser extends StatelessWidget {
     } else if (isOwnerMe) {
       context.navigator.pushNamed('/files/my/${file.id}');
     } else {
-      logger.e(
-          'Unknown owner: ${path.ownerId} (type: ${path.ownerId.runtimeType}) while trying to open directory ${file.id}');
+      logger.e('Unknown owner: ${path.ownerId} (type: '
+          '${path.ownerId.runtimeType}) while trying to open directory '
+          '${file.id}');
     }
   }
 
@@ -72,83 +72,58 @@ class FileBrowser extends StatelessWidget {
   }
 
   Widget _buildEmbedded(BuildContext context) {
-    return CachedRawBuilder<List<File>>(
-      // The owner is either a [User] or a [Course]. Either way, the [owner] is
-      // guaranteed to have a [files] field.
-      controller: path.files.controller,
-      builder: (context, update) {
-        if (update.hasError) {
-          return ErrorScreen(update.error, update.stackTrace);
-        }
-        final files = update.data;
-        if (files?.isEmpty ?? true) {
-          return _buildEmptyState(context);
-        }
-        return FileList(
-          files: files,
-          primary: false,
-          onOpenDirectory: (directory) => _openDirectory(context, directory),
-          onDownloadFile: (file) => _downloadFile(context, file),
-        );
-      },
+    return CollectionBuilder<File>(
+      collection: path.files,
+      builder: handleLoadingErrorEmpty(
+        emptyStateBuilder: _buildEmptyState,
+        builder: (context, fileIds, _) {
+          return FileList(
+            fileIds,
+            primary: false,
+            onOpenDirectory: (directory) => _openDirectory(context, directory),
+            onDownloadFile: (file) => _downloadFile(context, file),
+          );
+        },
+      ),
     );
   }
 
   Widget _buildStandalone(BuildContext context) {
-    FancyAppBar buildLoadingErrorAppBar(
-      dynamic error, [
-      Color backgroundColor,
-    ]) {
-      return FancyAppBar(
-        title: Text(error?.toString() ?? context.s.general_loading),
-        backgroundColor: backgroundColor,
-      );
-    }
-
     Widget appBar;
     if (isOwnerCourse) {
-      appBar = CachedRawBuilder<Course>(
-        controller: path.ownerId.controller,
-        builder: (context, update) {
-          if (!update.hasData) {
-            return buildLoadingErrorAppBar(update.error);
-          }
+      appBar = EntityBuilder<Course>(
+        id: path.ownerId,
+        builder: (context, snapshot, fetch) {
+          final course = snapshot.data;
 
-          final course = update.data;
           if (path.parentId == null) {
             return FancyAppBar(
-              title: Text(course.name),
-              backgroundColor: course.color,
+              title: Text(course?.name ??
+                  snapshot.error?.toString() ??
+                  context.s.general_loading),
+              backgroundColor: course?.color,
             );
           }
 
-          return CachedRawBuilder<File>(
-            controller: path.parentId.controller,
-            builder: (context, update) {
-              if (!update.hasData) {
-                return buildLoadingErrorAppBar(update.error, course.color);
-              }
-
-              final parent = update.data;
+          return EntityBuilder<File>(
+            id: path.parentId,
+            builder: handleLoadingError((context, parentDirectory, fetch) {
               return FancyAppBar(
-                title: Text(parent.name),
-                backgroundColor: course.color,
+                title: Text(parentDirectory.name),
+                backgroundColor: course?.color,
               );
-            },
+            }),
           );
         },
       );
     } else if (path.parentId != null) {
-      appBar = CachedRawBuilder<File>(
-        controller: path.parentId.controller,
-        builder: (context, update) {
-          if (!update.hasData) {
-            return buildLoadingErrorAppBar(update.error);
-          }
-
-          final parent = update.data;
-          return FancyAppBar(title: Text(parent.name));
-        },
+      appBar = EntityBuilder<File>(
+        id: path.parentId,
+        builder: handleError((context, parent, __) {
+          return FancyAppBar(
+            title: Text(parent?.name ?? context.s.general_loading),
+          );
+        }),
       );
     } else if (isOwnerMe) {
       appBar = FancyAppBar(title: Text(context.s.file_files_my));
@@ -160,20 +135,19 @@ class FileBrowser extends StatelessWidget {
         child: appBar,
       ),
       floatingActionButton: UploadFab(path: path),
-      body: CachedBuilder<List<File>>(
-        controller: path.files.controller,
-        errorBannerBuilder: (_, error, st) => ErrorBanner(error, st),
-        errorScreenBuilder: (_, error, st) => ErrorScreen(error, st),
-        builder: (context, files) {
-          if (files.isEmpty) {
-            return _buildEmptyState(context);
-          }
-          return FileList(
-            files: files,
-            onOpenDirectory: (directory) => _openDirectory(context, directory),
-            onDownloadFile: (file) => _downloadFile(context, file),
-          );
-        },
+      body: CollectionBuilder<File>(
+        collection: path.files,
+        builder: handleLoadingErrorEmpty(
+          emptyStateBuilder: _buildEmptyState,
+          builder: (context, fileIds, isFetching) {
+            return FileList(
+              fileIds,
+              onOpenDirectory: (directory) =>
+                  _openDirectory(context, directory),
+              onDownloadFile: (file) => _downloadFile(context, file),
+            );
+          },
+        ),
       ),
     );
   }
@@ -196,19 +170,19 @@ class FileBrowser extends StatelessWidget {
 }
 
 class FileList extends StatelessWidget {
-  const FileList({
+  const FileList(
+    this.fileIds, {
     Key key,
-    @required this.files,
     @required this.onOpenDirectory,
     @required this.onDownloadFile,
     this.primary = true,
-  })  : assert(files != null),
+  })  : assert(fileIds != null),
         assert(onOpenDirectory != null),
         assert(onDownloadFile != null),
         assert(primary != null),
         super(key: key);
 
-  final List<File> files;
+  final List<Id<File>> fileIds;
   final void Function(File directory) onOpenDirectory;
   final void Function(File file) onDownloadFile;
   final bool primary;
@@ -219,18 +193,19 @@ class FileList extends StatelessWidget {
       primary: primary,
       shrinkWrap: !primary,
       itemBuilder: (context, index) {
-        if (index < files.length) {
-          final file = files[index];
+        if (index < fileIds.length) {
+          final file = fileIds[index];
           return FileTile(
-            file: file,
-            onOpen: file.isDirectory ? onOpenDirectory : onDownloadFile,
+            file,
+            onOpenDirectory: onOpenDirectory,
+            onDownloadFile: onDownloadFile,
           );
-        } else if (index == files.length) {
+        } else if (index == fileIds.length) {
           return Container(
             alignment: Alignment.center,
             padding: EdgeInsets.all(16),
             child: Text(
-              context.s.file_fileBrowser_totalCount(files.length),
+              context.s.file_fileBrowser_totalCount(fileIds.length),
               style: context.textTheme.caption,
             ),
           );

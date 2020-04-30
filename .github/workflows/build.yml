@@ -110,8 +110,12 @@ jobs:
       # The default (sc) flavor doesn't have a special main.dart-suffix
       - if: matrix.flavor == 'sc'
         run: flutter build apk --flavor=sc
+        env:
+          RELEASE_USE_DEBUG_KEY: true
       - if: matrix.flavor != 'sc'
         run: flutter build apk --target=lib/main_${{ matrix.flavor }}.dart --flavor=${{ matrix.flavor }}
+        env:
+          RELEASE_USE_DEBUG_KEY: true
 
       - name: Upload APK as artifact
         uses: actions/upload-artifact@v1
@@ -119,15 +123,65 @@ jobs:
           name: apk-${{ matrix.flavor }}
           path: build/app/outputs/apk/${{ matrix.flavor }}/release
 
-  deploy-internal:
-    name: Deploy internal
+  # TODO(JonasWanke): enable screenshots when this issue is fixed: https://github.com/flutter/flutter/issues/36244
+  # generate-screenshots:
+  #   name: Generate screenshots
+  #   needs: install
+  #   # We have to use macOS for hardware acceleration on Android emulators
+  #   runs-on: macos-10.15
+  #   strategy:
+  #     matrix:
+  #       flavor: ["sc"]
+  #     fail-fast: false
+  #   steps:
+  #     - name: Install Java 12
+  #       uses: actions/setup-java@v1
+  #       with:
+  #         java-version: "12.x"
+  #     - name: Install Flutter (stable)
+  #       uses: subosito/flutter-action@v1
+  #       with:
+  #         channel: "stable"
+  #     - name: Checkout source
+  #       uses: actions/download-artifact@v1
+  #       with:
+  #         name: source
+  #         path: .
+  #     - name: Install Java 10
+  #       uses: actions/setup-java@v1
+  #       with:
+  #         java-version: 10
+  #     - name: Create virtual device
+  #       run: |
+  #         ~/Library/Android/sdk/tools/bin/sdkmanager "system-images;android-28;default;x86"
+  #         echo no | ~/Library/Android/sdk/tools/bin/avdmanager --verbose create avd --force --name "Pixel_XL" --package "system-images;android-28;default;x86" --device "pixel_xl"
+  #       env:
+  #         JDK_JAVA_OPTIONS: "--add-modules java.xml.bind"
+  #     - name: Install screenshots package
+  #       run: |
+  #         brew update && brew install imagemagick
+  #         flutter pub global activate screenshots
+  #     - name: Take screenshots
+  #       run: flutter pub global run screenshots:main -v -f sc
+  #     - name: Upload screenshots as artifact
+  #       uses: actions/upload-artifact@v1
+  #       with:
+  #         name: screenshots-${{ matrix.flavor }}
+  #         path: android/fastlane/metadata/android
+  #     - uses: actions/upload-artifact@v1
+  #       with:
+  #         name: tmp-screenshots
+  #         path: /tmp/screenshots
+
+  deploy-canary:
+    name: Deploy canary
     needs: install
-    # We have to use macOS for hardware acceleration on Android emulators
-    runs-on: macos-10.15
+    runs-on: ubuntu-latest
     strategy:
       matrix:
         flavor: ["sc"]
       fail-fast: false
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
     steps:
       - name: Install Java 12
         uses: actions/setup-java@v1
@@ -143,29 +197,29 @@ jobs:
           name: source
           path: .
 
-      - name: Install Java 10
-        uses: actions/setup-java@v1
+      - name: Store Google Play credentials in a file
+        run: echo "${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_KEY }}" | base64 --decode > ./android/fastlane/googlePlay-serviceAccount.json
+      - name: Store Google Play upload key in a file
+        run: echo "${{ secrets.GOOGLE_PLAY_UPLOAD_KEY }}" | base64 --decode > ./android/upload.keystore.jks
+
+      - id: unicorn
+        name: Determine new version & generate changelog
+        uses: JonasWanke/unicorn@ad66dae
         with:
-          java-version: 10
-      - name: Create virtual device
+          repo-token: "${{ secrets.UNICORN_TOKEN }}"
+      - name: Build AAB
         run: |
-          ~/Library/Android/sdk/tools/bin/sdkmanager "system-images;android-28;default;x86"
-          echo no | ~/Library/Android/sdk/tools/bin/avdmanager --verbose create avd --force --name "Pixel_XL" --package "system-images;android-28;default;x86" --device "pixel_xl"
+          flutter build appbundle \
+            --flavor=sc \
+            --build-number=${{ steps.unicorn.outputs.versionCode }} \
+            --build-name=${{ steps.unicorn.outputs.version }}
         env:
-          JDK_JAVA_OPTIONS: "--add-modules java.xml.bind"
-      - name: Install screenshots package
-        run: |
-          brew update && brew install imagemagick
-          flutter pub global activate screenshots
-      # TODO(JonasWanke): enabled when this issue is fixed: https://github.com/flutter/flutter/issues/36244
-      # - name: Take screenshots
-      #   run: flutter pub global run screenshots:main -v -f sc
-      # - name: Upload screenshots as artifact
-      #   uses: actions/upload-artifact@v1
-      #   with:
-      #     name: screenshots-${{ matrix.flavor }}
-      #     path: android/fastlane/metadata/android
-      # - uses: actions/upload-artifact@v1
-      #   with:
-      #     name: tmp-screenshots
-      #     path: /tmp/screenshots
+          UPLOAD_KEY_STORE_PASSWORD: ${{ secrets.GOOGLE_PLAY_UPLOAD_KEY_STORE_PASSWORD }}
+          UPLOAD_KEY_KEY_PASSWORD: ${{ secrets.GOOGLE_PLAY_UPLOAD_KEY_KEY_PASSWORD }}
+        # Flutter doesn't find the generated .aab-file, but it should
+        continue-on-error: true
+      - name: Deploy to Google Play (internal track)
+        uses: maierj/fastlane-action@v1.4.0
+        with:
+          lane: uploadCanary
+          subdirectory: android

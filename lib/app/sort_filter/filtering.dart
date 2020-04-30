@@ -1,17 +1,20 @@
 import 'package:black_hole_flutter/black_hole_flutter.dart';
 import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 import 'package:flutter/material.dart';
+import 'package:hive_cache/hive_cache.dart';
 import 'package:intl/intl.dart';
 import 'package:time_machine/time_machine.dart';
 import 'package:time_machine/time_machine_text_patterns.dart';
 
 import '../datetime_utils.dart';
 import '../utils.dart';
+import '../widgets/cache_utils.dart';
 import 'sort_filter.dart';
 
 typedef Test<T, D> = bool Function(T item, D data);
 typedef Selector<T, R> = R Function(T item);
 
+@immutable
 abstract class Filter<T, S> {
   const Filter(this.titleGetter) : assert(titleGetter != null);
 
@@ -19,7 +22,7 @@ abstract class Filter<T, S> {
 
   final L10nStringGetter titleGetter;
 
-  S tryParseWebQuerySorter(Map<String, String> query, String key);
+  S tryParseWebQuery(Map<String, String> query, String key);
 
   bool filter(T item, S selection);
   Widget buildWidget(
@@ -36,7 +39,6 @@ abstract class Filter<T, S> {
   }
 }
 
-@immutable
 class DateRangeFilter<T> extends Filter<T, DateRangeFilterSelection> {
   const DateRangeFilter(
     L10nStringGetter titleGetter, {
@@ -54,7 +56,7 @@ class DateRangeFilter<T> extends Filter<T, DateRangeFilterSelection> {
   final String webQueryKey;
 
   @override
-  DateRangeFilterSelection tryParseWebQuerySorter(
+  DateRangeFilterSelection tryParseWebQuery(
       Map<String, String> query, String key) {
     LocalDate tryParse(String value) {
       if (value == null) {
@@ -84,12 +86,14 @@ class DateRangeFilter<T> extends Filter<T, DateRangeFilterSelection> {
     DateRangeFilterSelection selection,
     DataChangeCallback<DateRangeFilterSelection> updater,
   ) {
+    final s = context.s;
+
     return Row(
       children: <Widget>[
         Expanded(
           child: _buildDateField(
             date: selection.start,
-            hintText: 'from',
+            hintText: s.app_dateRangeFilter_start,
             onChanged: (newStart) => updater(selection.withStart(newStart)),
             lastDate: selection.end,
           ),
@@ -100,7 +104,7 @@ class DateRangeFilter<T> extends Filter<T, DateRangeFilterSelection> {
         Expanded(
           child: _buildDateField(
             date: selection.end,
-            hintText: 'until',
+            hintText: s.app_dateRangeFilter_end,
             onChanged: (newEnd) => updater(selection.withEnd(newEnd)),
             firstDate: selection.start,
           ),
@@ -149,7 +153,80 @@ class DateRangeFilterSelection {
       DateRangeFilterSelection(start: start, end: end);
 }
 
-@immutable
+typedef CategoryLabelBuilder<C> = Widget Function(
+    BuildContext context, C category);
+typedef WebQueryCategoryParser<C> = C Function(String value);
+
+class CategoryFilter<T, C extends Entity<C>> extends Filter<T, Set<Id<C>>> {
+  const CategoryFilter(
+    L10nStringGetter titleGetter, {
+    @required this.selector,
+    @required this.categoriesCollection,
+    @required this.categoryLabelBuilder,
+    this.defaultSelection = const {},
+    this.webQueryKey,
+    @required this.webQueryParser,
+  })  : assert(selector != null),
+        assert(categoriesCollection != null),
+        assert(categoryLabelBuilder != null),
+        assert(defaultSelection != null),
+        assert(webQueryParser != null),
+        super(titleGetter);
+
+  final Selector<T, Id<C>> selector;
+  final Collection<C> categoriesCollection;
+  final CategoryLabelBuilder<Id<C>> categoryLabelBuilder;
+
+  @override
+  final Set<Id<C>> defaultSelection;
+
+  final String webQueryKey;
+  final WebQueryCategoryParser<Id<C>> webQueryParser;
+
+  @override
+  Set<Id<C>> tryParseWebQuery(Map<String, String> query, String key) {
+    final queryValue = query[webQueryKey ?? key];
+    return queryValue.split(',').map(webQueryParser).toSet();
+  }
+
+  @override
+  bool filter(T item, Set<Id<C>> selection) {
+    final category = selector(item);
+    return category == null ||
+        selection.isEmpty ||
+        selection.contains(category);
+  }
+
+  @override
+  Widget buildWidget(
+    BuildContext context,
+    Set<Id<C>> selection,
+    DataChangeCallback<Set<Id<C>>> updater,
+  ) {
+    return CollectionBuilder<C>(
+      collection: categoriesCollection,
+      builder: handleLoadingError((context, categoryIds, _) {
+        return ChipGroup(
+          children: <Widget>[
+            for (final category in categoryIds)
+              FilterChip(
+                selected: selection.contains(category),
+                onSelected: (isSelected) {
+                  if (isSelected) {
+                    updater({...selection, category});
+                  } else {
+                    updater(selection.toSet().difference({category}));
+                  }
+                },
+                label: categoryLabelBuilder(context, category),
+              )
+          ],
+        );
+      }),
+    );
+  }
+}
+
 class FlagsFilter<T> extends Filter<T, Map<String, bool>> {
   const FlagsFilter(L10nStringGetter titleGetter, {@required this.filters})
       : assert(filters != null),
@@ -166,8 +243,7 @@ class FlagsFilter<T> extends Filter<T, Map<String, bool>> {
   final Map<String, FlagFilter<T>> filters;
 
   @override
-  Map<String, bool> tryParseWebQuerySorter(
-      Map<String, String> query, String key) {
+  Map<String, bool> tryParseWebQuery(Map<String, String> query, String key) {
     return {
       for (final entry in filters.entries)
         entry.key: entry.value.tryParseWebQuerySorter(query, entry.key),

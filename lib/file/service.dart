@@ -64,7 +64,58 @@ class FileService {
     }
   }
 
-  Stream<UploadProgressUpdate> uploadFiles({
+  Future<void> uploadFileFromLocalPath({
+    @required BuildContext context,
+    @required String localPath,
+  }) async {
+    logger.i('Letting the user choose a destination where to upload '
+        '$localPath.');
+    final file = io.File(localPath);
+
+    final destination = await context.rootNavigator.push(MaterialPageRoute(
+      fullscreenDialog: true,
+      builder: (_) => ChooseDestinationScreen(
+        title: Text(context.s.file_chooseDestination_upload),
+        fabIcon: Icon(Icons.file_upload),
+        fabLabel: Text(context.s.file_chooseDestination_upload_button),
+      ),
+    ));
+
+    if (destination == null) {
+      return;
+    }
+
+    await uploadFiles(
+      context: context,
+      files: [file],
+      destination: destination,
+    );
+  }
+
+  Future<void> uploadFiles({
+    @required BuildContext context,
+    @required List<io.File> files,
+    @required FilePath destination,
+  }) async {
+    assert(context != null);
+    assert(files != null);
+    assert(destination != null);
+
+    logger.i('Uploading [${files.joinToString()}] to $destination.');
+    final s = context.s;
+    await services.snackBar.performMultiAction<UploadProgressUpdate>(
+      action: _uploadFiles(files: files, path: destination),
+      loadingMessageBuilder: (update) => s.file_upload_progress(
+        update.totalNumberOfFiles,
+        update.currentFileName,
+        update.index,
+      ),
+      successMessage: s.file_upload_completed,
+      failureMessage: s.file_upload_failed,
+    );
+  }
+
+  Stream<UploadProgressUpdate> _uploadFiles({
     @required List<io.File> files,
     @required FilePath path,
   }) async* {
@@ -135,38 +186,6 @@ class FileService {
       'thumbnail': signedInfo['header']['x-amz-meta-thumbnail'],
     });
     logger.i('Done uploading the file.');
-  }
-
-  Future<void> uploadFileFromLocalPath({
-    @required BuildContext context,
-    @required String localPath,
-  }) async {
-    logger.i('Letting the user choose a destination where to upload '
-        '$localPath.');
-    final file = io.File(localPath);
-
-    final destination = await context.rootNavigator.push(MaterialPageRoute(
-      fullscreenDialog: true,
-      builder: (_) => ChooseDestinationScreen(
-        title: Text(context.s.file_chooseDestination_upload),
-        fabIcon: Icon(Icons.file_upload),
-        fabLabel: Text(context.s.file_chooseDestination_upload_button),
-      ),
-    ));
-
-    if (destination != null) {
-      logger.i('Uploading to $destination.');
-      await services.snackBar.performAction(
-        action: () => uploadFiles(
-          files: [file],
-          path: destination,
-        ).forEach((_) {}),
-        loadingMessage:
-            context.s.file_uploadProgressSnackBarContent(1, file.name, 0),
-        successMessage: context.s.file_uploadCompletedSnackBar,
-        failureMessage: context.s.file_uploadFailedSnackBar,
-      );
-    }
   }
 }
 

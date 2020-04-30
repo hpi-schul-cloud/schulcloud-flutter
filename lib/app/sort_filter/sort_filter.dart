@@ -2,6 +2,7 @@ import 'package:black_hole_flutter/black_hole_flutter.dart';
 import 'package:dartx/dartx.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:schulcloud/app/app.dart';
 
 import '../utils.dart';
 import 'filtering.dart';
@@ -54,7 +55,7 @@ class SortFilter<T> {
       sortOrder: SortOrderUtils.tryParseWebQuery(query) ?? defaultSortOrder,
       filterSelections: {
         for (final entry in filters.entries)
-          entry.key: entry.value.tryParseWebQuerySorter(query, entry.key),
+          entry.key: entry.value.tryParseWebQuery(query, entry.key),
       },
     );
   }
@@ -123,18 +124,10 @@ class SortFilterSelection<T> {
   ) {
     assert(config.filters[flagsKey] is FlagsFilter);
 
-    return SortFilterSelection(
-      config: config,
-      sortSelectionKey: sortSelectionKey,
-      sortOrder: sortOrder,
-      filterSelections: {
-        ...filterSelections,
-        flagsKey: <String, bool>{
-          ...filterSelections[flagsKey],
-          flag: selection,
-        }
-      },
-    );
+    return withFilterSelection(flagsKey, <String, bool>{
+      ...filterSelections[flagsKey],
+      flag: selection,
+    });
   }
 
   List<T> apply(List<T> allItems) {
@@ -156,27 +149,31 @@ class SortFilterSelection<T> {
 
     var currentSelection = this;
     context.showFancyModalBottomSheet(
+      // Gives us more vertical space.
+      isScrollControlled: true,
       useRootNavigator: true,
-      builder: (_) => Padding(
-        padding: EdgeInsets.symmetric(horizontal: 16),
-        child: StatefulBuilder(
-          builder: (_, setState) {
-            return SortFilterWidget(
-              selection: currentSelection,
-              onSelectionChange: (selection) {
-                setState(() => currentSelection = selection);
-                callback(selection);
-              },
-            );
-          },
-        ),
-      ),
+      builder: (_) {
+        return Padding(
+          padding: EdgeInsets.symmetric(horizontal: 16),
+          child: StatefulBuilder(
+            builder: (_, setState) {
+              return SortFilterSelectionWidget(
+                selection: currentSelection,
+                onSelectionChange: (selection) {
+                  setState(() => currentSelection = selection);
+                  callback(selection);
+                },
+              );
+            },
+          ),
+        );
+      },
     );
   }
 }
 
-class SortFilterWidget<T> extends StatelessWidget {
-  const SortFilterWidget({
+class SortFilterSelectionWidget<T> extends StatelessWidget {
+  const SortFilterSelectionWidget({
     Key key,
     @required this.selection,
     @required this.onSelectionChange,
@@ -248,15 +245,93 @@ class _Section extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
+      padding: EdgeInsets.symmetric(vertical: 8),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
-          Text(title, style: context.textTheme.overline),
+          Text(title.toUpperCase(), style: context.textTheme.overline),
           SizedBox(height: 4),
           child,
         ],
       ),
     );
+  }
+}
+
+class SortFilterIconButton extends StatelessWidget {
+  const SortFilterIconButton(this.showSortFilterSheet)
+      : assert(showSortFilterSheet != null);
+
+  final VoidCallback showSortFilterSheet;
+
+  @override
+  Widget build(BuildContext context) {
+    return IconButton(
+      icon: Icon(Icons.sort),
+      onPressed: showSortFilterSheet,
+    );
+  }
+}
+
+class SortFilterEmptyState extends StatelessWidget {
+  const SortFilterEmptyState(this.showSortFilterSheet, {@required this.text})
+      : assert(showSortFilterSheet != null),
+        assert(text != null);
+
+  final VoidCallback showSortFilterSheet;
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    return EmptyStateScreen(
+      text: text,
+      actions: <Widget>[
+        SecondaryButton(
+          onPressed: showSortFilterSheet,
+          child: Text(context.s.app_sortFilterEmptyState_editFilters),
+        ),
+      ],
+    );
+  }
+}
+
+abstract class SortFilterWidget<T> extends StatefulWidget {
+  const SortFilterWidget(this.initialSortFilterSelection, {Key key})
+      : assert(initialSortFilterSelection != null),
+        super(key: key);
+
+  final SortFilterSelection<T> initialSortFilterSelection;
+}
+
+mixin SortFilterStateMixin<W extends SortFilterWidget<T>, T> on State<W> {
+  SortFilterSelection<T> sortFilterSelection;
+
+  @override
+  void initState() {
+    super.initState();
+
+    sortFilterSelection = widget.initialSortFilterSelection;
+  }
+
+  void showSortFilterSheet() {
+    sortFilterSelection.showSheet(
+      context: context,
+      callback: updateSortFilterSelection,
+    );
+  }
+
+  void updateSortFilterSelection(SortFilterSelection<T> selection) {
+    setState(() => sortFilterSelection = selection);
+  }
+
+  void setFilter(String key, dynamic selection) {
+    updateSortFilterSelection(
+        sortFilterSelection.withFilterSelection(key, selection));
+  }
+
+  // ignore: avoid_positional_boolean_parameters
+  void setFlagFilter(String key, bool value) {
+    updateSortFilterSelection(
+        sortFilterSelection.withFlagsFilterSelection('more', key, value));
   }
 }
