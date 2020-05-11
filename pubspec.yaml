@@ -91,6 +91,7 @@ dev_dependencies:
       ref: f8bdb804da56d0863e03316842317b27f47d2bdf
       path: hive_generator
   intl_utils: ^1.0.2
+  mockito: ^4.1.1
   pedantic: ^1.8.0+1
   screenshots: ^2.1.1
   # We need to use a version compatible with test_api 0.2.11 required by flutter_driver.
