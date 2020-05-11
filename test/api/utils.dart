@@ -25,6 +25,7 @@ Future<void> setUpCommon() async {
 
 class MockStorageService extends Mock implements StorageService {}
 
+const schoolId = '5da021397f7b3700339a8906';
 const teacherUserId = Id<User>('5eb9597d33f2e600294b1ac5');
 final teacherEmail = Platform.environment['SC_AT_TEACHER_EMAIL'];
 final teacherPassword = Platform.environment['SC_AT_TEACHER_PASSWORD'];
@@ -33,7 +34,7 @@ final teacher = User(
   firstName: 'AT',
   lastName: 'Teacher',
   email: teacherEmail,
-  schoolId: '5da021397f7b3700339a8906',
+  schoolId: schoolId,
   displayName: 'AT Teacher',
   avatarInitials: 'AT',
   avatarBackgroundColor: Color(0xfffe8a71),
