@@ -226,9 +226,8 @@ class _ExternalContentWebViewState extends State<_ExternalContentWebView>
         padding: EdgeInsets.all(1),
         child: InAppWebView(
           initialUrl: widget.url,
-          initialOptions: InAppWebViewWidgetOptions(
-            inAppWebViewOptions:
-                InAppWebViewOptions(transparentBackground: true),
+          initialOptions: InAppWebViewGroupOptions(
+            crossPlatform: InAppWebViewOptions(transparentBackground: true),
           ),
         ),
       ),
