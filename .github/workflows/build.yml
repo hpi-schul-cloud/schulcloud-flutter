@@ -6,6 +6,11 @@ on:
   schedule:
     - cron: "0 8 * * *"
 
+env:
+  JAVA_VERSION: 12.x
+  FLUTTER_CHANNEL: stable
+  FLUTTER_VERSION: 1.17.x
+
 jobs:
   install:
     name: Install Flutter & dependencies
@@ -17,11 +22,12 @@ jobs:
       - name: Install Java
         uses: actions/setup-java@v1
         with:
-          java-version: "12.x"
+          java-version: ${{ env.JAVA_VERSION }}
       - name: Install Flutter (stable)
         uses: subosito/flutter-action@v1
         with:
-          channel: "stable" # or: 'dev' or 'beta'
+          channel: ${{ env.FLUTTER_CHANNEL }}
+          version: ${{ env.FLUTTER_VERSION }}
 
       - name: Install dependencies
         run: flutter pub get
@@ -48,11 +54,12 @@ jobs:
       - name: Install Java
         uses: actions/setup-java@v1
         with:
-          java-version: "12.x"
+          java-version: ${{ env.JAVA_VERSION }}
       - name: Install Flutter (stable)
         uses: subosito/flutter-action@v1
         with:
-          channel: "stable"
+          channel: ${{ env.FLUTTER_CHANNEL }}
+          version: ${{ env.FLUTTER_VERSION }}
 
       - name: Checkout source
         uses: actions/download-artifact@v1
@@ -95,11 +102,12 @@ jobs:
       - name: Install Java
         uses: actions/setup-java@v1
         with:
-          java-version: "12.x"
+          java-version: ${{ env.JAVA_VERSION }}
       - name: Install Flutter (stable)
         uses: subosito/flutter-action@v1
         with:
-          channel: "stable"
+          channel: ${{ env.FLUTTER_CHANNEL }}
+          version: ${{ env.FLUTTER_VERSION }}
 
       - name: Checkout source
         uses: actions/download-artifact@v1
@@ -137,11 +145,12 @@ jobs:
   #     - name: Install Java 12
   #       uses: actions/setup-java@v1
   #       with:
-  #         java-version: "12.x"
+  #         java-version: ${{ env.JAVA_VERSION }}
   #     - name: Install Flutter (stable)
   #       uses: subosito/flutter-action@v1
   #       with:
-  #         channel: "stable"
+  #         channel: ${{ env.FLUTTER_CHANNEL }}
+  #         version: ${{ env.FLUTTER_VERSION }}
   #     - name: Checkout source
   #       uses: actions/download-artifact@v1
   #       with:
@@ -186,11 +195,12 @@ jobs:
       - name: Install Java 12
         uses: actions/setup-java@v1
         with:
-          java-version: "12.x"
+          java-version: ${{ env.JAVA_VERSION }}
       - name: Install Flutter (stable)
         uses: subosito/flutter-action@v1
         with:
-          channel: "stable"
+          channel: ${{ env.FLUTTER_CHANNEL }}
+          version: ${{ env.FLUTTER_VERSION }}
       - name: Checkout source
         uses: actions/download-artifact@v1
         with:
