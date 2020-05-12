@@ -18,9 +18,8 @@ void main() {
   group('/users', () {
     group('GET /:id', () {
       test('teacher (me)', () async {
-        final response = await api.get('users/$teacherUserId').json;
         expect(
-          response,
+          await api.get('users/$teacherUserId').json,
           _isUser(
             teacherUserId,
             isCurrentUser: true,
@@ -35,9 +34,8 @@ void main() {
       });
 
       test('student', () async {
-        final response = await api.get('users/$studentUserId').json;
         expect(
-          response,
+          await api.get('users/$studentUserId').json,
           _isUser(
             studentUserId,
             isCurrentUser: false,
