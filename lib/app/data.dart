@@ -14,26 +14,26 @@ part 'data.g.dart';
 
 @HiveType(typeId: TypeId.user)
 class User implements Entity<User> {
+  // [email] & [permissions] are null for some users (but not for the current
+  // one).
   const User({
     @required this.id,
     @required this.firstName,
     @required this.lastName,
-    @required this.email,
+    this.email,
     @required this.schoolId,
     String displayName,
     @required this.avatarInitials,
     @required this.avatarBackgroundColor,
-    @required this.permissions,
+    this.permissions,
     @required this.roleIds,
   })  : assert(id != null),
         assert(firstName != null),
         assert(lastName != null),
-        assert(email != null),
         assert(schoolId != null),
         displayName = displayName ?? '$firstName $lastName',
         assert(avatarInitials != null),
         assert(avatarBackgroundColor != null),
-        assert(permissions != null),
         assert(roleIds != null);
 
   User.fromJson(Map<String, dynamic> data)
@@ -47,7 +47,7 @@ class User implements Entity<User> {
           avatarInitials: data['avatarInitials'],
           avatarBackgroundColor:
               (data['avatarBackgroundColor'] as String).hexToColor,
-          permissions: (data['permissions'] as List<dynamic>).cast<String>(),
+          permissions: (data['permissions'] as List<dynamic>)?.cast<String>(),
           roleIds: parseIds(data['roles']),
         );
 
@@ -82,7 +82,8 @@ class User implements Entity<User> {
 
   @HiveField(6)
   final List<String> permissions;
-  bool hasPermission(String permission) => permissions.contains(permission);
+  bool hasPermission(String permission) =>
+      permissions?.contains(permission) ?? false;
 
   @HiveField(9)
   final List<Id<Role>> roleIds;
@@ -90,9 +91,9 @@ class User implements Entity<User> {
   bool hasRole(String name) {
     // TODO(marcelgarus): Remove the hard-coded mapping and use runtime lookup when upgrading flutter_cached and flattening is supported.
     final id = {
-      Role.teacherName: '0000d186816abba584714c98',
+      Role.teacherName: Role.teacher,
     }[name];
-    return id != null && roleIds.contains(Id<Role>(id));
+    return id != null && roleIds.contains(id);
   }
 
   @override
@@ -192,7 +193,9 @@ class Role implements Entity<Role> {
           roleIds: parseIds(data['roles']),
         );
 
+  static const teacher = Id<Role>('0000d186816abba584714c98');
   static const teacherName = 'teacher';
+  static const student = Id<Role>('0000d186816abba584714c99');
 
   @override
   @HiveField(0)

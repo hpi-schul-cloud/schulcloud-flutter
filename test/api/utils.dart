@@ -23,6 +23,10 @@ Future<void> setUpCommon() async {
     ..registerSingleton(api);
 }
 
+void tearDownCommon() {
+  services.reset();
+}
+
 class MockStorageService extends Mock implements StorageService {}
 
 const schoolId = '5da021397f7b3700339a8906';
@@ -36,6 +40,22 @@ final teacher = User(
   email: teacherEmail,
   schoolId: schoolId,
   displayName: 'AT Teacher',
+  avatarInitials: 'AT',
+  avatarBackgroundColor: Color(0xfffe8a71),
+  permissions: [],
+  roleIds: [],
+);
+
+const studentUserId = Id<User>('5eba35def505d6002a79a77f');
+final studentEmail = Platform.environment['SC_AT_STUDENT_EMAIL'];
+final studentPassword = Platform.environment['SC_AT_STUDENT_PASSWORD'];
+final student = User(
+  id: studentUserId,
+  firstName: 'AT',
+  lastName: 'Student',
+  email: studentEmail,
+  schoolId: schoolId,
+  displayName: 'AT Student',
   avatarInitials: 'AT',
   avatarBackgroundColor: Color(0xfffe8a71),
   permissions: [],

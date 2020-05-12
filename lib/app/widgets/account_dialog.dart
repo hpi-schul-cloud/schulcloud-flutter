@@ -102,6 +102,10 @@ class AccountDialog extends StatelessWidget {
     return EntityBuilder<User>(
       id: services.storage.userId,
       builder: handleLoadingError((context, user, fetch) {
+        assert(
+          user == null || user.email != null,
+          'email may be `null` for some users, but not the current one',
+        );
         return ListTile(
           leading: AccountAvatar(),
           title: FancyText(user?.displayName),
