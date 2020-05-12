@@ -317,12 +317,10 @@ packages:
   flutter_html:
     dependency: "direct main"
     description:
-      path: "."
-      ref: b5046d9
-      resolved-ref: b5046d9dbed099b89ccb5b022dddf0c3f05063a5
-      url: "git://github.com/Sub6Resources/flutter_html"
-    source: git
-    version: "1.0.0-pre.1"
+      name: flutter_html
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.0"
   flutter_inappwebview:
     dependency: "direct main"
     description:
@@ -362,7 +360,7 @@ packages:
       name: flutter_svg
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.14.4"
+    version: "0.17.4"
   flutter_test:
     dependency: transitive
     description: flutter

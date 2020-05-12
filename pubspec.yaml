@@ -30,16 +30,13 @@ dependencies:
   file_picker: ^1.4.3+2
   flare_flutter: ^1.5.8
   flutter_absolute_path: ^1.0.6
-  flutter_deep_linking: ^0.1.0
+  flutter_deep_linking: ^0.1.2
   # The current version of flutter_downloader, 1.2.1, causes the build to fail. Until this is fixed, we rely on an older version.
   flutter_downloader: 1.1.9
-  flutter_html:
-    git:
-      url: git://github.com/Sub6Resources/flutter_html
-      ref: b5046d9
+  flutter_html: ^1.0.0
   flutter_inappwebview: ^2.1.0+1
   flutter_native_timezone: ^1.0.4
-  flutter_svg: ^0.14.2
+  flutter_svg: ^0.17.4
   flutter_villains: ^1.2.0
   font_awesome_flutter: ^8.7.0
   get_it: 4.0.0-beta3
