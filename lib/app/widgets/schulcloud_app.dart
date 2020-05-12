@@ -177,7 +177,6 @@ class _BottomTab {
   final String initialRoute;
 
   static final values = [dashboard, course, assignment, file, news];
-  static int get count => values.length;
 
   // We don't use relative URLs as they would start with a '/' and hence the
   // navigator automatically populates our initial back stack with '/'.

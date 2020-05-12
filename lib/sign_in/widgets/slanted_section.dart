@@ -30,7 +30,7 @@ class SlantedSection extends StatelessWidget {
       child: Padding(
         padding: EdgeInsets.only(top: slantTop, bottom: slantBottom),
         child: DefaultTextStyle(
-          style: context.textTheme.body1.apply(color: Colors.white),
+          style: context.textTheme.bodyText2.apply(color: Colors.white),
           child: child,
         ),
       ),

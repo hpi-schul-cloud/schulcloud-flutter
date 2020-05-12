@@ -20,7 +20,7 @@ class ContentView extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
         if (content.title != null)
-          Text(content.title, style: context.textTheme.headline),
+          Text(content.title, style: context.textTheme.headline5),
         _ComponentView(content.component),
       ],
     );
@@ -118,7 +118,7 @@ class _ResourceCard extends StatelessWidget {
               Expanded(
                 child: Text(
                   resource.title,
-                  style: context.textTheme.subhead,
+                  style: context.textTheme.subtitle1,
                 ),
               ),
               Icon(Icons.open_in_new),

@@ -51,7 +51,7 @@ class ArticlePreview extends StatelessWidget {
             _buildImage(),
             FancyText(
               article?.title,
-              style: theme.textTheme.display2,
+              style: theme.textTheme.headline3,
             ),
             EntityBuilder<User>(
               id: article.authorId,
@@ -71,7 +71,7 @@ class ArticlePreview extends StatelessWidget {
                         : s.news_articlePreview_subtitle(
                             article.publishedAt.shortDateString, authorName),
                     emphasis: TextEmphasis.medium,
-                    style: theme.textTheme.subtitle,
+                    style: theme.textTheme.subtitle2,
                     estimatedWidth: 192,
                   );
                 }
