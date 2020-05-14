@@ -120,6 +120,7 @@ class Event implements Entity<Event> {
             until,
             1,
             Byday([weekday], null),
+            [],
           );
         })
         .where((r) => r != null)

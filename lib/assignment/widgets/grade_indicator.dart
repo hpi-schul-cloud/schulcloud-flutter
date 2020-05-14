@@ -42,7 +42,9 @@ class GradeIndicator extends StatelessWidget {
         children: [
           TextSpan(
             text: ' %',
-            style: TextStyle(fontSize: context.textTheme.body1.fontSize * 0.75),
+            style: TextStyle(
+              fontSize: context.textTheme.bodyText2.fontSize * 0.75,
+            ),
           ),
         ],
       ),

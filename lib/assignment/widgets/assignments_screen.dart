@@ -175,7 +175,7 @@ class AssignmentCard extends StatelessWidget {
         Expanded(
           child: FancyText(
             assignment.name,
-            style: context.textTheme.subhead,
+            style: context.textTheme.subtitle1,
             maxLines: 2,
           ),
         ),

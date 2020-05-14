@@ -41,12 +41,12 @@ class AssignmentDashboardCard extends StatelessWidget {
                   children: <Widget>[
                     Text(
                       openAssignments.length.toString(),
-                      style: context.textTheme.display3,
+                      style: context.textTheme.headline2,
                     ),
                     SizedBox(width: 4),
                     Text(
                       s.assignment_dashboardCard_header(openAssignments.length),
-                      style: context.textTheme.subhead,
+                      style: context.textTheme.subtitle1,
                     )
                   ],
                 ),
@@ -102,7 +102,7 @@ class _CourseAssignmentCountTile extends StatelessWidget {
           : Text(context.s.assignment_dashboardCard_noCourse),
       trailing: Text(
         assignmentCount.toString(),
-        style: context.textTheme.headline,
+        style: context.textTheme.headline5,
       ),
     );
   }

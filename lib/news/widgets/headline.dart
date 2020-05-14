@@ -47,7 +47,9 @@ class HeadlineBox extends StatelessWidget {
               ),
               SizedBox(height: 8),
               DefaultTextStyle(
-                style: context.textTheme.display2.copyWith(color: Colors.white),
+                style: context.textTheme.headline3.copyWith(
+                  color: Colors.white,
+                ),
                 child: title,
               ),
             ],
