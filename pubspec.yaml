@@ -45,7 +45,7 @@ dependencies:
   hive_cache:
     git:
       url: git://github.com/marcelgarus/hive_cache
-      ref: 5fc7fc9
+      ref: ad7ecd2
   hive_flutter: ^0.3.0+1
   html: ^0.14.0+3
   http: ^0.12.0
@@ -63,7 +63,7 @@ dependencies:
   path_provider: ^1.1.0
   permission_handler: ^3.3.0
   provider: ^4.0.0
-  rxdart: ^0.23.1
+  rxdart: ^0.24.0
   sentry: ^3.0.1
   share:
     git:
