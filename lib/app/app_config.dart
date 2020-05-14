@@ -99,24 +99,24 @@ class AppConfig {
 
   TextTheme _createTextTheme(Brightness brightness) {
     return TextTheme(
-      body1: TextStyle(fontSize: 16),
-      body2: TextStyle(fontSize: 16),
+      headline3: TextStyle(
+        fontWeight: FontWeight.bold,
+        fontSize: 32,
+        color: brightness.contrastColor,
+      ),
+      headline4: TextStyle(
+        fontWeight: FontWeight.bold,
+        fontSize: 28,
+        color: brightness.contrastColor,
+      ),
+      bodyText1: TextStyle(fontSize: 16),
+      bodyText2: TextStyle(fontSize: 16),
       button: TextStyle(
         color: Color(0xff373a3c),
         fontFamily: 'PT Sans Narrow',
         fontWeight: FontWeight.w700,
         fontSize: 16,
         height: 1.25,
-      ),
-      display1: TextStyle(
-        fontWeight: FontWeight.bold,
-        fontSize: 28,
-        color: brightness.contrastColor,
-      ),
-      display2: TextStyle(
-        fontWeight: FontWeight.bold,
-        fontSize: 32,
-        color: brightness.contrastColor,
       ),
       overline: TextStyle(
         fontWeight: FontWeight.bold,

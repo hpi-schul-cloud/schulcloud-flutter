@@ -82,7 +82,7 @@ class _EventPreview extends StatelessWidget {
     return ListTile(
       title: Text(
         event.title,
-        style: hasStarted ? textTheme.headline : textTheme.subhead,
+        style: hasStarted ? textTheme.headline5 : textTheme.subtitle1,
       ),
       trailing: DefaultTextStyle(
         style: textTheme.caption,

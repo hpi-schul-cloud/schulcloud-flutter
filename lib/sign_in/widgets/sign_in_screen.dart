@@ -55,8 +55,9 @@ class SignInScreen extends StatelessWidget {
             children: <Widget>[
               Text(
                 s.signIn_signInScreen_faq_getAccountQ,
-                style: theme.textTheme.title
-                    .copyWith(color: theme.primaryColor.contrastColor),
+                style: theme.textTheme.headline6.copyWith(
+                  color: theme.primaryColor.contrastColor,
+                ),
               ),
               SizedBox(height: 4),
               Text(
