@@ -164,7 +164,7 @@ class _DetailsTab extends StatelessWidget {
             padding: EdgeInsets.symmetric(horizontal: 16),
             child: FancyText.rich(assignment.description),
           ),
-          ..._buildFileSection(context, assignment.fileIds, assignment.id),
+          ..._buildFileSection(context, assignment.fileIds),
         ]),
       ),
     );
@@ -239,7 +239,7 @@ class _SubmissionTab extends StatelessWidget {
               : FancyText.rich(submission.comment),
         ),
         if (submission != null)
-          ..._buildFileSection(context, submission.fileIds, submission.id),
+          ..._buildFileSection(context, submission.fileIds),
         if (!assignment.isOverdue) FabSpacer(),
       ]),
     );
@@ -346,23 +346,20 @@ class _SubmissionsTab extends StatelessWidget {
 List<Widget> _buildFileSection(
   BuildContext context,
   List<Id<File>> fileIds,
-  Id<dynamic> parentId,
 ) {
+  if (fileIds.isEmpty) {
+    return [];
+  }
+
   return [
-    if (fileIds.isNotEmpty) ...[
-      SizedBox(height: 8),
-      Padding(
-        padding: EdgeInsets.symmetric(horizontal: 16),
-        child: Text(
-          context.s.assignment_assignmentDetails_filesSection,
-          style: context.textTheme.caption,
-        ),
+    SizedBox(height: 8),
+    Padding(
+      padding: EdgeInsets.symmetric(horizontal: 16),
+      child: Text(
+        context.s.assignment_assignmentDetails_filesSection,
+        style: context.textTheme.caption,
       ),
-    ],
-    for (final fileId in fileIds)
-      FileTile(
-        fileId,
-        onDownloadFile: services.get<FileService>().downloadFile,
-      ),
+    ),
+    FileList(fileIds),
   ];
 }

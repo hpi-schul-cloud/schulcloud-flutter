@@ -20,13 +20,11 @@ const supportedThumbnails = <String>{
   'psd',
   'tiff',
   'txt',
-  'xls'
+  'xls',
 };
 
 class FileThumbnail extends StatelessWidget {
-  const FileThumbnail({Key key, @required this.file})
-      : assert(file != null),
-        super(key: key);
+  const FileThumbnail(this.file) : assert(file != null);
 
   final File file;
 
@@ -43,6 +41,7 @@ class FileThumbnail extends StatelessWidget {
     if (file.isDirectory) {
       return Icon(Icons.folder);
     }
+
     final type = file.name.substring(file.name.lastIndexOf('.') + 1);
     final assetPath = supportedThumbnails.contains(type)
         ? 'assets/file_thumbnails/${type}s.png'

@@ -11,7 +11,9 @@ import 'package:meta/meta.dart';
 import 'package:mime/mime.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:schulcloud/app/app.dart';
-import 'package:schulcloud/file/file.dart';
+
+import 'data.dart';
+import 'pages/choose_destination_page.dart';
 
 @immutable
 class UploadProgressUpdate {
@@ -74,7 +76,7 @@ class FileService {
 
     final destination = await context.rootNavigator.push(MaterialPageRoute(
       fullscreenDialog: true,
-      builder: (_) => ChooseDestinationScreen(
+      builder: (_) => ChooseDestinationPage(
         title: Text(context.s.file_chooseDestination_upload),
         fabIcon: Icon(Icons.file_upload),
         fabLabel: Text(context.s.file_chooseDestination_upload_button),
