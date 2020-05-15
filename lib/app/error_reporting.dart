@@ -11,7 +11,6 @@ import 'package:sentry/sentry.dart' hide User;
 import 'package:system_info/system_info.dart';
 
 import 'app_config.dart';
-import 'data.dart';
 import 'logger.dart';
 import 'services/storage.dart';
 import 'utils.dart';
@@ -20,7 +19,7 @@ final _sentry = SentryClient(
     dsn: 'https://2d9dda495b8f4626b01e28e24c19a9b5@sentry.schul-cloud.dev/7');
 
 Future<void> runWithErrorReporting(Future<void> Function() body) async {
-  await runZoned<Future<void>>(
+  await runZonedGuarded<Future<void>>(
     () async {
       FlutterError.onError = (details) async {
         if (isInDebugMode) {
@@ -37,8 +36,7 @@ Future<void> runWithErrorReporting(Future<void> Function() body) async {
       await body();
       Logger.removeLogListener(_reportLogEvent);
     },
-    // ignore: avoid_types_on_closure_parameters
-    onError: (dynamic error, StackTrace stackTrace) async {
+    (error, stackTrace) async {
       if (isInDebugMode) {
         logger.e('Uncaught exception', error, stackTrace);
       }
@@ -52,7 +50,7 @@ Future<void> runWithErrorReporting(Future<void> Function() body) async {
 }
 
 bool get isInDebugMode {
-  bool inDebugMode = false;
+  var inDebugMode = false;
   assert(inDebugMode = true);
   return inDebugMode;
 }
@@ -101,7 +99,7 @@ Future<bool> reportEvent(Event event) async {
 
   final packageInfo = await PackageInfo.fromPlatform();
   final platformString = defaultTargetPlatform.toString();
-  User user = HiveCache.isInitialized ? await storage.userFromCache : null;
+  final user = HiveCache.isInitialized ? await storage.userFromCache : null;
   final fullEvent = Event(
     release: packageInfo.version,
     environment: isInDebugMode ? 'debug' : 'production',

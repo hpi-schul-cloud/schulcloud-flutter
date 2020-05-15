@@ -6,10 +6,11 @@ import 'package:flutter/material.dart' hide Banner;
 import 'package:flutter_absolute_path/flutter_absolute_path.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:navigation_patterns/navigation_patterns.dart';
+import 'package:schulcloud/file/file.dart';
 import 'package:schulcloud/generated/l10n.dart';
 import 'package:share/receive_share_state.dart';
 import 'package:share/share.dart';
-import 'package:schulcloud/file/file.dart';
 
 import '../app_config.dart';
 import '../logger.dart';
@@ -58,30 +59,13 @@ class SignedInScreen extends StatefulWidget {
   SignedInScreenState createState() => SignedInScreenState();
 }
 
-class SignedInScreenState extends ReceiveShareState<SignedInScreen>
-    with TickerProviderStateMixin {
+class SignedInScreenState extends ReceiveShareState<SignedInScreen> {
+  static final _navigationKey = GlobalKey<BottomNavigationPatternState>();
+  static NavigatorState get currentNavigator =>
+      _navigationKey.currentState.currentNavigator;
+
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   ScaffoldState get scaffold => _scaffoldKey.currentState;
-
-  static final _navigatorKeys =
-      List.generate(_BottomTab.count, (_) => GlobalKey<NavigatorState>());
-  List<AnimationController> _faders;
-
-  static var _selectedTabIndex = 0;
-  static NavigatorState get currentNavigator =>
-      _navigatorKeys[_selectedTabIndex].currentState;
-
-  void selectTab(int index, {bool popIfAlreadySelected = false}) {
-    assert(0 <= index && index < _BottomTab.count);
-
-    final pop = popIfAlreadySelected && _selectedTabIndex == index;
-    setState(() {
-      _selectedTabIndex = index;
-      if (pop) {
-        currentNavigator.popUntil((route) => route.isFirst);
-      }
-    });
-  }
 
   @override
   void initState() {
@@ -89,21 +73,6 @@ class SignedInScreenState extends ReceiveShareState<SignedInScreen>
     enableShareReceiving();
 
     scheduleMicrotask(_showSnackBars);
-
-    _faders = List.generate(
-      _BottomTab.count,
-      (_) =>
-          AnimationController(vsync: this, duration: kThemeAnimationDuration),
-    );
-    _faders[_selectedTabIndex].value = 1;
-  }
-
-  @override
-  void dispose() {
-    for (final fader in _faders) {
-      fader.dispose();
-    }
-    super.dispose();
   }
 
   @override
@@ -123,38 +92,31 @@ class SignedInScreenState extends ReceiveShareState<SignedInScreen>
     final theme = context.theme;
     final barColor = theme.bottomAppBarColor;
 
-    return WillPopScope(
-      onWillPop: _onWillPop,
-      child: ValueListenableBuilder<Set<Banner>>(
-        valueListenable: services.banners,
-        builder: (context, banners, child) {
-          return Bannered(
-            banners: <Widget>[
-              if (banners.contains(Banners.offline)) OfflineBanner(),
-              if (banners.contains(Banners.tokenExpired)) TokenExpiredBanner(),
-            ],
-            child: child,
-          );
-        },
-        child: Scaffold(
+    final navigation = BottomNavigationPattern(
+      key: _navigationKey,
+      tabCount: _BottomTab.values.length,
+      navigatorBuilder: (_, tabIndex, navigatorKey) {
+        return Navigator(
+          key: navigatorKey,
+          initialRoute: _BottomTab.values[tabIndex].initialRoute,
+          onGenerateRoute: router.onGenerateRoute,
+          observers: [
+            LoggingNavigatorObserver(
+              logger: (message) => logger.d('Navigator: $message'),
+            ),
+            HeroController(),
+          ],
+        );
+      },
+      scaffoldBuilder: (_, body, selectedTabIndex, onTabSelected) {
+        return Scaffold(
           key: _scaffoldKey,
-          body: Stack(
-            fit: StackFit.expand,
-            children: <Widget>[
-              for (var i = 0; i < _BottomTab.count; i++)
-                _TabContent(
-                  navigatorKey: _navigatorKeys[i],
-                  initialRoute: _BottomTab.values[i].initialRoute,
-                  fader: _faders[i],
-                  isActive: i == _selectedTabIndex,
-                ),
-            ],
-          ),
+          body: body,
           bottomNavigationBar: BottomNavigationBar(
             selectedItemColor: theme.accentColor,
             unselectedItemColor: theme.mediumEmphasisOnBackground,
-            currentIndex: _selectedTabIndex,
-            onTap: (index) => selectTab(index, popIfAlreadySelected: true),
+            currentIndex: selectedTabIndex,
+            onTap: onTabSelected,
             items: [
               for (final tab in _BottomTab.values)
                 BottomNavigationBarItem(
@@ -164,8 +126,22 @@ class SignedInScreenState extends ReceiveShareState<SignedInScreen>
                 ),
             ],
           ),
-        ),
-      ),
+        );
+      },
+    );
+
+    return ValueListenableBuilder<Set<Banner>>(
+      valueListenable: services.banners,
+      builder: (context, banners, child) {
+        return Bannered(
+          banners: <Widget>[
+            if (banners.contains(Banners.offline)) OfflineBanner(),
+            if (banners.contains(Banners.tokenExpired)) TokenExpiredBanner(),
+          ],
+          child: child,
+        );
+      },
+      child: navigation,
     );
   }
 
@@ -181,77 +157,6 @@ class SignedInScreenState extends ReceiveShareState<SignedInScreen>
       final controller = scaffold.showSnackBar(request.snackBar);
       request.completer.complete(controller);
     });
-  }
-
-  /// When the user tries to pop, we first try to pop with the inner navigator.
-  /// If that's not possible (we are at a top-level location), we go to the
-  /// dashboard. Only if we were already there, we pop (aka close the app).
-  Future<bool> _onWillPop() async {
-    if (currentNavigator.canPop()) {
-      currentNavigator.pop();
-      return false;
-    } else if (_selectedTabIndex != 0) {
-      selectTab(0);
-      return false;
-    } else {
-      return true;
-    }
-  }
-}
-
-class _TabContent extends StatefulWidget {
-  const _TabContent({
-    Key key,
-    @required this.navigatorKey,
-    @required this.initialRoute,
-    @required this.fader,
-    @required this.isActive,
-  })  : assert(navigatorKey != null),
-        assert(initialRoute != null),
-        assert(fader != null),
-        assert(isActive != null),
-        super(key: key);
-
-  final GlobalKey<NavigatorState> navigatorKey;
-  final String initialRoute;
-  final AnimationController fader;
-  final bool isActive;
-
-  @override
-  _TabContentState createState() => _TabContentState();
-}
-
-class _TabContentState extends State<_TabContent> {
-  Widget _child;
-
-  @override
-  Widget build(BuildContext context) {
-    if (!widget.isActive) {
-      widget.fader.reverse();
-      final child = _child ?? SizedBox();
-      if (widget.fader.isAnimating) {
-        return IgnorePointer(child: child);
-      }
-      return Offstage(child: child);
-    }
-
-    _child ??= FadeTransition(
-      opacity: widget.fader.drive(CurveTween(curve: Curves.fastOutSlowIn)),
-      child: Navigator(
-        key: widget.navigatorKey,
-        initialRoute: widget.initialRoute,
-        onGenerateRoute: router.onGenerateRoute,
-        observers: [
-          LoggingNavigatorObserver(
-            logger: (message) => logger.d('Navigator: $message'),
-          ),
-          HeroController(),
-        ],
-      ),
-    );
-
-    widget.fader.forward();
-    return _child;
   }
 }
 
@@ -272,7 +177,6 @@ class _BottomTab {
   final String initialRoute;
 
   static final values = [dashboard, course, assignment, file, news];
-  static int get count => values.length;
 
   // We don't use relative URLs as they would start with a '/' and hence the
   // navigator automatically populates our initial back stack with '/'.

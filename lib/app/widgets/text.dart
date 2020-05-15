@@ -247,7 +247,7 @@ class _FancyTextState extends State<FancyText> {
         // have to add our token.
         'img': (context, _, attributes, __) {
           final src = attributes['src'];
-          bool isInternal = true;
+          var isInternal = true;
           if (src == null || src.isBlank) {
             isInternal = false;
           }

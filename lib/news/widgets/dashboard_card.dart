@@ -54,7 +54,10 @@ class NewsDashboardCard extends StatelessWidget {
               textBaseline: TextBaseline.alphabetic,
               children: <Widget>[
                 Expanded(
-                  child: Text(article.title, style: context.textTheme.subhead),
+                  child: Text(
+                    article.title,
+                    style: context.textTheme.subtitle1,
+                  ),
                 ),
                 SizedBox(width: 8),
                 Text(

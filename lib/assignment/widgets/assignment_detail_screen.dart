@@ -155,7 +155,7 @@ class _DetailsTab extends StatelessWidget {
             padding: EdgeInsets.symmetric(horizontal: 16),
             child: Text(
               datesText,
-              style: textTheme.body1,
+              style: textTheme.bodyText2,
               textAlign: TextAlign.end,
             ),
           ),

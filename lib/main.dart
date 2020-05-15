@@ -75,14 +75,14 @@ Future<void> main({AppConfig appConfig = schulCloudAppConfig}) async {
     // We register these first as they're required for error reporting.
     services
       ..registerSingleton(appConfig)
-      ..registerSingletonAsync((_) => StorageService.create());
+      ..registerSingletonAsync(StorageService.create);
 
     logger.d('Initializing hive…');
     await initializeHive();
 
     logger.d('Registering remaining services…');
     services
-      ..registerSingletonAsync((_) async {
+      ..registerSingletonAsync<void>(() async {
         // We need to initialize TimeMachine before launching the app, and using
         // GetIt to keep track of initialization statuses is the simplest way.
         // Hence we just ignore the return value.
@@ -100,7 +100,7 @@ Future<void> main({AppConfig appConfig = schulCloudAppConfig}) async {
       ..registerSingleton(NetworkService())
       ..registerSingleton(ApiNetworkService())
       ..registerSingleton(FileService())
-      ..registerSingletonAsync((_) => DeepLinkingService.create())
+      ..registerSingletonAsync(DeepLinkingService.create)
       ..registerSingleton(CalendarBloc())
       ..registerSingleton(SignInBloc());
 
@@ -109,7 +109,7 @@ Future<void> main({AppConfig appConfig = schulCloudAppConfig}) async {
       yield EmptyStateLicense();
     });
 
-    logger.d('Waiting for services.');
+    logger.d('Waiting for services…');
     await services.allReady();
 
     // Set demo banner based on current user.

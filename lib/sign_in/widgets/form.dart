@@ -53,11 +53,10 @@ class _SignInFormState extends State<SignInForm> {
                 isLoading: _isSigningInViaWeb,
                 onPressed: () async {
                   setState(() => _isSigningInViaWeb = true);
-                  await browser.open(
+                  await browser.openUrl(
                     url: services.config.webUrl('login'),
                     options: InAppBrowserClassOptions(
-                      inAppBrowserOptions:
-                          InAppBrowserOptions(toolbarTop: false),
+                      crossPlatform: InAppBrowserOptions(toolbarTop: false),
                     ),
                   );
                   setState(() => _isSigningInViaWeb = false);

@@ -15,8 +15,7 @@ import 'widgets/not_found_screen.dart';
 import 'widgets/schulcloud_app.dart';
 import 'widgets/top_level_page_route.dart';
 
-final hostRegExp =
-    RegExp('(?:www\.)?${RegExp.escape(services.get<AppConfig>().host)}');
+final hostRegExp = RegExp('(?:www\.)?${RegExp.escape(services.config.host)}');
 
 String appSchemeLink(String path) => 'app://org.schulcloud.android/$path';
 
