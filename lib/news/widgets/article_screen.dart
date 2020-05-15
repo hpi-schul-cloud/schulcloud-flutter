@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/app/widgets/account_avatar.dart';
+import 'package:swipeable_page_route/swipeable_page_route.dart';
 
 import '../data.dart';
 import 'article_image.dart';
@@ -50,8 +51,8 @@ class ArticleScreen extends StatelessWidget {
     );
   }
 
-  AppBar _buildAppBar(BuildContext context, Article article) {
-    return AppBar(
+  Widget _buildAppBar(BuildContext context, Article article) {
+    return MorphingAppBar(
       elevation: 0,
       backgroundColor: context.theme.scaffoldBackgroundColor,
       iconTheme: IconThemeData(color: context.theme.contrastColor),
