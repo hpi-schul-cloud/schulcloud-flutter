@@ -7,6 +7,7 @@ export 'package:hive/hive.dart'
     show HiveType, HiveField, TypeAdapter, BinaryReader, BinaryWriter;
 export 'package:hive_cache/hive_cache.dart';
 export 'package:meta/meta.dart';
+export 'package:pedantic/pedantic.dart';
 export 'package:time_machine/time_machine.dart' show Instant;
 
 export 'app_config.dart';

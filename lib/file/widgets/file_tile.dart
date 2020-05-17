@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:pedantic/pedantic.dart';
 import 'package:schulcloud/app/app.dart';
 
 import '../data.dart';
