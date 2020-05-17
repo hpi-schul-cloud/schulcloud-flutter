@@ -80,6 +80,8 @@ categorization:
         description: ":building_construction: Refactoring"
       - name: "build"
         description: ":package: Build, CI & other meta changes"
+      - name: "test"
+        description: ":test_tube: Testing"
     labels:
       color: "c5def5"
       prefix: "T: "

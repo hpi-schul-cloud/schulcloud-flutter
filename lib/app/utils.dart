@@ -151,8 +151,14 @@ List<Id<E>> parseIds<E extends Entity<E>>(dynamic list) =>
     (list as List<dynamic>)?.cast<String>()?.toIds<E>() ?? [];
 
 extension DeepEquality<T> on Iterable<T> {
-  bool deeplyEquals(Iterable<T> other, {bool unordered = false}) => (unordered
-          ? DeepCollectionEquality.unordered()
-          : DeepCollectionEquality())
-      .equals(this, other);
+  bool deeplyEquals(Iterable<T> other, {bool unordered = false}) {
+    if (this == null) {
+      return other == null;
+    }
+
+    return (unordered
+            ? DeepCollectionEquality.unordered()
+            : DeepCollectionEquality())
+        .equals(this, other);
+  }
 }
