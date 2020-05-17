@@ -4,8 +4,8 @@ import 'package:schulcloud/app/app.dart';
 
 import '../data.dart';
 
-class ChooseDestinationScreen extends StatelessWidget {
-  const ChooseDestinationScreen({
+class ChooseDestinationPage extends StatelessWidget {
+  const ChooseDestinationPage({
     @required this.title,
     @required this.fabIcon,
     @required this.fabLabel,

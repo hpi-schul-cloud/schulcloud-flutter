@@ -5,14 +5,13 @@ import 'data.dart';
 import 'widgets/article_screen.dart';
 import 'widgets/news_screen.dart';
 
-final newsRoutes = Route(
+final newsRoutes = FancyRoute(
   matcher: Matcher.path('news'),
-  materialBuilder: (_, __) => NewsScreen(),
+  builder: (_, __) => NewsScreen(),
   routes: [
-    Route(
+    FancyRoute(
       matcher: Matcher.path('{newsId}'),
-      materialBuilder: (_, result) =>
-          ArticleScreen(Id<Article>(result['newsId'])),
+      builder: (_, result) => ArticleScreen(Id<Article>(result['newsId'])),
     ),
   ],
 );

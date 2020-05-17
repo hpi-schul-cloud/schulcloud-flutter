@@ -4,21 +4,15 @@ import 'package:schulcloud/app/app.dart';
 import 'widgets/sign_in_screen.dart';
 import 'widgets/sign_out_screen.dart';
 
-final signInRoutes = Route(
+final signInRoutes = FancyRoute(
   routes: [
-    Route(
+    FancyRoute(
       matcher: Matcher.path('login'),
-      builder: (result) => TopLevelPageRoute(
-        builder: (_) => SignInScreen(),
-        settings: result.settings,
-      ),
+      builder: (_, result) => SignInScreen(),
     ),
-    Route(
+    FancyRoute(
       matcher: Matcher.path('logout'),
-      builder: (result) => TopLevelPageRoute(
-        builder: (_) => SignOutScreen(),
-        settings: result.settings,
-      ),
+      builder: (_, result) => SignOutScreen(),
     ),
   ],
 );

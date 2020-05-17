@@ -8,73 +8,100 @@ import '../sort_filter/sort_filter.dart';
 import 'app_bar.dart';
 import 'error_widgets.dart';
 
+// Error
 FetchableBuilder<CacheSnapshot<T>> handleError<T>(FetchableBuilder<T> builder) {
   return (context, snapshot, fetch) {
-    if (snapshot == null) {
-      builder(context, null, fetch);
-    }
-
-    // There is no error. We can just call the builder.
-    if (!snapshot.hasError) {
-      return builder(context, snapshot.data, fetch);
-    }
-
-    // An error occurred.
-    assert(snapshot.hasError);
-    final error = snapshot.error;
-
-    // Code inside the stream should only throw [FancyException]s to
-    // trigger behavior in other parts of the app. Other exceptions should
-    // be handled locally. If they can't handle them, they should catch
-    // them nevertheless and then throw descriptive [FancyException]s
-    // instead.
-    final correctlyHandled = error is FancyException ||
-        error is ErrorAndStacktrace && error.error is FancyException;
-    if (!correctlyHandled) {
-      logger.e(
-        'The following exception occurred: $error '
-        'If you want to display an exception to the user, instead create '
-        'a custom exception by extending FancyException. This will be '
-        'caught and display a beautiful error screen. '
-        'To view the full stack trace, long-tap the pink striped area.',
-        error,
-      );
-      return PinkStripedErrorWidget(error, null);
-    }
-
-    final fancyError = error is FancyException
-        ? error
-        : (error as ErrorAndStacktrace).error as FancyException;
-
-    // If there is no data, then there's nothing we can display except the
-    // error.
-    if (!snapshot.hasData) {
-      return ErrorScreen(fancyError);
-    }
-
-    // There is an error as well as cached data.
-
-    // If the error is global, it's been handled elsewhere. More
-    // specifically, the user is shown a message at a central error space.
-    // That's why we don't need to display the error here.
-    if (fancyError.isGlobal) {
-      return builder(context, snapshot.data, fetch);
-    }
-
-    // TODO(marcelgarus): Display both the error and the cached content.
-    return PinkStripedErrorWidget(error, null);
+    return _buildError(snapshot) ?? builder(context, snapshot?.data, fetch);
   };
 }
 
-FetchableBuilder<CacheSnapshot<T>> handleLoading<T>(
-    FetchableBuilder<CacheSnapshot<T>> builder) {
+FetchableBuilder<CacheSnapshot<T>> handleErrorSliver<T>(
+  FetchableBuilder<T> builder,
+) {
   return (context, snapshot, fetch) {
-    return (!snapshot.hasData && !snapshot.hasError)
-        ? Center(child: CircularProgressIndicator())
-        : builder(context, snapshot, fetch);
+    return _wrapInFillRemaining(_buildError(snapshot)) ??
+        builder(context, snapshot?.data, fetch);
   };
 }
 
+Widget _buildError<T>(CacheSnapshot<T> snapshot) {
+  // There is no error.
+  if (snapshot == null || snapshot.hasNoError) {
+    return null;
+  }
+
+  // An error occurred.
+  assert(snapshot.hasError);
+  final error = snapshot.error;
+
+  // Code inside the stream should only throw [FancyException]s to
+  // trigger behavior in other parts of the app. Other exceptions should
+  // be handled locally. If they can't handle them, they should catch
+  // them nevertheless and then throw descriptive [FancyException]s
+  // instead.
+  final correctlyHandled = error is FancyException ||
+      error is ErrorAndStacktrace && error.error is FancyException;
+  if (!correctlyHandled) {
+    logger.e(
+      'The following exception occurred: $error '
+      'If you want to display an exception to the user, instead create '
+      'a custom exception by extending FancyException. This will be '
+      'caught and display a beautiful error screen. '
+      'To view the full stack trace, long-tap the pink striped area.',
+      error,
+    );
+    return PinkStripedErrorWidget(error, null);
+  }
+
+  final fancyError = error is FancyException
+      ? error
+      : (error as ErrorAndStacktrace).error as FancyException;
+
+  // If there is no data, then there's nothing we can display except the
+  // error.
+  if (!snapshot.hasData) {
+    return ErrorScreen(fancyError);
+  }
+
+  // There is an error as well as cached data.
+
+  // If the error is global, it's been handled elsewhere. More
+  // specifically, the user is shown a message at a central error space.
+  // That's why we don't need to display the error here.
+  if (fancyError.isGlobal) {
+    return null;
+  }
+
+  // TODO(marcelgarus): Display both the error and the cached content.
+  return PinkStripedErrorWidget(error, null);
+}
+
+// Loading
+FetchableBuilder<CacheSnapshot<T>> handleLoading<T>(
+  FetchableBuilder<CacheSnapshot<T>> builder,
+) {
+  return (context, snapshot, fetch) {
+    return _buildLoading(snapshot) ?? builder(context, snapshot, fetch);
+  };
+}
+
+FetchableBuilder<CacheSnapshot<T>> handleLoadingSliver<T>(
+  FetchableBuilder<CacheSnapshot<T>> builder,
+) {
+  return (context, snapshot, fetch) {
+    return _wrapInFillRemaining(_buildLoading(snapshot)) ??
+        builder(context, snapshot, fetch);
+  };
+}
+
+Widget _buildLoading<T>(CacheSnapshot<T> snapshot) {
+  if (snapshot.hasData || snapshot.hasError) {
+    return null;
+  }
+  return Center(child: CircularProgressIndicator());
+}
+
+// Refresh
 FetchableBuilder<T> handleRefresh<T>({
   NestedScrollViewHeaderSliversBuilder headerSliverBuilder,
   FancyAppBar appBar,
@@ -101,6 +128,7 @@ FetchableBuilder<T> handleRefresh<T>({
   };
 }
 
+// Empty
 FetchableBuilder<List<T>> handleEmpty<T>({
   @required WidgetBuilder emptyStateBuilder,
   @required FetchableBuilder<List<T>> builder,
@@ -112,6 +140,7 @@ FetchableBuilder<List<T>> handleEmpty<T>({
   };
 }
 
+// Filter
 FetchableBuilder<List<T>> handleFilter<T>({
   @required SortFilterSelection<T> sortFilterSelection,
   @required WidgetBuilder filteredEmptyStateBuilder,
@@ -125,35 +154,62 @@ FetchableBuilder<List<T>> handleFilter<T>({
   };
 }
 
-// Compositional shortcuts.
+// Utils
+Widget _wrapInFillRemaining(Widget child) {
+  if (child == null) {
+    return null;
+  }
+
+  return SliverFillRemaining(child: child);
+}
+
+// Compositional shortcuts
 
 FetchableBuilder<CacheSnapshot<T>> handleLoadingError<T>(
-        FetchableBuilder<T> builder) =>
+  FetchableBuilder<T> builder,
+) =>
     handleLoading(handleError(builder));
+FetchableBuilder<CacheSnapshot<T>> handleLoadingErrorSliver<T>(
+  FetchableBuilder<T> builder,
+) =>
+    handleLoadingSliver(handleErrorSliver(builder));
 
 FetchableBuilder<CacheSnapshot<List<T>>> handleLoadingErrorEmpty<T>({
   @required WidgetBuilder emptyStateBuilder,
   @required FetchableBuilder<List<T>> builder,
-}) =>
-    handleLoadingError(handleEmpty(
-      emptyStateBuilder: emptyStateBuilder,
-      builder: builder,
-    ));
+}) {
+  return handleLoadingError(handleEmpty(
+    emptyStateBuilder: emptyStateBuilder,
+    builder: builder,
+  ));
+}
+
+FetchableBuilder<CacheSnapshot<List<T>>> handleLoadingErrorEmptySliver<T>({
+  @required WidgetBuilder emptyStateBuilder,
+  @required FetchableBuilder<List<T>> builder,
+}) {
+  return handleLoadingErrorSliver(handleEmpty(
+    emptyStateBuilder: emptyStateBuilder,
+    builder: builder,
+  ));
+}
 
 FetchableBuilder<CacheSnapshot<List<T>>> handleLoadingErrorRefreshEmpty<T>({
+  bool isSliver = false,
   NestedScrollViewHeaderSliversBuilder headerSliverBuilder,
   FancyAppBar appBar,
   @required WidgetBuilder emptyStateBuilder,
   @required FetchableBuilder<List<T>> builder,
-}) =>
-    handleLoadingError(handleRefresh(
-      headerSliverBuilder: headerSliverBuilder,
-      appBar: appBar,
-      builder: handleEmpty(
-        emptyStateBuilder: emptyStateBuilder,
-        builder: builder,
-      ),
-    ));
+}) {
+  return handleLoadingError(handleRefresh(
+    headerSliverBuilder: headerSliverBuilder,
+    appBar: appBar,
+    builder: handleEmpty(
+      emptyStateBuilder: emptyStateBuilder,
+      builder: builder,
+    ),
+  ));
+}
 
 FetchableBuilder<CacheSnapshot<List<T>>>
     handleLoadingErrorRefreshEmptyFilter<T>({
@@ -163,14 +219,15 @@ FetchableBuilder<CacheSnapshot<List<T>>>
   @required SortFilterSelection<T> sortFilterSelection,
   @required WidgetBuilder filteredEmptyStateBuilder,
   @required FetchableBuilder<List<T>> builder,
-}) =>
-        handleLoadingErrorRefreshEmpty<T>(
-          headerSliverBuilder: headerSliverBuilder,
-          appBar: appBar,
-          emptyStateBuilder: emptyStateBuilder,
-          builder: handleFilter(
-            sortFilterSelection: sortFilterSelection,
-            filteredEmptyStateBuilder: filteredEmptyStateBuilder,
-            builder: builder,
-          ),
-        );
+}) {
+  return handleLoadingErrorRefreshEmpty<T>(
+    headerSliverBuilder: headerSliverBuilder,
+    appBar: appBar,
+    emptyStateBuilder: emptyStateBuilder,
+    builder: handleFilter(
+      sortFilterSelection: sortFilterSelection,
+      filteredEmptyStateBuilder: filteredEmptyStateBuilder,
+      builder: builder,
+    ),
+  );
+}

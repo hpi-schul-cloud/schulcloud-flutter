@@ -5,10 +5,10 @@ import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/course/course.dart';
 
 import '../data.dart';
-import 'file_browser.dart';
-import 'upload_fab.dart';
+import '../widgets/file_browser.dart';
+import '../widgets/upload_fab.dart';
 
-class FilesScreen extends StatelessWidget {
+class FilesPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FancyScaffold(
@@ -81,7 +81,7 @@ class _UserFiles extends StatelessWidget {
     return FancyCard(
       title: context.s.file_files_my,
       omitHorizontalPadding: true,
-      child: FileBrowser.myFiles(null, isEmbedded: true),
+      child: FileBrowser.myFiles(),
     );
   }
 }
@@ -105,7 +105,7 @@ class FlatMaterial extends StatelessWidget {
         onTap: onTap,
         borderRadius: BorderRadius.circular(8),
         child: Container(
-          padding: const EdgeInsets.all(8),
+          padding: EdgeInsets.all(8),
           decoration: BoxDecoration(
             border: Border.all(color: Colors.black12),
             borderRadius: BorderRadius.circular(8),

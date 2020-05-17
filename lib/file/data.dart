@@ -14,6 +14,8 @@ class FilePath {
 
   @HiveField(0)
   final Id<dynamic> ownerId;
+  bool get isOwnerCourse => ownerId is Id<Course>;
+  bool get isOwnerMe => ownerId == services.storage.userId;
 
   @HiveField(1)
   final Id<File> parentId;

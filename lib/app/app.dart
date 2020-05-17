@@ -7,6 +7,7 @@ export 'package:hive/hive.dart'
     show HiveType, HiveField, TypeAdapter, BinaryReader, BinaryWriter;
 export 'package:hive_cache/hive_cache.dart';
 export 'package:meta/meta.dart';
+export 'package:pedantic/pedantic.dart';
 export 'package:time_machine/time_machine.dart' show Instant;
 
 export 'app_config.dart';
@@ -16,6 +17,7 @@ export 'error_reporting.dart';
 export 'exception.dart';
 export 'hive.dart';
 export 'logger.dart';
+export 'routing.dart' show FancyRoute, FancyRouteBuilder;
 export 'services/api_network.dart';
 export 'services/banner.dart';
 export 'services/deep_linking.dart';
@@ -34,7 +36,7 @@ export 'widgets/empty_state.dart';
 export 'widgets/error_widgets.dart';
 export 'widgets/fade_in.dart';
 export 'widgets/form.dart';
-export 'widgets/page_route.dart' show TopLevelPageRoute;
 export 'widgets/scaffold.dart';
 export 'widgets/schulcloud_app.dart' show SchulCloudApp, SignedInScreen;
 export 'widgets/text.dart';
+export 'widgets/top_level_page_route.dart';

@@ -7,9 +7,9 @@ import 'widgets/assignments_screen.dart';
 import 'widgets/edit_submission_screen.dart';
 
 const _activeTabPrefix = 'activetabid=';
-final assignmentRoutes = Route(
+final assignmentRoutes = FancyRoute(
   matcher: Matcher.path('homework'),
-  materialBuilder: (_, result) {
+  builder: (_, result) {
     // Query string is stored inside the fragment, e.g.:
     // https://schul-cloud.org/homework/#?dueDateFrom=2020-03-09&dueDateTo=2020-03-27&private=true&publicSubmissions=false&sort=updatedAt&sortorder=1&teamSubmissions=true
     final query = Uri.parse(result.uri.fragment).queryParameters;
@@ -18,9 +18,10 @@ final assignmentRoutes = Route(
     return AssignmentsScreen(sortFilterSelection: selection);
   },
   routes: [
-    Route(
+    FancyRoute(
       matcher: Matcher.path('{assignmentId}'),
-      materialBuilder: (_, result) {
+      onlySwipeFromEdge: true,
+      builder: (_, result) {
         var tab = result.uri.fragment;
         tab = tab.isNotEmpty && tab.startsWith(_activeTabPrefix)
             ? tab.substring(_activeTabPrefix.length)
@@ -32,9 +33,9 @@ final assignmentRoutes = Route(
         );
       },
       routes: [
-        Route(
+        FancyRoute(
           matcher: Matcher.path('submission'),
-          materialBuilder: (_, result) =>
+          builder: (_, result) =>
               EditSubmissionScreen(Id<Assignment>(result['assignmentId'])),
         ),
       ],

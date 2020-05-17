@@ -1,11 +1,16 @@
 import 'package:black_hole_flutter/black_hole_flutter.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
+import 'package:swipeable_page_route/swipeable_page_route.dart';
 
 import 'account_avatar.dart';
 
+/// An adapted [SliverAppBar] with floating & snap set.
 class FancyAppBar extends StatelessWidget {
   const FancyAppBar({
     Key key,
+    this.backgroundColor,
     @required this.title,
     this.subtitle,
     this.actions = const [],
@@ -16,6 +21,7 @@ class FancyAppBar extends StatelessWidget {
         assert(forceElevated != null),
         super(key: key);
 
+  final Color backgroundColor;
   final Widget title;
   final Widget subtitle;
   final List<Widget> actions;
@@ -25,40 +31,32 @@ class FancyAppBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = context.theme;
+    final backgroundColor =
+        this.backgroundColor ?? theme.scaffoldBackgroundColor;
+    final color = backgroundColor.highEmphasisOnColor;
 
-    return SliverAppBar(
+    return MorphingSliverAppBar(
       pinned: true,
-      backgroundColor: theme.scaffoldBackgroundColor,
+      backgroundColor: backgroundColor,
       title: DefaultTextStyle.merge(
-        style: TextStyle(color: theme.contrastColor),
-        child: _buildTitle(context),
+        style: TextStyle(color: color),
+        overflow: TextOverflow.ellipsis,
+        child: TitleAndSubtitle(
+          title: title,
+          subtitle: subtitle,
+        ),
       ),
-      iconTheme: IconThemeData(color: theme.contrastColor),
-      actions: [
+      iconTheme: IconThemeData(color: color),
+      actions: <Widget>[
         ...actions,
-        SizedBox(width: 8),
-        AccountButton(),
-        SizedBox(width: 8),
+        Padding(
+          key: ValueKey('accountButton'),
+          padding: EdgeInsets.symmetric(horizontal: 8),
+          child: AccountButton(),
+        ),
       ],
       bottom: bottom,
       forceElevated: forceElevated,
     );
-  }
-
-  Widget _buildTitle(BuildContext context) {
-    if (subtitle == null) {
-      return title;
-    } else {
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          title,
-          DefaultTextStyle.merge(
-            style: TextStyle(fontSize: 12),
-            child: subtitle,
-          ),
-        ],
-      );
-    }
   }
 }

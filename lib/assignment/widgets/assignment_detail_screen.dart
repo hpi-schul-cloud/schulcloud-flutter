@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:black_hole_flutter/black_hole_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:schulcloud/app/app.dart';
@@ -20,6 +22,8 @@ class AssignmentDetailScreen extends StatefulWidget {
 
 class _AssignmentDetailScreenState extends State<AssignmentDetailScreen>
     with TickerProviderStateMixin {
+  TabController _controller;
+
   @override
   Widget build(BuildContext context) {
     final s = context.s;
@@ -46,8 +50,17 @@ class _AssignmentDetailScreenState extends State<AssignmentDetailScreen>
               initialTabIndex = null;
             }
 
+            if (_controller == null || _controller.length != tabs.length) {
+              _controller = TabController(
+                initialIndex: min(initialTabIndex ?? 0, tabs.length - 1),
+                length: tabs.length,
+                vsync: this,
+              );
+            }
+
             return FancyTabbedScaffold(
               initialTabIndex: initialTabIndex,
+              controller: _controller,
               appBarBuilder: (_) => FancyAppBar(
                 title: Text(assignment.name),
                 subtitle: CourseName.orNull(assignment.courseId),
@@ -56,6 +69,7 @@ class _AssignmentDetailScreenState extends State<AssignmentDetailScreen>
                     _buildArchiveAction(context, assignment),
                 ],
                 bottom: TabBar(
+                  controller: _controller,
                   tabs: [
                     Tab(text: s.assignment_assignmentDetails_details),
                     if (showSubmissionTab)
@@ -150,7 +164,7 @@ class _DetailsTab extends StatelessWidget {
             padding: EdgeInsets.symmetric(horizontal: 16),
             child: FancyText.rich(assignment.description),
           ),
-          ..._buildFileSection(context, assignment.fileIds, assignment.id),
+          ..._buildFileSection(context, assignment.fileIds),
         ]),
       ),
     );
@@ -225,7 +239,7 @@ class _SubmissionTab extends StatelessWidget {
               : FancyText.rich(submission.comment),
         ),
         if (submission != null)
-          ..._buildFileSection(context, submission.fileIds, submission.id),
+          ..._buildFileSection(context, submission.fileIds),
         if (!assignment.isOverdue) FabSpacer(),
       ]),
     );
@@ -332,23 +346,20 @@ class _SubmissionsTab extends StatelessWidget {
 List<Widget> _buildFileSection(
   BuildContext context,
   List<Id<File>> fileIds,
-  Id<dynamic> parentId,
 ) {
+  if (fileIds.isEmpty) {
+    return [];
+  }
+
   return [
-    if (fileIds.isNotEmpty) ...[
-      SizedBox(height: 8),
-      Padding(
-        padding: EdgeInsets.symmetric(horizontal: 16),
-        child: Text(
-          context.s.assignment_assignmentDetails_filesSection,
-          style: context.textTheme.caption,
-        ),
+    SizedBox(height: 8),
+    Padding(
+      padding: EdgeInsets.symmetric(horizontal: 16),
+      child: Text(
+        context.s.assignment_assignmentDetails_filesSection,
+        style: context.textTheme.caption,
       ),
-    ],
-    for (final fileId in fileIds)
-      FileTile(
-        fileId,
-        onDownloadFile: services.get<FileService>().downloadFile,
-      ),
+    ),
+    FileList(fileIds),
   ];
 }

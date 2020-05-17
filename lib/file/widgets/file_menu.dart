@@ -73,7 +73,7 @@ class FileMenu extends StatelessWidget {
       children: <Widget>[
         SizedBox(height: 16),
         ListTile(
-          leading: FileThumbnail(file: file),
+          leading: FileThumbnail(file),
           title: Text(file.name),
           subtitle: Text(subtitle),
         ),
