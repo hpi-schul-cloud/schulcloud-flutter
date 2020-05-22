@@ -297,7 +297,7 @@ class NetworkService {
     // ignore: parameter_assignments
     headers = {
       'Content-Type': 'application/json',
-      if (headers != null) ...headers,
+      ...?headers,
     };
     for (final entry in headers.entries) {
       request.headers[entry.key] = entry.value;
