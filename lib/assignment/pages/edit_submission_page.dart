@@ -1,11 +1,10 @@
-import 'package:black_hole_flutter/black_hole_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:schulcloud/app/app.dart';
 
 import '../data.dart';
 
-class EditSubmissionScreen extends StatelessWidget {
-  const EditSubmissionScreen(this.assignmentId) : assert(assignmentId != null);
+class EditSubmissionPage extends StatelessWidget {
+  const EditSubmissionPage(this.assignmentId) : assert(assignmentId != null);
 
   final Id<Assignment> assignmentId;
 
