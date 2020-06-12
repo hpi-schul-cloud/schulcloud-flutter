@@ -16,7 +16,7 @@ class CalendarDashboardCard extends StatefulWidget {
 }
 
 class _CalendarDashboardCardState extends State<CalendarDashboardCard> {
-  StreamSubscription _subscription;
+  StreamSubscription<void> _subscription;
 
   @override
   void dispose() {
@@ -56,7 +56,7 @@ class _CalendarDashboardCardState extends State<CalendarDashboardCard> {
           // Update this widget when the current event is over.
           final nextEnd = events.map((e) => e.end).min();
           _subscription =
-              Future.delayed(Instant.now().timeUntil(nextEnd).toDuration)
+              Future<void>.delayed(Instant.now().timeUntil(nextEnd).toDuration)
                   .asStream()
                   .listen((_) => setState(() {}));
           return Column(

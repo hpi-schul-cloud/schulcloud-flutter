@@ -146,7 +146,7 @@ class SignedInScreenState extends ReceiveShareState<SignedInScreen> {
   }
 
   Future<void> _showSnackBars() async {
-    StreamSubscription subscription;
+    StreamSubscription<SnackBarRequest> subscription;
     subscription = services.snackBar.requests.listen((request) {
       final scaffold = this.scaffold;
       if (scaffold == null) {
@@ -171,7 +171,7 @@ class _BottomTab {
         assert(title != null),
         assert(initialRoute != null);
 
-  final ValueKey key;
+  final ValueKey<String> key;
   final IconData icon;
   final L10nStringGetter title;
   final String initialRoute;
@@ -186,25 +186,25 @@ class _BottomTab {
     initialRoute: services.get<AppConfig>().webUrl('dashboard'),
   );
   static final course = _BottomTab(
-    key: ValueKey('navigation-course'),
+    key: ValueKey<String>('navigation-course'),
     icon: FontAwesomeIcons.graduationCap,
     title: (s) => s.course,
     initialRoute: services.get<AppConfig>().webUrl('courses'),
   );
   static final assignment = _BottomTab(
-    key: ValueKey('navigation-assignment'),
+    key: ValueKey<String>('navigation-assignment'),
     icon: FontAwesomeIcons.tasks,
     title: (s) => s.assignment,
     initialRoute: services.get<AppConfig>().webUrl('homework'),
   );
   static final file = _BottomTab(
-    key: ValueKey('navigation-file'),
+    key: ValueKey<String>('navigation-file'),
     icon: FontAwesomeIcons.solidFolderOpen,
     title: (s) => s.file,
     initialRoute: services.get<AppConfig>().webUrl('files'),
   );
   static final news = _BottomTab(
-    key: ValueKey('navigation-news'),
+    key: ValueKey<String>('navigation-news'),
     icon: FontAwesomeIcons.solidNewspaper,
     title: (s) => s.news,
     initialRoute: services.get<AppConfig>().webUrl('news'),

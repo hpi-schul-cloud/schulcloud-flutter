@@ -28,7 +28,7 @@ class SortFilter<T> {
   final Map<String, Sorter<T>> sorters;
   final String defaultSorter;
   final SortOrder defaultSortOrder;
-  final Map<String, Filter> filters;
+  final Map<String, Filter<T, dynamic>> filters;
 
   SortFilterSelection<T> get defaultSelection {
     return SortFilterSelection(
