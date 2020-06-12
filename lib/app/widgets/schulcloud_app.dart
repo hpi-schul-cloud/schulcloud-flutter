@@ -176,37 +176,37 @@ class _BottomTab {
   final L10nStringGetter title;
   final String initialRoute;
 
-  static final values = [dashboard, course, assignment, file, news];
+  static final values = [dashboard, course, assignment, file, messenger];
 
   // We don't use relative URLs as they would start with a '/' and hence the
   // navigator automatically populates our initial back stack with '/'.
   static final dashboard = _BottomTab(
     icon: FontAwesomeIcons.thLarge,
     title: (s) => s.dashboard,
-    initialRoute: services.get<AppConfig>().webUrl('dashboard'),
+    initialRoute: services.config.webUrl('dashboard'),
   );
   static final course = _BottomTab(
     key: ValueKey('navigation-course'),
     icon: FontAwesomeIcons.graduationCap,
     title: (s) => s.course,
-    initialRoute: services.get<AppConfig>().webUrl('courses'),
+    initialRoute: services.config.webUrl('courses'),
   );
   static final assignment = _BottomTab(
     key: ValueKey('navigation-assignment'),
     icon: FontAwesomeIcons.tasks,
     title: (s) => s.assignment,
-    initialRoute: services.get<AppConfig>().webUrl('homework'),
+    initialRoute: services.config.webUrl('homework'),
   );
   static final file = _BottomTab(
     key: ValueKey('navigation-file'),
     icon: FontAwesomeIcons.solidFolderOpen,
     title: (s) => s.file,
-    initialRoute: services.get<AppConfig>().webUrl('files'),
+    initialRoute: services.config.webUrl('files'),
   );
-  static final news = _BottomTab(
-    key: ValueKey('navigation-news'),
-    icon: FontAwesomeIcons.solidNewspaper,
-    title: (s) => s.news,
-    initialRoute: services.get<AppConfig>().webUrl('news'),
+  static final messenger = _BottomTab(
+    key: ValueKey('navigation-messenger'),
+    icon: FontAwesomeIcons.solidComments,
+    title: (s) => s.messenger,
+    initialRoute: appSchemeLink('messenger'),
   );
 }

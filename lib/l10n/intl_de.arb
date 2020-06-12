@@ -129,6 +129,7 @@
   "general_undo": "Rückgängig machen",
   "general_user_unknown": "Unbekannt",
   "general_viewInBrowser": "Im Browser ansehen",
+  "messenger": "Messenger",
   "news": "Neuigkeiten",
   "news_articlePreview_subtitle": "Veröffentlicht am {published} von {author}",
   "news_authorView": "von {author}",
