@@ -47,7 +47,7 @@ void main() {
             role: Role.student.value,
           ),
         );
-      }, skip: 'Student account is not yet migrated');
+      });
     });
   });
 }

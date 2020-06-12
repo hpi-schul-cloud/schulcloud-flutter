@@ -46,7 +46,7 @@ final teacher = User(
   roleIds: [],
 );
 
-const studentUserId = Id<User>('5eba35def505d6002a79a77f');
+const studentUserId = Id<User>('5ee109db80ec38002b793c60');
 final studentEmail = Platform.environment['SC_AT_STUDENT_EMAIL'];
 final studentPassword = Platform.environment['SC_AT_STUDENT_PASSWORD'];
 final student = User(
@@ -57,7 +57,7 @@ final student = User(
   schoolId: schoolId,
   displayName: 'Flutter AT Student',
   avatarInitials: 'FT',
-  avatarBackgroundColor: Color(0xfffe8a71),
+  avatarBackgroundColor: Color(0xfff6cd61),
   permissions: [],
   roleIds: [],
 );
