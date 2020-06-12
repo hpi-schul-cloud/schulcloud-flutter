@@ -30,6 +30,7 @@ const _thrOrange = MaterialColor(0xfff56b00, {
 const thrAppConfig = AppConfig(
   name: 'thr',
   host: 'schulcloud-thueringen.de',
+  messengerHost: 'matrix.thueringen.messenger.schule',
   title: 'Thüringer Schulcloud',
   primaryColor: _thrBlue,
   secondaryColor: _thrOrange,

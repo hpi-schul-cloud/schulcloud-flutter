@@ -4,6 +4,7 @@ import 'main_sc.dart';
 
 final scTestAppConfig = scAppConfig.copyWith(
   host: 'test.schul-cloud.org',
+  messengerHost: 'matrix.test.messenger.schule',
   title: 'HPI Schul-Cloud (Test)',
 );
 

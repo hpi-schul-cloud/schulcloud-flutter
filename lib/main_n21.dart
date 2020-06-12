@@ -18,6 +18,7 @@ const _n21Blue = MaterialColor(0xff78aae5, {
 const n21AppConfig = AppConfig(
   name: 'n21',
   host: 'niedersachsen.cloud',
+  messengerHost: 'matrix.niedersachsen.messenger.schule',
   title: 'Niedersächsische Bildungscloud',
   primaryColor: _n21Blue,
   secondaryColor: _n21Blue,

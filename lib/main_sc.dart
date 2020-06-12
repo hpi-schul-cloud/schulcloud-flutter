@@ -47,6 +47,7 @@ const _scYellow = MaterialColor(0xffe2661d, {
 const scAppConfig = AppConfig(
   name: 'sc',
   host: 'schul-cloud.org',
+  messengerHost: 'matrix.messenger.schule',
   title: 'HPI Schul-Cloud',
   primaryColor: _scRed,
   secondaryColor: _scOrange,
