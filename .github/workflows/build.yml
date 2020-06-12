@@ -241,7 +241,7 @@ jobs:
         name: Determine new version & generate changelog
         uses: JonasWanke/unicorn@ad66dae
         with:
-          repo-token: "${{ secrets.UNICORN_TOKEN }}"
+          repo-token: "${{ secrets.GITHUB_TOKEN }}"
       - name: Build AAB
         run: |
           flutter build appbundle \
