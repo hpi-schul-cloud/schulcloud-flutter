@@ -23,31 +23,31 @@ void main() {
           _isUser(
             teacherUserId,
             isCurrentUser: true,
-            firstName: 'AT',
+            firstName: 'Flutter AT',
             lastName: 'Teacher',
             email: teacherEmail,
-            displayName: 'AT Teacher',
-            avatarInitials: 'AT',
+            displayName: 'Flutter AT Teacher',
+            avatarInitials: 'FT',
             role: Role.teacher.value,
           ),
         );
       });
 
-      test('student', () async {
+      /* test('student', () async {
         expect(
           await api.get('users/$studentUserId').json,
           _isUser(
             studentUserId,
             isCurrentUser: false,
-            firstName: 'AT',
+            firstName: 'Flutter AT',
             lastName: 'Student',
             email: studentEmail,
-            displayName: 'AT Student',
-            avatarInitials: 'AS',
+            displayName: 'Flutter AT Student',
+            avatarInitials: 'FS',
             role: Role.student.value,
           ),
         );
-      });
+      }); */
     });
   });
 }

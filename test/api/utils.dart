@@ -29,19 +29,19 @@ void tearDownCommon() {
 
 class MockStorageService extends Mock implements StorageService {}
 
-const schoolId = '5da021397f7b3700339a8906';
-const teacherUserId = Id<User>('5eb9597d33f2e600294b1ac5');
+const schoolId = '0000d186816abba584714c5f';
+const teacherUserId = Id<User>('5ee1085380ec38002b79390a');
 final teacherEmail = Platform.environment['SC_AT_TEACHER_EMAIL'];
 final teacherPassword = Platform.environment['SC_AT_TEACHER_PASSWORD'];
 final teacher = User(
   id: teacherUserId,
-  firstName: 'AT',
+  firstName: 'Flutter AT',
   lastName: 'Teacher',
   email: teacherEmail,
   schoolId: schoolId,
-  displayName: 'AT Teacher',
-  avatarInitials: 'AT',
-  avatarBackgroundColor: Color(0xfffe8a71),
+  displayName: 'Flutter AT Teacher',
+  avatarInitials: 'FT',
+  avatarBackgroundColor: Color(0x00fe8a71),
   permissions: [],
   roleIds: [],
 );
@@ -51,12 +51,12 @@ final studentEmail = Platform.environment['SC_AT_STUDENT_EMAIL'];
 final studentPassword = Platform.environment['SC_AT_STUDENT_PASSWORD'];
 final student = User(
   id: studentUserId,
-  firstName: 'AT',
+  firstName: 'Flutter AT',
   lastName: 'Student',
   email: studentEmail,
   schoolId: schoolId,
-  displayName: 'AT Student',
-  avatarInitials: 'AT',
+  displayName: 'Flutter AT Student',
+  avatarInitials: 'FT',
   avatarBackgroundColor: Color(0xfffe8a71),
   permissions: [],
   roleIds: [],
