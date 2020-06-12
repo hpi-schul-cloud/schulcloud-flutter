@@ -36,9 +36,6 @@ linter:
     overridden_fields: true
     prefer_const_constructors: false
     prefer_constructors_over_static_methods: true
-    # Doesn't work well with the hive-generated TypeAdapters yet:
-    # https://github.com/hivedb/hive/issues/130
-    # prefer_final_locals: true
     prefer_function_declarations_over_variables: true
     prefer_int_literals: true
     prefer_interpolation_to_compose_strings: true
