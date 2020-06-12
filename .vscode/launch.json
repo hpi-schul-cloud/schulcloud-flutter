@@ -2,10 +2,19 @@
   "version": "0.2.0",
   "configurations": [
     {
+      "name": "SC test",
+      "type": "dart",
+      "request": "launch",
+      "program": "lib/main_sc_test.dart",
+      "args": [
+        "--flavor=sc"
+      ]
+    },
+    {
       "name": "SC",
       "type": "dart",
       "request": "launch",
-      "program": "lib/main.dart",
+      "program": "lib/main_sc.dart",
       "args": [
         "--flavor=sc"
       ]

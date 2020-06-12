@@ -143,6 +143,18 @@ class AppConfig {
     }
     return 'assets/theme/$assetName';
   }
+
+  AppConfig copyWith({String host, String title}) {
+    return AppConfig(
+      name: name,
+      host: host ?? this.host,
+      title: title ?? this.title,
+      primaryColor: primaryColor,
+      secondaryColor: secondaryColor,
+      accentColor: accentColor,
+      hasDemo: hasDemo,
+    );
+  }
 }
 
 extension AppConfigGetIt on GetIt {

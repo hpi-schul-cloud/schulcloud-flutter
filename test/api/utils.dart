@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:mockito/mockito.dart';
 import 'package:schulcloud/app/app.dart';
-import 'package:schulcloud/main_sc.dart';
+import 'package:schulcloud/main_sc_test.dart';
 import 'package:streaming_shared_preferences/streaming_shared_preferences.dart';
 import 'package:test/test.dart';
 
@@ -17,7 +17,7 @@ Future<void> setUpCommon() async {
 
   services
     ..registerSingleton(storage)
-    ..registerSingleton(scAppConfig)
+    ..registerSingleton(scTestAppConfig)
     ..registerSingleton(BannerService())
     ..registerSingleton(NetworkService())
     ..registerSingleton(api);
