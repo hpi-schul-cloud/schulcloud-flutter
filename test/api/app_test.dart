@@ -33,7 +33,7 @@ void main() {
         );
       });
 
-      /* test('student', () async {
+      test('student', () async {
         expect(
           await api.get('users/$studentUserId').json,
           _isUser(
@@ -47,7 +47,7 @@ void main() {
             role: Role.student.value,
           ),
         );
-      }); */
+      }, skip: 'Student account is not yet migrated');
     });
   });
 }
