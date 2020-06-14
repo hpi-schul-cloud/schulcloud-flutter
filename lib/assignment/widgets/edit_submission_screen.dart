@@ -129,7 +129,7 @@ class _EditSubmissionFormState extends State<EditSubmissionForm> {
     );
   }
 
-  void _save(BuildContext context) async {
+  Future<void> _save(BuildContext context) async {
     setState(() => _isSaving = true);
     try {
       if (isNewSubmission) {

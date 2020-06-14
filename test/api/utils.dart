@@ -10,7 +10,7 @@ ApiNetworkService api;
 StorageService storage;
 
 Future<void> setUpCommon() async {
-  await Future.delayed(Duration(seconds: 1));
+  await Future<void>.delayed(Duration(seconds: 1));
 
   api = ApiNetworkService();
   storage = MockStorageService();
