@@ -13,7 +13,7 @@ void main() {
       driver = await FlutterDriver.connect();
 
       // TODO(JonasWanke): remove when flutter driver supports async main functions, https://github.com/flutter/flutter/issues/41029
-      await Future.delayed(Duration(seconds: 10));
+      await Future<void>.delayed(Duration(seconds: 10));
     });
     tearDownAll(() async {
       await driver.close();

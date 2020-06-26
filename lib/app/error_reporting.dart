@@ -67,7 +67,7 @@ const _loggerLevelToSentryLevel = {
 Future<void> _reportLogEvent(LogEvent event) async {
   await reportEvent(Event(
     level: _loggerLevelToSentryLevel[event.level],
-    message: event.message,
+    message: event.message?.toString(),
     exception: event.error,
     stackTrace: event.stackTrace,
     tags: {'source': 'logger'},
@@ -112,7 +112,7 @@ Future<bool> reportEvent(Event event) async {
       'platform': platformString.substring(platformString.indexOf('.') + 1),
       'flavor': services.config.name,
       if (user != null) 'schoolId': user.schoolId,
-      for (final entry in event.tags?.entries ?? {}) entry.key: entry.value,
+      for (final entry in event.tags?.entries ?? []) entry.key: entry.value,
     },
     extra: {
       'locale': window.locale.toString(),

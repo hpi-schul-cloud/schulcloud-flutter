@@ -27,7 +27,7 @@ jobs:
         uses: subosito/flutter-action@v1
         with:
           channel: ${{ env.FLUTTER_CHANNEL }}
-          version: ${{ env.FLUTTER_VERSION }}
+          flutter-version: ${{ env.FLUTTER_VERSION }}
 
       - name: Install dependencies
         run: flutter pub get
@@ -59,7 +59,7 @@ jobs:
         uses: subosito/flutter-action@v1
         with:
           channel: ${{ env.FLUTTER_CHANNEL }}
-          version: ${{ env.FLUTTER_VERSION }}
+          flutter-version: ${{ env.FLUTTER_VERSION }}
 
       - name: Checkout source
         uses: actions/download-artifact@v1
@@ -104,7 +104,7 @@ jobs:
         uses: subosito/flutter-action@v1
         with:
           channel: ${{ env.FLUTTER_CHANNEL }}
-          version: ${{ env.FLUTTER_VERSION }}
+          flutter-version: ${{ env.FLUTTER_VERSION }}
 
       - name: Checkout source
         uses: actions/download-artifact@v1
@@ -138,7 +138,7 @@ jobs:
         uses: subosito/flutter-action@v1
         with:
           channel: ${{ env.FLUTTER_CHANNEL }}
-          version: ${{ env.FLUTTER_VERSION }}
+          flutter-version: ${{ env.FLUTTER_VERSION }}
 
       - name: Checkout source
         uses: actions/download-artifact@v1
@@ -146,13 +146,7 @@ jobs:
           name: source
           path: .
 
-      # The default (sc) flavor doesn't have a special main.dart-suffix
-      - if: matrix.flavor == 'sc'
-        run: flutter build apk --flavor=sc
-        env:
-          RELEASE_USE_DEBUG_KEY: true
-      - if: matrix.flavor != 'sc'
-        run: flutter build apk --target=lib/main_${{ matrix.flavor }}.dart --flavor=${{ matrix.flavor }}
+      - run: flutter build apk --target=lib/main_${{ matrix.flavor }}.dart --flavor=${{ matrix.flavor }}
         env:
           RELEASE_USE_DEBUG_KEY: true
 
@@ -181,7 +175,7 @@ jobs:
   #       uses: subosito/flutter-action@v1
   #       with:
   #         channel: ${{ env.FLUTTER_CHANNEL }}
-  #         version: ${{ env.FLUTTER_VERSION }}
+  #         flutter-version: ${{ env.FLUTTER_VERSION }}
   #     - name: Checkout source
   #       uses: actions/download-artifact@v1
   #       with:
@@ -231,7 +225,7 @@ jobs:
         uses: subosito/flutter-action@v1
         with:
           channel: ${{ env.FLUTTER_CHANNEL }}
-          version: ${{ env.FLUTTER_VERSION }}
+          flutter-version: ${{ env.FLUTTER_VERSION }}
       - name: Checkout source
         uses: actions/download-artifact@v1
         with:
@@ -247,7 +241,7 @@ jobs:
         name: Determine new version & generate changelog
         uses: JonasWanke/unicorn@ad66dae
         with:
-          repo-token: "${{ secrets.UNICORN_TOKEN }}"
+          repo-token: "${{ secrets.GITHUB_TOKEN }}"
       - name: Build AAB
         run: |
           flutter build appbundle \

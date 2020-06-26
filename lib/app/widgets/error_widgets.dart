@@ -8,8 +8,11 @@ import 'buttons.dart';
 import 'empty_state.dart';
 
 void _showStackTrace(
-    BuildContext context, dynamic error, StackTrace stackTrace) {
-  context.navigator.push(MaterialPageRoute(
+  BuildContext context,
+  dynamic error,
+  StackTrace stackTrace,
+) {
+  context.navigator.push(MaterialPageRoute<void>(
     builder: (_) {
       return Scaffold(
         appBar: AppBar(title: Text(context.s.app_error_stackTrace)),

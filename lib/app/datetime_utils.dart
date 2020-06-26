@@ -2,6 +2,7 @@ import 'package:time_machine/time_machine.dart';
 import 'package:time_machine/time_machine_text_patterns.dart';
 
 extension IntInstantParser on int {
+  // ignore: use_to_and_as_if_applicable
   Instant parseInstant() => Instant.fromEpochMilliseconds(this);
 }
 
