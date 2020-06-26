@@ -20,7 +20,7 @@ class AssignmentCard extends StatelessWidget {
   final Id<Assignment> assignmentId;
   final CourseClickedCallback onCourseClicked;
   final VoidCallback onOverdueClicked;
-  final SetFlagFilterCallback<Assignment> setFlagFilterCallback;
+  final SetFlagFilterCallback setFlagFilterCallback;
 
   @override
   Widget build(BuildContext context) {
