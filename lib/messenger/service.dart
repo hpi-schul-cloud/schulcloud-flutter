@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:get_it/get_it.dart';
@@ -8,10 +9,17 @@ import 'package:matrix_sdk/src/util/mxc_url.dart';
 import 'package:moor/moor.dart';
 import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
+import 'package:rxdart/rxdart.dart';
 import 'package:schulcloud/app/app.dart' hide User;
 
+@immutable
 class MessengerService {
-  const MessengerService._({@required this.user}) : assert(user != null);
+  const MessengerService._({
+    @required this.stream,
+    @required StreamSubscription<MyUser> subscription,
+  })  : assert(stream != null),
+        assert(subscription != null),
+        _subscription = subscription;
 
   static Future<void> createAndRegister() async {
     final instance = await _create();
@@ -26,8 +34,15 @@ class MessengerService {
     final storePath = path.join(documentsDirectory.path, 'messenger.sqlite');
     final storeLocation = MoorStoreLocation.file(File(storePath));
 
+    final user = await _signIn(homeserver, storeLocation, _tokenResponse);
+    final userStream = user.updates
+        .map((u) => u.user)
+        .startWith(user)
+        .doOnData((event) => logger.d('Messenger update', event))
+        .publishValue();
     return MessengerService._(
-      user: await _signIn(homeserver, storeLocation, _tokenResponse),
+      stream: userStream,
+      subscription: userStream.connect(),
     );
   }
 
@@ -51,7 +66,7 @@ class MessengerService {
     final displayName = profile['displayname'];
     final avatarUrl = tryParseMxcUrl(profile['avatar_url']);
 
-    final myUser = MyUser.base(
+    var user = MyUser.base(
       id: UserId(_tokenResponse.userId),
       accessToken: _tokenResponse.accessToken,
       name: displayName,
@@ -62,17 +77,30 @@ class MessengerService {
     );
 
     final updater = Updater(
-      myUser,
+      user,
       homeserver,
       storeLocation,
       saveMyUserToStore: true,
     );
+    user = updater.user..startSync();
+    final update = await user.updates.firstSync;
 
-    return updater.user;
+    return update.user;
   }
 
-  final User user;
+  final ValueStream<MyUser> stream;
+  final StreamSubscription<MyUser> _subscription;
+  MyUser get user => stream.value;
+
+  Future<void> sync() async {
+    user.startSync();
+    // There's no obvious way to await a sync, hence we listen to the output
+    // stream until the next value arrives.
+    await user.updates.take(2).toList();
+  }
+
   void dispose() {
+    _subscription.cancel();
     services.unregister<MessengerService>();
   }
 }
