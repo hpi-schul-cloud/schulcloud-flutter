@@ -4,6 +4,7 @@ import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/app/routing.dart';
+import 'package:schulcloud/messenger/messenger.dart';
 
 import '../bloc.dart';
 import 'sign_in_browser.dart';
@@ -25,7 +26,7 @@ class _SignInFormState extends State<SignInForm> {
 
   @override
   void initState() {
-    browser = SignInBrowser(signedInCallback: _pushSignedInPage);
+    browser = SignInBrowser(signedInCallback: _handleSignedIn);
     super.initState();
   }
 
@@ -81,7 +82,7 @@ class _SignInFormState extends State<SignInForm> {
     Future<void> demoSignIn(Future<void> Function() signInCallback) async {
       try {
         await signInCallback();
-        _pushSignedInPage();
+        await _handleSignedIn();
       } on UnauthorizedError {
         context.scaffold.showSnackBar(SnackBar(
           content: Text(context.s.signIn_form_error_demoSignInFailed),
@@ -117,6 +118,9 @@ class _SignInFormState extends State<SignInForm> {
     );
   }
 
-  void _pushSignedInPage() => context.rootNavigator
-      .pushReplacementNamed(appSchemeLink('signedInScreen'));
+  Future<void> _handleSignedIn() async {
+    await MessengerService.createAndRegister();
+    await context.rootNavigator
+        .pushReplacementNamed(appSchemeLink('signedInScreen'));
+  }
 }

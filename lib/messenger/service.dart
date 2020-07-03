@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:get_it/get_it.dart';
 import 'package:matrix_sdk/matrix_sdk.dart';
 // Required for [signIn].
 // ignore: implementation_imports
@@ -12,7 +13,12 @@ import 'package:schulcloud/app/app.dart' hide User;
 class MessengerService {
   const MessengerService._({@required this.user}) : assert(user != null);
 
-  static Future<MessengerService> create() async {
+  static Future<void> createAndRegister() async {
+    final instance = await _create();
+    services.registerSingleton(instance);
+  }
+
+  static Future<MessengerService> _create() async {
     final _tokenResponse = await _TokenResponse.fetch();
     final homeserver = Homeserver(_tokenResponse.homeserverUri);
 
@@ -66,6 +72,13 @@ class MessengerService {
   }
 
   final User user;
+  void dispose() {
+    services.unregister<MessengerService>();
+  }
+}
+
+extension MessengerServiceGetIt on GetIt {
+  MessengerService get messenger => get<MessengerService>();
 }
 
 class _TokenResponse {
