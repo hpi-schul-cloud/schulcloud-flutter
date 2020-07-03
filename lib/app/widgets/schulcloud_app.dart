@@ -7,6 +7,7 @@ import 'package:flutter_absolute_path/flutter_absolute_path.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:navigation_patterns/navigation_patterns.dart';
+import 'package:schulcloud/brand/brand.dart';
 import 'package:schulcloud/file/file.dart';
 import 'package:schulcloud/generated/l10n.dart';
 import 'package:share/receive_share_state.dart';
@@ -181,31 +182,31 @@ class _BottomTab {
   // We don't use relative URLs as they would start with a '/' and hence the
   // navigator automatically populates our initial back stack with '/'.
   static final dashboard = _BottomTab(
-    icon: FontAwesomeIcons.thLarge,
+    icon: ScIcons.dashboard,
     title: (s) => s.dashboard,
     initialRoute: services.config.webUrl('dashboard'),
   );
   static final course = _BottomTab(
     key: ValueKey('navigation-course'),
-    icon: FontAwesomeIcons.graduationCap,
+    icon: ScIcons.course,
     title: (s) => s.course,
     initialRoute: services.config.webUrl('courses'),
   );
   static final assignment = _BottomTab(
     key: ValueKey('navigation-assignment'),
-    icon: FontAwesomeIcons.tasks,
+    icon: ScIcons.assignment,
     title: (s) => s.assignment,
     initialRoute: services.config.webUrl('homework'),
   );
   static final file = _BottomTab(
     key: ValueKey('navigation-file'),
-    icon: FontAwesomeIcons.solidFolderOpen,
+    icon: ScIcons.file,
     title: (s) => s.file,
     initialRoute: services.config.webUrl('files'),
   );
   static final messenger = _BottomTab(
     key: ValueKey('navigation-messenger'),
-    icon: FontAwesomeIcons.solidComments,
+    icon: ScIcons.messenger,
     title: (s) => s.messenger,
     initialRoute: appSchemeLink('messenger'),
   );

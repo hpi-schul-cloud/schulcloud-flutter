@@ -8,6 +8,7 @@ export 'package:hive/hive.dart'
 export 'package:hive_cache/hive_cache.dart';
 export 'package:meta/meta.dart';
 export 'package:pedantic/pedantic.dart';
+export 'package:schulcloud/brand/brand.dart';
 export 'package:time_machine/time_machine.dart' show Instant;
 
 export 'app_config.dart';
