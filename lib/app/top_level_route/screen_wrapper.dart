@@ -8,7 +8,7 @@ import '../logger.dart';
 import '../services/deep_linking.dart';
 import '../services/storage.dart';
 import '../utils.dart';
-import 'schulcloud_app.dart';
+import '../widgets/schulcloud_app.dart';
 
 class TopLevelScreenWrapper extends StatefulWidget {
   const TopLevelScreenWrapper({@required this.child}) : assert(child != null);
