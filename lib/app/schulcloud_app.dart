@@ -12,13 +12,13 @@ import 'package:schulcloud/generated/l10n.dart';
 import 'package:share/receive_share_state.dart';
 import 'package:share/share.dart';
 
-import '../banner/service.dart';
-import '../banner/widgets.dart';
-import '../logger.dart';
-import '../routing.dart';
-import '../services/snack_bar.dart';
-import '../services/storage.dart';
-import '../utils.dart';
+import 'banner/service.dart';
+import 'banner/widgets.dart';
+import 'logger.dart';
+import 'routing.dart';
+import 'services/snack_bar.dart';
+import 'services/storage.dart';
+import 'utils.dart';
 
 class SchulCloudApp extends StatelessWidget {
   static final navigatorKey = GlobalKey<NavigatorState>();
