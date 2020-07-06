@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:hive_cache/hive_cache.dart';
 import 'package:rxdart/rxdart.dart';
 
-import '../exception.dart';
 import '../logger.dart';
 import '../sort_filter/sort_filter.dart';
-import 'app_bar.dart';
-import 'error_widgets.dart';
+import '../widgets/app_bar.dart';
+import 'exception.dart';
+import 'widgets/error.dart';
 
 // Error
 FetchableBuilder<CacheSnapshot<T>> handleError<T>(FetchableBuilder<T> builder) {

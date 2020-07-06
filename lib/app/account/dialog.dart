@@ -6,10 +6,10 @@ import 'package:schulcloud/brand/brand.dart';
 import 'package:schulcloud/sign_in/sign_in.dart';
 
 import '../banner/service.dart';
+import '../caching/utils.dart';
 import '../data.dart';
 import '../services/storage.dart';
 import '../utils.dart';
-import '../widgets/cache_utils.dart';
 import '../widgets/text.dart';
 import 'avatar.dart';
 

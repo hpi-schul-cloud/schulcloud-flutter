@@ -36,7 +36,7 @@ class _LessonScreenState extends State<LessonScreen> {
           ),
           sliver: contents.isEmpty
               ? SliverFillRemaining(
-                  child: EmptyStateScreen(
+                  child: EmptyStatePage(
                     text: s.course_lessonScreen_empty,
                     actions: <Widget>[
                       PrimaryButton(

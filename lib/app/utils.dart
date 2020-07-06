@@ -14,7 +14,7 @@ import 'package:schulcloud/brand/brand.dart';
 import 'package:schulcloud/generated/l10n.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import 'exception.dart';
+import 'caching/exception.dart';
 import 'logger.dart';
 import 'services/api_network.dart';
 import 'services/network.dart';

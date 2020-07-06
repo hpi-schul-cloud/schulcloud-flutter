@@ -80,7 +80,7 @@ class _ComponentView extends StatelessWidget {
     }
 
     assert(component is UnsupportedComponent);
-    return EmptyStateScreen(text: context.s.course_contentView_unsupported);
+    return EmptyStatePage(text: context.s.course_contentView_unsupported);
   }
 }
 

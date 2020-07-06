@@ -6,7 +6,7 @@ import 'package:get_it/get_it.dart';
 import 'package:http/http.dart' as http;
 
 import '../banner/service.dart';
-import '../exception.dart';
+import '../caching/exception.dart';
 import '../logger.dart';
 import '../utils.dart';
 

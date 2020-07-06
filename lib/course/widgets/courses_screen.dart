@@ -61,7 +61,7 @@ class _CoursesScreenState extends State<CoursesScreen>
             title: Text(s.course),
             actions: <Widget>[SortFilterIconButton(showSortFilterSheet)],
           ),
-          emptyStateBuilder: (context) => EmptyStateScreen(
+          emptyStateBuilder: (context) => EmptyStatePage(
             text: s.course_coursesScreen_empty,
           ),
           sortFilterSelection: sortFilterSelection,

@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:schulcloud/brand/brand.dart';
 
+import '../../utils.dart';
 import '../exception.dart';
-import '../utils.dart';
-import 'empty_state.dart';
+import '../pages/empty_state.dart';
 
 void _showStackTrace(
   BuildContext context,
@@ -102,7 +102,7 @@ class ErrorScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return EmptyStateScreen(
+    return EmptyStatePage(
       text: error.messageBuilder(context),
       actions: [
         if (error.hasOriginalException)
