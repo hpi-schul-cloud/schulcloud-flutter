@@ -34,6 +34,10 @@ categorization:
         description: "localization module"
         paths:
           - "lib/l10n/**"
+      - name: "messenger"
+        description: "messenger module"
+        paths:
+          - "lib/messenger/**"
       - name: "signIn"
         description: "signIn module"
         paths:
