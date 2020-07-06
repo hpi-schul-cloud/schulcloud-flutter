@@ -279,7 +279,7 @@ class FlagsFilter<T> extends Filter<T, Map<String, bool>> {
               false: null,
             }[filterData];
 
-            updater(selection.copyWith(key, newValue));
+            updater({...selection, key: newValue});
           },
         );
       }).toList(),
