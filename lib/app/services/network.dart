@@ -5,10 +5,10 @@ import 'package:flutter/widgets.dart';
 import 'package:get_it/get_it.dart';
 import 'package:http/http.dart' as http;
 
+import '../banner/service.dart';
 import '../exception.dart';
 import '../logger.dart';
 import '../utils.dart';
-import 'banner.dart';
 
 /// The API server returns error data as JSON when an error occurs. We parse
 /// this data because it's helpful for debugging (there's a message, a code

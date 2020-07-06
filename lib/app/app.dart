@@ -11,6 +11,7 @@ export 'package:pedantic/pedantic.dart';
 export 'package:schulcloud/brand/brand.dart';
 export 'package:time_machine/time_machine.dart' show Instant, LocalDate, Period;
 
+export 'banner/service.dart';
 export 'data.dart';
 export 'datetime_utils.dart';
 export 'error_reporting.dart';
@@ -19,7 +20,6 @@ export 'hive.dart';
 export 'logger.dart';
 export 'routing.dart' show FancyRoute, FancyRouteBuilder;
 export 'services/api_network.dart';
-export 'services/banner.dart';
 export 'services/deep_linking.dart';
 export 'services/network.dart';
 export 'services/snack_bar.dart';
