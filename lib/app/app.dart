@@ -11,7 +11,6 @@ export 'package:pedantic/pedantic.dart';
 export 'package:schulcloud/brand/brand.dart';
 export 'package:time_machine/time_machine.dart' show Instant, LocalDate, Period;
 
-export 'app_config.dart';
 export 'data.dart';
 export 'datetime_utils.dart';
 export 'error_reporting.dart';
@@ -30,9 +29,7 @@ export 'sort_filter/sort_filter.dart';
 export 'sort_filter/sorting.dart';
 export 'utils.dart';
 export 'widgets/app_bar.dart';
-export 'widgets/buttons.dart';
 export 'widgets/cache_utils.dart';
-export 'widgets/card.dart';
 export 'widgets/empty_state.dart';
 export 'widgets/error_widgets.dart';
 export 'widgets/fade_in.dart';

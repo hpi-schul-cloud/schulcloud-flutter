@@ -1,10 +1,10 @@
 import 'package:black_hole_flutter/black_hole_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:schulcloud/brand/brand.dart';
 
 import '../exception.dart';
 import '../utils.dart';
-import 'buttons.dart';
 import 'empty_state.dart';
 
 void _showStackTrace(
