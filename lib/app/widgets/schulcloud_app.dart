@@ -147,7 +147,7 @@ class SignedInScreenState extends ReceiveShareState<SignedInScreen> {
   }
 
   Future<void> _showSnackBars() async {
-    StreamSubscription subscription;
+    StreamSubscription<SnackBarRequest> subscription;
     subscription = services.snackBar.requests.listen((request) {
       final scaffold = this.scaffold;
       if (scaffold == null) {
@@ -172,7 +172,7 @@ class _BottomTab {
         assert(title != null),
         assert(initialRoute != null);
 
-  final ValueKey key;
+  final ValueKey<String> key;
   final IconData icon;
   final L10nStringGetter title;
   final String initialRoute;
@@ -187,25 +187,24 @@ class _BottomTab {
     initialRoute: services.config.webUrl('dashboard'),
   );
   static final course = _BottomTab(
-    key: ValueKey('navigation-course'),
+    key: ValueKey<String>('navigation-course'),
     icon: ScIcons.course,
     title: (s) => s.course,
     initialRoute: services.config.webUrl('courses'),
   );
   static final assignment = _BottomTab(
-    key: ValueKey('navigation-assignment'),
+    key: ValueKey<String>('navigation-assignment'),
     icon: ScIcons.assignment,
     title: (s) => s.assignment,
     initialRoute: services.config.webUrl('homework'),
   );
   static final file = _BottomTab(
-    key: ValueKey('navigation-file'),
+    key: ValueKey<String>('navigation-file'),
     icon: ScIcons.file,
     title: (s) => s.file,
     initialRoute: services.config.webUrl('files'),
   );
   static final messenger = _BottomTab(
-    key: ValueKey('navigation-messenger'),
     icon: ScIcons.messenger,
     title: (s) => s.messenger,
     initialRoute: appSchemeLink('messenger'),

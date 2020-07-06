@@ -78,7 +78,7 @@ class Event implements Entity<Event> {
     // I'm sorry this method has to be written, but the Calendar API is … not
     // the best. Recurrence rules are an array, stored in the intuitively called
     // field 'included'.
-    List<dynamic> recurrenceJson = json['included'];
+    final recurrenceJson = json['included'] as List<dynamic>;
     if (recurrenceJson == null) {
       return [];
     }

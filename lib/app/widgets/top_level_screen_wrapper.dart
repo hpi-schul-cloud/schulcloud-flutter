@@ -20,7 +20,7 @@ class TopLevelScreenWrapper extends StatefulWidget {
 }
 
 class _TopLevelScreenWrapperState extends State<TopLevelScreenWrapper> {
-  StreamSubscription _deepLinksSubscription;
+  StreamSubscription<Uri> _deepLinksSubscription;
   final _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
