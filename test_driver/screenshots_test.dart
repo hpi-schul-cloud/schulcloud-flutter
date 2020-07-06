@@ -58,12 +58,5 @@ void main() {
         await screenshot(driver, config, 'file');
       });
     });
-
-    group('news', () {
-      test('NewsScreen', () async {
-        await driver.tap(find.byValueKey('navigation-news'));
-        await screenshot(driver, config, 'news');
-      });
-    });
   });
 }
