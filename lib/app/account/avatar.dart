@@ -6,7 +6,7 @@ import '../banner/service.dart';
 import '../data.dart';
 import '../services/storage.dart';
 import '../utils.dart';
-import 'account_dialog.dart';
+import 'dialog.dart';
 
 class AccountButton extends StatelessWidget {
   @override

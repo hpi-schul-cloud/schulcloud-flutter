@@ -9,9 +9,9 @@ import '../banner/service.dart';
 import '../data.dart';
 import '../services/storage.dart';
 import '../utils.dart';
-import 'account_avatar.dart';
-import 'cache_utils.dart';
-import 'text.dart';
+import '../widgets/cache_utils.dart';
+import '../widgets/text.dart';
+import 'avatar.dart';
 
 class AccountDialog extends StatelessWidget {
   @override
