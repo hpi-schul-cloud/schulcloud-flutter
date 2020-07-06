@@ -11,21 +11,33 @@ class MessengerPage extends StatelessWidget {
     return FancyScaffold(
       appBar: FancyAppBar(title: Text(context.s.messenger)),
       omitHorizontalPadding: true,
-      sliver: StreamBuilder<List<Room>>(
-        stream: services.messenger.stream.map((u) => u.rooms.toList()),
-        builder: fetchableToAsync(handleLoadingErrorEmptySliver(
-          emptyStateBuilder: (_) =>
-              EmptyStateScreen(text: "You aren't part of any room yet."),
-          builder: (context, rooms, _) {
-            return SliverList(
-              delegate: SliverChildBuilderDelegate(
-                (context, index) => RoomListTile(rooms[index]),
-                childCount: rooms.length,
-              ),
-            );
-          },
-        )),
-      ),
+      sliver: MessengerService.isRegistered
+          ? _buildSignedInContent()
+          : _buildSignedOutContent(),
+    );
+  }
+
+  Widget _buildSignedInContent() {
+    return StreamBuilder<List<Room>>(
+      stream: services.messenger.stream.map((u) => u.rooms.toList()),
+      builder: fetchableToAsync(handleLoadingErrorEmptySliver(
+        emptyStateBuilder: (_) =>
+            EmptyStateScreen(text: "You aren't part of any room yet."),
+        builder: (context, rooms, _) {
+          return SliverList(
+            delegate: SliverChildBuilderDelegate(
+              (context, index) => RoomListTile(rooms[index]),
+              childCount: rooms.length,
+            ),
+          );
+        },
+      )),
+    );
+  }
+
+  Widget _buildSignedOutContent() {
+    return SliverFillRemaining(
+      child: ErrorScreen(_MessengerUnauthorizedError()),
     );
   }
 
@@ -45,4 +57,12 @@ class MessengerPage extends StatelessWidget {
       );
     };
   }
+}
+
+class _MessengerUnauthorizedError extends FancyException {
+  _MessengerUnauthorizedError()
+      : super(
+          messageBuilder: (context) => context.s.app_error_tokenExpired,
+          isGlobal: true,
+        );
 }

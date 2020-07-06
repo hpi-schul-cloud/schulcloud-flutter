@@ -3,7 +3,7 @@ import 'dart:io';
 
 import 'package:get_it/get_it.dart';
 import 'package:matrix_sdk/matrix_sdk.dart';
-// Required for [signIn].
+// Required for [MessengerService._signIn].
 // ignore: implementation_imports
 import 'package:matrix_sdk/src/util/mxc_url.dart';
 import 'package:moor/moor.dart';
@@ -21,20 +21,28 @@ class MessengerService {
         assert(subscription != null),
         _subscription = subscription;
 
+  static bool _isRegistered = false;
+  static bool get isRegistered => _isRegistered;
   static Future<void> createAndRegister() async {
-    final instance = await _create();
+    MessengerService instance;
+    try {
+      instance = await _create();
+    } on UnauthorizedError {
+      return;
+    }
     services.registerSingleton(instance);
+    _isRegistered = true;
   }
 
   static Future<MessengerService> _create() async {
-    final _tokenResponse = await _TokenResponse.fetch();
-    final homeserver = Homeserver(_tokenResponse.homeserverUri);
+    final tokenResponse = await _TokenResponse.fetch();
+    final homeserver = Homeserver(tokenResponse.homeserverUri);
 
     final documentsDirectory = await getApplicationDocumentsDirectory();
     final storePath = path.join(documentsDirectory.path, 'messenger.sqlite');
     final storeLocation = MoorStoreLocation.file(File(storePath));
 
-    final user = await _signIn(homeserver, storeLocation, _tokenResponse);
+    final user = await _signIn(homeserver, storeLocation, tokenResponse);
     final userStream = user.updates
         .map((u) => u.user)
         .startWith(user)
@@ -101,6 +109,7 @@ class MessengerService {
 
   void dispose() {
     _subscription.cancel();
+    _isRegistered = false;
     services.unregister<MessengerService>();
   }
 }
