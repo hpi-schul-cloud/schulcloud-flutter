@@ -9,7 +9,6 @@ class AppConfig {
   const AppConfig({
     @required this.name,
     @required this.host,
-    @required this.messengerHost,
     @required this.title,
     @required this.primaryColor,
     @required this.secondaryColor,
@@ -17,7 +16,6 @@ class AppConfig {
     this.hasDemo = true,
   })  : assert(name != null),
         assert(host != null),
-        assert(messengerHost != null),
         assert(title != null),
         assert(primaryColor != null),
         assert(secondaryColor != null),
@@ -36,8 +34,6 @@ class AppConfig {
   String get baseWebUrl => 'https://$host';
   String webUrl(String path) => '$baseWebUrl/$path';
   String get baseApiUrl => 'https://api.$host';
-  final String messengerHost;
-  String get messengerUrl => 'https://$messengerHost';
 
   final String title;
   final MaterialColor primaryColor;
@@ -148,11 +144,10 @@ class AppConfig {
     return 'assets/theme/$assetName';
   }
 
-  AppConfig copyWith({String host, String messengerHost, String title}) {
+  AppConfig copyWith({String host, String title}) {
     return AppConfig(
       name: name,
       host: host ?? this.host,
-      messengerHost: messengerHost ?? this.messengerHost,
       title: title ?? this.title,
       primaryColor: primaryColor,
       secondaryColor: secondaryColor,
