@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:schulcloud/brand/brand.dart';
 
 import '../app.dart';
-import 'buttons.dart';
 
 /// A screen with no content on it. Instead a placeholder is displayed,
 /// consisting of [child] (commonly an image) and a text underneath as well as

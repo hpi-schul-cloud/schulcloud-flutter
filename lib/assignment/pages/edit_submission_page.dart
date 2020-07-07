@@ -155,7 +155,7 @@ class _EditSubmissionFormState extends State<EditSubmissionForm> {
       SizedBox(height: 8),
       if (assignment.teamSubmissions)
         ListTile(
-          leading: Icon(Icons.people),
+          leading: Icon(ScIcons.teams),
           title: Text(
               context.s.assignment_editSubmission_teamSubmissionNotSupported),
           trailing: Icon(Icons.open_in_new),

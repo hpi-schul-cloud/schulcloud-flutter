@@ -7,10 +7,10 @@ import 'package:flutter/foundation.dart';
 import 'package:hive_cache/hive_cache.dart';
 import 'package:logger/logger.dart';
 import 'package:package_info/package_info.dart';
+import 'package:schulcloud/brand/brand.dart';
 import 'package:sentry/sentry.dart' hide User;
 import 'package:system_info/system_info.dart';
 
-import 'app_config.dart';
 import 'logger.dart';
 import 'services/storage.dart';
 import 'utils.dart';

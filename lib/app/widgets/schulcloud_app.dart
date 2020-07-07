@@ -5,14 +5,13 @@ import 'package:black_hole_flutter/black_hole_flutter.dart';
 import 'package:flutter/material.dart' hide Banner;
 import 'package:flutter_absolute_path/flutter_absolute_path.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:navigation_patterns/navigation_patterns.dart';
+import 'package:schulcloud/brand/brand.dart';
 import 'package:schulcloud/file/file.dart';
 import 'package:schulcloud/generated/l10n.dart';
 import 'package:share/receive_share_state.dart';
 import 'package:share/share.dart';
 
-import '../app_config.dart';
 import '../logger.dart';
 import '../routing.dart';
 import '../services/banner.dart';
@@ -181,32 +180,32 @@ class _BottomTab {
   // We don't use relative URLs as they would start with a '/' and hence the
   // navigator automatically populates our initial back stack with '/'.
   static final dashboard = _BottomTab(
-    icon: FontAwesomeIcons.thLarge,
+    icon: ScIcons.dashboard,
     title: (s) => s.dashboard,
-    initialRoute: services.get<AppConfig>().webUrl('dashboard'),
+    initialRoute: services.config.webUrl('dashboard'),
   );
   static final course = _BottomTab(
     key: ValueKey<String>('navigation-course'),
-    icon: FontAwesomeIcons.graduationCap,
+    icon: ScIcons.course,
     title: (s) => s.course,
-    initialRoute: services.get<AppConfig>().webUrl('courses'),
+    initialRoute: services.config.webUrl('courses'),
   );
   static final assignment = _BottomTab(
     key: ValueKey<String>('navigation-assignment'),
-    icon: FontAwesomeIcons.tasks,
+    icon: ScIcons.assignment,
     title: (s) => s.assignment,
-    initialRoute: services.get<AppConfig>().webUrl('homework'),
+    initialRoute: services.config.webUrl('homework'),
   );
   static final file = _BottomTab(
     key: ValueKey<String>('navigation-file'),
-    icon: FontAwesomeIcons.solidFolderOpen,
+    icon: ScIcons.file,
     title: (s) => s.file,
-    initialRoute: services.get<AppConfig>().webUrl('files'),
+    initialRoute: services.config.webUrl('files'),
   );
   static final news = _BottomTab(
     key: ValueKey<String>('navigation-news'),
-    icon: FontAwesomeIcons.solidNewspaper,
+    icon: ScIcons.news,
     title: (s) => s.news,
-    initialRoute: services.get<AppConfig>().webUrl('news'),
+    initialRoute: services.config.webUrl('news'),
   );
 }

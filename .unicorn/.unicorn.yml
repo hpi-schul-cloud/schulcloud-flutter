@@ -14,6 +14,10 @@ categorization:
         description: "assignment module"
         paths:
           - "lib/assignment/**"
+      - name: "brand"
+        description: "brand module"
+        paths:
+          - "lib/brand/**"
       - name: "calendar"
         description: "calendar module"
         paths:
