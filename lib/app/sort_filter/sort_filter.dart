@@ -283,7 +283,7 @@ class SortFilterEmptyState extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return EmptyStateScreen(
+    return EmptyStatePage(
       text: text,
       actions: <Widget>[
         SecondaryButton(

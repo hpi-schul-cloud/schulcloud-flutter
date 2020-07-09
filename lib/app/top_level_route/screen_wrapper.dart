@@ -5,10 +5,10 @@ import 'package:logger_flutter/logger_flutter.dart';
 import 'package:schulcloud/sign_in/sign_in.dart';
 
 import '../logger.dart';
+import '../schulcloud_app.dart';
 import '../services/deep_linking.dart';
 import '../services/storage.dart';
 import '../utils.dart';
-import 'schulcloud_app.dart';
 
 class TopLevelScreenWrapper extends StatefulWidget {
   const TopLevelScreenWrapper({@required this.child}) : assert(child != null);

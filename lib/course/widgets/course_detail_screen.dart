@@ -50,7 +50,7 @@ class CourseDetailsScreen extends StatelessWidget {
     return CollectionBuilder.populated<Lesson>(
       collection: course.lessons,
       builder: handleLoadingErrorEmpty(
-        emptyStateBuilder: (_) => EmptyStateScreen(
+        emptyStateBuilder: (_) => EmptyStatePage(
           text: context.s.course_detailsScreen_empty,
         ),
         builder: (context, lessons, _) {

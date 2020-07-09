@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'top_level_screen_wrapper.dart';
+import 'screen_wrapper.dart';
 
 class TopLevelPageRoute<T> extends PageRoute<T> {
   TopLevelPageRoute({

@@ -14,7 +14,7 @@ import 'package:schulcloud/brand/brand.dart';
 import 'package:schulcloud/generated/l10n.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import 'exception.dart';
+import 'caching/exception.dart';
 import 'logger.dart';
 import 'services/api_network.dart';
 import 'services/network.dart';
@@ -124,17 +124,6 @@ String exceptionMessage(dynamic error) {
     return error.body.message;
   }
   return error.toString();
-}
-
-extension ImmutableMap<K, V> on Map<K, V> {
-  // ignore: use_to_and_as_if_applicable
-  Map<K, V> clone() => Map.of(this);
-
-  Map<K, V> copyWith(K key, V value) {
-    final newMap = clone();
-    newMap[key] = value;
-    return newMap;
-  }
 }
 
 /// An error indicating that a permission wasn't granted by the user.

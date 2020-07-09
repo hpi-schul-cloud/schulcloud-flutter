@@ -5,13 +5,13 @@ import 'package:hive_cache/hive_cache.dart';
 import 'package:schulcloud/brand/brand.dart';
 import 'package:schulcloud/sign_in/sign_in.dart';
 
+import '../banner/service.dart';
+import '../caching/utils.dart';
 import '../data.dart';
-import '../services/banner.dart';
 import '../services/storage.dart';
 import '../utils.dart';
-import 'account_avatar.dart';
-import 'cache_utils.dart';
-import 'text.dart';
+import '../widgets/text.dart';
+import 'avatar.dart';
 
 class AccountDialog extends StatelessWidget {
   @override

@@ -25,7 +25,7 @@ class FileBrowser extends StatelessWidget {
   }
 
   Widget _buildEmptyState(BuildContext context) {
-    return EmptyStateScreen(
+    return EmptyStatePage(
       text: context.s.file_fileBrowser_empty,
       child: SizedBox(
         width: 100,

@@ -6,9 +6,9 @@ import 'package:intl/intl.dart';
 import 'package:time_machine/time_machine.dart';
 import 'package:time_machine/time_machine_text_patterns.dart';
 
+import '../caching/utils.dart';
 import '../datetime_utils.dart';
 import '../utils.dart';
-import '../widgets/cache_utils.dart';
 import 'sort_filter.dart';
 
 typedef Test<T, D> = bool Function(T item, D data);
@@ -279,7 +279,7 @@ class FlagsFilter<T> extends Filter<T, Map<String, bool>> {
               false: null,
             }[filterData];
 
-            updater(selection.copyWith(key, newValue));
+            updater({...selection, key: newValue});
           },
         );
       }).toList(),
