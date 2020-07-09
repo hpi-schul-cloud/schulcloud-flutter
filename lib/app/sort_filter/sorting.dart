@@ -44,7 +44,7 @@ class Sorter<T> {
   Sorter.simple(
     L10nStringGetter titleGetter, {
     String webQueryKey,
-    @required Selector<T, Comparable> selector,
+    @required Selector<T, Comparable<dynamic>> selector,
   }) : this(
           titleGetter,
           webQueryKey: webQueryKey,

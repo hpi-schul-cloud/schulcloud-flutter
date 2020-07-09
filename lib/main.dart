@@ -8,6 +8,7 @@ import 'package:logger/logger.dart';
 import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/calendar/calendar.dart';
 import 'package:schulcloud/file/file.dart';
+import 'package:schulcloud/messenger/messenger.dart';
 import 'package:schulcloud/settings/settings.dart';
 import 'package:schulcloud/sign_in/sign_in.dart';
 import 'package:time_machine/time_machine.dart';
@@ -29,6 +30,8 @@ Future<void> main({AppConfig appConfig = scAppConfig}) async {
       ..d('Registering first services…');
     // We register these first as they're required for error reporting.
     services
+      // The MessengerService is recreated after every sign in.
+      ..allowReassignment = true
       ..registerSingleton(appConfig)
       ..registerSingletonAsync(StorageService.create);
 
@@ -58,6 +61,9 @@ Future<void> main({AppConfig appConfig = scAppConfig}) async {
       ..registerSingletonAsync(DeepLinkingService.create)
       ..registerSingleton(CalendarBloc())
       ..registerSingleton(SignInBloc());
+    if (services.storage.isSignedIn) {
+      await MessengerService.createAndRegister();
+    }
 
     logger.d('Adding custom licenses to registry…');
     LicenseRegistry.addLicense(() async* {

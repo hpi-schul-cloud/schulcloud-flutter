@@ -114,7 +114,10 @@ class SnackBarService {
         .doOnData((update) => updateMessages.add(loadingMessageBuilder(update)))
         .listen(
       (update) {},
-      onError: (e, st) async {
+      // `onError`'s `Function` doesn't have defined generic types in its
+      // declaration.
+      // ignore: avoid_types_on_closure_parameters
+      onError: (dynamic e, StackTrace st) async {
         logger.e("Multi action couldn't be performed.", e, st);
         hasError = true;
         await updateMessages.close();

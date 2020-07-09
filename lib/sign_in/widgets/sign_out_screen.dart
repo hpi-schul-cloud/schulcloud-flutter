@@ -4,6 +4,7 @@ import 'package:black_hole_flutter/black_hole_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:schulcloud/app/app.dart';
+import 'package:schulcloud/messenger/messenger.dart';
 
 class SignOutScreen extends StatefulWidget {
   @override
@@ -26,6 +27,7 @@ class _SignOutScreenState extends State<SignOutScreen> {
       // This should probably be awaited, but right now awaiting it
       // leads to the issue that logging out becomes impossible.
       unawaited(services.get<StorageService>().clear());
+      services.messenger.dispose();
 
       unawaited(context.rootNavigator.pushReplacementNamed('/login'));
       logger.i('Signed out!');

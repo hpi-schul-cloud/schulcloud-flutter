@@ -4,6 +4,7 @@ import 'package:schulcloud/assignment/assignment.dart';
 import 'package:schulcloud/course/course.dart';
 import 'package:schulcloud/dashboard/dashboard.dart';
 import 'package:schulcloud/file/file.dart';
+import 'package:schulcloud/messenger/messenger.dart';
 import 'package:schulcloud/news/news.dart';
 import 'package:schulcloud/settings/settings.dart';
 import 'package:schulcloud/sign_in/sign_in.dart';
@@ -75,6 +76,7 @@ final router = Router(
           matcher: Matcher.path('signedInScreen'),
           topLevelBuilder: (_, result) => SignedInScreen(),
         ),
+        messengerRoutes,
       ],
     ),
     FancyRoute(

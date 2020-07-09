@@ -2,9 +2,9 @@ import 'package:flutter_deep_linking/flutter_deep_linking.dart';
 import 'package:schulcloud/app/app.dart';
 
 import 'data.dart';
-import 'widgets/assignment_detail_screen.dart';
-import 'widgets/assignments_screen.dart';
-import 'widgets/edit_submission_screen.dart';
+import 'pages/assignment_detail_page/page.dart';
+import 'pages/assignments_page.dart';
+import 'pages/edit_submission_page.dart';
 
 const _activeTabPrefix = 'activetabid=';
 final assignmentRoutes = FancyRoute(
@@ -13,9 +13,8 @@ final assignmentRoutes = FancyRoute(
     // Query string is stored inside the fragment, e.g.:
     // https://schul-cloud.org/homework/#?dueDateFrom=2020-03-09&dueDateTo=2020-03-27&private=true&publicSubmissions=false&sort=updatedAt&sortorder=1&teamSubmissions=true
     final query = Uri.parse(result.uri.fragment).queryParameters;
-    final selection =
-        AssignmentsScreen.sortFilterConfig.tryParseWebQuery(query);
-    return AssignmentsScreen(sortFilterSelection: selection);
+    final selection = AssignmentsPage.sortFilterConfig.tryParseWebQuery(query);
+    return AssignmentsPage(sortFilterSelection: selection);
   },
   routes: [
     FancyRoute(
@@ -27,7 +26,7 @@ final assignmentRoutes = FancyRoute(
             ? tab.substring(_activeTabPrefix.length)
             : null;
 
-        return AssignmentDetailScreen(
+        return AssignmentDetailPage(
           Id<Assignment>(result['assignmentId']),
           initialTab: tab,
         );
@@ -36,7 +35,7 @@ final assignmentRoutes = FancyRoute(
         FancyRoute(
           matcher: Matcher.path('submission'),
           builder: (_, result) =>
-              EditSubmissionScreen(Id<Assignment>(result['assignmentId'])),
+              EditSubmissionPage(Id<Assignment>(result['assignmentId'])),
         ),
       ],
     ),

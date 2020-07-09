@@ -212,6 +212,24 @@ FetchableBuilder<CacheSnapshot<List<T>>> handleLoadingErrorRefreshEmpty<T>({
 }
 
 FetchableBuilder<CacheSnapshot<List<T>>>
+    handleLoadingErrorRefreshEmptySliver<T>({
+  bool isSliver = false,
+  NestedScrollViewHeaderSliversBuilder headerSliverBuilder,
+  FancyAppBar appBar,
+  @required WidgetBuilder emptyStateBuilder,
+  @required FetchableBuilder<List<T>> builder,
+}) {
+  return handleLoadingErrorSliver(handleRefresh(
+    headerSliverBuilder: headerSliverBuilder,
+    appBar: appBar,
+    builder: handleEmpty(
+      emptyStateBuilder: emptyStateBuilder,
+      builder: builder,
+    ),
+  ));
+}
+
+FetchableBuilder<CacheSnapshot<List<T>>>
     handleLoadingErrorRefreshEmptyFilter<T>({
   NestedScrollViewHeaderSliversBuilder headerSliverBuilder,
   FancyAppBar appBar,
