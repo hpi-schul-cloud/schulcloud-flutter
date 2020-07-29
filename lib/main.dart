@@ -75,18 +75,7 @@ Future<void> main({AppConfig appConfig = scAppConfig}) async {
       userStream?.dispose();
       userStream = userId?.resolve();
       userStream?.listen((user) {
-        // TODO(marcelgarus): Don't hardcode role id.
-        final isDemo = [
-          Id<Role>('0000d186816abba584714d00'), // demo general
-          Id<Role>('0000d186816abba584714d02'), // demo student
-          Id<Role>('0000d186816abba584714d03'), // demo teacher
-        ].any((demoRole) => user?.roleIds?.contains(demoRole) ?? false);
-
-        if (isDemo) {
-          services.banners.add(Banners.demo);
-        } else {
-          services.banners.remove(Banners.demo);
-        }
+        services.banners[Banners.demo] = (user?.roleIds ?? []).any(Role.isDemo);
       });
     });
 

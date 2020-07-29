@@ -66,8 +66,7 @@ class AccountDialog extends StatelessWidget {
           ),
         ),
         SizedBox(height: 8),
-        if (services.banners.value.contains(Banners.demo))
-          _buildDemoSection(context),
+        if (services.banners[Banners.demo]) _buildDemoSection(context),
         _buildAccountTile(context),
         Divider(),
         ListTile(
