@@ -105,6 +105,10 @@ class File implements Entity<File>, Comparable<File> {
 
   @HiveField(1)
   final String name;
+  String get extension {
+    final lastDot = name.lastIndexOf('.');
+    return lastDot == null ? null : name.substring(lastDot + 1);
+  }
 
   @HiveField(12)
   final FilePath path;

@@ -42,7 +42,7 @@ class FileThumbnail extends StatelessWidget {
       return Icon(Icons.folder);
     }
 
-    final type = file.name.substring(file.name.lastIndexOf('.') + 1);
+    final type = file.extension;
     final assetPath = supportedThumbnails.contains(type)
         ? 'assets/file_thumbnails/${type}s.png'
         : 'assets/file_thumbnails/default.png';
