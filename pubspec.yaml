@@ -31,8 +31,10 @@ dependencies:
   flare_flutter: ^2.0.3
   flutter_absolute_path: ^1.0.6
   flutter_deep_linking: ^0.1.2
-  # The current version of flutter_downloader, 1.2.1, causes the build to fail. Until this is fixed, we rely on an older version.
-  flutter_downloader: 1.1.9
+  flutter_downloader:
+    git:
+      url: https://github.com/marcelgarus/flutter_downloader
+      ref: 307bcfc
   flutter_html: ^1.0.0
   flutter_inappwebview: ^3.1.0
   flutter_native_timezone: ^1.0.4
@@ -58,9 +60,10 @@ dependencies:
     git:
       url: https://github.com/JonasWanke/navigation_patterns.git
       ref: 8e7c54c
+  open_file: ^3.0.1
   package_info: ^0.4.0+3
-  path_provider: ^1.1.0
-  permission_handler: ^3.3.0
+  path_provider: ^1.6.8
+  permission_handler: ^5.0.0
   provider: ^4.0.0
   rxdart: ^0.24.0
   sentry: ^3.0.1
