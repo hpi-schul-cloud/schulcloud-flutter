@@ -99,7 +99,8 @@ Future<void> main({AppConfig appConfig = schulCloudAppConfig}) async {
       ..registerSingleton(SnackBarService())
       ..registerSingleton(NetworkService())
       ..registerSingleton(ApiNetworkService())
-      ..registerSingleton(FileService())
+      ..registerSingleton(UploadService())
+      ..registerSingleton(DownloadService())
       ..registerSingletonAsync(DeepLinkingService.create)
       ..registerSingleton(CalendarBloc())
       ..registerSingleton(SignInBloc());

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:schulcloud/app/app.dart';
 
 import '../data.dart';
-import '../service.dart';
+import '../upload.dart';
 
 class UploadFab extends StatelessWidget {
   const UploadFab({@required this.path}) : assert(path != null);
@@ -21,7 +21,7 @@ class UploadFab extends StatelessWidget {
 
         return FloatingActionButton(
           onPressed: () async {
-            await services.files.uploadFiles(
+            await services.upload.uploadFiles(
               context: context,
               files: await FilePicker.getMultiFile(),
               destination: path,

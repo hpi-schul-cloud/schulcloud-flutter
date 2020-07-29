@@ -5,11 +5,9 @@ import 'package:black_hole_flutter/black_hole_flutter.dart';
 import 'package:dartx/dartx_io.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:get_it/get_it.dart';
 import 'package:meta/meta.dart';
 import 'package:mime/mime.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:schulcloud/app/app.dart';
 
 import 'data.dart';
@@ -29,42 +27,10 @@ class UploadProgressUpdate {
   bool get isSingleFile => totalNumberOfFiles == 1;
 }
 
+/// A service that manages storing [File]s locally.
 @immutable
-class FileService {
-  const FileService();
-
-  Future<void> downloadFile(File file) async {
-    assert(file != null);
-
-    await ensureStoragePermissionGranted();
-
-    /// The signed URL is the URL used to actually download a file instead of
-    /// just viewing its JSON representation.
-    final response = await services.api.get(
-      'fileStorage/signedUrl',
-      queryParameters: {
-        'download': null,
-        'file': file.id.value,
-      },
-    );
-    final signedUrl = json.decode(response.body)['url'];
-
-    await FlutterDownloader.enqueue(
-      url: signedUrl,
-      savedDir: '/sdcard/Download',
-      fileName: file.name,
-      showNotification: true,
-      openFileFromNotification: true,
-    );
-  }
-
-  Future<void> ensureStoragePermissionGranted() async {
-    final permissions =
-        await PermissionHandler().requestPermissions([PermissionGroup.storage]);
-    if (permissions[PermissionGroup.storage] != PermissionStatus.granted) {
-      throw PermissionNotGranted();
-    }
-  }
+class UploadService {
+  const UploadService();
 
   Future<void> uploadFileFromLocalPath({
     @required BuildContext context,
@@ -191,6 +157,6 @@ class FileService {
   }
 }
 
-extension FileServiceGetIt on GetIt {
-  FileService get files => get<FileService>();
+extension UploadServiceGetIt on GetIt {
+  UploadService get upload => get<UploadService>();
 }

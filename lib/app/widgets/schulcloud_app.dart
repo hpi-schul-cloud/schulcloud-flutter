@@ -79,7 +79,7 @@ class SignedInScreenState extends ReceiveShareState<SignedInScreen> {
   void receiveShare(Share shared) {
     logger.i('The user shared $shared into the app.');
     Future.delayed(Duration(seconds: 1), () async {
-      await services.files.uploadFileFromLocalPath(
+      await services.upload.uploadFileFromLocalPath(
         context: context,
         localPath: await FlutterAbsolutePath.getAbsolutePath(shared.path),
       );
