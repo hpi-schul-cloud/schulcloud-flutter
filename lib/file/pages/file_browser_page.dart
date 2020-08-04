@@ -88,7 +88,7 @@ class FileBrowserPage extends StatelessWidget {
     return SliverFillViewport(
       delegate: SliverChildListDelegate.fixed(
         [
-          EmptyStateScreen(
+          EmptyStatePage(
             text: context.s.file_fileBrowser_empty,
             child: SizedBox(
               width: 100,

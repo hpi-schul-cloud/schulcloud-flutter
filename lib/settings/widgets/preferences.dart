@@ -35,7 +35,7 @@ class _SwitchPreferenceState extends State<SwitchPreference> {
     );
   }
 
-  void _setValue(bool value) async {
+  Future<void> _setValue(bool value) async {
     setState(() => _isUpdating = true);
     await widget.preference.setValue(value);
     setState(() => _isUpdating = false);

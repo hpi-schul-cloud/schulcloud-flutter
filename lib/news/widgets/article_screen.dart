@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:schulcloud/app/app.dart';
-import 'package:schulcloud/app/widgets/account_avatar.dart';
 import 'package:swipeable_page_route/swipeable_page_route.dart';
 
 import '../data.dart';

@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:mockito/mockito.dart';
 import 'package:schulcloud/app/app.dart';
-import 'package:schulcloud/main.dart';
+import 'package:schulcloud/main_sc_test.dart';
 import 'package:streaming_shared_preferences/streaming_shared_preferences.dart';
 import 'package:test/test.dart';
 
@@ -10,14 +10,14 @@ ApiNetworkService api;
 StorageService storage;
 
 Future<void> setUpCommon() async {
-  await Future.delayed(Duration(seconds: 1));
+  await Future<void>.delayed(Duration(seconds: 1));
 
   api = ApiNetworkService();
   storage = MockStorageService();
 
   services
     ..registerSingleton(storage)
-    ..registerSingleton(schulCloudAppConfig)
+    ..registerSingleton(scTestAppConfig)
     ..registerSingleton(BannerService())
     ..registerSingleton(NetworkService())
     ..registerSingleton(api);
@@ -29,35 +29,35 @@ void tearDownCommon() {
 
 class MockStorageService extends Mock implements StorageService {}
 
-const schoolId = '5da021397f7b3700339a8906';
-const teacherUserId = Id<User>('5eb9597d33f2e600294b1ac5');
+const schoolId = '0000d186816abba584714c5f';
+const teacherUserId = Id<User>('5ee1085380ec38002b79390a');
 final teacherEmail = Platform.environment['SC_AT_TEACHER_EMAIL'];
 final teacherPassword = Platform.environment['SC_AT_TEACHER_PASSWORD'];
 final teacher = User(
   id: teacherUserId,
-  firstName: 'AT',
+  firstName: 'Flutter AT',
   lastName: 'Teacher',
   email: teacherEmail,
   schoolId: schoolId,
-  displayName: 'AT Teacher',
-  avatarInitials: 'AT',
-  avatarBackgroundColor: Color(0xfffe8a71),
+  displayName: 'Flutter AT Teacher',
+  avatarInitials: 'FT',
+  avatarBackgroundColor: Color(0x00fe8a71),
   permissions: [],
   roleIds: [],
 );
 
-const studentUserId = Id<User>('5eba35def505d6002a79a77f');
+const studentUserId = Id<User>('5ee109db80ec38002b793c60');
 final studentEmail = Platform.environment['SC_AT_STUDENT_EMAIL'];
 final studentPassword = Platform.environment['SC_AT_STUDENT_PASSWORD'];
 final student = User(
   id: studentUserId,
-  firstName: 'AT',
+  firstName: 'Flutter AT',
   lastName: 'Student',
   email: studentEmail,
   schoolId: schoolId,
-  displayName: 'AT Student',
-  avatarInitials: 'AT',
-  avatarBackgroundColor: Color(0xfffe8a71),
+  displayName: 'Flutter AT Student',
+  avatarInitials: 'FT',
+  avatarBackgroundColor: Color(0xfff6cd61),
   permissions: [],
   roleIds: [],
 );

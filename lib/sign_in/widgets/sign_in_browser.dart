@@ -28,7 +28,7 @@ class SignInBrowser extends InAppBrowser {
     _trySigningIn(url);
   }
 
-  void _trySigningIn(String url) async {
+  Future<void> _trySigningIn(String url) async {
     final firstPathSegment = Uri.parse(url).pathSegments.first;
     if (firstPathSegment != 'dashboard') {
       return;

@@ -6,9 +6,9 @@ import 'package:intl/intl.dart';
 import 'package:time_machine/time_machine.dart';
 import 'package:time_machine/time_machine_text_patterns.dart';
 
+import '../caching/utils.dart';
 import '../datetime_utils.dart';
 import '../utils.dart';
-import '../widgets/cache_utils.dart';
 import 'sort_filter.dart';
 
 typedef Test<T, D> = bool Function(T item, D data);
@@ -279,7 +279,7 @@ class FlagsFilter<T> extends Filter<T, Map<String, bool>> {
               false: null,
             }[filterData];
 
-            updater(selection.copyWith(key, newValue));
+            updater({...selection, key: newValue});
           },
         );
       }).toList(),
@@ -291,7 +291,7 @@ class FlagsFilter<T> extends Filter<T, Map<String, bool>> {
       filters.keys.every((k) => filters[k].apply(item, selection[k]));
 }
 
-typedef SetFlagFilterCallback<T> = void Function(String key, bool value);
+typedef SetFlagFilterCallback = void Function(String key, bool value);
 
 @immutable
 class FlagFilter<T> {
@@ -324,7 +324,7 @@ class FlagFilter<T> {
   }
 }
 
-class FlagFilterPreviewChip<T> extends StatelessWidget {
+class FlagFilterPreviewChip extends StatelessWidget {
   const FlagFilterPreviewChip({
     Key key,
     @required this.flag,
@@ -338,7 +338,7 @@ class FlagFilterPreviewChip<T> extends StatelessWidget {
         super(key: key);
 
   final String flag;
-  final SetFlagFilterCallback<T> callback;
+  final SetFlagFilterCallback callback;
   final IconData icon;
   final String label;
 

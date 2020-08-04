@@ -2,11 +2,11 @@ import 'package:black_hole_flutter/black_hole_flutter.dart';
 import 'package:flutter/material.dart' hide Banner;
 import 'package:hive_cache/hive_cache.dart';
 
+import '../banner/service.dart';
 import '../data.dart';
-import '../services/banner.dart';
 import '../services/storage.dart';
 import '../utils.dart';
-import 'account_dialog.dart';
+import 'dialog.dart';
 
 class AccountButton extends StatelessWidget {
   @override

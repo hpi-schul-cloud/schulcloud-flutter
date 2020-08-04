@@ -1,11 +1,10 @@
-import 'package:black_hole_flutter/black_hole_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:schulcloud/app/app.dart';
 
 import '../data.dart';
 
-class EditSubmissionScreen extends StatelessWidget {
-  const EditSubmissionScreen(this.assignmentId) : assert(assignmentId != null);
+class EditSubmissionPage extends StatelessWidget {
+  const EditSubmissionPage(this.assignmentId) : assert(assignmentId != null);
 
   final Id<Assignment> assignmentId;
 
@@ -129,7 +128,7 @@ class _EditSubmissionFormState extends State<EditSubmissionForm> {
     );
   }
 
-  void _save(BuildContext context) async {
+  Future<void> _save(BuildContext context) async {
     setState(() => _isSaving = true);
     try {
       if (isNewSubmission) {
@@ -156,7 +155,7 @@ class _EditSubmissionFormState extends State<EditSubmissionForm> {
       SizedBox(height: 8),
       if (assignment.teamSubmissions)
         ListTile(
-          leading: Icon(Icons.people),
+          leading: Icon(ScIcons.teams),
           title: Text(
               context.s.assignment_editSubmission_teamSubmissionNotSupported),
           trailing: Icon(Icons.open_in_new),

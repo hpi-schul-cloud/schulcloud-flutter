@@ -1,8 +1,7 @@
 import 'package:black_hole_flutter/black_hole_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
-
-import 'utils.dart';
+import 'package:schulcloud/app/app.dart' show services;
 
 @immutable
 class AppConfig {
@@ -142,6 +141,18 @@ class AppConfig {
       }
     }
     return 'assets/theme/$assetName';
+  }
+
+  AppConfig copyWith({String host, String title}) {
+    return AppConfig(
+      name: name,
+      host: host ?? this.host,
+      title: title ?? this.title,
+      primaryColor: primaryColor,
+      secondaryColor: secondaryColor,
+      accentColor: accentColor,
+      hasDemo: hasDemo,
+    );
   }
 }
 

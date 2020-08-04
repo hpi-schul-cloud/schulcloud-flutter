@@ -1,15 +1,18 @@
 import 'package:black_hole_flutter/black_hole_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:schulcloud/brand/brand.dart';
 
+import '../../utils.dart';
 import '../exception.dart';
-import '../utils.dart';
-import 'buttons.dart';
-import 'empty_state.dart';
+import '../pages/empty_state.dart';
 
 void _showStackTrace(
-    BuildContext context, dynamic error, StackTrace stackTrace) {
-  context.navigator.push(MaterialPageRoute(
+  BuildContext context,
+  dynamic error,
+  StackTrace stackTrace,
+) {
+  context.navigator.push(MaterialPageRoute<void>(
     builder: (_) {
       return Scaffold(
         appBar: AppBar(title: Text(context.s.app_error_stackTrace)),
@@ -99,7 +102,7 @@ class ErrorScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return EmptyStateScreen(
+    return EmptyStatePage(
       text: error.messageBuilder(context),
       actions: [
         if (error.hasOriginalException)

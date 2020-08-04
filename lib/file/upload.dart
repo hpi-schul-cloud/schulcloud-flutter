@@ -40,7 +40,9 @@ class UploadService {
         '$localPath.');
     final file = io.File(localPath);
 
-    final destination = await context.rootNavigator.push(MaterialPageRoute(
+    // TODO(marcelgarus): Maybe we should move the route creation to ChooseDestinationPage
+    final destination =
+        await context.rootNavigator.push(MaterialPageRoute<FilePath>(
       fullscreenDialog: true,
       builder: (_) => ChooseDestinationPage(
         title: Text(context.s.file_chooseDestination_upload),

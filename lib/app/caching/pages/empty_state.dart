@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:schulcloud/brand/brand.dart';
 
-import '../app.dart';
-import 'buttons.dart';
+import '../../utils.dart';
 
 /// A screen with no content on it. Instead a placeholder is displayed,
 /// consisting of [child] (commonly an image) and a text underneath as well as
@@ -11,8 +11,8 @@ import 'buttons.dart';
 /// Trying to execute the last action again (like, fetching stuff from the
 /// server) is a very common action, so there's an extra parameter [onRetry]
 /// that - if set - causes a "Try again" button to be displayed.
-class EmptyStateScreen extends StatelessWidget {
-  const EmptyStateScreen({
+class EmptyStatePage extends StatelessWidget {
+  const EmptyStatePage({
     @required this.text,
     this.child,
     this.actions = const [],

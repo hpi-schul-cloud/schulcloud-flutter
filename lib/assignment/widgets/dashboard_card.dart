@@ -1,12 +1,10 @@
-import 'package:black_hole_flutter/black_hole_flutter.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/course/course.dart';
 import 'package:schulcloud/dashboard/dashboard.dart';
-import 'package:time_machine/time_machine.dart';
 
-import '../assignment.dart';
+import '../data.dart';
 
 class AssignmentDashboardCard extends StatelessWidget {
   @override

@@ -5,10 +5,10 @@ import 'package:flutter/widgets.dart';
 import 'package:get_it/get_it.dart';
 import 'package:http/http.dart' as http;
 
-import '../exception.dart';
+import '../banner/service.dart';
+import '../caching/exception.dart';
 import '../logger.dart';
 import '../utils.dart';
-import 'banner.dart';
 
 /// The API server returns error data as JSON when an error occurs. We parse
 /// this data because it's helpful for debugging (there's a message, a code
@@ -297,7 +297,7 @@ class NetworkService {
     // ignore: parameter_assignments
     headers = {
       'Content-Type': 'application/json',
-      if (headers != null) ...headers,
+      ...?headers,
     };
     for (final entry in headers.entries) {
       request.headers[entry.key] = entry.value;

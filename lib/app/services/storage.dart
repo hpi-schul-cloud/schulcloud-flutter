@@ -9,7 +9,7 @@ import '../app.dart';
 class StorageService {
   StorageService._({StreamingSharedPreferences prefs})
       : _prefs = prefs,
-        userIdString = prefs.getString('userId', defaultValue: ''),
+        userIdString = prefs.getString('userId', defaultValue: null),
         token = prefs.getString('token', defaultValue: ''),
         errorReportingEnabled = prefs.getBool(
           'settings_privacy_errorReporting_enabled',

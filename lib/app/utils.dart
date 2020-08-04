@@ -10,11 +10,11 @@ import 'package:get_it/get_it.dart';
 import 'package:hive_cache/hive_cache.dart';
 import 'package:html/parser.dart';
 import 'package:http/http.dart';
+import 'package:schulcloud/brand/brand.dart';
 import 'package:schulcloud/generated/l10n.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import 'app_config.dart';
-import 'exception.dart';
+import 'caching/exception.dart';
 import 'logger.dart';
 import 'services/api_network.dart';
 import 'services/network.dart';
@@ -126,18 +126,8 @@ String exceptionMessage(dynamic error) {
   return error.toString();
 }
 
-extension ImmutableMap<K, V> on Map<K, V> {
-  Map<K, V> clone() => Map.of(this);
-
-  Map<K, V> copyWith(K key, V value) {
-    final newMap = clone();
-    newMap[key] = value;
-    return newMap;
-  }
-}
-
 /// An error indicating that a permission wasn't granted by the user.
-class PermissionNotGranted<T> extends FancyException {
+class PermissionNotGranted extends FancyException {
   PermissionNotGranted()
       : super(
           isGlobal: false,

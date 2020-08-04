@@ -7,10 +7,10 @@ import 'package:flutter/foundation.dart';
 import 'package:hive_cache/hive_cache.dart';
 import 'package:logger/logger.dart';
 import 'package:package_info/package_info.dart';
+import 'package:schulcloud/brand/brand.dart';
 import 'package:sentry/sentry.dart' hide User;
 import 'package:system_info/system_info.dart';
 
-import 'app_config.dart';
 import 'logger.dart';
 import 'services/storage.dart';
 import 'utils.dart';
@@ -67,7 +67,7 @@ const _loggerLevelToSentryLevel = {
 Future<void> _reportLogEvent(LogEvent event) async {
   await reportEvent(Event(
     level: _loggerLevelToSentryLevel[event.level],
-    message: event.message,
+    message: event.message?.toString(),
     exception: event.error,
     stackTrace: event.stackTrace,
     tags: {'source': 'logger'},
@@ -112,7 +112,7 @@ Future<bool> reportEvent(Event event) async {
       'platform': platformString.substring(platformString.indexOf('.') + 1),
       'flavor': services.config.name,
       if (user != null) 'schoolId': user.schoolId,
-      for (final entry in event.tags?.entries ?? {}) entry.key: entry.value,
+      for (final entry in event.tags?.entries ?? []) entry.key: entry.value,
     },
     extra: {
       'locale': window.locale.toString(),

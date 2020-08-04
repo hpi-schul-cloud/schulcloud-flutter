@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:swipeable_page_route/swipeable_page_route.dart';
 
-import 'account_avatar.dart';
+import '../account/avatar.dart';
 
 /// An adapted [SliverAppBar] with floating & snap set.
 class FancyAppBar extends StatelessWidget {
