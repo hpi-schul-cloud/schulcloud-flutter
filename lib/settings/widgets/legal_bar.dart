@@ -23,16 +23,13 @@ class LegalBar extends StatelessWidget {
           child: Text(s.settings_legalBar_privacyPolicy),
         ),
         FlatButton(
-          onPressed: () async {
-            final version = await appVersion;
+          onPressed: () {
             showLicensePage(
               context: context,
               applicationName: services.config.title,
-              applicationVersion: 'v$version',
+              applicationVersion: 'v$appVersion',
               applicationIcon: SvgPicture.asset(
-                services
-                    .get<AppConfig>()
-                    .assetName(context, 'logo/logo_with_text.svg'),
+                services.config.assetName(context, 'logo/logo_with_text.svg'),
               ),
             );
           },

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_native_timezone/flutter_native_timezone.dart';
 import 'package:logger/logger.dart';
+import 'package:package_info/package_info.dart';
 import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/calendar/calendar.dart';
 import 'package:schulcloud/file/file.dart';
@@ -50,6 +51,7 @@ Future<void> main({AppConfig appConfig = scAppConfig}) async {
           'timeZone': timeZone,
         });
       }, instanceName: 'ignored')
+      ..registerSingletonAsync(PackageInfo.fromPlatform)
       ..registerSingleton(BannerService())
       ..registerSingleton(SnackBarService())
       ..registerSingleton(NetworkService())

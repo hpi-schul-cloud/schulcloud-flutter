@@ -52,17 +52,10 @@ class _AboutSection extends StatelessWidget {
       omitHorizontalPadding: true,
       child: Column(
         children: [
-          FutureBuilder<String>(
-            future: appVersion,
-            builder: (context, snapshot) {
-              return ListTile(
-                leading: Icon(Icons.update),
-                title: Text(s.settings_about_version),
-                subtitle: FancyText(
-                  snapshot.data ?? snapshot.error?.toString(),
-                ),
-              );
-            },
+          ListTile(
+            leading: Icon(Icons.update),
+            title: Text(s.settings_about_version),
+            subtitle: FancyText(appVersion),
           ),
           ListTile(
             leading: Icon(Icons.people_outline),

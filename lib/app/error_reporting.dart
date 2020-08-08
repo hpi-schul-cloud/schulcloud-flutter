@@ -97,11 +97,10 @@ Future<bool> reportEvent(Event event) async {
     return true;
   }
 
-  final packageInfo = await PackageInfo.fromPlatform();
   final platformString = defaultTargetPlatform.toString();
   final user = HiveCache.isInitialized ? await storage.userFromCache : null;
   final fullEvent = Event(
-    release: packageInfo.version,
+    release: services.get<PackageInfo>().version,
     environment: isInDebugMode ? 'debug' : 'production',
     message: event.message,
     exception: event.exception,
@@ -126,7 +125,7 @@ Future<bool> reportEvent(Event event) async {
 
 Future<Contexts> _getContexts() async {
   try {
-    final packageInfo = await PackageInfo.fromPlatform();
+    final packageInfo = services.get<PackageInfo>();
     final app = App(
       name: packageInfo.appName,
       version: packageInfo.version,

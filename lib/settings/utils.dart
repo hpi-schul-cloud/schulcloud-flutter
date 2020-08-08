@@ -1,6 +1,7 @@
 import 'package:package_info/package_info.dart';
+import 'package:schulcloud/app/app.dart';
 
-Future<String> get appVersion async {
-  final packageInfo = await PackageInfo.fromPlatform();
+String get appVersion {
+  final packageInfo = services.get<PackageInfo>();
   return '${packageInfo.version}+${packageInfo.buildNumber}';
 }
