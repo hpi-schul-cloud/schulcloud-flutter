@@ -9,7 +9,7 @@ on:
 env:
   JAVA_VERSION: 12.x
   FLUTTER_CHANNEL: stable
-  FLUTTER_VERSION: 1.17.x
+  FLUTTER_VERSION: 1.20.x
 
 jobs:
   install:
