@@ -9,7 +9,7 @@ import 'package:schulcloud/assignment/assignment.dart';
 import 'package:schulcloud/calendar/calendar.dart';
 import 'package:schulcloud/course/course.dart';
 import 'package:schulcloud/file/file.dart';
-import 'package:schulcloud/news/news.dart';
+import 'package:schulcloud/news/module.dart';
 import 'package:time_machine/time_machine.dart';
 
 import 'data.dart';

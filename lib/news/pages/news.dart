@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:schulcloud/app/module.dart';
 
 import '../data.dart';
-import 'article_preview.dart';
+import '../widgets/article_preview.dart';
 
-/// A screen that displays a list of articles.
-class NewsScreen extends StatelessWidget {
+/// A page that displays a list of articles.
+class NewsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(

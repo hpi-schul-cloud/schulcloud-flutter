@@ -5,7 +5,7 @@ import 'package:schulcloud/brand/brand.dart';
 import 'package:schulcloud/course/course.dart';
 import 'package:schulcloud/dashboard/dashboard.dart';
 import 'package:schulcloud/file/file.dart';
-import 'package:schulcloud/news/news.dart';
+import 'package:schulcloud/news/module.dart';
 import 'package:schulcloud/settings/settings.dart';
 import 'package:schulcloud/sign_in/sign_in.dart';
 import 'package:swipeable_page_route/swipeable_page_route.dart';

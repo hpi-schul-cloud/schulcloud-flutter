@@ -4,18 +4,18 @@ import 'package:schulcloud/app/module.dart';
 import 'package:swipeable_page_route/swipeable_page_route.dart';
 
 import '../data.dart';
-import 'article_image.dart';
-import 'author.dart';
-import 'headline.dart';
-import 'section.dart';
-import 'theme.dart';
+import '../widgets/article_image.dart';
+import '../widgets/author.dart';
+import '../widgets/headline.dart';
+import '../widgets/section.dart';
+import '../widgets/theme.dart';
 
 /// Displays an article for the user to read.
 ///
 /// If a landscape image is provided, it's displayed above the headline.
 /// If a portrait image is provided, it's displayed below it.
-class ArticleScreen extends StatelessWidget {
-  const ArticleScreen(this.articleId) : assert(articleId != null);
+class ArticlePage extends StatelessWidget {
+  const ArticlePage(this.articleId) : assert(articleId != null);
 
   final Id<Article> articleId;
 
