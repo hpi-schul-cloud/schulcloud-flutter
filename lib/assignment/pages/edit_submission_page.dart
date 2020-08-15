@@ -142,8 +142,8 @@ class _EditSubmissionFormState extends State<EditSubmissionForm> {
     } on ConflictError catch (e) {
       unawaited(services.snackBar.showMessage(e.body.message));
     } catch (e) {
-      unawaited(services.snackBar
-          .showMessage(context.s.app_error_unknown(exceptionMessage(e))));
+      unawaited(services.snackBar.showMessage(
+          context.s.app_error_unknown(exceptionMessage(e, context))));
     } finally {
       setState(() => _isSaving = false);
     }
