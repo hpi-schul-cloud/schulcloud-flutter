@@ -27,6 +27,15 @@ class InvalidSignInSyntaxError extends FancyException {
   final bool isPasswordValid;
 }
 
+class SignInFailedException extends FancyException {
+  SignInFailedException()
+      : super(
+          isGlobal: false,
+          messageBuilder: (context) =>
+              throw Exception('Should be handled directly.'),
+        );
+}
+
 const _emailRegExp =
     r"^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?)*$";
 
@@ -49,13 +58,20 @@ class SignInBloc {
 
     logger.i('Signing in as $email…');
 
-    // The sign in throws an [AuthenticationError] if it wasn't successful.
-    final rawResponse = await services.api.post(
-      'authentication',
-      body: SignInRequest(email: email, password: password).toJson(),
-    );
+    /// The request throws an [UnauthorizedError] if it wasn't successful.
+    SignInResponse response;
+    try {
+      final rawResponse = await services.api.post(
+        'authentication',
+        body: SignInRequest(email: email, password: password).toJson(),
+      );
+      print('Status ${rawResponse.statusCode}');
+      response = SignInResponse.fromJson(json.decode(rawResponse.body));
+    } catch (e) {
+      rethrow;
+      // throw InvalidJsonException();
+    }
 
-    final response = SignInResponse.fromJson(json.decode(rawResponse.body));
     await services.storage.setUserInfo(
       userId: response.userId,
       token: response.accessToken,

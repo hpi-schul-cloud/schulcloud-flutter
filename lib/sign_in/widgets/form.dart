@@ -97,7 +97,14 @@ class _SignInFormState extends State<SignInForm> {
           isLoading: _isSigningInAsDemoStudent,
           onPressed: () async {
             setState(() => _isSigningInAsDemoStudent = true);
-            await demoSignIn(services.get<SignInBloc>().signInAsDemoStudent);
+            try {
+              await demoSignIn(services.get<SignInBloc>().signInAsDemoStudent);
+            } catch (e) {
+              logger.e(exceptionMessage(e, context));
+              context.scaffold.showSnackBar(SnackBar(
+                content: Text(exceptionMessage(e, context)),
+              ));
+            }
             setState(() => _isSigningInAsDemoStudent = false);
           },
           child: Text(s.signIn_form_demo_student),
