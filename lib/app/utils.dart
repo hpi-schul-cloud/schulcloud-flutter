@@ -102,11 +102,17 @@ Future<bool> tryLaunchingUrl(String url) async {
     final result = Matcher.path('content/redirect/{id}')
         .evaluate(PartialUri.fromUri(resolved));
     if (result.isMatch) {
-      final response = await services.api.head(
-        'content/redirect/${result.parameters['id']}',
-        followRedirects: false,
-      );
-      final redirect = response.headers['location'];
+      String redirect;
+      try {
+        await services.api.head(
+          'content/redirect/${result.parameters['id']}',
+          followRedirects: false,
+        );
+        throw Exception('Requests to content/redirect/… should throw a '
+            'MovedPermanentlyError');
+      } on MovedPermanentlyError catch (e) {
+        redirect = e.location;
+      }
       logger.d("Resolved content redirect: '$redirect'");
       return tryLaunchingUrl(redirect);
     }

@@ -89,7 +89,17 @@ class ServerError extends FancyException {
   final ErrorBody body;
 }
 
+// 3xx
+
+class MovedPermanentlyError extends ServerError {
+  MovedPermanentlyError(ErrorBody body, this.location)
+      : super(body, (context) => context.s.app_error_movedPermanently);
+
+  final String location;
+}
+
 // 4xx
+
 class BadRequestError extends ServerError {
   BadRequestError(ErrorBody body)
       : super(body, (context) => context.s.app_error_badRequest);
@@ -120,14 +130,15 @@ class ConflictError extends ServerError {
 }
 
 class TooManyRequestsError extends ServerError {
-  TooManyRequestsError(ErrorBody body, {@required this.timeToWait})
-      : assert(timeToWait != null),
-        super(body, (context) => context.s.app_error_rateLimit(timeToWait));
+  TooManyRequestsError(ErrorBody body, {@required this.durationToWait})
+      : assert(durationToWait != null),
+        super(body, (context) => context.s.app_error_rateLimit(durationToWait));
 
-  final Duration timeToWait;
+  final Duration durationToWait;
 }
 
 // 5xx
+
 class InternalServerError extends ServerError {
   InternalServerError(ErrorBody body)
       : super(body, (context) => context.s.app_error_internal);
@@ -222,8 +233,8 @@ class NetworkService {
     }
     services.banners.remove(Banners.offline);
 
-    // Succeed if its a 2xx or 3xx status code.
-    if (response.statusCode ~/ 100 == 2 || response.statusCode ~/ 100 == 3) {
+    // Succeed if its a 2xx status code.
+    if (response.statusCode ~/ 100 == 2) {
       services.banners.remove(Banners.tokenExpired);
       return response;
     }
@@ -271,16 +282,10 @@ class NetworkService {
     }
 
     if (response.statusCode == HttpStatus.tooManyRequests) {
-      final timeToWait = () {
-        try {
-          return Duration(
-            seconds: error.data['timeToWait'],
-          );
-        } catch (_) {
-          return Duration(seconds: 10);
-        }
-      }();
-      throw TooManyRequestsError(error, timeToWait: timeToWait);
+      final secondsToWait = error.data['timeToWait'];
+      final durationToWait =
+          Duration(seconds: secondsToWait is int ? secondsToWait : 10);
+      throw TooManyRequestsError(error, durationToWait: durationToWait);
     }
 
     if (response.statusCode == HttpStatus.internalServerError) {
@@ -289,6 +294,10 @@ class NetworkService {
 
     if (response.statusCode == HttpStatus.notFound) {
       throw NotFoundError(error);
+    }
+
+    if (response.statusCode == HttpStatus.movedPermanently) {
+      throw MovedPermanentlyError(error, response.headers['location']);
     }
 
     throw UnimplementedError(

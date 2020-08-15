@@ -10,6 +10,7 @@
   "app_error_conflict": "Your changes conflict with changes someone else did at the same time.",
   "app_error_forbidden": "You don't have the permission to do that.",
   "app_error_internal": "An unknown server error occurred.",
+  "app_error_movedPermanently": "This was moved somewhere else permanently.",
   "app_error_noConnection": "No connection to the server.",
   "app_error_rateLimit": "Too many requests. Try again in {timeToWait}.",
   "app_error_showStackTrace": "Show stack trace",
