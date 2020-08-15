@@ -25,12 +25,7 @@ class CourseCard extends StatelessWidget {
                 String text;
                 if (snapshot != null) {
                   if (snapshot.hasError) {
-                    final error = snapshot.error;
-                    if (error is FancyException) {
-                      text = error.messageBuilder(context);
-                    } else {
-                      text = snapshot.error.toString();
-                    }
+                    text = exceptionMessage(snapshot.error, context);
                   } else if (snapshot.hasData) {
                     text = snapshot.data
                         .where((teacher) => teacher != null)
