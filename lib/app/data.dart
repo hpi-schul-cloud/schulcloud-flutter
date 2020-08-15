@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:characters/characters.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_cache/hive_cache.dart';
 import 'package:meta/meta.dart';

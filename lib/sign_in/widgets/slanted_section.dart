@@ -1,4 +1,4 @@
-import 'package:schulcloud/app/app.dart';
+import 'package:schulcloud/app/module.dart';
 import 'package:flutter/material.dart';
 
 class SlantedSection extends StatelessWidget {
