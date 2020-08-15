@@ -21,16 +21,29 @@ class CourseCard extends StatelessWidget {
           Expanded(
             child: EntityListBuilder<User>(
               ids: course.teacherIds,
-              builder: handleError((_, teachers, __) {
+              builder: (_, snapshot, __) {
+                String text;
+                if (snapshot != null) {
+                  if (snapshot.hasError) {
+                    final error = snapshot.error;
+                    if (error is FancyException) {
+                      text = error.messageBuilder(context);
+                    } else {
+                      text = snapshot.error.toString();
+                    }
+                  } else if (snapshot.hasData) {
+                    text = snapshot.data
+                        .where((teacher) => teacher != null)
+                        .map((teacher) => teacher.shortName)
+                        .join(', ');
+                  }
+                }
                 return FancyText(
-                  teachers
-                      ?.where((teacher) => teacher != null)
-                      ?.map((teacher) => teacher.shortName)
-                      ?.join(', '),
+                  text,
                   maxLines: 1,
                   emphasis: TextEmphasis.medium,
                 );
-              }),
+              },
             ),
           ),
         ],
