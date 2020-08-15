@@ -52,13 +52,9 @@ class RecurrenceRuleAdapter extends TypeAdapter<RecurrenceRule> {
       writer.writeString(GrecMinimal.toTexts([obj]).single);
 }
 
-// Type ids.
-// Used before: 46
 class TypeId {
-  static const entity = 71;
-  static const id = 40;
-  static const root = 42;
-  static const collection = 70;
+  // Used before: 40, 42, 46, 70, 71.
+
   static const color = 48;
   static const children = 49;
   static const instant = 61;
