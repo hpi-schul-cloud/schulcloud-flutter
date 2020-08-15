@@ -28,7 +28,7 @@ class CourseCard extends StatelessWidget {
                     text = exceptionMessage(snapshot.error, context);
                   } else if (snapshot.hasData) {
                     text = snapshot.data
-                        .where((teacher) => teacher != null)
+                        .whereNotNull()
                         .map((teacher) => teacher.shortName)
                         .join(', ');
                   }
