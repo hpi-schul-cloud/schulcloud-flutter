@@ -70,7 +70,7 @@ Future<void> main({AppConfig appConfig = scAppConfig}) async {
     // Set demo banner based on current user.
     StreamAndData<User, CachedFetchStreamData<dynamic>> userStream;
     services.storage.userIdString
-        .map((idString) => idString != null ? Id<User>(idString) : null)
+        .map((idString) => Id<User>.orNull(idString.emptyToNull))
         .listen((userId) {
       userStream?.dispose();
       userStream = userId?.resolve();
