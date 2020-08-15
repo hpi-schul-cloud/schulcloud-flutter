@@ -2,7 +2,7 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:schulcloud/app/module.dart';
-import 'package:schulcloud/course/course.dart';
+import 'package:schulcloud/course/module.dart';
 
 import '../../data.dart';
 import 'tab_details.dart';

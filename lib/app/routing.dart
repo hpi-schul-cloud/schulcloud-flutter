@@ -2,7 +2,7 @@ import 'package:flutter/widgets.dart' hide Route, RouteBuilder;
 import 'package:flutter_deep_linking/flutter_deep_linking.dart';
 import 'package:schulcloud/assignment/assignment.dart';
 import 'package:schulcloud/brand/brand.dart';
-import 'package:schulcloud/course/course.dart';
+import 'package:schulcloud/course/module.dart';
 import 'package:schulcloud/dashboard/dashboard.dart';
 import 'package:schulcloud/file/file.dart';
 import 'package:schulcloud/news/news.dart';
