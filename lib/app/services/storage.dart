@@ -7,6 +7,7 @@ import 'package:streaming_shared_preferences/streaming_shared_preferences.dart';
 
 import '../data.dart';
 import '../services.dart';
+import '../utils.dart';
 
 /// A service that offers storage of app-wide data.
 class StorageService {
@@ -29,7 +30,7 @@ class StorageService {
   final StreamingSharedPreferences _prefs;
 
   final Preference<String> userIdString;
-  Id<User> get userId => Id<User>(userIdString.getValue());
+  Id<User> get userId => Id<User>.orNull(userIdString.getValue().emptyToNull);
   Future<User> get userFromCache async {
     if (userId == null) {
       return null;

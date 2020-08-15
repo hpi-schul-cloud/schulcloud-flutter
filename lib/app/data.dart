@@ -1,6 +1,5 @@
 import 'dart:ui';
 
-import 'package:dartx/dartx.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_cache/hive_cache.dart';
 import 'package:meta/meta.dart';
@@ -68,7 +67,7 @@ class User implements Entity<User> {
   @HiveField(2)
   final String lastName;
 
-  String get shortName => '${firstName.chars.first}. $lastName';
+  String get shortName => '${firstName.characters.first}. $lastName';
 
   @HiveField(3)
   final String email;
@@ -201,6 +200,13 @@ class Role implements Entity<Role> {
   static const teacher = Id<Role>('0000d186816abba584714c98');
   static const teacherName = 'teacher';
   static const student = Id<Role>('0000d186816abba584714c99');
+
+  static const demoGeneral = Id<Role>('0000d186816abba584714d00');
+  static const demoTeacher = Id<Role>('0000d186816abba584714d03');
+  static const demoStudent = Id<Role>('0000d186816abba584714d02');
+  // TODO(marcelgarus): Don't hardcode role id.
+  static bool isDemo(Id<Role> roleId) =>
+      [Role.demoGeneral, Role.demoTeacher, Role.demoStudent].contains(roleId);
 
   @override
   @HiveField(0)
