@@ -24,6 +24,15 @@ class BannerService extends ValueNotifier<Set<Banner>> {
 
   void add(Banner banner) => value = Set.from(value)..add(banner);
   void remove(Banner banner) => value = Set.from(value)..remove(banner);
+
+  bool operator [](Banner banner) => value.contains(banner);
+  void operator []=(Banner banner, bool value) {
+    if (value) {
+      add(banner);
+    } else {
+      remove(banner);
+    }
+  }
 }
 
 extension BannerServiceGetIt on GetIt {

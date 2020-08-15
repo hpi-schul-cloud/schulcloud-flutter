@@ -197,6 +197,13 @@ class Role implements Entity<Role> {
   static const teacherName = 'teacher';
   static const student = Id<Role>('0000d186816abba584714c99');
 
+  static const demoGeneral = Id<Role>('0000d186816abba584714d00');
+  static const demoTeacher = Id<Role>('0000d186816abba584714d03');
+  static const demoStudent = Id<Role>('0000d186816abba584714d02');
+  // TODO(marcelgarus): Don't hardcode role id.
+  static bool isDemo(Id<Role> roleId) =>
+      [Role.demoGeneral, Role.demoTeacher, Role.demoStudent].contains(roleId);
+
   @override
   @HiveField(0)
   final Id<Role> id;
