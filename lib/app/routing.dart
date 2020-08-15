@@ -1,5 +1,6 @@
 import 'package:flutter/widgets.dart' hide Route, RouteBuilder;
 import 'package:flutter_deep_linking/flutter_deep_linking.dart';
+import 'package:package_info/package_info.dart';
 import 'package:schulcloud/assignment/assignment.dart';
 import 'package:schulcloud/brand/brand.dart';
 import 'package:schulcloud/course/course.dart';
@@ -15,9 +16,10 @@ import 'top_level_route/page_route.dart';
 import 'utils.dart';
 import 'widgets/not_found_screen.dart';
 
-final hostRegExp = RegExp('(?:www\.)?${RegExp.escape(services.config.host)}');
+final _hostRegExp = RegExp('(?:www\.)?${RegExp.escape(services.config.host)}');
 
-String appSchemeLink(String path) => 'app://org.schulcloud.android/$path';
+String appSchemeLink(String path) =>
+    'app://${services.get<PackageInfo>().packageName}/$path';
 
 typedef FancyRouteBuilder = Widget Function(
     BuildContext context, RouteResult result);
@@ -69,7 +71,8 @@ class FancyRoute extends Route {
 final router = Router(
   routes: [
     FancyRoute(
-      matcher: Matcher.scheme('app') & Matcher.host('org.schulcloud.android'),
+      matcher: Matcher.scheme('app') &
+          Matcher.host('services.get<PackageInfo>().packageName'),
       routes: [
         FancyRoute(
           matcher: Matcher.path('signedInScreen'),
@@ -78,7 +81,7 @@ final router = Router(
       ],
     ),
     FancyRoute(
-      matcher: Matcher.webHost(hostRegExp, isOptional: true),
+      matcher: Matcher.webHost(_hostRegExp, isOptional: true),
       routes: [
         assignmentRoutes,
         courseRoutes,
