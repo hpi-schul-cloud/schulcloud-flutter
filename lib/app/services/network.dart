@@ -109,6 +109,11 @@ class ForbiddenError extends ServerError {
       : super(body, (context) => context.s.app_error_forbidden);
 }
 
+class NotFoundError extends ServerError {
+  NotFoundError(ErrorBody body)
+      : super(body, (context) => context.s.app_error_notFound);
+}
+
 class ConflictError extends ServerError {
   ConflictError(ErrorBody body)
       : super(body, (context) => context.s.app_error_conflict);
@@ -280,6 +285,10 @@ class NetworkService {
 
     if (response.statusCode == HttpStatus.internalServerError) {
       throw InternalServerError(error);
+    }
+
+    if (response.statusCode == HttpStatus.notFound) {
+      throw NotFoundError(error);
     }
 
     throw UnimplementedError(
