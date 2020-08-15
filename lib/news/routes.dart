@@ -1,5 +1,5 @@
 import 'package:flutter_deep_linking/flutter_deep_linking.dart';
-import 'package:schulcloud/app/app.dart';
+import 'package:schulcloud/app/module.dart';
 
 import 'data.dart';
 import 'widgets/article_screen.dart';

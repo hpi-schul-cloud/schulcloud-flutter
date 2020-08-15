@@ -1,9 +1,7 @@
-import 'package:black_hole_flutter/black_hole_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:schulcloud/app/app.dart';
-import 'package:schulcloud/app/routing.dart';
+import 'package:schulcloud/app/module.dart';
 
 import '../bloc.dart';
 import 'sign_in_browser.dart';

@@ -1,9 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:grec_minimal/grec_minimal.dart';
-import 'package:hive/hive.dart';
-import 'package:meta/meta.dart';
-import 'package:schulcloud/app/app.dart';
-import 'package:time_machine/time_machine.dart';
+import 'package:schulcloud/app/module.dart';
 import 'package:time_machine/time_machine_text_patterns.dart';
 
 part 'data.g.dart';

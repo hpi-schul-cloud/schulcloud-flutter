@@ -4,11 +4,15 @@ import 'package:dartx/dartx.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_cache/hive_cache.dart';
 import 'package:meta/meta.dart';
-import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/assignment/assignment.dart';
 import 'package:schulcloud/calendar/calendar.dart';
 import 'package:schulcloud/course/course.dart';
 import 'package:schulcloud/news/news.dart';
+
+import 'hive.dart';
+import 'services.dart';
+import 'services/api_network.dart';
+import 'utils.dart';
 
 part 'data.g.dart';
 

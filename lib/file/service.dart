@@ -1,16 +1,11 @@
 import 'dart:convert';
 import 'dart:io' as io;
 
-import 'package:black_hole_flutter/black_hole_flutter.dart';
-import 'package:dartx/dartx_io.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
-import 'package:get_it/get_it.dart';
-import 'package:meta/meta.dart';
 import 'package:mime/mime.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:schulcloud/app/app.dart';
+import 'package:schulcloud/app/module.dart';
 
 import 'data.dart';
 import 'pages/choose_destination_page.dart';

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:schulcloud/app/app.dart';
+import 'package:schulcloud/app/module.dart';
 
 class SubmissionsTab extends StatelessWidget {
   const SubmissionsTab({Key key}) : super(key: key);

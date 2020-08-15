@@ -1,13 +1,11 @@
 import 'dart:math';
 import 'dart:ui';
 
-import 'package:black_hole_flutter/black_hole_flutter.dart';
-import 'package:dartx/dartx.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_html/style.dart';
 import 'package:html/parser.dart' as html_parser;
-import 'package:schulcloud/app/app.dart';
+import 'package:schulcloud/app/module.dart';
 
 import '../utils.dart';
 

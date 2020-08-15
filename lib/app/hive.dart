@@ -5,7 +5,6 @@ import 'package:flutter/widgets.dart';
 import 'package:grec_minimal/grec_minimal.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_cache/hive_cache.dart';
-import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/assignment/assignment.dart';
 import 'package:schulcloud/calendar/calendar.dart';
 import 'package:schulcloud/course/course.dart';
@@ -14,6 +13,7 @@ import 'package:schulcloud/news/news.dart';
 import 'package:time_machine/time_machine.dart';
 
 import 'data.dart';
+import 'logger.dart';
 
 class ColorAdapter extends TypeAdapter<Color> {
   @override

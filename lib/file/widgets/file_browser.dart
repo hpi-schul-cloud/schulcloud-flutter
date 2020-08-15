@@ -1,7 +1,6 @@
 import 'package:flare_flutter/flare_actor.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:schulcloud/app/app.dart';
+import 'package:schulcloud/app/module.dart';
 
 import '../data.dart';
 import 'file_list.dart';

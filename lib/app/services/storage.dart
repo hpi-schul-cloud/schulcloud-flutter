@@ -1,9 +1,12 @@
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:get_it/get_it.dart';
+import 'package:hive_cache/hive_cache.dart';
 import 'package:meta/meta.dart';
+import 'package:schulcloud/brand/brand.dart';
 import 'package:streaming_shared_preferences/streaming_shared_preferences.dart';
 
-import '../app.dart';
+import '../data.dart';
+import '../services.dart';
 
 /// A service that offers storage of app-wide data.
 class StorageService {

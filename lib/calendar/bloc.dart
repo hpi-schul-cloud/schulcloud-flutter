@@ -1,10 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:grec_minimal/grec_minimal.dart';
-import 'package:meta/meta.dart';
-import 'package:schulcloud/app/app.dart';
+import 'package:schulcloud/app/module.dart';
 import 'package:schulcloud/calendar/calendar.dart';
-import 'package:time_machine/time_machine.dart';
-import 'package:hive_cache/hive_cache.dart';
 
 import 'data.dart';
 

@@ -6,7 +6,6 @@ import 'package:collection/collection.dart';
 import 'package:dartx/dartx.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_deep_linking/flutter_deep_linking.dart';
-import 'package:get_it/get_it.dart';
 import 'package:hive_cache/hive_cache.dart';
 import 'package:html/parser.dart';
 import 'package:http/http.dart';
@@ -16,10 +15,9 @@ import 'package:url_launcher/url_launcher.dart';
 
 import 'caching/exception.dart';
 import 'logger.dart';
+import 'services.dart';
 import 'services/api_network.dart';
 import 'services/network.dart';
-
-final services = GetIt.instance;
 
 extension ContextWithLocalization on BuildContext {
   S get s => S.of(this);

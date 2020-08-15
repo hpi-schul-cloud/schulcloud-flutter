@@ -1,7 +1,6 @@
-import 'package:package_info/package_info.dart';
-import 'package:schulcloud/app/app.dart';
+import 'package:schulcloud/app/module.dart';
 
 String get appVersion {
-  final packageInfo = services.get<PackageInfo>();
+  final packageInfo = services.packageInfo;
   return '${packageInfo.version}+${packageInfo.buildNumber}';
 }
