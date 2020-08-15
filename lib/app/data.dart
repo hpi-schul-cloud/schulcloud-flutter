@@ -1,6 +1,5 @@
 import 'dart:ui';
 
-import 'package:dartx/dartx.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_cache/hive_cache.dart';
 import 'package:meta/meta.dart';
@@ -64,7 +63,7 @@ class User implements Entity<User> {
   @HiveField(2)
   final String lastName;
 
-  String get shortName => '${firstName.chars.first}. $lastName';
+  String get shortName => '${firstName.characters.first}. $lastName';
 
   @HiveField(3)
   final String email;
