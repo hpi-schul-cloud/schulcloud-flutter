@@ -59,18 +59,11 @@ class SignInBloc {
     logger.i('Signing in as $email…');
 
     /// The request throws an [UnauthorizedError] if it wasn't successful.
-    SignInResponse response;
-    try {
-      final rawResponse = await services.api.post(
-        'authentication',
-        body: SignInRequest(email: email, password: password).toJson(),
-      );
-      print('Status ${rawResponse.statusCode}');
-      response = SignInResponse.fromJson(json.decode(rawResponse.body));
-    } catch (e) {
-      rethrow;
-      // throw InvalidJsonException();
-    }
+    final rawResponse = await services.api.post(
+      'authentication',
+      body: SignInRequest(email: email, password: password).toJson(),
+    );
+    final response = SignInResponse.fromJson(json.decode(rawResponse.body));
 
     await services.storage.setUserInfo(
       userId: response.userId,
