@@ -223,7 +223,27 @@ class NetworkService {
       return response;
     }
 
-    final error = ErrorBody.fromJson(json.decode(response.body));
+    ErrorBody error;
+    try {
+      error = ErrorBody.fromJson(json.decode(response.body));
+    } on FormatException {
+      // The response body was not valid JSON.
+      error = ErrorBody(
+        name: 'Invalid response format.',
+        message: 'The server returned a response body that is not valid json.',
+        code: response.statusCode,
+        className: 'none',
+      );
+    } catch (e) {
+      // The JSON didn't contain the known error body fields.
+      error = ErrorBody(
+        name: 'Invalid error.',
+        message: "The server returned an error response that doesn't contain "
+            'the error fields we know.',
+        code: response.statusCode,
+        className: 'none',
+      );
+    }
     logger.w('Network ${response.statusCode}: $method $url', error);
 
     if (response.statusCode == HttpStatus.unauthorized) {
