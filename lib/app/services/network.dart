@@ -110,6 +110,11 @@ class ForbiddenError extends ServerError {
       : super(body, (context) => context.s.app_error_forbidden);
 }
 
+class NotFoundError extends ServerError {
+  NotFoundError(ErrorBody body)
+      : super(body, (context) => context.s.app_error_notFound);
+}
+
 class ConflictError extends ServerError {
   ConflictError(ErrorBody body)
       : super(body, (context) => context.s.app_error_conflict);
@@ -224,7 +229,27 @@ class NetworkService {
       return response;
     }
 
-    final error = ErrorBody.fromJson(json.decode(response.body));
+    ErrorBody error;
+    try {
+      error = ErrorBody.fromJson(json.decode(response.body));
+    } on FormatException {
+      // The response body was not valid JSON.
+      error = ErrorBody(
+        name: 'Invalid response format.',
+        message: 'The server returned a response body that is not valid JSON.',
+        code: response.statusCode,
+        className: 'none',
+      );
+    } catch (e) {
+      // The JSON didn't contain the known error body fields.
+      error = ErrorBody(
+        name: 'Invalid error.',
+        message: "The server returned an error response that doesn't contain "
+            'the error fields we know.',
+        code: response.statusCode,
+        className: 'none',
+      );
+    }
     logger.w('Network ${response.statusCode}: $method $url', error);
 
     if (response.statusCode == HttpStatus.unauthorized) {
@@ -261,6 +286,10 @@ class NetworkService {
 
     if (response.statusCode == HttpStatus.internalServerError) {
       throw InternalServerError(error);
+    }
+
+    if (response.statusCode == HttpStatus.notFound) {
+      throw NotFoundError(error);
     }
 
     throw UnimplementedError(

@@ -118,12 +118,12 @@ Future<bool> tryLaunchingUrl(String url) async {
   return false;
 }
 
-// TODO(marcelgarus): remove
-String exceptionMessage(dynamic error) {
-  if (error is ServerError && error.body.message != null) {
-    return error.body.message;
+String exceptionMessage(dynamic error, BuildContext context) {
+  if (error is FancyException) {
+    return error.messageBuilder(context);
+  } else {
+    return error.toString();
   }
-  return error.toString();
 }
 
 /// An error indicating that a permission wasn't granted by the user.
