@@ -66,13 +66,17 @@ Future<void> main({AppConfig appConfig = scAppConfig}) async {
     });
 
     logger.d('Waiting for services…');
+    // await Future.delayed(Duration(seconds: 1));
+    // print('DeepLinkingService? ${services.isReady<DeepLinkingService>()}');
+    // print('SignInBloc? ${services.isReady(instanceName: 'ignored')}');
     await services.allReady();
 
     // Set demo banner based on current user.
     StreamAndData<User, CachedFetchStreamData<dynamic>> userStream;
     services.storage.userIdString
-        .map((idString) => idString != null ? Id<User>(idString) : null)
+        .map((idString) => idString == '' ? null : Id<User>(idString))
         .listen((userId) {
+      print('User id is $userId');
       userStream?.dispose();
       userStream = userId?.resolve();
       userStream?.listen((user) {

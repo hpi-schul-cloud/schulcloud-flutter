@@ -100,7 +100,7 @@ class DownloadService {
 
   // Fires everytime an update to one of the two lists above happens.
   final _controller = StreamController<void>();
-  Stream<void> get _updates => _controller.stream;
+  Stream<Null> get _updates => _controller.stream;
   void _updateDownloadStates() => _controller.add(null);
 
   /// Returns a [Stream] of [DownloadState]s of the given [File]. The [Stream]

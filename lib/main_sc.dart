@@ -46,7 +46,7 @@ const _scYellow = MaterialColor(0xffe2661d, {
 
 const scAppConfig = AppConfig(
   name: 'sc',
-  host: 'schul-cloud.org',
+  host: 'hpi.schul-cloud.org',
   title: 'HPI Schul-Cloud',
   primaryColor: _scRed,
   secondaryColor: _scOrange,

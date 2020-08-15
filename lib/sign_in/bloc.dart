@@ -55,6 +55,9 @@ class SignInBloc {
       body: SignInRequest(email: email, password: password).toJson(),
     );
 
+    logger.i(
+        'Sign in response body is "${rawResponse.body}" (status ${rawResponse.statusCode}).');
+    // TODO(marcelgarus): Handle exception because of invalid json.
     final response = SignInResponse.fromJson(json.decode(rawResponse.body));
     await services.storage.setUserInfo(
       userId: response.userId,
