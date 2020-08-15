@@ -235,7 +235,7 @@ class NetworkService {
       // The response body was not valid JSON.
       error = ErrorBody(
         name: 'Invalid response format.',
-        message: 'The server returned a response body that is not valid json.',
+        message: 'The server returned a response body that is not valid JSON.',
         code: response.statusCode,
         className: 'none',
       );
