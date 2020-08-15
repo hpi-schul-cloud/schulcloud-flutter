@@ -1,7 +1,6 @@
-import 'package:black_hole_flutter/black_hole_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:schulcloud/app/app.dart';
+import 'package:schulcloud/app/module.dart';
 
 import '../utils.dart';
 
@@ -23,16 +22,13 @@ class LegalBar extends StatelessWidget {
           child: Text(s.settings_legalBar_privacyPolicy),
         ),
         FlatButton(
-          onPressed: () async {
-            final version = await appVersion;
+          onPressed: () {
             showLicensePage(
               context: context,
               applicationName: services.config.title,
-              applicationVersion: 'v$version',
+              applicationVersion: 'v$appVersion',
               applicationIcon: SvgPicture.asset(
-                services
-                    .get<AppConfig>()
-                    .assetName(context, 'logo/logo_with_text.svg'),
+                services.config.assetName(context, 'logo/logo_with_text.svg'),
               ),
             );
           },

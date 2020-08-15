@@ -6,14 +6,13 @@ import 'package:device_info/device_info.dart';
 import 'package:flutter/foundation.dart';
 import 'package:hive_cache/hive_cache.dart';
 import 'package:logger/logger.dart';
-import 'package:package_info/package_info.dart';
 import 'package:schulcloud/brand/brand.dart';
 import 'package:sentry/sentry.dart' hide User;
 import 'package:system_info/system_info.dart';
 
 import 'logger.dart';
+import 'services.dart';
 import 'services/storage.dart';
-import 'utils.dart';
 
 final _sentry = SentryClient(
     dsn: 'https://2d9dda495b8f4626b01e28e24c19a9b5@sentry.schul-cloud.dev/7');
@@ -97,11 +96,10 @@ Future<bool> reportEvent(Event event) async {
     return true;
   }
 
-  final packageInfo = await PackageInfo.fromPlatform();
   final platformString = defaultTargetPlatform.toString();
   final user = HiveCache.isInitialized ? await storage.userFromCache : null;
   final fullEvent = Event(
-    release: packageInfo.version,
+    release: services.packageInfo.version,
     environment: isInDebugMode ? 'debug' : 'production',
     message: event.message,
     exception: event.exception,
@@ -126,7 +124,7 @@ Future<bool> reportEvent(Event event) async {
 
 Future<Contexts> _getContexts() async {
   try {
-    final packageInfo = await PackageInfo.fromPlatform();
+    final packageInfo = services.packageInfo;
     final app = App(
       name: packageInfo.appName,
       version: packageInfo.version,

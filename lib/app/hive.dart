@@ -5,7 +5,6 @@ import 'package:flutter/widgets.dart';
 import 'package:grec_minimal/grec_minimal.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_cache/hive_cache.dart';
-import 'package:schulcloud/app/app.dart';
 import 'package:schulcloud/assignment/assignment.dart';
 import 'package:schulcloud/calendar/calendar.dart';
 import 'package:schulcloud/course/course.dart';
@@ -14,6 +13,7 @@ import 'package:schulcloud/news/news.dart';
 import 'package:time_machine/time_machine.dart';
 
 import 'data.dart';
+import 'logger.dart';
 
 class ColorAdapter extends TypeAdapter<Color> {
   @override
@@ -52,13 +52,9 @@ class RecurrenceRuleAdapter extends TypeAdapter<RecurrenceRule> {
       writer.writeString(GrecMinimal.toTexts([obj]).single);
 }
 
-// Type ids.
-// Used before: 46
 class TypeId {
-  static const entity = 71;
-  static const id = 40;
-  static const root = 42;
-  static const collection = 70;
+  // Used before: 40, 42, 46, 70, 71.
+
   static const color = 48;
   static const children = 49;
   static const instant = 61;

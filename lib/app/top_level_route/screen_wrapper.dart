@@ -6,6 +6,7 @@ import 'package:schulcloud/sign_in/sign_in.dart';
 
 import '../logger.dart';
 import '../schulcloud_app.dart';
+import '../services.dart';
 import '../services/deep_linking.dart';
 import '../services/storage.dart';
 import '../utils.dart';

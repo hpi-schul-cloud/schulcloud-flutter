@@ -6,6 +6,7 @@ import 'package:schulcloud/brand/brand.dart';
 import 'package:streaming_shared_preferences/streaming_shared_preferences.dart';
 
 import '../data.dart';
+import '../services.dart';
 import '../utils.dart';
 
 /// A service that offers storage of app-wide data.
