@@ -6,6 +6,7 @@
   "app_demo_explanation": "Dies ist ein Demo-Account. Sämtliche Aktionen, die Daten anlegen oder ändern, sind deaktiviert und nicht sichtbar.",
   "app_emptyState_retry": "Nochmal versuchen",
   "app_error_badRequest": "Der Server versteht uns nicht. Gibt es vielleicht ein Update für die App?",
+  "app_error_notFound": "Diese Ressource konnte nicht gefunden werden.",
   "app_error_conflict": "Deine Änderungen können nicht gespeichert werden, weil jemand anderes zur selben Zeit etwas geändert hat.",
   "app_error_forbidden": "Du hast keine Berechtigung dazu.",
   "app_error_internal": "Ein unbekannter Serverfehler ist aufgetreten.",
