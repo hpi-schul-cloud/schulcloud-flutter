@@ -33,7 +33,7 @@ class CourseCard extends StatelessWidget {
                     }
                   } else if (snapshot.hasData) {
                     text = snapshot.data
-                        .where((teacher) => teacher != null)
+                        .whereNotNull()
                         .map((teacher) => teacher.shortName)
                         .join(', ');
                   }
