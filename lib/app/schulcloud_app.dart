@@ -42,7 +42,6 @@ class SchulCloudApp extends StatelessWidget {
         LoggingNavigatorObserver(
           logger: (message) => logger.d('Navigator: $message'),
         ),
-        HeroController(),
       ],
       localizationsDelegates: [
         S.delegate,
