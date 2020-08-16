@@ -1,18 +1,18 @@
 import 'package:flutter_deep_linking/flutter_deep_linking.dart';
 import 'package:schulcloud/app/module.dart';
 
-import 'widgets/sign_in_screen.dart';
-import 'widgets/sign_out_screen.dart';
+import 'pages/sign_in/page.dart';
+import 'pages/sign_out.dart';
 
-final signInRoutes = FancyRoute(
+final authRoutes = FancyRoute(
   routes: [
     FancyRoute(
       matcher: Matcher.path('login'),
-      builder: (_, result) => SignInScreen(),
+      builder: (_, result) => SignInPage(),
     ),
     FancyRoute(
       matcher: Matcher.path('logout'),
-      builder: (_, result) => SignOutScreen(),
+      builder: (_, result) => SignOutPage(),
     ),
   ],
 );
