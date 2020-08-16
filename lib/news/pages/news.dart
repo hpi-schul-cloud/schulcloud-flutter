@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:schulcloud/app/module.dart';
 
 import '../data.dart';
-import '../widgets/article_preview.dart';
+import '../widgets/article_card.dart';
 
 /// A page that displays a list of articles.
 class NewsPage extends StatelessWidget {
@@ -19,15 +19,21 @@ class NewsPage extends StatelessWidget {
             final articles = unsortedArticles.toList()
               ..sort((a1, a2) => a2.publishedAt.compareTo(a1.publishedAt));
 
-            return ListView.builder(
-              padding: EdgeInsets.only(top: 8),
-              itemCount: articles.length,
-              itemBuilder: (context, index) {
-                return Padding(
-                  padding: EdgeInsets.fromLTRB(16, 0, 16, 16),
-                  child: ArticlePreview(article: articles[index]),
-                );
-              },
+            return CustomScrollView(
+              slivers: <Widget>[
+                SliverList(
+                  delegate: SliverChildBuilderDelegate(
+                    (_, index) {
+                      return Padding(
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                        child: ArticleCard(articles[index].id),
+                      );
+                    },
+                    childCount: articles.length,
+                  ),
+                ),
+              ],
             );
           },
         ),
