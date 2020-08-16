@@ -11,6 +11,7 @@ import 'package:html/dom.dart';
 import 'package:html/dom_parsing.dart';
 import 'package:html/parser.dart';
 import 'package:http/http.dart';
+import 'package:rxdart/rxdart.dart';
 import 'package:schulcloud/brand/brand.dart';
 import 'package:schulcloud/generated/l10n.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -19,7 +20,6 @@ import 'caching/exception.dart';
 import 'logger.dart';
 import 'services.dart';
 import 'services/api_network.dart';
-import 'services/network.dart';
 
 extension ContextWithLocalization on BuildContext {
   S get s => S.of(this);
@@ -154,6 +154,8 @@ Future<bool> tryLaunchingUrl(String url) async {
 String exceptionMessage(dynamic error, BuildContext context) {
   if (error is FancyException) {
     return error.messageBuilder(context);
+  } else if (error is ErrorAndStacktrace) {
+    return error.error.toString();
   } else {
     return error.toString();
   }
