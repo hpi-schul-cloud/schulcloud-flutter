@@ -135,7 +135,7 @@ class _FancyTextState extends State<FancyText> {
 
   Widget _buildLoading(BuildContext context, TextStyle style) {
     final theme = context.theme;
-    final resolvedStyle = DefaultTextStyle.of(context).style.merge(style);
+    final resolvedStyle = context.defaultTextStyle.style.merge(style);
     final color = context.theme.isDark ? theme.disabledColor : Colors.black38;
 
     Widget buildBar({double width, double widthFactor}) {
@@ -181,7 +181,8 @@ class _FancyTextState extends State<FancyText> {
     data = data
         .replaceAll(RegExp('[\r\n\t]+'), ' ')
         // Collapes simple and non-breaking spaces
-        .replaceAll(RegExp('[ \u00A0]+'), ' ');
+        .replaceAll(RegExp('[ \u00A0]+'), ' ')
+        .trim();
 
     return Text(
       data,
