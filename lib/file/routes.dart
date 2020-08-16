@@ -1,6 +1,6 @@
 import 'package:flutter_deep_linking/flutter_deep_linking.dart';
 import 'package:schulcloud/app/module.dart';
-import 'package:schulcloud/course/course.dart';
+import 'package:schulcloud/course/module.dart';
 
 import 'data.dart';
 import 'pages/file_browser_page.dart';

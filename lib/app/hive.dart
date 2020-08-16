@@ -7,7 +7,7 @@ import 'package:hive/hive.dart';
 import 'package:hive_cache/hive_cache.dart';
 import 'package:schulcloud/assignment/assignment.dart';
 import 'package:schulcloud/calendar/calendar.dart';
-import 'package:schulcloud/course/course.dart';
+import 'package:schulcloud/course/module.dart';
 import 'package:schulcloud/file/file.dart';
 import 'package:schulcloud/news/module.dart';
 import 'package:time_machine/time_machine.dart';

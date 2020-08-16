@@ -4,7 +4,7 @@ import 'package:schulcloud/assignment/assignment.dart';
 import 'package:schulcloud/calendar/calendar.dart';
 import 'package:schulcloud/news/module.dart';
 
-class DashboardScreen extends StatelessWidget {
+class DashboardPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FancyScaffold(
