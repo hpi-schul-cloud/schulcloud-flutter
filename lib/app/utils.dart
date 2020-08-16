@@ -17,7 +17,6 @@ import 'caching/exception.dart';
 import 'logger.dart';
 import 'services.dart';
 import 'services/api_network.dart';
-import 'services/network.dart';
 
 extension ContextWithLocalization on BuildContext {
   S get s => S.of(this);
