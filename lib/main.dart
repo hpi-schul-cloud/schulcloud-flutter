@@ -7,7 +7,6 @@ import 'package:schulcloud/app/module.dart';
 import 'package:schulcloud/calendar/calendar.dart';
 import 'package:schulcloud/file/file.dart';
 import 'package:schulcloud/settings/settings.dart';
-import 'package:schulcloud/sign_in/sign_in.dart';
 
 import 'main_sc.dart';
 
@@ -27,8 +26,7 @@ Future<void> main({AppConfig appConfig = scAppConfig}) async {
     logger.d('Registering remaining services…');
     services
       ..registerSingleton(FileService())
-      ..registerSingleton(CalendarBloc())
-      ..registerSingleton(SignInBloc());
+      ..registerSingleton(CalendarBloc());
 
     logger.d('Adding custom licenses to registry…');
     LicenseRegistry.addLicense(() async* {
