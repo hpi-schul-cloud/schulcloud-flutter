@@ -3,7 +3,6 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
-import 'package:meta/meta.dart';
 import 'package:schulcloud/app/module.dart';
 
 class SignInBrowser extends InAppBrowser {

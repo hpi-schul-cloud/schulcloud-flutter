@@ -1,13 +1,13 @@
 import 'package:flutter/widgets.dart' hide Route, RouteBuilder;
 import 'package:flutter_deep_linking/flutter_deep_linking.dart';
 import 'package:schulcloud/assignment/assignment.dart';
+import 'package:schulcloud/auth/module.dart';
 import 'package:schulcloud/brand/brand.dart';
 import 'package:schulcloud/course/module.dart';
 import 'package:schulcloud/dashboard/module.dart';
 import 'package:schulcloud/file/file.dart';
 import 'package:schulcloud/news/news.dart';
 import 'package:schulcloud/settings/module.dart';
-import 'package:schulcloud/sign_in/sign_in.dart';
 import 'package:swipeable_page_route/swipeable_page_route.dart';
 
 import 'schulcloud_app.dart';
@@ -86,7 +86,7 @@ final router = Router(
         courseRoutes,
         dashboardRoutes,
         fileRoutes,
-        signInRoutes,
+        authRoutes,
         newsRoutes,
         settingsRoutes,
       ],
