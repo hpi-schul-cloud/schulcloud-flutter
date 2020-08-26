@@ -103,18 +103,18 @@ class _TextPreviewTreeVisitor extends TreeVisitor {
 
   @override
   void visitText(Text node) {
-    _str.write(node.data);
+    _str..write(node.data.trim())..write(' ');
   }
 
   @override
   void visitElement(Element node) {
     if (node.namespaceUri == 'http://www.w3.org/1999/xhtml') {
       if (node.localName == 'img') {
-        _str.write(' 🖼 ');
+        _str.write('🖼 ');
       } else if (node.localName == 'video') {
-        _str.write(' 🎥 ');
+        _str.write('🎥 ');
       } else if (node.localName == 'audio') {
-        _str.write(' 🎶 ');
+        _str.write('🎶 ');
       }
     }
 
@@ -122,7 +122,7 @@ class _TextPreviewTreeVisitor extends TreeVisitor {
   }
 
   @override
-  String toString() => _str.toString();
+  String toString() => _str.toString().trimRight();
 }
 
 /// Tries launching a url.
