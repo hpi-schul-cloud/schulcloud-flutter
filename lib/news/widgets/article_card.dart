@@ -38,7 +38,7 @@ class ArticleCard extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         FancyText(article.title, style: context.textTheme.headline5),
-        SizedBox(width: 8),
+        SizedBox(height: 4),
         Wrap(
           children: [
             UserPreview(
