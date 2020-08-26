@@ -7,7 +7,7 @@ import 'package:schulcloud/course/module.dart';
 import 'package:schulcloud/dashboard/module.dart';
 import 'package:schulcloud/file/file.dart';
 import 'package:schulcloud/news/news.dart';
-import 'package:schulcloud/settings/settings.dart';
+import 'package:schulcloud/settings/module.dart';
 import 'package:swipeable_page_route/swipeable_page_route.dart';
 
 import 'schulcloud_app.dart';

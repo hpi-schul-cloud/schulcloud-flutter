@@ -1,22 +1,16 @@
 import 'dart:async';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 import 'package:schulcloud/app/module.dart';
 import 'package:schulcloud/calendar/calendar.dart';
 import 'package:schulcloud/file/file.dart';
-import 'package:schulcloud/settings/settings.dart';
+import 'package:schulcloud/settings/module.dart';
 
 import 'main_sc.dart';
 
 Future<void> main({AppConfig appConfig = scAppConfig}) async {
-  // Show loading screen.
-  runApp(Container(
-    color: Colors.white,
-    alignment: Alignment.center,
-    child: CircularProgressIndicator(),
-  ));
+  _showLoadingPage();
 
   await runWithErrorReporting(() async {
     Logger.level = Level.debug;
@@ -28,11 +22,7 @@ Future<void> main({AppConfig appConfig = scAppConfig}) async {
       ..registerSingleton(FileService())
       ..registerSingleton(CalendarBloc());
 
-    logger.d('Adding custom licenses to registry…');
-    LicenseRegistry.addLicense(() async* {
-      yield EmptyStateLicense();
-    });
-
+    initSettings();
     await initAppEnd();
 
     logger.d('Waiting for services to be ready…');
@@ -53,4 +43,12 @@ Future<void> main({AppConfig appConfig = scAppConfig}) async {
     logger.d('Running…');
     runApp(SchulCloudApp());
   });
+}
+
+void _showLoadingPage() {
+  runApp(Container(
+    color: Colors.white,
+    alignment: Alignment.center,
+    child: CircularProgressIndicator(),
+  ));
 }

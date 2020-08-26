@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:schulcloud/app/module.dart';
 
 import '../utils.dart';
-import 'legal_bar.dart';
-import 'preferences.dart';
+import '../widgets/legal_bar.dart';
+import '../widgets/preferences.dart';
 
 class SettingsScreen extends StatelessWidget {
   @override

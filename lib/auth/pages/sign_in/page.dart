@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:schulcloud/app/module.dart';
-import 'package:schulcloud/settings/settings.dart';
+import 'package:schulcloud/settings/module.dart';
 
 import 'form.dart';
 import 'slanted_section.dart';
