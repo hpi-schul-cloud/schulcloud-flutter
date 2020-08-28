@@ -49,7 +49,9 @@ export 'widgets/app_bar.dart';
 export 'widgets/fade_in.dart';
 export 'widgets/form.dart';
 export 'widgets/scaffold.dart';
+export 'widgets/separated_icon_text.dart';
 export 'widgets/text.dart';
+export 'widgets/user_preview.dart';
 
 Future<void> initAppStart({@required AppConfig appConfig}) async {
   logger.i('Initializing module app part Ⅰ/Ⅱ…');

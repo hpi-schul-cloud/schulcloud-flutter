@@ -86,9 +86,8 @@ class _AssignmentsPageState extends State<AssignmentsPage>
             title: Text(s.assignment),
             actions: <Widget>[SortFilterIconButton(showSortFilterSheet)],
           ),
-          emptyStateBuilder: (context) => EmptyStatePage(
-            text: context.s.assignment_assignmentsPage_empty,
-          ),
+          emptyStateBuilder: (context) =>
+              EmptyStatePage(text: context.s.assignment_assignmentsPage_empty),
           sortFilterSelection: sortFilterSelection,
           filteredEmptyStateBuilder: (context) => SortFilterEmptyState(
             showSortFilterSheet,

@@ -7,7 +7,7 @@ import 'package:meta/meta.dart';
 import 'package:schulcloud/assignment/assignment.dart';
 import 'package:schulcloud/calendar/calendar.dart';
 import 'package:schulcloud/course/module.dart';
-import 'package:schulcloud/news/news.dart';
+import 'package:schulcloud/news/module.dart';
 
 import 'hive.dart';
 import 'services.dart';

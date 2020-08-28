@@ -3,7 +3,6 @@ import 'package:schulcloud/app/module.dart';
 import 'package:schulcloud/dashboard/module.dart';
 
 import '../data.dart';
-import '../news.dart';
 
 class NewsDashboardCard extends StatelessWidget {
   static const articleCount = 3;
