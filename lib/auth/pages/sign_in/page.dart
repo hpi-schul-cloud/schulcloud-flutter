@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:schulcloud/app/module.dart';
-import 'package:schulcloud/settings/settings.dart';
+import 'package:schulcloud/settings/module.dart';
 
 import 'form.dart';
 import 'slanted_section.dart';
 
-class SignInScreen extends StatelessWidget {
+class SignInPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -42,7 +42,7 @@ class SignInScreen extends StatelessWidget {
           height: 50,
           padding: EdgeInsets.only(bottom: mediaQuery.padding.bottom),
           alignment: Alignment.center,
-          child: Text(s.signIn_signInScreen_moreInformation),
+          child: Text(s.auth_signIn_moreInformation),
         ),
       ),
       SlantedSection(
@@ -53,14 +53,14 @@ class SignInScreen extends StatelessWidget {
           child: Column(
             children: <Widget>[
               Text(
-                s.signIn_signInScreen_faq_getAccountQ,
+                s.auth_signIn_faq_getAccountQ,
                 style: theme.textTheme.headline6.copyWith(
                   color: theme.primaryColor.contrastColor,
                 ),
               ),
               SizedBox(height: 4),
               Text(
-                s.signIn_signInScreen_faq_getAccountA(services.config.title),
+                s.auth_signIn_faq_getAccountA(services.config.title),
               ),
               SizedBox(height: 8),
               Align(
@@ -73,7 +73,7 @@ class SignInScreen extends StatelessWidget {
                   onPressed: () =>
                       tryLaunchingUrl('https://blog.schul-cloud.org/faq'),
                   icon: Icon(Icons.help_outline),
-                  label: Text(s.signIn_signInScreen_faq),
+                  label: Text(s.auth_signIn_faq),
                 ),
               ),
             ],
