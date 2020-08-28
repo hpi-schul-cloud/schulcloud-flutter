@@ -228,6 +228,7 @@ class _FancyTextState extends State<FancyText> {
           color: theme.primaryColor,
           textDecoration: TextDecoration.none,
         ),
+        'body': Style(margin: EdgeInsets.zero),
         'code': Style(
           backgroundColor: theme.contrastColor.withOpacity(0.05),
           color: theme.primaryColor,
