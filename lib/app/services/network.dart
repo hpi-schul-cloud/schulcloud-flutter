@@ -93,7 +93,10 @@ class ServerError extends FancyException {
 
 class MovedPermanentlyError extends ServerError {
   MovedPermanentlyError(ErrorBody body, this.location)
-      : super(body, (context) => context.s.app_error_movedPermanently);
+      : super(body, (_) {
+          throw Exception('MovedPermanentlyError should never be shown to the '
+              'user.');
+        });
 
   final String location;
 }

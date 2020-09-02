@@ -10,7 +10,6 @@
   "app_error_conflict": "Deine Änderungen können nicht gespeichert werden, weil jemand anderes zur selben Zeit etwas geändert hat.",
   "app_error_forbidden": "Du hast keine Berechtigung dazu.",
   "app_error_internal": "Ein unbekannter Serverfehler ist aufgetreten.",
-  "app_error_movedPermanently": "Das wurde woanders hin verschoben.",
   "app_error_noConnection": "Es konnte keine Verbindung zum Server aufgebaut werden.",
   "app_error_rateLimit": "Zu viele Versuche. Versuche es erneut in {timeToWait}.",
   "app_error_showStackTrace": "Stack-Trace zeigen",
