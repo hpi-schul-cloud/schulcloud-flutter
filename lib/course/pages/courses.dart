@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:schulcloud/app/app.dart';
+import 'package:schulcloud/app/module.dart';
 
 import '../data.dart';
-import 'course_card.dart';
+import '../widgets/course_card.dart';
 
-class CoursesScreen extends SortFilterWidget<Course> {
-  CoursesScreen({
+class CoursesPage extends SortFilterWidget<Course> {
+  CoursesPage({
     SortFilterSelection<Course> sortFilterSelection,
   }) : super(sortFilterSelection ?? sortFilterConfig.defaultSelection);
 
@@ -44,11 +44,11 @@ class CoursesScreen extends SortFilterWidget<Course> {
   );
 
   @override
-  _CoursesScreenState createState() => _CoursesScreenState();
+  _CoursesPageState createState() => _CoursesPageState();
 }
 
-class _CoursesScreenState extends State<CoursesScreen>
-    with SortFilterStateMixin<CoursesScreen, Course> {
+class _CoursesPageState extends State<CoursesPage>
+    with SortFilterStateMixin<CoursesPage, Course> {
   @override
   Widget build(BuildContext context) {
     final s = context.s;
@@ -61,27 +61,29 @@ class _CoursesScreenState extends State<CoursesScreen>
             title: Text(s.course),
             actions: <Widget>[SortFilterIconButton(showSortFilterSheet)],
           ),
-          emptyStateBuilder: (context) => EmptyStatePage(
-            text: s.course_coursesScreen_empty,
-          ),
+          emptyStateBuilder: (context) =>
+              EmptyStatePage(text: s.course_coursesPage_empty),
           sortFilterSelection: sortFilterSelection,
           filteredEmptyStateBuilder: (context) => SortFilterEmptyState(
             showSortFilterSheet,
-            text: s.course_coursesScreen_emptyFiltered,
+            text: s.course_coursesPage_emptyFiltered,
           ),
           builder: (context, courses, fetch) {
             return CustomScrollView(
               slivers: <Widget>[
                 SliverList(
-                  delegate: SliverChildBuilderDelegate((_, index) {
-                    return Padding(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 8,
-                      ),
-                      child: CourseCard(courses[index]),
-                    );
-                  }, childCount: courses.length),
+                  delegate: SliverChildBuilderDelegate(
+                    (_, index) {
+                      return Padding(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 8,
+                        ),
+                        child: CourseCard(courses[index]),
+                      );
+                    },
+                    childCount: courses.length,
+                  ),
                 ),
               ],
             );

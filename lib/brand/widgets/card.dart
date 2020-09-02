@@ -8,9 +8,11 @@ class FancyCard extends StatelessWidget {
     @required this.child,
     this.onTap,
     this.color,
+    this.omitTopPadding = false,
     this.omitHorizontalPadding = false,
     this.omitBottomPadding = false,
-  })  : assert(omitHorizontalPadding != null),
+  })  : assert(omitTopPadding != null),
+        assert(omitHorizontalPadding != null),
         assert(omitBottomPadding != null),
         super(key: key);
 
@@ -18,6 +20,7 @@ class FancyCard extends StatelessWidget {
   final Widget child;
   final VoidCallback onTap;
   final Color color;
+  final bool omitTopPadding;
   final bool omitHorizontalPadding;
   final bool omitBottomPadding;
 
@@ -49,7 +52,7 @@ class FancyCard extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        SizedBox(height: 16),
+        if (!omitTopPadding) SizedBox(height: 16),
         if (title != null)
           Padding(
             padding: EdgeInsets.fromLTRB(16, 0, 16, 16),

@@ -2,12 +2,13 @@ import 'package:black_hole_flutter/black_hole_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:hive_cache/hive_cache.dart';
+import 'package:schulcloud/auth/module.dart';
 import 'package:schulcloud/brand/brand.dart';
-import 'package:schulcloud/sign_in/sign_in.dart';
 
 import '../banner/service.dart';
 import '../caching/utils.dart';
 import '../data.dart';
+import '../services.dart';
 import '../services/storage.dart';
 import '../utils.dart';
 import '../widgets/text.dart';

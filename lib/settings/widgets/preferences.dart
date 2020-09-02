@@ -24,14 +24,11 @@ class _SwitchPreferenceState extends State<SwitchPreference> {
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      onTap: () => _setValue(!widget.preference.getValue()),
+    return SwitchListTile.adaptive(
+      value: widget.preference.getValue(),
+      onChanged: _isUpdating ? null : _setValue,
       title: Text(widget.title),
       subtitle: widget.subtitle != null ? Text(widget.subtitle) : null,
-      trailing: Switch.adaptive(
-        value: widget.preference.getValue(),
-        onChanged: _isUpdating ? null : _setValue,
-      ),
     );
   }
 

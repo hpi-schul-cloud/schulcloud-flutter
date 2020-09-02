@@ -2,10 +2,11 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:logger_flutter/logger_flutter.dart';
-import 'package:schulcloud/sign_in/sign_in.dart';
+import 'package:schulcloud/auth/module.dart';
 
 import '../logger.dart';
 import '../schulcloud_app.dart';
+import '../services.dart';
 import '../services/deep_linking.dart';
 import '../services/storage.dart';
 import '../utils.dart';

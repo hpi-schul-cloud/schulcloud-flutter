@@ -1,8 +1,7 @@
-import 'package:black_hole_flutter/black_hole_flutter.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:schulcloud/app/app.dart';
-import 'package:schulcloud/course/course.dart';
+import 'package:schulcloud/app/module.dart';
+import 'package:schulcloud/course/module.dart';
 
 import '../data.dart';
 import '../widgets/file_browser.dart';

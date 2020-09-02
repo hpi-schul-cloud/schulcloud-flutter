@@ -1,17 +1,17 @@
 import 'package:flutter_deep_linking/flutter_deep_linking.dart';
-import 'package:schulcloud/app/app.dart';
+import 'package:schulcloud/app/module.dart';
 
 import 'data.dart';
-import 'widgets/article_screen.dart';
-import 'widgets/news_screen.dart';
+import 'pages/article.dart';
+import 'pages/news.dart';
 
 final newsRoutes = FancyRoute(
   matcher: Matcher.path('news'),
-  builder: (_, __) => NewsScreen(),
+  builder: (_, __) => NewsPage(),
   routes: [
     FancyRoute(
       matcher: Matcher.path('{newsId}'),
-      builder: (_, result) => ArticleScreen(Id<Article>(result['newsId'])),
+      builder: (_, result) => ArticlePage(Id<Article>(result['newsId'])),
     ),
   ],
 );

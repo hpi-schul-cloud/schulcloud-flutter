@@ -14,6 +14,10 @@ categorization:
         description: "assignment module"
         paths:
           - "lib/assignment/**"
+      - name: "auth"
+        description: "auth module"
+        paths:
+          - "lib/auth/**"
       - name: "brand"
         description: "brand module"
         paths:
@@ -38,10 +42,6 @@ categorization:
         description: "localization module"
         paths:
           - "lib/l10n/**"
-      - name: "signIn"
-        description: "signIn module"
-        paths:
-          - "lib/login/**"
       - name: "news"
         description: "news module"
         paths:

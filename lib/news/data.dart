@@ -1,4 +1,4 @@
-import 'package:schulcloud/app/app.dart';
+import 'package:schulcloud/app/module.dart';
 
 part 'data.g.dart';
 
@@ -23,7 +23,7 @@ class Article implements Entity<Article> {
           authorId: Id<User>(data['creatorId']),
           publishedAt: (data['displayAt'] as String).parseInstant(),
           imageUrl: null,
-          content: (data['content'] as String).withoutHtmlTags,
+          content: data['content'],
         );
 
   static Future<Article> fetch(Id<Article> id) async =>
@@ -46,6 +46,7 @@ class Article implements Entity<Article> {
 
   @HiveField(6)
   final String imageUrl;
+  bool get hasImage => imageUrl != null;
 
   @HiveField(7)
   final String content;

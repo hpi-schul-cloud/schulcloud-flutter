@@ -1,8 +1,8 @@
 import 'package:banners/banners.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:schulcloud/app/app.dart';
-import 'package:schulcloud/sign_in/sign_in.dart';
+import 'package:schulcloud/app/module.dart';
+import 'package:schulcloud/auth/module.dart';
 
 const _bannerPadding = EdgeInsets.symmetric(horizontal: 16, vertical: 4);
 

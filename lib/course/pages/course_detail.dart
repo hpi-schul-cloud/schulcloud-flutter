@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:schulcloud/app/app.dart';
+import 'package:schulcloud/app/module.dart';
 
 import '../data.dart';
 
-class CourseDetailsScreen extends StatelessWidget {
-  const CourseDetailsScreen(this.courseId) : assert(courseId != null);
+class CourseDetailsPage extends StatelessWidget {
+  const CourseDetailsPage(this.courseId) : assert(courseId != null);
 
   final Id<Course> courseId;
 
@@ -50,16 +50,13 @@ class CourseDetailsScreen extends StatelessWidget {
     return CollectionBuilder.populated<Lesson>(
       collection: course.lessons,
       builder: handleLoadingErrorEmpty(
-        emptyStateBuilder: (_) => EmptyStatePage(
-          text: context.s.course_detailsScreen_empty,
-        ),
+        emptyStateBuilder: (_) =>
+            EmptyStatePage(text: context.s.course_detailsPage_empty),
         builder: (context, lessons, _) {
-          lessons = lessons.sorted();
-
           return Column(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
-              for (final lesson in lessons)
+              for (final lesson in lessons.sorted())
                 ListTile(
                   title: Text(lesson.name),
                   onTap: () => context.navigator

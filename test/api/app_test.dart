@@ -1,5 +1,5 @@
 import 'package:test/test.dart';
-import 'package:schulcloud/app/app.dart';
+import 'package:schulcloud/app/module.dart';
 
 import 'matchers.dart';
 import 'utils.dart';

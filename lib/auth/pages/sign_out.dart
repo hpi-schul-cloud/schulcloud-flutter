@@ -1,16 +1,13 @@
-import 'dart:async';
-
-import 'package:black_hole_flutter/black_hole_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
-import 'package:schulcloud/app/app.dart';
+import 'package:schulcloud/app/module.dart';
 
-class SignOutScreen extends StatefulWidget {
+class SignOutPage extends StatefulWidget {
   @override
-  _SignOutScreenState createState() => _SignOutScreenState();
+  _SignOutPageState createState() => _SignOutPageState();
 }
 
-class _SignOutScreenState extends State<SignOutScreen> {
+class _SignOutPageState extends State<SignOutPage> {
   @override
   void initState() {
     super.initState();
@@ -43,10 +40,7 @@ class _SignOutScreenState extends State<SignOutScreen> {
           children: <Widget>[
             Center(child: CircularProgressIndicator()),
             SizedBox(height: 8),
-            Text(
-              context.s.signIn_signOutScreen_message,
-              textAlign: TextAlign.center,
-            ),
+            Text(context.s.auth_signOut_message, textAlign: TextAlign.center),
           ],
         ),
       ),

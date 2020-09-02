@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:schulcloud/app/app.dart';
+import 'package:schulcloud/app/module.dart';
 
 import '../data.dart';
-import 'content_view.dart';
+import '../widgets/content_view.dart';
 
-class LessonScreen extends StatefulWidget {
-  const LessonScreen({@required this.courseId, @required this.lessonId})
+class LessonPage extends StatefulWidget {
+  const LessonPage(this.courseId, this.lessonId)
       : assert(courseId != null),
         assert(lessonId != null);
 
@@ -13,10 +13,10 @@ class LessonScreen extends StatefulWidget {
   final Id<Lesson> lessonId;
 
   @override
-  _LessonScreenState createState() => _LessonScreenState();
+  _LessonPageState createState() => _LessonPageState();
 }
 
-class _LessonScreenState extends State<LessonScreen> {
+class _LessonPageState extends State<LessonPage> {
   @override
   Widget build(BuildContext context) {
     final s = context.s;
@@ -37,7 +37,7 @@ class _LessonScreenState extends State<LessonScreen> {
           sliver: contents.isEmpty
               ? SliverFillRemaining(
                   child: EmptyStatePage(
-                    text: s.course_lessonScreen_empty,
+                    text: s.course_lessonPage_empty,
                     actions: <Widget>[
                       PrimaryButton(
                         onPressed: () => tryLaunchingUrl(lesson.webUrl),

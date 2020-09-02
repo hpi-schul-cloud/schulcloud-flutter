@@ -1,8 +1,6 @@
 import 'package:flutter/widgets.dart';
-import 'package:get_it/get_it.dart';
-import 'package:meta/meta.dart';
 import 'package:http/http.dart' as http;
-import 'package:schulcloud/app/app.dart';
+import 'package:schulcloud/app/module.dart';
 
 import 'storage.dart';
 
@@ -25,8 +23,7 @@ class ApiNetworkService {
       _url(path),
       queryParameters: {
         // For better server performance.
-        if (user != null)
-          'schoolId': user.schoolId,
+        if (user != null) 'schoolId': user.schoolId,
         ...queryParameters,
       },
       headers: _getHeaders(),

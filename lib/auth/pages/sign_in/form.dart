@@ -1,12 +1,12 @@
-import 'package:black_hole_flutter/black_hole_flutter.dart';
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:schulcloud/app/app.dart';
-import 'package:schulcloud/app/routing.dart';
+import 'package:schulcloud/app/module.dart';
 
-import '../bloc.dart';
-import 'sign_in_browser.dart';
+import 'browser.dart';
+import 'data.dart';
 
 class SignInForm extends StatefulWidget {
   @override
@@ -61,7 +61,7 @@ class _SignInFormState extends State<SignInForm> {
                   );
                   setState(() => _isSigningInViaWeb = false);
                 },
-                child: Text(context.s.signIn_form_signIn),
+                child: Text(context.s.auth_signIn_form_signIn),
               ),
             ),
             SizedBox(height: 12),
@@ -78,13 +78,26 @@ class _SignInFormState extends State<SignInForm> {
     /// Contrary to calling the [SignInBloc]'s method directly, this method
     /// never throws but handles failed sign in attempts gracefully by
     /// displaying a [SnackBar].
-    Future<void> demoSignIn(Future<void> Function() signInCallback) async {
+    Future<void> demoSignIn(String email, String password) async {
       try {
-        await signInCallback();
+        logger.i('Signing in as $email…');
+
+        // The sign in throws an [AuthenticationError] if it wasn't successful.
+        final rawResponse = await services.api.post(
+          'authentication',
+          body: SignInRequest(email: email, password: password).toJson(),
+        );
+
+        final response = SignInResponse.fromJson(json.decode(rawResponse.body));
+        await services.storage.setUserInfo(
+          userId: response.userId,
+          token: response.accessToken,
+        );
+        logger.i('Signed in with userId ${response.userId}!');
         _pushSignedInPage();
       } on UnauthorizedError {
         context.scaffold.showSnackBar(SnackBar(
-          content: Text(context.s.signIn_form_error_demoSignInFailed),
+          content: Text(context.s.auth_signIn_form_error_demoSignInFailed),
         ));
       }
     }
@@ -98,7 +111,7 @@ class _SignInFormState extends State<SignInForm> {
           onPressed: () async {
             setState(() => _isSigningInAsDemoStudent = true);
             try {
-              await demoSignIn(services.get<SignInBloc>().signInAsDemoStudent);
+              await demoSignIn('demo-lehrer@schul-cloud.org', 'schulcloud');
             } catch (e) {
               logger.e(exceptionMessage(e, context));
               context.scaffold.showSnackBar(SnackBar(
@@ -107,7 +120,7 @@ class _SignInFormState extends State<SignInForm> {
             }
             setState(() => _isSigningInAsDemoStudent = false);
           },
-          child: Text(s.signIn_form_demo_student),
+          child: Text(s.auth_signIn_form_demo_student),
         ),
         SecondaryButton(
           key: ValueKey('signIn-demoTeacher'),
@@ -115,10 +128,10 @@ class _SignInFormState extends State<SignInForm> {
           isLoading: _isSigningInAsDemoTeacher,
           onPressed: () async {
             setState(() => _isSigningInAsDemoTeacher = true);
-            await demoSignIn(services.get<SignInBloc>().signInAsDemoTeacher);
+            await demoSignIn('demo-schueler@schul-cloud.org', 'schulcloud');
             setState(() => _isSigningInAsDemoTeacher = false);
           },
-          child: Text(s.signIn_form_demo_teacher),
+          child: Text(s.auth_signIn_form_demo_teacher),
         ),
       ],
     );

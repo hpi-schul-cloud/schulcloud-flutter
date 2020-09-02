@@ -1,4 +1,4 @@
-import 'package:black_hole_flutter/black_hole_flutter.dart';
+import 'package:schulcloud/app/module.dart';
 import 'package:flutter/material.dart';
 
 class SlantedSection extends StatelessWidget {
@@ -30,7 +30,8 @@ class SlantedSection extends StatelessWidget {
       child: Padding(
         padding: EdgeInsets.only(top: slantTop, bottom: slantBottom),
         child: DefaultTextStyle(
-          style: context.textTheme.bodyText2.apply(color: Colors.white),
+          style: context.textTheme.bodyText2
+              .apply(color: color.highEmphasisOnColor),
           child: child,
         ),
       ),

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:schulcloud/app/app.dart';
+import 'package:schulcloud/app/module.dart';
 
 import '../utils.dart';
-import 'legal_bar.dart';
-import 'preferences.dart';
+import '../widgets/legal_bar.dart';
+import '../widgets/preferences.dart';
 
 class SettingsScreen extends StatelessWidget {
   @override
@@ -52,17 +52,10 @@ class _AboutSection extends StatelessWidget {
       omitHorizontalPadding: true,
       child: Column(
         children: [
-          FutureBuilder<String>(
-            future: appVersion,
-            builder: (context, snapshot) {
-              return ListTile(
-                leading: Icon(Icons.update),
-                title: Text(s.settings_about_version),
-                subtitle: FancyText(
-                  snapshot.data ?? snapshot.error?.toString(),
-                ),
-              );
-            },
+          ListTile(
+            leading: Icon(Icons.update),
+            title: Text(s.settings_about_version),
+            subtitle: FancyText(appVersion),
           ),
           ListTile(
             leading: Icon(Icons.people_outline),
