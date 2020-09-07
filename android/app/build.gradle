@@ -66,6 +66,10 @@ android {
         sc {
             dimension "brand"
         }
+        sc_test {
+            dimension "brand"
+            applicationId "org.schulcloud.test.android"
+        }
         brb {
             dimension "brand"
             applicationId "org.schulcloud.brandenburg.android"
