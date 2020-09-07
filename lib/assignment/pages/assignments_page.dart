@@ -5,10 +5,8 @@ import 'package:schulcloud/course/module.dart';
 import '../data.dart';
 import '../widgets/assignment_card.dart';
 
-class AssignmentsPage extends SortFilterWidget<Assignment> {
-  AssignmentsPage({
-    SortFilterSelection<Assignment> sortFilterSelection,
-  }) : super(sortFilterSelection ?? sortFilterConfig.defaultSelection);
+class AssignmentsPage extends StatelessWidget {
+  const AssignmentsPage({this.sortFilterSelection});
 
   static final sortFilterConfig = SortFilter<Assignment>(
     sorters: {
@@ -67,63 +65,39 @@ class AssignmentsPage extends SortFilterWidget<Assignment> {
       ),
     },
   );
+  final SortFilterSelection<Assignment> sortFilterSelection;
 
-  @override
-  _AssignmentsPageState createState() => _AssignmentsPageState();
-}
-
-class _AssignmentsPageState extends State<AssignmentsPage>
-    with SortFilterStateMixin<AssignmentsPage, Assignment> {
   @override
   Widget build(BuildContext context) {
-    final s = context.s;
-
-    return Scaffold(
-      body: CollectionBuilder.populated<Assignment>(
-        collection: services.storage.root.assignments,
-        builder: handleLoadingErrorRefreshEmptyFilter(
-          appBar: FancyAppBar(
-            title: Text(s.assignment),
-            actions: <Widget>[SortFilterIconButton(showSortFilterSheet)],
-          ),
-          emptyStateBuilder: (context) =>
-              EmptyStatePage(text: context.s.assignment_assignmentsPage_empty),
-          sortFilterSelection: sortFilterSelection,
-          filteredEmptyStateBuilder: (context) => SortFilterEmptyState(
-            showSortFilterSheet,
-            text: s.assignment_assignmentsPage_emptyFiltered,
-          ),
-          builder: (context, assignments, fetch) {
-            return CustomScrollView(
-              slivers: <Widget>[
-                SliverList(
-                  delegate: SliverChildBuilderDelegate(
-                    (_, index) => _buildAssignmentCard(assignments[index].id),
-                    childCount: assignments.length,
-                  ),
+    return SortFilterPage<Assignment>(
+      config: sortFilterConfig,
+      initialSelection: sortFilterSelection,
+      collection: services.storage.root.assignments,
+      appBarBuilder: (context, showSortFilterSheet) => FancyAppBar(
+        title: Text(context.s.assignment),
+        actions: <Widget>[SortFilterIconButton(showSortFilterSheet)],
+      ),
+      emptyStateTextGetter: (s) => s.assignment_assignmentsPage_empty,
+      filteredEmptyStateTextGetter: (s) =>
+          s.assignment_assignmentsPage_emptyFiltered,
+      builder: (_, assignment, setFilter, setFlagFilter) {
+        return Padding(
+          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          child: AssignmentCard(
+            assignment.id,
+            onCourseClicked: (courseId) => setFilter('courseId', {courseId}),
+            onOverdueClicked: () {
+              setFilter(
+                'dueAt',
+                DateRangeFilterSelection(
+                  end: LocalDate.today() - Period(days: 1),
                 ),
-              ],
-            );
-          },
-        ),
-      ),
-    );
-  }
-
-  Widget _buildAssignmentCard(Id<Assignment> assignmentId) {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: AssignmentCard(
-        assignmentId,
-        onCourseClicked: (courseId) => setFilter('courseId', {courseId}),
-        onOverdueClicked: () {
-          setFilter(
-            'dueAt',
-            DateRangeFilterSelection(end: LocalDate.today() - Period(days: 1)),
-          );
-        },
-        setFlagFilterCallback: setFlagFilter,
-      ),
+              );
+            },
+            setFlagFilterCallback: setFlagFilter,
+          ),
+        );
+      },
     );
   }
 }
