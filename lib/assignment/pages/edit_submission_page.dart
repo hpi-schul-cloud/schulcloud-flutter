@@ -80,6 +80,7 @@ class _EditSubmissionFormState extends State<EditSubmissionForm> {
           if (isExistingSubmission)
             IconButton(
               icon: Icon(Icons.delete),
+              tooltip: s.assignment_editSubmission_delete,
               onPressed: () async {
                 final result = await context.showConfirmDeleteDialog(
                     s.assignment_editSubmission_delete_confirm);

@@ -268,6 +268,7 @@ class SortFilterIconButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return IconButton(
       icon: Icon(Icons.sort),
+      tooltip: context.s.app_sortFilterIconButton,
       onPressed: showSortFilterSheet,
     );
   }
