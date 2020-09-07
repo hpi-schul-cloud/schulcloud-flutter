@@ -1,13 +1,11 @@
 import 'dart:math';
 import 'dart:ui';
 
-import 'package:black_hole_flutter/black_hole_flutter.dart';
-import 'package:dartx/dartx.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_html/style.dart';
 import 'package:html/parser.dart' as html_parser;
-import 'package:schulcloud/app/app.dart';
+import 'package:schulcloud/app/module.dart';
 
 import '../utils.dart';
 
@@ -137,7 +135,7 @@ class _FancyTextState extends State<FancyText> {
 
   Widget _buildLoading(BuildContext context, TextStyle style) {
     final theme = context.theme;
-    final resolvedStyle = DefaultTextStyle.of(context).style.merge(style);
+    final resolvedStyle = context.defaultTextStyle.style.merge(style);
     final color = context.theme.isDark ? theme.disabledColor : Colors.black38;
 
     Widget buildBar({double width, double widthFactor}) {
@@ -183,7 +181,8 @@ class _FancyTextState extends State<FancyText> {
     data = data
         .replaceAll(RegExp('[\r\n\t]+'), ' ')
         // Collapes simple and non-breaking spaces
-        .replaceAll(RegExp('[ \u00A0]+'), ' ');
+        .replaceAll(RegExp('[ \u00A0]+'), ' ')
+        .trim();
 
     return Text(
       data,
@@ -229,6 +228,7 @@ class _FancyTextState extends State<FancyText> {
           color: theme.primaryColor,
           textDecoration: TextDecoration.none,
         ),
+        'body': Style(margin: EdgeInsets.zero),
         'code': Style(
           backgroundColor: theme.contrastColor.withOpacity(0.05),
           color: theme.primaryColor,

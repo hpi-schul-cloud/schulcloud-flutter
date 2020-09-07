@@ -2,7 +2,7 @@ import 'package:black_hole_flutter/black_hole_flutter.dart';
 import 'package:dartx/dartx.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:schulcloud/app/app.dart';
+import 'package:schulcloud/app/module.dart';
 
 import '../utils.dart';
 import 'filtering.dart';
@@ -283,7 +283,7 @@ class SortFilterEmptyState extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return EmptyStateScreen(
+    return EmptyStatePage(
       text: text,
       actions: <Widget>[
         SecondaryButton(

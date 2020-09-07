@@ -5,10 +5,11 @@ import 'package:flutter/widgets.dart';
 import 'package:get_it/get_it.dart';
 import 'package:http/http.dart' as http;
 
-import '../exception.dart';
+import '../banner/service.dart';
+import '../caching/exception.dart';
 import '../logger.dart';
+import '../services.dart';
 import '../utils.dart';
-import 'banner.dart';
 
 /// The API server returns error data as JSON when an error occurs. We parse
 /// this data because it's helpful for debugging (there's a message, a code
@@ -107,6 +108,11 @@ class UnauthorizedError extends ServerError {
 class ForbiddenError extends ServerError {
   ForbiddenError(ErrorBody body)
       : super(body, (context) => context.s.app_error_forbidden);
+}
+
+class NotFoundError extends ServerError {
+  NotFoundError(ErrorBody body)
+      : super(body, (context) => context.s.app_error_notFound);
 }
 
 class ConflictError extends ServerError {
@@ -223,7 +229,27 @@ class NetworkService {
       return response;
     }
 
-    final error = ErrorBody.fromJson(json.decode(response.body));
+    ErrorBody error;
+    try {
+      error = ErrorBody.fromJson(json.decode(response.body));
+    } on FormatException {
+      // The response body was not valid JSON.
+      error = ErrorBody(
+        name: 'Invalid response format.',
+        message: 'The server returned a response body that is not valid JSON.',
+        code: response.statusCode,
+        className: 'none',
+      );
+    } catch (e) {
+      // The JSON didn't contain the known error body fields.
+      error = ErrorBody(
+        name: 'Invalid error.',
+        message: "The server returned an error response that doesn't contain "
+            'the error fields we know.',
+        code: response.statusCode,
+        className: 'none',
+      );
+    }
     logger.w('Network ${response.statusCode}: $method $url', error);
 
     if (response.statusCode == HttpStatus.unauthorized) {
@@ -260,6 +286,10 @@ class NetworkService {
 
     if (response.statusCode == HttpStatus.internalServerError) {
       throw InternalServerError(error);
+    }
+
+    if (response.statusCode == HttpStatus.notFound) {
+      throw NotFoundError(error);
     }
 
     throw UnimplementedError(

@@ -1,9 +1,8 @@
 import 'dart:math';
 
-import 'package:black_hole_flutter/black_hole_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
-import 'package:schulcloud/app/app.dart';
+import 'package:schulcloud/app/module.dart';
 
 import '../data.dart';
 
@@ -80,7 +79,7 @@ class _ComponentView extends StatelessWidget {
     }
 
     assert(component is UnsupportedComponent);
-    return EmptyStateScreen(text: context.s.course_contentView_unsupported);
+    return EmptyStatePage(text: context.s.course_contentView_unsupported);
   }
 }
 

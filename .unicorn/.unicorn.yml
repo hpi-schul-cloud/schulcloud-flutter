@@ -14,6 +14,14 @@ categorization:
         description: "assignment module"
         paths:
           - "lib/assignment/**"
+      - name: "auth"
+        description: "auth module"
+        paths:
+          - "lib/auth/**"
+      - name: "brand"
+        description: "brand module"
+        paths:
+          - "lib/brand/**"
       - name: "calendar"
         description: "calendar module"
         paths:
@@ -38,10 +46,6 @@ categorization:
         description: "messenger module"
         paths:
           - "lib/messenger/**"
-      - name: "signIn"
-        description: "signIn module"
-        paths:
-          - "lib/login/**"
       - name: "news"
         description: "news module"
         paths:

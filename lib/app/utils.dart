@@ -4,22 +4,22 @@ import 'dart:ui';
 
 import 'package:collection/collection.dart';
 import 'package:dartx/dartx.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide Text, Element;
 import 'package:flutter_deep_linking/flutter_deep_linking.dart';
-import 'package:get_it/get_it.dart';
 import 'package:hive_cache/hive_cache.dart';
+import 'package:html/dom.dart';
+import 'package:html/dom_parsing.dart';
 import 'package:html/parser.dart';
 import 'package:http/http.dart';
+import 'package:rxdart/rxdart.dart';
+import 'package:schulcloud/brand/brand.dart';
 import 'package:schulcloud/generated/l10n.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import 'app_config.dart';
-import 'exception.dart';
+import 'caching/exception.dart';
 import 'logger.dart';
+import 'services.dart';
 import 'services/api_network.dart';
-import 'services/network.dart';
-
-final services = GetIt.instance;
 
 extension ContextWithLocalization on BuildContext {
   S get s => S.of(this);
@@ -60,10 +60,16 @@ typedef L10nStringGetter = String Function(S);
 
 extension LegenWaitForItDaryString on String {
   // ignore: unnecessary_this
+  String get emptyToNull => this?.isEmpty != false ? null : this;
+  // ignore: unnecessary_this
   String get blankToNull => this?.isBlank != false ? null : this;
 
   /// Removes html tags from a string.
-  String get withoutHtmlTags => parse(this).documentElement.text;
+  String get withoutHtmlTags {
+    final visitor = _TextPreviewTreeVisitor()
+      ..visit(parse(this).documentElement);
+    return visitor.toString();
+  }
 
   /// Removes HTML tags trying to preserve line breaks.
   String get simpleHtmlToPlain {
@@ -92,6 +98,33 @@ extension LegenWaitForItDaryString on String {
       Color(int.parse(substring(1).padLeft(8, 'f'), radix: 16));
 }
 
+class _TextPreviewTreeVisitor extends TreeVisitor {
+  final _str = StringBuffer();
+
+  @override
+  void visitText(Text node) {
+    _str..write(node.data.trim())..write(' ');
+  }
+
+  @override
+  void visitElement(Element node) {
+    if (node.namespaceUri == 'http://www.w3.org/1999/xhtml') {
+      if (node.localName == 'img') {
+        _str.write('🖼 ');
+      } else if (node.localName == 'video') {
+        _str.write('🎥 ');
+      } else if (node.localName == 'audio') {
+        _str.write('🎶 ');
+      }
+    }
+
+    visitChildren(node);
+  }
+
+  @override
+  String toString() => _str.toString().trimRight();
+}
+
 /// Tries launching a url.
 Future<bool> tryLaunchingUrl(String url) async {
   logger.i("Trying to launch url '$url'…");
@@ -118,22 +151,13 @@ Future<bool> tryLaunchingUrl(String url) async {
   return false;
 }
 
-// TODO(marcelgarus): remove
-String exceptionMessage(dynamic error) {
-  if (error is ServerError && error.body.message != null) {
-    return error.body.message;
-  }
-  return error.toString();
-}
-
-extension ImmutableMap<K, V> on Map<K, V> {
-  // ignore: use_to_and_as_if_applicable
-  Map<K, V> clone() => Map.of(this);
-
-  Map<K, V> copyWith(K key, V value) {
-    final newMap = clone();
-    newMap[key] = value;
-    return newMap;
+String exceptionMessage(dynamic error, BuildContext context) {
+  if (error is FancyException) {
+    return error.messageBuilder(context);
+  } else if (error is ErrorAndStacktrace) {
+    return error.error.toString();
+  } else {
+    return error.toString();
   }
 }
 

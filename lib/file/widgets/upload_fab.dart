@@ -1,6 +1,6 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:schulcloud/app/app.dart';
+import 'package:schulcloud/app/module.dart';
 
 import '../data.dart';
 import '../service.dart';
@@ -14,7 +14,11 @@ class UploadFab extends StatelessWidget {
   Widget build(BuildContext context) {
     return EntityBuilder<User>(
       id: services.storage.userId,
-      builder: handleError((context, user, _) {
+      builder: (context, snapshot, _) {
+        if (snapshot == null || !snapshot.hasData) {
+          return SizedBox();
+        }
+        final user = snapshot.data;
         if (user == null || !user.hasPermission(Permission.fileStorageCreate)) {
           return SizedBox();
         }
@@ -29,7 +33,7 @@ class UploadFab extends StatelessWidget {
           },
           child: Icon(Icons.file_upload),
         );
-      }),
+      },
     );
   }
 }

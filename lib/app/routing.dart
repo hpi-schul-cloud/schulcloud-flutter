@@ -1,24 +1,25 @@
 import 'package:flutter/widgets.dart' hide Route, RouteBuilder;
 import 'package:flutter_deep_linking/flutter_deep_linking.dart';
 import 'package:schulcloud/assignment/assignment.dart';
-import 'package:schulcloud/course/course.dart';
-import 'package:schulcloud/dashboard/dashboard.dart';
+import 'package:schulcloud/auth/module.dart';
+import 'package:schulcloud/brand/brand.dart';
+import 'package:schulcloud/course/module.dart';
+import 'package:schulcloud/dashboard/module.dart';
 import 'package:schulcloud/file/file.dart';
 import 'package:schulcloud/messenger/messenger.dart';
-import 'package:schulcloud/news/news.dart';
-import 'package:schulcloud/settings/settings.dart';
-import 'package:schulcloud/sign_in/sign_in.dart';
+import 'package:schulcloud/news/module.dart';
+import 'package:schulcloud/settings/module.dart';
 import 'package:swipeable_page_route/swipeable_page_route.dart';
 
-import 'app_config.dart';
-import 'utils.dart';
+import 'schulcloud_app.dart';
+import 'services.dart';
+import 'top_level_route/page_route.dart';
 import 'widgets/not_found_screen.dart';
-import 'widgets/schulcloud_app.dart';
-import 'widgets/top_level_page_route.dart';
 
-final hostRegExp = RegExp('(?:www\.)?${RegExp.escape(services.config.host)}');
+final _hostRegExp = RegExp('(?:www\.)?${RegExp.escape(services.config.host)}');
 
-String appSchemeLink(String path) => 'app://org.schulcloud.android/$path';
+String appSchemeLink(String path) =>
+    'app://${services.packageInfo.packageName}/$path';
 
 typedef FancyRouteBuilder = Widget Function(
     BuildContext context, RouteResult result);
@@ -70,7 +71,8 @@ class FancyRoute extends Route {
 final router = Router(
   routes: [
     FancyRoute(
-      matcher: Matcher.scheme('app') & Matcher.host('org.schulcloud.android'),
+      matcher: Matcher.scheme('app') &
+          Matcher.host(services.packageInfo.packageName),
       routes: [
         FancyRoute(
           matcher: Matcher.path('signedInScreen'),
@@ -80,13 +82,13 @@ final router = Router(
       ],
     ),
     FancyRoute(
-      matcher: Matcher.webHost(hostRegExp, isOptional: true),
+      matcher: Matcher.webHost(_hostRegExp, isOptional: true),
       routes: [
         assignmentRoutes,
         courseRoutes,
         dashboardRoutes,
         fileRoutes,
-        signInRoutes,
+        authRoutes,
         newsRoutes,
         settingsRoutes,
       ],

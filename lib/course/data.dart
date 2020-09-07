@@ -1,5 +1,4 @@
-import 'package:schulcloud/app/app.dart';
-import 'package:time_machine/time_machine.dart';
+import 'package:schulcloud/app/module.dart';
 
 part 'data.g.dart';
 

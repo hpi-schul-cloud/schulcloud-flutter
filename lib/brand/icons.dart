@@ -5,9 +5,11 @@ import 'package:meta/meta.dart';
 class ScIcons {
   const ScIcons._();
 
-  static final dashboard = FontAwesomeIcons.thLarge;
-  static final course = FontAwesomeIcons.graduationCap;
   static final assignment = FontAwesomeIcons.tasks;
+  static final course = FontAwesomeIcons.graduationCap;
+  static final dashboard = FontAwesomeIcons.thLarge;
   static final file = FontAwesomeIcons.solidFolderOpen;
   static final messenger = FontAwesomeIcons.solidComments;
+  static final news = FontAwesomeIcons.solidNewspaper;
+  static final teams = FontAwesomeIcons.users;
 }

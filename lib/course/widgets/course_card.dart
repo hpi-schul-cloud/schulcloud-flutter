@@ -1,6 +1,5 @@
-import 'package:black_hole_flutter/black_hole_flutter.dart';
 import 'package:flutter/material.dart';
-import 'package:schulcloud/app/app.dart';
+import 'package:schulcloud/app/module.dart';
 
 import '../data.dart';
 
@@ -21,16 +20,24 @@ class CourseCard extends StatelessWidget {
           Expanded(
             child: EntityListBuilder<User>(
               ids: course.teacherIds,
-              builder: handleError((_, teachers, __) {
+              builder: (_, snapshot, __) {
+                String text;
+                if (snapshot != null) {
+                  if (snapshot.hasError) {
+                    text = exceptionMessage(snapshot.error, context);
+                  } else if (snapshot.hasData) {
+                    text = snapshot.data
+                        .whereNotNull()
+                        .map((teacher) => teacher.shortName)
+                        .join(', ');
+                  }
+                }
                 return FancyText(
-                  teachers
-                      ?.where((teacher) => teacher != null)
-                      ?.map((teacher) => teacher.shortName)
-                      ?.join(', '),
+                  text,
                   maxLines: 1,
                   emphasis: TextEmphasis.medium,
                 );
-              }),
+              },
             ),
           ),
         ],

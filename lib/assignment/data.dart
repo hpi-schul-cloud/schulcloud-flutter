@@ -1,5 +1,5 @@
-import 'package:schulcloud/app/app.dart';
-import 'package:schulcloud/course/course.dart';
+import 'package:schulcloud/app/module.dart';
+import 'package:schulcloud/course/module.dart';
 import 'package:schulcloud/file/file.dart';
 
 part 'data.g.dart';

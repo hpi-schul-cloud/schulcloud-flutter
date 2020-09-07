@@ -1,11 +1,6 @@
-import 'dart:async';
-
-import 'package:black_hole_flutter/black_hole_flutter.dart';
-import 'package:dartx/dartx.dart';
 import 'package:flutter/material.dart';
-import 'package:schulcloud/app/app.dart';
+import 'package:schulcloud/app/module.dart';
 import 'package:schulcloud/dashboard/widgets/dashboard_card.dart';
-import 'package:time_machine/time_machine.dart';
 
 import '../bloc.dart';
 import '../data.dart';

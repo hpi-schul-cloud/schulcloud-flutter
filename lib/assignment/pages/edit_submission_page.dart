@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:schulcloud/app/app.dart';
+import 'package:schulcloud/app/module.dart';
 
 import '../data.dart';
 
@@ -142,8 +142,8 @@ class _EditSubmissionFormState extends State<EditSubmissionForm> {
     } on ConflictError catch (e) {
       unawaited(services.snackBar.showMessage(e.body.message));
     } catch (e) {
-      unawaited(services.snackBar
-          .showMessage(context.s.app_error_unknown(exceptionMessage(e))));
+      unawaited(services.snackBar.showMessage(
+          context.s.app_error_unknown(exceptionMessage(e, context))));
     } finally {
       setState(() => _isSaving = false);
     }
@@ -155,7 +155,7 @@ class _EditSubmissionFormState extends State<EditSubmissionForm> {
       SizedBox(height: 8),
       if (assignment.teamSubmissions)
         ListTile(
-          leading: Icon(Icons.people),
+          leading: Icon(ScIcons.teams),
           title: Text(
               context.s.assignment_editSubmission_teamSubmissionNotSupported),
           trailing: Icon(Icons.open_in_new),

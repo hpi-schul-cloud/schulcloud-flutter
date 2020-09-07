@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:schulcloud/app/app.dart';
-import 'package:schulcloud/course/course.dart';
+import 'package:schulcloud/app/module.dart';
+import 'package:schulcloud/course/module.dart';
 
 import '../data.dart';
 import '../widgets/assignment_card.dart';
@@ -86,9 +86,8 @@ class _AssignmentsPageState extends State<AssignmentsPage>
             title: Text(s.assignment),
             actions: <Widget>[SortFilterIconButton(showSortFilterSheet)],
           ),
-          emptyStateBuilder: (context) => EmptyStateScreen(
-            text: context.s.assignment_assignmentsPage_empty,
-          ),
+          emptyStateBuilder: (context) =>
+              EmptyStatePage(text: context.s.assignment_assignmentsPage_empty),
           sortFilterSelection: sortFilterSelection,
           filteredEmptyStateBuilder: (context) => SortFilterEmptyState(
             showSortFilterSheet,

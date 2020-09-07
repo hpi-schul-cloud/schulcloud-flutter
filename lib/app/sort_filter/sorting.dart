@@ -1,8 +1,8 @@
 import 'package:characters/characters.dart';
 import 'package:dartx/dartx.dart';
 import 'package:flutter/material.dart';
-import 'package:schulcloud/app/app.dart';
 
+import '../utils.dart';
 import 'filtering.dart';
 
 extension ComparatorOrder<T> on Comparator<T> {
