@@ -39,6 +39,8 @@ dependencies:
   flutter_villains: ^1.2.1
   font_awesome_flutter: ^8.8.1
   get_it: ^4.0.4
+  # Required by the release tool.
+  git: ^1.0.1
   grec_minimal: ^0.0.4
   hive: ^1.4.2
   hive_cache:
@@ -60,6 +62,8 @@ dependencies:
   package_info: ">=0.4.1 <2.0.0"
   path_provider: ^1.6.11
   permission_handler: ^3.3.0
+  # Required by the release tool.
+  pub_semver: ^1.4.4
   rxdart: ^0.24.1
   sentry: ^3.0.1
   share:

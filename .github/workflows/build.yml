@@ -66,6 +66,8 @@ jobs:
         with:
           name: source
           path: .
+      - name: Install dependencies
+        run: flutter pub get
 
       - name: Run linter
         run: flutter analyze > flutter_analyze_report.txt
@@ -111,6 +113,8 @@ jobs:
         with:
           name: source
           path: .
+      - name: Install dependencies
+        run: flutter pub get
 
       - name: Run API tests
         # Limit concurrency to prevent 429 errors.
@@ -145,6 +149,8 @@ jobs:
         with:
           name: source
           path: .
+      - name: Install dependencies
+        run: flutter pub get
 
       - run: flutter build apk --target=lib/main_${{ matrix.flavor }}.dart --flavor=${{ matrix.flavor }}
         env:
@@ -257,4 +263,58 @@ jobs:
         uses: maierj/fastlane-action@v1.4.0
         with:
           lane: uploadCanary
+          subdirectory: android
+  deploy-beta:
+    name: Deploy beta
+    needs: install
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        flavor: ["sc"]
+      fail-fast: false
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/heads/release/v')
+    steps:
+      - name: Install Java 12
+        uses: actions/setup-java@v1
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+      - name: Install Flutter (stable)
+        uses: subosito/flutter-action@v1
+        with:
+          channel: ${{ env.FLUTTER_CHANNEL }}
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+
+      - name: Checkout source
+        uses: actions/download-artifact@v1
+        with:
+          name: source
+          path: .
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Store Google Play credentials in a file
+        run: echo "${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_KEY }}" | base64 --decode > ./android/fastlane/googlePlay-serviceAccount.json
+      - name: Store Google Play upload key in a file
+        run: echo "${{ secrets.GOOGLE_PLAY_UPLOAD_KEY }}" | base64 --decode > ./android/upload.keystore.jks
+
+      - id: unicorn
+        name: Load new version
+        uses: JonasWanke/unicorn@ad66dae
+        with:
+          repo-token: "${{ secrets.GITHUB_TOKEN }}"
+      - name: Build AAB
+        run: |
+          flutter build appbundle \
+            --flavor=sc \
+            --build-number=${{ steps.unicorn.outputs.versionCode }} \
+            --build-name=${{ steps.unicorn.outputs.version }}
+        env:
+          UPLOAD_KEY_STORE_PASSWORD: ${{ secrets.GOOGLE_PLAY_UPLOAD_KEY_STORE_PASSWORD }}
+          UPLOAD_KEY_KEY_PASSWORD: ${{ secrets.GOOGLE_PLAY_UPLOAD_KEY_KEY_PASSWORD }}
+        # Flutter doesn't find the generated .aab-file, but it should exist
+        continue-on-error: true
+      - name: Deploy to Google Play (beta track)
+        uses: maierj/fastlane-action@v1.4.0
+        with:
+          lane: uploadBeta
           subdirectory: android

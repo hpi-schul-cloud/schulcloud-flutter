@@ -12,6 +12,8 @@ import java.util.*
 import net.swiftzer.semver.SemVer
 
 
+val CANARY = "canary"
+
 fun SemVer.versionCode(): Int {
     require(major in 0..20) { "major must be between 0 and 20, was $major" }
     require(minor in 0..99) { "minor must be between 0 and 99, was $minor" }
@@ -25,7 +27,7 @@ fun SemVer.versionCode(): Int {
         require(previewVersion in 0..999) { "preview version must be between 0 and 999, was $previewVersion" }
 
         val previewBaseCode = when (preview.toLowerCase()) {
-            "canary" -> 2
+            CANARY -> 2
             "alpha" -> 4
             "beta" -> 5
             "rc" -> 8
@@ -37,7 +39,28 @@ fun SemVer.versionCode(): Int {
     return ((major * 100 + minor) * 100 + patch) * 10000 + previewCode
 }
 
-val CANARY = "canary"
+fun getCanaryReleaseVersion(): SemVer {
+    val serviceAccountFile = File("./android/fastlane/googlePlay-serviceAccount.json")
+    val credentials = GoogleCredentials.fromStream(serviceAccountFile.inputStream())
+        .createScoped("https://www.googleapis.com/auth/androidpublisher")
+    val releases = Google.Play.getReleases(credentials, "org.schulcloud.android", "internal")
+
+    val currentVersion = releases.map { it.version }.max() ?: error("No releases found")
+    val currentPreRelease = currentVersion.preRelease
+    return if (currentPreRelease == null || !currentPreRelease.startsWith(CANARY))
+        currentVersion.nextPatch.copy(preRelease = "$CANARY.0")
+    else {
+        val canaryRelease = currentPreRelease.substring(CANARY.length + 1).toInt()
+        currentVersion.copy(preRelease = "$CANARY.${canaryRelease + 1}")
+    }
+}
+fun getBetaReleaseVersion(): SemVer {
+    return File("./pubspec.yaml").readLines()
+        .first { it.startsWith("version:") }
+        .removePrefix("version:")
+        .trim()
+        .let { SemVer.parse(it) }
+}
 
 unicorn {
     gitHubAction {
@@ -53,36 +76,28 @@ unicorn {
             }
 
             is Action.Event.Push -> {
-                if (git.flow.currentBranch(this) !is Git.Flow.MasterBranch)
-                    return@gitHubAction
+                val branch = git.flow.currentBranch(this)
+                val isCanaryRelease = branch is Git.Flow.MasterBranch
+                val isBetaRelease = branch is Git.Flow.ReleaseBranch
+                if (!isCanaryRelease && !isBetaRelease) return@gitHubAction
 
-                val serviceAccountFile = File("./android/fastlane/googlePlay-serviceAccount.json")
-                val credentials = GoogleCredentials.fromStream(serviceAccountFile.inputStream())
-                    .createScoped("https://www.googleapis.com/auth/androidpublisher")
-                val releases = Google.Play.getReleases(credentials, "org.schulcloud.android", "internal")
-
-                val currentVersion = releases.map { it.version }.max() ?: error("No releases found")
-                val currentPreRelease = currentVersion.preRelease
-                val version = if (currentPreRelease == null || !currentPreRelease.startsWith(CANARY))
-                    currentVersion.nextPatch.copy(preRelease = "$CANARY.0")
-                else {
-                    val canaryRelease = currentPreRelease.substring(CANARY.length + 1).toInt()
-                    currentVersion.copy(preRelease = "$CANARY.${canaryRelease + 1}")
-                }
+                val version = if (isCanaryRelease) getCanaryReleaseVersion() else getBetaReleaseVersion()
                 val versionCode = version.versionCode()
                 Action.setOutput("version", version.toString())
                 Action.setOutput("versionCode", versionCode.toString())
 
-                val commit = git.getHeadCommit(this)
-                Fastlane.saveChangelog(
-                    this,
-                    versionCode,
-                    contents = mapOf(
-                        Locale.US to "Canary deployment of commit ${commit.name}:\n${commit.fullMessage}",
-                        Locale.GERMANY to "Canary-Deployment von Commit ${commit.name}:\n${commit.fullMessage}"
-                    ),
-                    directory = projectDir.resolve("android/fastlane")
-                )
+                if (isCanaryRelease) {
+                    val commit = git.getHeadCommit(this)
+                    Fastlane.saveChangelog(
+                        this,
+                        versionCode,
+                        contents = mapOf(
+                            Locale.US to "Canary deployment of commit ${commit.name}:\n${commit.fullMessage}",
+                            Locale.GERMANY to "Canary-Deployment von Commit ${commit.name}:\n${commit.fullMessage}"
+                        ),
+                        directory = projectDir.resolve("android/fastlane")
+                    )
+                }
             }
         }
     }

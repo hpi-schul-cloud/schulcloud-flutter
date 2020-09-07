@@ -9,4 +9,14 @@ platform :android do
       aab: "../build/app/outputs/bundle/scRelease/app-sc-release.aab"
     )
   end
+
+  desc "Upload a new beta build"
+  lane :uploadBeta do
+    # Building the AAB and metadata preparation is done externally.
+    upload_to_play_store(
+      track: "beta",
+      release_status: "draft",
+      aab: "../build/app/outputs/bundle/scRelease/app-sc-release.aab"
+    )
+  end
 end
