@@ -303,6 +303,9 @@ abstract class SortFilterWidget<T> extends StatefulWidget {
   final SortFilterSelection<T> initialSortFilterSelection;
 }
 
+typedef FilterSetter = void Function(String key, dynamic selection);
+typedef FlagFilterSetter = void Function(String key, bool value);
+
 mixin SortFilterStateMixin<W extends SortFilterWidget<T>, T> on State<W> {
   SortFilterSelection<T> sortFilterSelection;
 
@@ -333,5 +336,85 @@ mixin SortFilterStateMixin<W extends SortFilterWidget<T>, T> on State<W> {
   void setFlagFilter(String key, bool value) {
     updateSortFilterSelection(
         sortFilterSelection.withFlagsFilterSelection('more', key, value));
+  }
+}
+
+typedef SortFilterWidgetBuilder<E extends Entity<E>> = Widget Function(
+  BuildContext context,
+  E entity,
+  FilterSetter filterSetter,
+  FlagFilterSetter flagFilterSetter,
+);
+typedef SortFilterAppBarBuilder = Widget Function(
+  BuildContext context,
+  VoidCallback showSortFilterSheet,
+);
+
+class SortFilterPage<E extends Entity<E>> extends SortFilterWidget<E> {
+  SortFilterPage({
+    @required this.config,
+    SortFilterSelection<E> initialSelection,
+    @required this.collection,
+    @required this.appBarBuilder,
+    @required this.emptyStateTextGetter,
+    @required this.filteredEmptyStateTextGetter,
+    @required this.builder,
+  })  : assert(config != null),
+        assert(collection != null),
+        assert(appBarBuilder != null),
+        assert(emptyStateTextGetter != null),
+        assert(filteredEmptyStateTextGetter != null),
+        assert(builder != null),
+        super(initialSelection ?? config.defaultSelection);
+
+  final SortFilter<E> config;
+  final Collection<E> collection;
+  final SortFilterAppBarBuilder appBarBuilder;
+  final L10nStringGetter emptyStateTextGetter;
+  final L10nStringGetter filteredEmptyStateTextGetter;
+  final SortFilterWidgetBuilder<E> builder;
+
+  @override
+  _SortFilterPageState<E> createState() => _SortFilterPageState<E>();
+}
+
+class _SortFilterPageState<E extends Entity<E>> extends State<SortFilterPage<E>>
+    with SortFilterStateMixin<SortFilterPage<E>, E> {
+  @override
+  Widget build(BuildContext context) {
+    final s = context.s;
+
+    return Scaffold(
+      body: CollectionBuilder.populated<E>(
+        collection: widget.collection,
+        builder: handleLoadingErrorRefreshEmptyFilter(
+          appBar: widget.appBarBuilder(context, showSortFilterSheet),
+          emptyStateBuilder: (_) =>
+              EmptyStatePage(text: widget.emptyStateTextGetter(s)),
+          sortFilterSelection: sortFilterSelection,
+          filteredEmptyStateBuilder: (_) => SortFilterEmptyState(
+            showSortFilterSheet,
+            text: widget.filteredEmptyStateTextGetter(s),
+          ),
+          builder: (_, entities, __) {
+            return CustomScrollView(
+              slivers: <Widget>[
+                SliverList(
+                  delegate: SliverChildBuilderDelegate(
+                    (context, index) => widget.builder(
+                      context,
+                      entities[index],
+                      setFilter,
+                      setFlagFilter,
+                    ),
+                    childCount: entities.length,
+                  ),
+                ),
+              ],
+            );
+          },
+        ),
+      ),
+    );
   }
 }
