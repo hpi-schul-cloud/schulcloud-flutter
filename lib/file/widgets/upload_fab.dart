@@ -31,6 +31,7 @@ class UploadFab extends StatelessWidget {
               destination: path,
             );
           },
+          tooltip: context.s.file_uploadFab,
           child: Icon(Icons.file_upload),
         );
       },

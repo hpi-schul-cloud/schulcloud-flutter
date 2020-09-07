@@ -4,22 +4,17 @@ import 'package:schulcloud/app/module.dart';
 import '../data.dart';
 
 class ChooseDestinationPage extends StatelessWidget {
-  const ChooseDestinationPage({
-    @required this.title,
-    @required this.fabIcon,
-    @required this.fabLabel,
-  })  : assert(title != null),
-        assert(fabIcon != null),
-        assert(fabLabel != null);
-
-  final Widget title;
-  final Widget fabIcon;
-  final Widget fabLabel;
+  static Future<FilePath> show(BuildContext context) {
+    return context.rootNavigator.push(MaterialPageRoute<FilePath>(
+      fullscreenDialog: true,
+      builder: (_) => ChooseDestinationPage(),
+    ));
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: title),
+      appBar: AppBar(title: Text(context.s.file_chooseDestination_upload)),
       body: Center(
         child: Text(
           context.s.file_chooseDestination_content,
@@ -29,8 +24,9 @@ class ChooseDestinationPage extends StatelessWidget {
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () =>
             context.navigator.pop(FilePath(services.storage.userId)),
-        icon: fabIcon,
-        label: fabLabel,
+        icon: Icon(Icons.file_upload),
+        tooltip: context.s.file_chooseDestination_upload_button,
+        label: Text(context.s.file_chooseDestination_upload_button),
       ),
     );
   }

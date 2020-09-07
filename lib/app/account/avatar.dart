@@ -12,20 +12,23 @@ import 'dialog.dart';
 class AccountButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      customBorder: CircleBorder(),
-      onTap: () {
-        showDialog(context: context, builder: (_) => AccountDialog());
-      },
-      child: Padding(
-        padding: EdgeInsets.all(8),
-        child: ValueListenableBuilder<Set<Banner>>(
-          valueListenable: services.banners,
-          builder: (context, banners, _) {
-            return banners.contains(Banners.demo)
-                ? Center(child: DemoTag())
-                : AccountAvatar();
-          },
+    return Tooltip(
+      message: context.s.app_accountButton,
+      child: InkWell(
+        customBorder: CircleBorder(),
+        onTap: () {
+          showDialog(context: context, builder: (_) => AccountDialog());
+        },
+        child: Padding(
+          padding: EdgeInsets.all(8),
+          child: ValueListenableBuilder<Set<Banner>>(
+            valueListenable: services.banners,
+            builder: (context, banners, _) {
+              return banners.contains(Banners.demo)
+                  ? Center(child: DemoTag())
+                  : AccountAvatar();
+            },
+          ),
         ),
       ),
     );

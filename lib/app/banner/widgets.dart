@@ -22,16 +22,19 @@ class OfflineBanner extends StatelessWidget {
 class TokenExpiredBanner extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final s = context.s;
+
     return BannerScaffold(
       backgroundColor: Colors.orange.withOpacity(0.5),
       body: Padding(
         padding: _bannerPadding,
         child: Row(
           children: <Widget>[
-            Expanded(child: Text(context.s.app_error_tokenExpired)),
+            Expanded(child: Text(s.app_error_tokenExpired)),
             SizedBox(width: 16),
             IconButton(
               onPressed: () => signOut(context),
+              tooltip: s.general_signOut,
               icon: SvgPicture.asset(
                 'assets/icon_signOut.svg',
                 color: context.theme.contrastColor,

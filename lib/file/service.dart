@@ -69,17 +69,7 @@ class FileService {
         '$localPath.');
     final file = io.File(localPath);
 
-    // TODO(marcelgarus): Maybe we should move the route creation to ChooseDestinationPage
-    final destination =
-        await context.rootNavigator.push(MaterialPageRoute<FilePath>(
-      fullscreenDialog: true,
-      builder: (_) => ChooseDestinationPage(
-        title: Text(context.s.file_chooseDestination_upload),
-        fabIcon: Icon(Icons.file_upload),
-        fabLabel: Text(context.s.file_chooseDestination_upload_button),
-      ),
-    ));
-
+    final destination = await ChooseDestinationPage.show(context);
     if (destination == null) {
       return;
     }
