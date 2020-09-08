@@ -185,11 +185,20 @@ FetchableBuilder<CacheSnapshot<List<T>>> handleLoadingErrorEmpty<T>({
 }
 
 FetchableBuilder<CacheSnapshot<List<T>>> handleLoadingErrorEmptySliver<T>({
-  @required WidgetBuilder emptyStateBuilder,
+  WidgetBuilder emptyStateBuilder,
+  WidgetBuilder sliverEmptyStateBuilder,
   @required FetchableBuilder<List<T>> builder,
 }) {
+  assert((emptyStateBuilder == null) != (sliverEmptyStateBuilder == null));
+
   return handleLoadingErrorSliver(handleEmpty(
-    emptyStateBuilder: emptyStateBuilder,
+    emptyStateBuilder: sliverEmptyStateBuilder ??
+        (context) {
+          return SliverFillViewport(
+            delegate:
+                SliverChildListDelegate.fixed([emptyStateBuilder(context)]),
+          );
+        },
     builder: builder,
   ));
 }
