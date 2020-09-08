@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="appName">Open Schul-Cloud</string>
+    <string name="deepLinking_host1">open.hpi-schul-cloud.de</string>
+    <string name="deepLinking_host2">www.open.hpi-schul-cloud.de</string>
 </resources>
