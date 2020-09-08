@@ -238,6 +238,7 @@ class Permission {
   const Permission._();
 
   static const assignmentEdit = 'HOMEWORK_EDIT';
+  static const courseEdit = 'COURSE_EDIT';
   static const fileStorageCreate = 'FILESTORAGE_CREATE';
   static const submissionsCreate = 'SUBMISSIONS_CREATE';
   static const submissionsEdit = 'SUBMISSIONS_EDIT';
