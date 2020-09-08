@@ -138,12 +138,8 @@ class Root implements Entity<Root> {
         .toList(),
   );
 
-  final assignments = Collection<Assignment>(
-    id: 'assignments',
-    fetcher: () async => (await services.api.get('homework').parseJsonList())
-        .map((data) => Assignment.fromJson(data))
-        .toList(),
-  );
+  final assignments =
+      Collection<Assignment>(id: 'assignments', fetcher: Assignment.fetchList);
 
   final submissions = Collection<Submission>(
     id: 'submissions',

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:schulcloud/app/module.dart';
 
 import '../../data.dart';
+import 'tab_assignments.dart';
 import 'tab_topics.dart';
 
 class CourseDetailPage extends StatefulWidget {
@@ -58,9 +59,10 @@ class _CourseDetailPageState extends State<CourseDetailPage>
             ],
             bottom: TabBar(
               controller: _controller,
+              isScrollable: true,
               tabs: [
                 Tab(text: s.course_courseDetails_topics),
-                Tab(text: s.course_courseDetails_assignments),
+                Tab(child: AssignmentsTabIndicator(course: course)),
                 Tab(text: s.course_courseDetails_tools),
                 Tab(text: s.course_courseDetails_groups),
               ],
@@ -70,7 +72,7 @@ class _CourseDetailPageState extends State<CourseDetailPage>
           ),
           tabs: [
             TopicsTab(course),
-            Placeholder(),
+            AssignmentsTab(course),
             Placeholder(),
             Placeholder(),
             // AssignmentsTab(course),

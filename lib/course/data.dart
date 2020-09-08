@@ -1,4 +1,5 @@
 import 'package:schulcloud/app/module.dart';
+import 'package:schulcloud/assignment/assignment.dart';
 
 part 'data.g.dart';
 
@@ -27,6 +28,11 @@ class Course implements Entity<Course> {
         visibleLessons = Collection<Lesson>(
           id: 'visible lessons of course $id',
           fetcher: () async => Lesson.fetchList(id, hidden: false),
+        ),
+        currentAssignments = Collection<Assignment>(
+          id: 'currently open assignments of course $id',
+          fetcher: () async =>
+              Assignment.fetchList(courseId: id, notArchivedByUser: true),
         );
 
   Course.fromJson(Map<String, dynamic> data)
@@ -70,6 +76,8 @@ class Course implements Entity<Course> {
 
   final Collection<Lesson> lessons;
   final Collection<Lesson> visibleLessons;
+
+  final Collection<Assignment> currentAssignments;
 
   @override
   bool operator ==(Object other) =>
