@@ -4,10 +4,8 @@ import 'package:schulcloud/app/module.dart';
 import '../data.dart';
 import '../widgets/course_card.dart';
 
-class CoursesPage extends SortFilterWidget<Course> {
-  CoursesPage({
-    SortFilterSelection<Course> sortFilterSelection,
-  }) : super(sortFilterSelection ?? sortFilterConfig.defaultSelection);
+class CoursesPage extends StatelessWidget {
+  const CoursesPage({this.sortFilterSelection});
 
   static final sortFilterConfig = SortFilter<Course>(
     sorters: {
@@ -42,54 +40,26 @@ class CoursesPage extends SortFilterWidget<Course> {
       ),
     },
   );
+  final SortFilterSelection<Course> sortFilterSelection;
 
-  @override
-  _CoursesPageState createState() => _CoursesPageState();
-}
-
-class _CoursesPageState extends State<CoursesPage>
-    with SortFilterStateMixin<CoursesPage, Course> {
   @override
   Widget build(BuildContext context) {
-    final s = context.s;
-
-    return Scaffold(
-      body: CollectionBuilder.populated<Course>(
-        collection: services.storage.root.courses,
-        builder: handleLoadingErrorRefreshEmptyFilter(
-          appBar: FancyAppBar(
-            title: Text(s.course),
-            actions: <Widget>[SortFilterIconButton(showSortFilterSheet)],
-          ),
-          emptyStateBuilder: (context) =>
-              EmptyStatePage(text: s.course_coursesPage_empty),
-          sortFilterSelection: sortFilterSelection,
-          filteredEmptyStateBuilder: (context) => SortFilterEmptyState(
-            showSortFilterSheet,
-            text: s.course_coursesPage_emptyFiltered,
-          ),
-          builder: (context, courses, fetch) {
-            return CustomScrollView(
-              slivers: <Widget>[
-                SliverList(
-                  delegate: SliverChildBuilderDelegate(
-                    (_, index) {
-                      return Padding(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 8,
-                        ),
-                        child: CourseCard(courses[index]),
-                      );
-                    },
-                    childCount: courses.length,
-                  ),
-                ),
-              ],
-            );
-          },
-        ),
+    return SortFilterPage<Course>(
+      config: sortFilterConfig,
+      initialSelection: sortFilterSelection,
+      collection: services.storage.root.courses,
+      appBarBuilder: (context, showSortFilterSheet) => FancyAppBar(
+        title: Text(context.s.course),
+        actions: <Widget>[SortFilterIconButton(showSortFilterSheet)],
       ),
+      emptyStateTextGetter: (s) => s.course_coursesPage_empty,
+      filteredEmptyStateTextGetter: (s) => s.course_coursesPage_emptyFiltered,
+      builder: (_, course, __, ___) {
+        return Padding(
+          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          child: CourseCard(course),
+        );
+      },
     );
   }
 }

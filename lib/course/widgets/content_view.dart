@@ -54,7 +54,7 @@ class _ComponentView extends StatelessWidget {
       return EntityBuilder<User>(
         id: services.storage.userId,
         builder: handleLoadingError((context, user, fetch) {
-          // https://github.com/schul-cloud/schulcloud-client/blob/90e7d1f70be4b0e8224f9e18525a7ef1c7ff297a/views/topic/components/content-neXboard.hbs#L3-L4
+          // https://github.com/hpi-schul-cloud/schulcloud-client/blob/90e7d1f70be4b0e8224f9e18525a7ef1c7ff297a/views/topic/components/content-neXboard.hbs#L3-L4
           final url =
               '${component.url}?disableConference=true&username=${user.avatarInitials}';
           return _ComponentWrapper(

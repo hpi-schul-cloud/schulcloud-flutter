@@ -75,6 +75,7 @@ class SubmissionTab extends StatelessWidget {
             builder: (context) => FloatingActionButton.extended(
               onPressed: () => context.navigator
                   .pushNamed('/homework/${assignment.id}/submission'),
+              tooltip: labelText,
               label: Text(labelText),
               icon: Icon(Icons.edit),
             ),

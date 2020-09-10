@@ -8,11 +8,13 @@ class Article implements Entity<Article> {
     @required this.id,
     @required this.title,
     @required this.authorId,
+    @required this.createdAt,
     @required this.publishedAt,
     this.imageUrl,
     @required this.content,
   })  : assert(title != null),
         assert(authorId != null),
+        assert(createdAt != null),
         assert(publishedAt != null),
         assert(content != null);
 
@@ -21,6 +23,7 @@ class Article implements Entity<Article> {
           id: Id<Article>(data['_id']),
           title: data['title'],
           authorId: Id<User>(data['creatorId']),
+          createdAt: (data['createdAt'] as String).parseInstant(),
           publishedAt: (data['displayAt'] as String).parseInstant(),
           imageUrl: null,
           content: data['content'],
@@ -41,6 +44,8 @@ class Article implements Entity<Article> {
   @HiveField(2)
   final Id<User> authorId;
 
+  @HiveField(9)
+  final Instant createdAt;
   @HiveField(8)
   final Instant publishedAt;
 

@@ -143,9 +143,9 @@ class AppConfig {
     return 'assets/theme/$assetName';
   }
 
-  AppConfig copyWith({String host, String title}) {
+  AppConfig copyWith({String name, String host, String title}) {
     return AppConfig(
-      name: name,
+      name: name ?? this.name,
       host: host ?? this.host,
       title: title ?? this.title,
       primaryColor: primaryColor,

@@ -19,6 +19,7 @@ class CourseDetailsPage extends StatelessWidget {
             actions: <Widget>[
               IconButton(
                 icon: Icon(Icons.folder),
+                tooltip: context.s.general_action_view_course,
                 onPressed: () =>
                     context.navigator.pushNamed('/files/courses/${course.id}'),
               ),
