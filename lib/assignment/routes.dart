@@ -11,7 +11,7 @@ final assignmentRoutes = FancyRoute(
   matcher: Matcher.path('homework'),
   builder: (_, result) {
     // Query string is stored inside the fragment, e.g.:
-    // https://schul-cloud.org/homework/#?dueDateFrom=2020-03-09&dueDateTo=2020-03-27&private=true&publicSubmissions=false&sort=updatedAt&sortorder=1&teamSubmissions=true
+    // https://hpi-schul-cloud.de/homework/#?dueDateFrom=2020-03-09&dueDateTo=2020-03-27&private=true&publicSubmissions=false&sort=updatedAt&sortorder=1&teamSubmissions=true
     final query = Uri.parse(result.uri.fragment).queryParameters;
     final selection = AssignmentsPage.sortFilterConfig.tryParseWebQuery(query);
     return AssignmentsPage(sortFilterSelection: selection);
