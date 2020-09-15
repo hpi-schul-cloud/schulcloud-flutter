@@ -111,7 +111,7 @@ class _SignInFormState extends State<SignInForm> {
           onPressed: () async {
             setState(() => _isSigningInAsDemoStudent = true);
             try {
-              await demoSignIn('demo-lehrer@schul-cloud.org', 'schulcloud');
+              await demoSignIn('demo-schueler@schul-cloud.org', 'schulcloud');
             } catch (e) {
               logger.e(exceptionMessage(e, context));
               context.scaffold.showSnackBar(SnackBar(
@@ -128,7 +128,14 @@ class _SignInFormState extends State<SignInForm> {
           isLoading: _isSigningInAsDemoTeacher,
           onPressed: () async {
             setState(() => _isSigningInAsDemoTeacher = true);
-            await demoSignIn('demo-schueler@schul-cloud.org', 'schulcloud');
+            try {
+              await demoSignIn('demo-lehrer@schul-cloud.org', 'schulcloud');
+            } catch (e) {
+              logger.e(exceptionMessage(e, context));
+              context.scaffold.showSnackBar(SnackBar(
+                content: Text(exceptionMessage(e, context)),
+              ));
+            }
             setState(() => _isSigningInAsDemoTeacher = false);
           },
           child: Text(s.auth_signIn_form_demo_teacher),
