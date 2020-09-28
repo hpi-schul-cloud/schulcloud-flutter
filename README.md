@@ -1,5 +1,7 @@
 # A Flutter based mobile App for the HPI Schul-Cloud
 
+This is currently an internal beta.
+
 ![Build & Lint](https://github.com/hpi-schul-cloud/schulcloud-flutter/workflows/Build%20&%20Lint/badge.svg)
 
 Please check our [wiki][wiki] for more info:
