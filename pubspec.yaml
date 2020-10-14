@@ -24,7 +24,6 @@ dependencies:
   banners: ^0.2.0
   black_hole_flutter: ^0.2.13
   collection: ^1.14.13
-  cupertino_icons: ^0.1.2
   datetime_picker_formfield: ^1.0.0
   device_info: ^0.4.2+4
   file_picker: ^1.13.2
