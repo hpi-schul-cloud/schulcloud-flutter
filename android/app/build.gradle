@@ -78,6 +78,10 @@ android {
             dimension "brand"
             applicationId "cloud.niedersachsen.android"
         }
+        nbc_audit {
+            dimension "brand"
+            applicationId "cloud.niedersachsen.audit.android"
+        }
         open {
             dimension "brand"
             applicationId "org.schulcloud.open.android"

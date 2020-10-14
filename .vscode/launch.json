@@ -6,54 +6,49 @@
       "type": "dart",
       "request": "launch",
       "program": "lib/main_sc_test.dart",
-      "args": [
-        "--flavor=sc"
-      ]
+      "args": ["--flavor=sc_test"]
     },
     {
       "name": "SC",
       "type": "dart",
       "request": "launch",
       "program": "lib/main_sc.dart",
-      "args": [
-        "--flavor=sc"
-      ]
+      "args": ["--flavor=sc"]
     },
     {
       "name": "BRB",
       "type": "dart",
       "request": "launch",
       "program": "lib/main_brb.dart",
-      "args": [
-        "--flavor=brb"
-      ]
+      "args": ["--flavor=brb"]
     },
     {
       "name": "N21",
       "type": "dart",
       "request": "launch",
       "program": "lib/main_n21.dart",
-      "args": [
-        "--flavor=n21"
-      ]
+      "args": ["--flavor=n21"]
+    },
+    {
+      "name": "NBC audit",
+      "type": "dart",
+      "request": "launch",
+      "program": "lib/main_nbc_audit.dart",
+      "args": ["--flavor=nbc_audit"]
     },
     {
       "name": "Open",
       "type": "dart",
       "request": "launch",
       "program": "lib/main_open.dart",
-      "args": [
-        "--flavor=open"
-      ]
+      "args": ["--flavor=open"]
     },
     {
       "name": "THR",
       "type": "dart",
       "request": "launch",
       "program": "lib/main_thr.dart",
-      "args": [
-        "--flavor=thr"
-      ]
+      "args": ["--flavor=thr"]
     }
   ]
 }
