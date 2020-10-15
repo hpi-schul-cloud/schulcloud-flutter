@@ -127,7 +127,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        flavor: ["sc", "sc_test", "brb", "n21", "open", "thr"]
+        flavor: ["sc", "sc_test", "brb", "n21", "nbc_audit", "open", "thr"]
       fail-fast: false
     steps:
       - name: Install Java
