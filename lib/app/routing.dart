@@ -1,4 +1,4 @@
-import 'package:flutter/widgets.dart' hide Route, RouteBuilder;
+import 'package:flutter/widgets.dart' hide Route, Router;
 import 'package:flutter_deep_linking/flutter_deep_linking.dart';
 import 'package:schulcloud/assignment/assignment.dart';
 import 'package:schulcloud/auth/module.dart';

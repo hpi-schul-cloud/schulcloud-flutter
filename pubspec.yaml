@@ -13,7 +13,7 @@ homepage: https://github.com/hpi-schul-cloud/schulcloud-flutter
 
 environment:
   sdk: ">=2.7.0 <3.0.0"
-  flutter: ">=1.19.0 <1.21.0"
+  flutter: ">=1.22.0 <1.23.0"
 
 dependencies:
   flutter:
@@ -24,7 +24,6 @@ dependencies:
   banners: ^0.2.0
   black_hole_flutter: ^0.2.13
   collection: ^1.14.13
-  cupertino_icons: ^0.1.2
   datetime_picker_formfield: ^1.0.0
   device_info: ^0.4.2+4
   file_picker: ^1.13.2
@@ -86,7 +85,7 @@ dev_dependencies:
   hive_generator: ^0.7.1
   intl_utils: ^1.6.3
   mockito: ^4.1.1
-  screenshots: ^2.1.1
+  # screenshots: ^2.1.1
   # We need to use a version compatible with test_api 0.2.11 required by flutter_driver.
   test: ^1.11.0
 
