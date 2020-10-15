@@ -39,6 +39,5 @@ void main() {
         }),
       );
     });
-    // The homework route still doesn't work.
-  }, skip: true);
+  });
 }
