@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="appName">NBC (Audit)</string>
+    <string name="deepLinking_host1">nbc-audit.hpi-schul-cloud.org</string>
+    <string name="deepLinking_host2">www.nbc-audit.hpi-schul-cloud.org</string>
+</resources>
