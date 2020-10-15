@@ -11,7 +11,7 @@ analyzer:
 
 # These are _a lot_ of strict linter rules. If you think that a rule should be
 # turned off, please open an issue at
-# https://github.com/schul-cloud/schulcloud-flutter/issues/new
+# https://github.com/hpi-schul-cloud/schulcloud-flutter/issues/new
 linter:
   rules:
     always_put_required_named_parameters_first: false

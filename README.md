@@ -1,10 +1,12 @@
 # A Flutter based mobile App for the HPI Schul-Cloud
 
-![Build & Lint](https://github.com/schul-cloud/schulcloud-flutter/workflows/Build%20&%20Lint/badge.svg)
+This is currently an internal beta.
+
+![Build & Lint](https://github.com/hpi-schul-cloud/schulcloud-flutter/workflows/Build%20&%20Lint/badge.svg)
 
 Please check our [wiki][wiki] for more info:
 - [Getting started][wiki]
-- [Run the app](https://github.com/schul-cloud/schulcloud-flutter/wiki/Run-the-app)
+- [Run the app](https://github.com/hpi-schul-cloud/schulcloud-flutter/wiki/Run-the-app)
 
 Feel free to contribute :)
 
@@ -19,4 +21,4 @@ For help getting started with Flutter, view the
 samples, guidance on mobile development, and a full API reference.
 
 
-[wiki]: https://github.com/schul-cloud/schulcloud-flutter/wiki
+[wiki]: https://github.com/hpi-schul-cloud/schulcloud-flutter/wiki

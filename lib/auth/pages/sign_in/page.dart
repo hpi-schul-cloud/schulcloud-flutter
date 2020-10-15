@@ -71,7 +71,7 @@ class SignInPage extends StatelessWidget {
                       BorderSide(color: theme.primaryColor.contrastColor),
                   highlightedBorderColor: theme.primaryColor.contrastColor,
                   onPressed: () =>
-                      tryLaunchingUrl('https://blog.schul-cloud.org/faq'),
+                      tryLaunchingUrl('https://blog.hpi-schul-cloud.de/faq'),
                   icon: Icon(Icons.help_outline),
                   label: Text(s.auth_signIn_faq),
                 ),

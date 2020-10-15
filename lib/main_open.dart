@@ -29,7 +29,7 @@ const _openRed = MaterialColor(0xffdf0b40, {
 
 const openAppConfig = AppConfig(
   name: 'open',
-  host: 'open.schul-cloud.org',
+  host: 'open.hpi-schul-cloud.de',
   title: 'Open Schul-Cloud',
   primaryColor: _openBlue,
   secondaryColor: _openRed,
