@@ -161,7 +161,7 @@ class SortFilterSelection<T> {
             padding: EdgeInsets.symmetric(horizontal: 16),
             child: StatefulBuilder(
               builder: (_, setState) {
-                return SortFilterSelectionWidget(
+                return _SortFilterSelectionWidget(
                   selection: currentSelection,
                   onSelectionChange: (selection) {
                     setState(() => currentSelection = selection);
@@ -178,8 +178,8 @@ class SortFilterSelection<T> {
   }
 }
 
-class SortFilterSelectionWidget<T> extends StatelessWidget {
-  const SortFilterSelectionWidget({
+class _SortFilterSelectionWidget<T> extends StatelessWidget {
+  const _SortFilterSelectionWidget({
     Key key,
     @required this.selection,
     @required this.onSelectionChange,
@@ -196,16 +196,17 @@ class SortFilterSelectionWidget<T> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
+    return ListView(
       controller: scrollController,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          _buildSortSection(context),
-          for (final filterKey in config.filters.keys)
-            _buildFilterSection(context, filterKey),
-        ],
-      ),
+      children: [
+        SizedBox(height: 8),
+        Center(child: DragIndicator()),
+        SizedBox(height: 8),
+        _buildSortSection(context),
+        for (final filterKey in config.filters.keys)
+          _buildFilterSection(context, filterKey),
+        SizedBox(height: 8),
+      ],
     );
   }
 
