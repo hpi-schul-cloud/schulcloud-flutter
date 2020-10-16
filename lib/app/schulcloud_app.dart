@@ -120,7 +120,7 @@ class SignedInScreenState extends ReceiveShareState<SignedInScreen> {
               for (final tab in _BottomTab.values)
                 BottomNavigationBarItem(
                   icon: Icon(tab.icon, key: tab.key),
-                  title: Text(tab.title(s)),
+                  label: tab.title(s),
                   backgroundColor: barColor,
                 ),
             ],
