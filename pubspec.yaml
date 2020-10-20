@@ -64,7 +64,7 @@ dependencies:
   share:
     git:
       url: https://github.com/d-silveira/flutter-share.git
-      ref: 1f8b139
+      ref: 998cced
   swipeable_page_route: ^0.1.3
   streaming_shared_preferences: ^1.0.1
   system_info: ^0.1.3
