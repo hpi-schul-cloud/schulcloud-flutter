@@ -10,15 +10,15 @@ class NewsPage extends StatelessWidget {
 
   static final sortFilterConfig = SortFilter<Article>(
     sorters: {
-      'name': Sorter<Article>.name(
+      'name': Sorter.name(
         (s) => s.general_entity_property_name,
         selector: (article) => article.title,
       ),
-      'createdAt': Sorter<Article>.simple(
+      'createdAt': Sorter.simple(
         (s) => s.general_entity_property_createdAt,
         selector: (article) => article.createdAt,
       ),
-      'publishedAt': Sorter<Article>.simple(
+      'publishedAt': Sorter.simple(
         (s) => s.general_entity_property_publishedAt,
         selector: (article) => article.publishedAt,
       ),
