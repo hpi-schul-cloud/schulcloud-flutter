@@ -50,6 +50,7 @@ class FancyAppBar extends StatelessWidget {
       // inside an inner navigator.
       heroTag: 'MorphingAppBar-${context.navigator.hashCode}',
       pinned: true,
+      brightness: backgroundColor.estimatedBrightness,
       backgroundColor: backgroundColor,
       title: DefaultTextStyle.merge(
         style: TextStyle(color: color),
