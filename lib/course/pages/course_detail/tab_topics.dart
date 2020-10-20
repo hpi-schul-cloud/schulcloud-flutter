@@ -27,6 +27,7 @@ class TopicsTab extends StatelessWidget {
             builder: handleLoadingErrorEmptySliver(
               emptyStateBuilder: (_) => EmptyStatePage(
                 text: context.s.course_courseDetails_topics_empty,
+                asset: 'topics',
               ),
               builder: (context, lessons, _) {
                 lessons = lessons.sorted();

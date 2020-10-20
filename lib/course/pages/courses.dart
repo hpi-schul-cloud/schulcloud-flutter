@@ -53,6 +53,7 @@ class CoursesPage extends StatelessWidget {
         actions: <Widget>[SortFilterIconButton(showSortFilterSheet)],
       ),
       emptyStateTextGetter: (s) => s.course_coursesPage_empty,
+      emptyStateAsset: 'courses',
       filteredEmptyStateTextGetter: (s) => s.course_coursesPage_emptyFiltered,
       builder: (_, course, __, ___) {
         return Padding(
