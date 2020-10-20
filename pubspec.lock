@@ -1007,7 +1007,7 @@ packages:
       name: swipeable_page_route
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.1.4"
+    version: "0.1.5"
   sync_http:
     dependency: transitive
     description:
