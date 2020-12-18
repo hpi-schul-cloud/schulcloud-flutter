@@ -10,8 +10,6 @@ import 'package:schulcloud/settings/module.dart';
 import 'main_sc.dart';
 
 Future<void> main({AppConfig appConfig = scAppConfig}) async {
-  _showLoadingPage();
-
   await runWithErrorReporting(() async {
     Logger.level = Level.debug;
     logger.i('Starting…');
@@ -43,12 +41,4 @@ Future<void> main({AppConfig appConfig = scAppConfig}) async {
     logger.d('Running…');
     runApp(SchulCloudApp());
   });
-}
-
-void _showLoadingPage() {
-  runApp(Container(
-    color: Colors.white,
-    alignment: Alignment.center,
-    child: CircularProgressIndicator(),
-  ));
 }
