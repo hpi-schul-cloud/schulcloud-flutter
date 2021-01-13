@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:mime/mime.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:schulcloud/app/module.dart';
+import 'package:schulcloud/app/module.dart' hide Permission;
 
 import 'data.dart';
 import 'pages/choose_destination_page.dart';
@@ -54,9 +54,7 @@ class FileService {
   }
 
   Future<void> ensureStoragePermissionGranted() async {
-    final permissions =
-        await PermissionHandler().requestPermissions([PermissionGroup.storage]);
-    if (permissions[PermissionGroup.storage] != PermissionStatus.granted) {
+    if (!await Permission.storage.request().isGranted) {
       throw PermissionNotGranted();
     }
   }

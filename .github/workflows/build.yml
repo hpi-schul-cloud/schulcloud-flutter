@@ -82,7 +82,7 @@ jobs:
           bundle install --without documentation
         if: github.event_name == 'pull_request'
       - name: Run danger on generated report
-        uses: MeilCli/danger-action@v1
+        uses: MeilCli/danger-action@v5
         if: github.event_name == 'pull_request'
         with:
           danger_file: Dangerfile
@@ -146,7 +146,10 @@ jobs:
           name: source
           path: .
 
-      - run: flutter build apk --target=lib/main_${{ matrix.flavor }}.dart --flavor=${{ matrix.flavor }}
+      # https://github.com/flutter/flutter/issues/58247
+      - run: |
+          flutter build apk --target=lib/main_${{ matrix.flavor }}.dart --flavor=${{ matrix.flavor }} --debug
+          flutter build apk --target=lib/main_${{ matrix.flavor }}.dart --flavor=${{ matrix.flavor }}
         env:
           RELEASE_USE_DEBUG_KEY: true
 

@@ -3,13 +3,10 @@ import 'dart:async';
 import 'package:banners/banners.dart';
 import 'package:black_hole_flutter/black_hole_flutter.dart';
 import 'package:flutter/material.dart' hide Banner;
-import 'package:flutter_absolute_path/flutter_absolute_path.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:navigation_patterns/navigation_patterns.dart';
 import 'package:schulcloud/brand/brand.dart';
-import 'package:schulcloud/file/file.dart';
 import 'package:schulcloud/generated/l10n.dart';
-import 'package:share/share.dart';
 
 import 'banner/service.dart';
 import 'banner/widgets.dart';

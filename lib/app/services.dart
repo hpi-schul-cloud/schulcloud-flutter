@@ -23,21 +23,15 @@ Future<void> initServices() async {
   logger.d('Initializing hive…');
   await initializeHive();
 
+  var timeZone = await FlutterNativeTimezone.getLocalTimezone();
+  if (timeZone == 'GMT') timeZone = 'UTC';
+  await TimeMachine.initialize({
+    'rootBundle': rootBundle,
+    'timeZone': timeZone,
+  });
+
   logger.d('Registering remaining services…');
   services
-    ..registerSingletonAsync<void>(() async {
-      // We need to initialize TimeMachine before launching the app, and using
-      // GetIt to keep track of initialization statuses is the simplest way.
-      // Hence we just ignore the return value.
-      var timeZone = await FlutterNativeTimezone.getLocalTimezone();
-      if (timeZone == 'GMT') {
-        timeZone = 'UTC';
-      }
-      await TimeMachine.initialize({
-        'rootBundle': rootBundle,
-        'timeZone': timeZone,
-      });
-    }, instanceName: 'ignored')
     ..registerSingletonAsync(PackageInfo.fromPlatform)
     ..registerSingleton(BannerService())
     ..registerSingleton(SnackBarService())
