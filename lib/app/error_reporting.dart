@@ -13,7 +13,7 @@ const _sentryDsn =
 Future<void> runWithErrorReporting(Future<void> Function() body) async {
   await SentryFlutter.init(
     (options) async {
-      if (await _enableSentry()) options.dsn = _sentryDsn;
+      options.dsn = await _enableSentry() ? _sentryDsn : '';
     },
     appRunner: body,
   );
