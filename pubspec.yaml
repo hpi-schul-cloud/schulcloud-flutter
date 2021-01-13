@@ -25,8 +25,8 @@ dependencies:
   black_hole_flutter: ^0.2.13
   collection: ^1.14.13
   datetime_picker_formfield: ^1.0.0
-  device_info: ^0.4.2+4
-  file_picker: ^1.13.2
+  device_info: ^1.0.0
+  file_picker: ^2.1.5+1
   flare_flutter: ^2.0.6
   flutter_absolute_path: ^1.0.6
   flutter_deep_linking: ^0.1.2
