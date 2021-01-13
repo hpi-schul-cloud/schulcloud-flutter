@@ -314,13 +314,6 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
-  flutter_absolute_path:
-    dependency: "direct main"
-    description:
-      name: flutter_absolute_path
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.0.6"
   flutter_cached:
     dependency: transitive
     description:
@@ -380,13 +373,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.0.11"
-  flutter_sequence_animation:
-    dependency: transitive
-    description:
-      name: flutter_sequence_animation
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "3.0.1"
   flutter_svg:
     dependency: "direct main"
     description:
@@ -399,13 +385,6 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
-  flutter_villains:
-    dependency: "direct main"
-    description:
-      name: flutter_villains
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.2.1"
   flutter_web_plugins:
     dependency: transitive
     description: flutter
@@ -687,7 +666,7 @@ packages:
     source: hosted
     version: "0.1.4"
   path_provider:
-    dependency: "direct main"
+    dependency: transitive
     description:
       name: path_provider
       url: "https://pub.dartlang.org"

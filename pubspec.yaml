@@ -28,14 +28,12 @@ dependencies:
   device_info: ^1.0.0
   file_picker: ^2.1.5+1
   flare_flutter: ^2.0.6
-  flutter_absolute_path: ^1.0.6
   flutter_deep_linking: ^0.1.2
   flutter_downloader: ^1.4.4
   flutter_html: ^1.0.2
   flutter_inappwebview: ^4.0.0+4
   flutter_native_timezone: ^1.0.4
   flutter_svg: ^0.19.1
-  flutter_villains: ^1.2.1
   font_awesome_flutter: ^8.8.1
   get_it: ^5.0.4
   grec_minimal: ^0.0.4
@@ -56,7 +54,6 @@ dependencies:
       url: https://github.com/JonasWanke/navigation_patterns.git
       ref: b1841ad
   package_info: ">=0.4.1 <2.0.0"
-  path_provider: ^1.6.11
   permission_handler: ^5.0.1+1
   rxdart: ^0.24.1
   sentry: ^4.0.1
