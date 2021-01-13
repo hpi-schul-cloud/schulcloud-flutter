@@ -4,19 +4,38 @@ import 'package:logger/logger.dart';
 import 'package:sentry/sentry.dart' hide User;
 import 'package:sentry_flutter/sentry_flutter.dart';
 
+import 'logger.dart';
 import 'services.dart';
 import 'services/storage.dart';
 
 const _sentryDsn =
     'https://2d9dda495b8f4626b01e28e24c19a9b5@sentry.schul-cloud.dev/7';
 
-Future<void> runWithErrorReporting(Future<void> Function() body) async {
-  await SentryFlutter.init(
-    (options) async {
-      options.dsn = await _enableSentry() ? _sentryDsn : '';
-    },
-    appRunner: body,
-  );
+Future<void> runWithErrorReporting(Future<void> Function() appRuner) async {
+  logger.d('1');
+
+  final isSentryEnabled = await _enableSentry();
+  if (isSentryEnabled) {
+    await SentryFlutter.init((options) => options.dsn = _sentryDsn);
+  }
+
+  await runZonedGuarded(() async {
+    await appRuner();
+  }, (exception, stackTrace) async {
+    if (isSentryEnabled) {
+      logger.e('Uncaught error:', exception, stackTrace);
+      return;
+    }
+
+    final event = SentryEvent(
+      throwable: ThrowableMechanism(
+        Mechanism(type: 'runZonedGuarded', handled: true),
+        exception,
+      ),
+      level: SentryLevel.fatal,
+    );
+    await Sentry.captureEvent(event);
+  });
 }
 
 bool get isInDebugMode {

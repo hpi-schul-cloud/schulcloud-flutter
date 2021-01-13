@@ -167,5 +167,6 @@
   "settings_legalBar_privacyPolicy": "Datenschutzerklärung",
   "settings_privacy": "Datenschutz",
   "settings_privacy_errorReportingEnabled": "Fehlerberichte senden",
-  "settings_privacy_errorReportingEnabled_description": "Nach jedem Absturz und gröberen internen Fehler wird ein anonymer Bericht hochgeladen, um die Benutzererfahrung zu verbessern."
+  "settings_privacy_errorReportingEnabled_description": "Nach jedem Absturz und gröberen internen Fehler wird ein anonymer Bericht hochgeladen, um die Benutzererfahrung zu verbessern.",
+  "settings_restartRequired": "Diese Änderung wird erst nach einem Neustart der App aktiv."
 }

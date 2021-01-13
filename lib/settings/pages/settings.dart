@@ -38,6 +38,11 @@ class _PrivacySection extends StatelessWidget {
         preference: services.storage.errorReportingEnabled,
         title: s.settings_privacy_errorReportingEnabled,
         subtitle: s.settings_privacy_errorReportingEnabled_description,
+        onChanged: () {
+          context.scaffold.showSnackBar(
+            SnackBar(content: Text(context.s.settings_restartRequired)),
+          );
+        },
       ),
     );
   }
