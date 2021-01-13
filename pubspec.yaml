@@ -34,10 +34,10 @@ dependencies:
   flutter_html: ^1.0.2
   flutter_inappwebview: ^4.0.0+4
   flutter_native_timezone: ^1.0.4
-  flutter_svg: ^0.17.4
+  flutter_svg: ^0.19.1
   flutter_villains: ^1.2.1
   font_awesome_flutter: ^8.8.1
-  get_it: ^4.0.4
+  get_it: ^5.0.4
   grec_minimal: ^0.0.4
   hive: ^1.4.2
   hive_cache:
@@ -48,8 +48,7 @@ dependencies:
   html: ^0.14.0+3
   http: ^0.12.2
   intl: ^0.16.1
-  logger: ^0.7.0+1
-  logger_flutter: ^0.7.1
+  logger: ^0.9.4
   meta: ^1.1.8
   mime: ^0.9.6+3
   navigation_patterns:
@@ -71,7 +70,6 @@ dependencies:
   url_launcher: ^5.5.0
 dependency_overrides:
   dartx: ^0.5.0
-  flutter_svg: ^0.18.0
   # https://github.com/Dana-Ferguson/time_machine/issues/44
   time_machine:
     git:

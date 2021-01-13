@@ -31,9 +31,7 @@ Future<void> runWithErrorReporting(Future<void> Function() body) async {
         ));
       };
 
-      Logger.addLogListener(_reportLogEvent);
       await body();
-      Logger.removeLogListener(_reportLogEvent);
     },
     (error, stackTrace) async {
       if (isInDebugMode) {
@@ -54,23 +52,30 @@ bool get isInDebugMode {
   return inDebugMode;
 }
 
-const _loggerLevelToSentryLevel = {
-  Level.verbose: SeverityLevel.debug,
-  Level.debug: SeverityLevel.debug,
-  Level.info: SeverityLevel.info,
-  Level.warning: SeverityLevel.warning,
-  Level.error: SeverityLevel.error,
-  Level.wtf: SeverityLevel.fatal,
-  Level.nothing: SeverityLevel.debug,
-};
-Future<void> _reportLogEvent(LogEvent event) async {
-  await reportEvent(Event(
-    level: _loggerLevelToSentryLevel[event.level],
-    message: event.message?.toString(),
-    exception: event.error,
-    stackTrace: event.stackTrace,
+Future<void> reportLogEvent(
+  Level level,
+  dynamic message,
+  dynamic error,
+  StackTrace stackTrace,
+) async {
+  const _loggerLevelToSentryLevel = {
+    Level.verbose: SeverityLevel.debug,
+    Level.debug: SeverityLevel.debug,
+    Level.info: SeverityLevel.info,
+    Level.warning: SeverityLevel.warning,
+    Level.error: SeverityLevel.error,
+    Level.wtf: SeverityLevel.fatal,
+    Level.nothing: SeverityLevel.debug,
+  };
+
+  final event = Event(
+    level: _loggerLevelToSentryLevel[level],
+    message: message?.toString(),
+    exception: error,
+    stackTrace: stackTrace,
     tags: {'source': 'logger'},
-  ));
+  );
+  await reportEvent(event);
 }
 
 Future<bool> reportEvent(Event event) async {

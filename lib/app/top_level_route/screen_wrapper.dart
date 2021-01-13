@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:logger_flutter/logger_flutter.dart';
 import 'package:schulcloud/auth/module.dart';
 
 import '../logger.dart';
@@ -37,14 +36,8 @@ class _TopLevelScreenWrapperState extends State<TopLevelScreenWrapper> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return LogConsoleOnShake(
-      child: Scaffold(
-        key: _scaffoldKey,
-        body: widget.child,
-      ),
-    );
-  }
+  Widget build(BuildContext context) =>
+      Scaffold(key: _scaffoldKey, body: widget.child);
 
   void _handleUri(Uri uri) {
     if (uri == null) {

@@ -9,19 +9,32 @@ import 'package:time_machine/time_machine_text_patterns.dart';
 
 import 'error_reporting.dart';
 
-final logger = Logger(
-  filter: _FancyFilter(),
-  printer: _FancyPrinter(),
-);
+final logger = _FancyLogger();
+
+/// The new logger package doesn't offer a way to access raw [LogEvent]s with
+/// their error and stack trace fields, but only formatted output after
+/// [LogPrinter]s.
+class _FancyLogger extends Logger {
+  _FancyLogger() : super(filter: _FancyFilter(), printer: _FancyPrinter());
+
+  @override
+  void log(
+    Level level,
+    dynamic message, [
+    dynamic error,
+    StackTrace stackTrace,
+  ]) {
+    super.log(level, message, error, stackTrace);
+    reportLogEvent(level, message, error, stackTrace);
+  }
+}
 
 class _FancyFilter extends LogFilter {
   static const _prodMinLevel = Level.error;
 
   @override
   bool shouldLog(LogEvent event) {
-    if (!isInDebugMode) {
-      return event.level.index >= _prodMinLevel.index;
-    }
+    if (!isInDebugMode) return event.level.index >= _prodMinLevel.index;
     return true;
   }
 }
@@ -29,12 +42,8 @@ class _FancyFilter extends LogFilter {
 /// A [LogPrinter] similar to [PrettyPrinter], but using less vertical space.
 class _FancyPrinter extends LogPrinter {
   static final levelEmojis = {
+    ...PrettyPrinter.levelEmojis,
     Level.verbose: '💤',
-    Level.debug: '🐛',
-    Level.info: '💡',
-    Level.warning: '⚠️',
-    Level.error: '⛔',
-    Level.wtf: '👾',
   };
 
   static final timeFormat =
@@ -46,87 +55,75 @@ class _FancyPrinter extends LogPrinter {
   static const middleCorner = ' ├─';
   static const bottomCorner = ' └─';
 
+  final _prettyPrinter = PrettyPrinter();
+
   @override
-  void log(LogEvent event) {
+  List<String> log(LogEvent event) {
     final messageStr = stringifyMessage(event.message) ?? '';
     final timeStr = timeFormat.format(Instant.now().inLocalZone().clockTime);
 
     final level = event.error is AssertionError ? Level.wtf : event.level;
 
-    String stackTraceStr;
+    String stackTrace;
     if (event.stackTrace != null || [Level.error, Level.wtf].contains(level)) {
-      stackTraceStr = _formatStackTrace(event.stackTrace ?? StackTrace.current);
+      stackTrace = _prettyPrinter.formatStackTrace(
+        event.stackTrace ?? StackTrace.current,
+        stackTraceMethodCount,
+      );
     }
     final errorStr = stringifyMessage(event.error);
-    formatAndPrint(level, messageStr, timeStr, errorStr, stackTraceStr);
+    return format(level, messageStr, timeStr, errorStr, stackTrace).toList();
   }
 
   String stringifyMessage(dynamic message) {
-    if (message == null) {
-      return null;
+    if (message == null) return null;
+    if (message is String) return message;
+
+    dynamic toEncodable(dynamic object) {
+      try {
+        return object.toJson();
+      } catch (_) {
+        try {
+          return '$object';
+        } catch (_) {
+          return object.runtimeType;
+        }
+      }
     }
-    if (message is String) {
-      return message;
-    }
-    try {
-      return JsonEncoder.withIndent('  ').convert(message);
-      // ignore: avoid_catching_errors
-    } on JsonUnsupportedObjectError {
-      return message.toString();
-    }
+
+    return JsonEncoder.withIndent('  ', toEncodable).convert(message);
   }
 
-  String _formatStackTrace(StackTrace stackTrace) {
-    final formatted = <String>[];
-    var count = 0;
-    for (final line in stackTrace.toString().split('\n')) {
-      final match = PrettyPrinter.stackTraceRegex.matchAsPrefix(line);
-      if (match == null) {
-        formatted.add(line);
-        continue;
-      }
-
-      final method = match[1];
-      final package = match[2];
-      if (method == 'FancyPrinter.log' ||
-          package.startsWith('package:logger')) {
-        continue;
-      }
-
-      final newLine = '#$count  $method ($package)';
-      formatted.add(newLine.replaceAll('<anonymous closure>', '()'));
-      if (++count == stackTraceMethodCount) {
-        break;
-      }
-    }
-    return formatted.join('\n');
-  }
-
-  void formatAndPrint(Level level, String message, String time, String error,
-      String stackTrace) {
+  Iterable<String> format(
+    Level level,
+    String message,
+    String time,
+    String error,
+    String stackTrace,
+  ) sync* {
     final color = PrettyPrinter.levelColors[level];
 
     final messageFirstLinebreakIndex = message.indexOf('\n');
     final title = messageFirstLinebreakIndex >= 0
         ? message.substring(0, messageFirstLinebreakIndex)
         : message;
-    _printSection(
-      title: ' $time: $title',
+    yield* _formatSection(
+      title: '$time: $title',
       content: messageFirstLinebreakIndex >= 0
-          ? message.substring(messageFirstLinebreakIndex)
+          ? message.substring(messageFirstLinebreakIndex + 1)
           : '',
       firstLinePrefix: levelEmojis[level],
       isLastSection: error == null && stackTrace == null,
       color: color,
     );
 
-    _printSection(
+    yield* _formatSection(
       title: 'Error:',
       content: error,
       isLastSection: stackTrace == null,
       color: color,
     );
-    _printSection(
+    yield* _formatSection(
       title: 'Stack trace:',
       content: stackTrace,
       firstLinePrefix: bottomCorner,
@@ -135,24 +132,24 @@ class _FancyPrinter extends LogPrinter {
     );
   }
 
-  void _printSection({
+  Iterable<String> _formatSection({
     @required String title,
     String firstLinePrefix,
     String content,
     @required bool isLastSection,
     @required AnsiColor color,
-  }) {
+  }) sync* {
     if (content == null) {
       return;
     }
 
     firstLinePrefix ??= isLastSection ? bottomCorner : middleCorner;
-    println(color('$firstLinePrefix $title'));
+    yield color('$firstLinePrefix \t$title');
 
     if (content.isNotEmpty) {
       final prefix = isLastSection ? verticalSpace : verticalLine;
       for (final line in content.split('\n')) {
-        println(color('$prefix $line'));
+        yield color('$prefix \t$line');
       }
     }
   }

@@ -400,7 +400,7 @@ packages:
       name: flutter_svg
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.18.1"
+    version: "0.19.1"
   flutter_test:
     dependency: transitive
     description: flutter
@@ -436,7 +436,7 @@ packages:
       name: get_it
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "4.0.4"
+    version: "5.0.4"
   glob:
     dependency: transitive
     description:
@@ -592,14 +592,7 @@ packages:
       name: logger
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.7.0+2"
-  logger_flutter:
-    dependency: "direct main"
-    description:
-      name: logger_flutter
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.7.1"
+    version: "0.9.4"
   logging:
     dependency: transitive
     description:
@@ -833,13 +826,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.24.1"
-  sensors:
-    dependency: transitive
-    description:
-      name: sensors
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.4.2+6"
   sentry:
     dependency: "direct main"
     description:
