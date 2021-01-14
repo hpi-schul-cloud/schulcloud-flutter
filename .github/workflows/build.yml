@@ -93,12 +93,14 @@ jobs:
         with:
           ruby-version: "2.6"
       - name: Install ruby gems
+        working-directory: ./app
         run: |
           gem install bundler
           bundle config set without 'documentation'
           bundle install
         if: github.event_name == 'pull_request'
       - name: Run danger on generated report
+        working-directory: ./app
         run: |
           gem install danger --version ">= 6.0.0"
           danger --dangerfile=Dangerfile --danger_id="danger-pr"
