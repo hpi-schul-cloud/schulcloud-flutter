@@ -1,0 +1,23 @@
+name: PR
+
+on: [pull_request]
+
+jobs:
+  add-labels:
+    name: Add labels
+    runs-on: ubuntu-latest
+    steps:
+      - uses: srvaroa/labeler@v0.6
+        with:
+          config_path: .github/labels.yml
+        env:
+          GITHUB_TOKEN: "${{ secrets.BOT_TOKEN }}"
+
+  assign-author:
+    name: Assign author
+    if: github.event.action == 'opened'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: samspills/assign-pr-to-author@v1.0
+        with:
+          repo-token: "${{ secrets.BOT_TOKEN }}"

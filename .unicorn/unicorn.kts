@@ -42,16 +42,6 @@ val CANARY = "canary"
 unicorn {
     gitHubAction {
         when (val event = this.event) {
-            is Action.Event.PullRequest -> {
-                event.pullRequest.addAuthorAsAssignee()
-                event.pullRequest.inferLabels(this)
-
-                runChecks {
-                    checkLabels()
-                    checkClosedIssues()
-                }
-            }
-
             is Action.Event.Push -> {
                 if (git.flow.currentBranch(this) !is Git.Flow.MasterBranch)
                     return@gitHubAction

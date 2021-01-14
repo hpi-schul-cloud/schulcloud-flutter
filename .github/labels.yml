@@ -1,0 +1,47 @@
+version: 1
+labels:
+  # Module
+  - label: "M: app"
+    files: ["app/lib/app/.*"]
+  - label: "M: assignment"
+    files: ["app/lib/assignment/.*"]
+  - label: "M: auth"
+    files: ["app/lib/auth/.*"]
+  - label: "M: brand"
+    files: ["app/lib/brand/.*"]
+  - label: "M: calendar"
+    files: ["app/lib/calendar/.*"]
+  - label: "M: course"
+    files: ["app/lib/course/.*"]
+  - label: "M: dashboard"
+    files: ["app/lib/dashboard/.*"]
+  - label: "M: file"
+    files: ["app/lib/file/.*"]
+  - label: "M: l10n"
+    files: ["app/lib/l10n/.*"]
+  - label: "M: news"
+    files: ["app/lib/news/.*"]
+  - label: "M: settings"
+    files: ["app/lib/settings/.*"]
+
+  # Package
+  - label: "P: api"
+    files: ["api/.*"]
+  - label: "P: app"
+    files: ["app/.*"]
+
+  # Type
+  - label: "T: build"
+    branch: "^build/.*"
+  - label: "T: change"
+    branch: "^change/.*"
+  - label: "T: docs"
+    branch: "^docs/.*"
+  - label: "T: feat"
+    branch: "^feat/.*"
+  - label: "T: fix"
+    branch: "^fix/.*"
+  - label: "T: refactor"
+    branch: "^refactor/.*"
+  - label: "T: test"
+    branch: "^test/.*"
