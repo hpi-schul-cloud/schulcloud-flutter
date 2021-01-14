@@ -10,53 +10,53 @@ class AssignmentsPage extends StatelessWidget {
 
   static final sortFilterConfig = SortFilter<Assignment>(
     sorters: {
-      'createdAt': Sorter<Assignment>.simple(
+      'createdAt': Sorter.simple(
         (s) => s.general_entity_property_createdAt,
         selector: (assignment) => assignment.createdAt,
       ),
-      'updatedAt': Sorter<Assignment>.simple(
+      'updatedAt': Sorter.simple(
         (s) => s.general_entity_property_updatedAt,
         selector: (assignment) => assignment.updatedAt,
       ),
-      'availableAt': Sorter<Assignment>.simple(
+      'availableAt': Sorter.simple(
         (s) => s.assignment_assignment_property_availableAt,
         webQueryKey: 'availableDate',
         selector: (assignment) => assignment.availableAt,
       ),
-      'dueAt': Sorter<Assignment>.simple(
+      'dueAt': Sorter.simple(
         (s) => s.assignment_assignment_property_dueAt,
         selector: (assignment) => assignment.dueAt,
       ),
     },
     defaultSorter: 'dueAt',
     filters: {
-      'dueAt': DateRangeFilter<Assignment>(
+      'dueAt': DateRangeFilter(
         (s) => s.assignment_assignment_property_dueAt,
         webQueryKey: 'dueDate',
         selector: (assignment) => assignment.dueAt?.inLocalZone()?.calendarDate,
         defaultSelection: DateRangeFilterSelection(start: LocalDate.today()),
       ),
-      'courseId': CategoryFilter<Assignment, Course>(
+      'courseId': CategoryFilter(
         (s) => s.assignment_assignment_property_course,
         selector: (assignment) => assignment.courseId,
         categoriesCollection: services.storage.root.courses,
         categoryLabelBuilder: (_, courseId) => CourseName(courseId),
         webQueryParser: (value) => Id<Course>(value),
       ),
-      'more': FlagsFilter<Assignment>(
+      'more': FlagsFilter(
         (s) => s.general_entity_property_more,
         filters: {
-          'isArchived': FlagFilter<Assignment>(
+          'isArchived': FlagFilter(
             (s) => s.general_entity_property_isArchived,
             selector: (assignment) => assignment.isArchived,
             defaultSelection: false,
           ),
-          'isPrivate': FlagFilter<Assignment>(
+          'isPrivate': FlagFilter(
             (s) => s.assignment_assignment_property_isPrivate,
             webQueryKey: 'private',
             selector: (assignment) => assignment.isPrivate,
           ),
-          'hasPublicSubmissions': FlagFilter<Assignment>(
+          'hasPublicSubmissions': FlagFilter(
             (s) => s.assignment_assignment_property_hasPublicSubmissions,
             webQueryKey: 'publicSubmissions',
             selector: (assignment) => assignment.hasPublicSubmissions,

@@ -3,6 +3,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:schulcloud/brand/brand.dart';
 
 import '../../utils.dart';
+import '../../widgets/text.dart';
 
 /// A screen with no content on it. Instead a placeholder is displayed,
 /// consisting of [child] (commonly an image) and a text underneath as well as
@@ -15,13 +16,16 @@ class EmptyStatePage extends StatelessWidget {
   const EmptyStatePage({
     @required this.text,
     this.child,
+    this.asset = 'default',
     this.actions = const [],
     this.onRetry,
   })  : assert(text != null),
+        assert(asset != null),
         assert(actions != null);
 
-  final Widget child;
   final String text;
+  final Widget child;
+  final String asset;
   final List<Widget> actions;
   final VoidCallback onRetry;
 
@@ -34,9 +38,13 @@ class EmptyStatePage extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           child ??
-              SvgPicture.asset('assets/empty_states/default.svg', height: 300),
+              SvgPicture.asset('assets/empty_states/$asset.svg', height: 300),
           SizedBox(height: 16),
-          Text(text, textAlign: TextAlign.center),
+          FancyText(
+            text,
+            emphasis: TextEmphasis.medium,
+            textAlign: TextAlign.center,
+          ),
           if (actions.isNotEmpty || onRetry != null) ...[
             SizedBox(height: 16),
             Row(

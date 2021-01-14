@@ -24,7 +24,19 @@ class FileBrowserPage extends StatelessWidget {
       sliver: CollectionBuilder<File>(
         collection: path.files,
         builder: handleLoadingErrorEmptySliver(
-          emptyStateBuilder: _buildEmptyState,
+          emptyStateBuilder: (context) => EmptyStatePage(
+            text: context.s.file_fileBrowser_empty,
+            child: SizedBox(
+              width: 100,
+              height: 100,
+              child: FlareActor(
+                'assets/empty_states/files.flr',
+                alignment: Alignment.center,
+                fit: BoxFit.contain,
+                animation: 'idle',
+              ),
+            ),
+          ),
           builder: (context, fileIds, isFetching) => SliverFileList(fileIds),
         ),
       ),
@@ -81,27 +93,5 @@ class FileBrowserPage extends StatelessWidget {
       assert(false, 'Unsupported path owner: ${path.ownerId.runtimeType}');
       return null;
     }
-  }
-
-  Widget _buildEmptyState(BuildContext context) {
-    return SliverFillViewport(
-      delegate: SliverChildListDelegate.fixed(
-        [
-          EmptyStatePage(
-            text: context.s.file_fileBrowser_empty,
-            child: SizedBox(
-              width: 100,
-              height: 100,
-              child: FlareActor(
-                'assets/empty_states/files.flr',
-                alignment: Alignment.center,
-                fit: BoxFit.contain,
-                animation: 'idle',
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
   }
 }

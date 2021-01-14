@@ -1,4 +1,5 @@
 import 'package:schulcloud/app/module.dart';
+import 'package:schulcloud/assignment/assignment.dart';
 
 part 'data.g.dart';
 
@@ -22,11 +23,16 @@ class Course implements Entity<Course> {
         assert(color != null),
         lessons = Collection<Lesson>(
           id: 'lessons of course $id',
-          fetcher: () async => Lesson.fetchList(courseId: id),
+          fetcher: () async => Lesson.fetchList(id),
         ),
         visibleLessons = Collection<Lesson>(
           id: 'visible lessons of course $id',
-          fetcher: () async => Lesson.fetchList(courseId: id, hidden: false),
+          fetcher: () async => Lesson.fetchList(id, hidden: false),
+        ),
+        currentAssignments = Collection<Assignment>(
+          id: 'currently open assignments of course $id',
+          fetcher: () async =>
+              Assignment.fetchList(courseId: id, notArchivedByUser: true),
         );
 
   Course.fromJson(Map<String, dynamic> data)
@@ -70,6 +76,8 @@ class Course implements Entity<Course> {
 
   final Collection<Lesson> lessons;
   final Collection<Lesson> visibleLessons;
+
+  final Collection<Assignment> currentAssignments;
 
   @override
   bool operator ==(Object other) =>
@@ -129,14 +137,16 @@ class Lesson implements Entity<Lesson>, Comparable<Lesson> {
   static Future<Lesson> fetch(Id<Lesson> id) async =>
       Lesson.fromJson(await services.api.get('lessons/$id').json);
 
-  static Future<List<Lesson>> fetchList({
-    Id<Course> courseId,
+  static Future<List<Lesson>> fetchList(
+    Id<Course> courseId, {
     bool hidden,
   }) async {
+    assert(courseId != null);
+
     final jsonList = await services.api.get(
       'lessons',
       queryParameters: {
-        if (courseId != null) 'courseId': courseId.value,
+        'courseId': courseId.value,
         if (hidden == true)
           'hidden': 'true'
         else if (hidden == false)

@@ -25,7 +25,6 @@ class FancyText extends StatefulWidget {
         assert(showRichText != null),
         assert(!showRichText || maxLines == null,
             "maxLines isn't supported in combination with showRichText."),
-        assert(maxLines == null || maxLines > 0),
         assert(estimatedWidth == null || estimatedWidth > 0),
         assert(!showRichText || textAlign == null,
             "textAlign isn't supported in combination with showRichText."),
