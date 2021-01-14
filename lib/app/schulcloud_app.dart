@@ -3,14 +3,10 @@ import 'dart:async';
 import 'package:banners/banners.dart';
 import 'package:black_hole_flutter/black_hole_flutter.dart';
 import 'package:flutter/material.dart' hide Banner;
-import 'package:flutter_absolute_path/flutter_absolute_path.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:navigation_patterns/navigation_patterns.dart';
 import 'package:schulcloud/brand/brand.dart';
-import 'package:schulcloud/file/file.dart';
 import 'package:schulcloud/generated/l10n.dart';
-import 'package:share/receive_share_state.dart';
-import 'package:share/share.dart';
 
 import 'banner/service.dart';
 import 'banner/widgets.dart';
@@ -58,7 +54,7 @@ class SignedInScreen extends StatefulWidget {
   SignedInScreenState createState() => SignedInScreenState();
 }
 
-class SignedInScreenState extends ReceiveShareState<SignedInScreen> {
+class SignedInScreenState extends State<SignedInScreen> {
   static final _navigationKey = GlobalKey<BottomNavigationPatternState>();
   static NavigatorState get currentNavigator =>
       _navigationKey.currentState.currentNavigator;
@@ -69,20 +65,8 @@ class SignedInScreenState extends ReceiveShareState<SignedInScreen> {
   @override
   void initState() {
     super.initState();
-    enableShareReceiving();
 
     scheduleMicrotask(_showSnackBars);
-  }
-
-  @override
-  void receiveShare(Share shared) {
-    logger.i('The user shared $shared into the app.');
-    Future.delayed(Duration(seconds: 1), () async {
-      await services.files.uploadFileFromLocalPath(
-        context: context,
-        localPath: await FlutterAbsolutePath.getAbsolutePath(shared.path),
-      );
-    });
   }
 
   @override

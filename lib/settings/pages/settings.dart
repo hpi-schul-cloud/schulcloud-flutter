@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:schulcloud/app/module.dart';
 
 import '../utils.dart';
@@ -37,6 +38,11 @@ class _PrivacySection extends StatelessWidget {
         preference: services.storage.errorReportingEnabled,
         title: s.settings_privacy_errorReportingEnabled,
         subtitle: s.settings_privacy_errorReportingEnabled_description,
+        onChanged: () {
+          context.scaffold.showSnackBar(
+            SnackBar(content: Text(context.s.settings_restartRequired)),
+          );
+        },
       ),
     );
   }
@@ -71,7 +77,7 @@ class _AboutSection extends StatelessWidget {
           ListTile(
             onTap: () => tryLaunchingUrl(
                 'https://github.com/schul-cloud/schulcloud-flutter'),
-            leading: Icon(Icons.code),
+            leading: Icon(FontAwesomeIcons.github),
             title: Text(s.settings_about_openSource),
             trailing: Icon(Icons.open_in_new),
           ),

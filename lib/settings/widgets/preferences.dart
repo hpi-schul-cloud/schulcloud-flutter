@@ -7,6 +7,7 @@ class SwitchPreference extends StatefulWidget {
     @required this.preference,
     @required this.title,
     this.subtitle,
+    this.onChanged,
   })  : assert(preference != null),
         assert(title != null),
         super(key: key);
@@ -14,6 +15,7 @@ class SwitchPreference extends StatefulWidget {
   final Preference<bool> preference;
   final String title;
   final String subtitle;
+  final VoidCallback onChanged;
 
   @override
   _SwitchPreferenceState createState() => _SwitchPreferenceState();
@@ -36,5 +38,6 @@ class _SwitchPreferenceState extends State<SwitchPreference> {
     setState(() => _isUpdating = true);
     await widget.preference.setValue(value);
     setState(() => _isUpdating = false);
+    widget.onChanged?.call();
   }
 }

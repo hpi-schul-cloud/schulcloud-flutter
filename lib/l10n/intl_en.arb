@@ -173,5 +173,6 @@
   "settings_legalBar_privacyPolicy": "Privacy Policy",
   "settings_privacy": "Privacy",
   "settings_privacy_errorReportingEnabled": "Send error reports",
-  "settings_privacy_errorReportingEnabled_description": "After every crash and major internal error, an anonymous report will be uploaded to improve the user experience."
+  "settings_privacy_errorReportingEnabled_description": "After every crash and major internal error, an anonymous report will be uploaded to improve the user experience.",
+  "settings_restartRequired": "This change will only take effect after a restart of the app."
 }
