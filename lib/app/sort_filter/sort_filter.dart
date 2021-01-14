@@ -148,23 +148,29 @@ class SortFilterSelection<T> {
     assert(callback != null);
 
     var currentSelection = this;
-    context.showFancyModalBottomSheet(
-      // Gives us more vertical space.
+    // Ideally, this should be changed in the black_hole_flutter package
+    // so we can use a FancyModalBottomSheet
+    context.showModalBottomSheet(
+      // Allows the sheet to expand vertically
       isScrollControlled: true,
       useRootNavigator: true,
       builder: (_) {
-        return Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16),
-          child: StatefulBuilder(
-            builder: (_, setState) {
-              return SortFilterSelectionWidget(
-                selection: currentSelection,
-                onSelectionChange: (selection) {
-                  setState(() => currentSelection = selection);
-                  callback(selection);
-                },
-              );
-            },
+        return DraggableScrollableSheet(
+          expand: false,
+          builder: (context, controller) => Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16),
+            child: StatefulBuilder(
+              builder: (_, setState) {
+                return _SortFilterSelectionWidget(
+                  selection: currentSelection,
+                  onSelectionChange: (selection) {
+                    setState(() => currentSelection = selection);
+                    callback(selection);
+                  },
+                  scrollController: controller,
+                );
+              },
+            ),
           ),
         );
       },
@@ -172,27 +178,34 @@ class SortFilterSelection<T> {
   }
 }
 
-class SortFilterSelectionWidget<T> extends StatelessWidget {
-  const SortFilterSelectionWidget({
+class _SortFilterSelectionWidget<T> extends StatelessWidget {
+  const _SortFilterSelectionWidget({
     Key key,
     @required this.selection,
     @required this.onSelectionChange,
+    this.scrollController,
   })  : assert(selection != null),
         assert(onSelectionChange != null),
         super(key: key);
 
   final SortFilterSelection<T> selection;
   SortFilter<T> get config => selection.config;
+  final ScrollController scrollController;
 
   final SortFilterChangeCallback<T> onSelectionChange;
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: <Widget>[
+    return ListView(
+      controller: scrollController,
+      children: [
+        SizedBox(height: 8),
+        Center(child: DragIndicator()),
+        SizedBox(height: 8),
         _buildSortSection(context),
         for (final filterKey in config.filters.keys)
           _buildFilterSection(context, filterKey),
+        SizedBox(height: 8),
       ],
     );
   }
