@@ -14,6 +14,7 @@ class Shallow {
         assert(apiRoot != null) {
     this.dio.options.baseUrl = apiRoot;
     _authentication = ShallowAuthentication(this);
+    this.dio.interceptors.add(authentication.dioInterceptor);
   }
 
   final Dio dio;

@@ -19,11 +19,32 @@ class ShallowAuthentication {
   Id<User> get currentUserId => _currentUserId;
   bool get isSignedIn => currentUserId != null;
 
+  static const noAuthenticationHeader = 'x-no-authentication';
+  InterceptorsWrapper get dioInterceptor {
+    return InterceptorsWrapper(
+      onRequest: (options) {
+        if (options.headers.containsKey(noAuthenticationHeader)) {
+          options.headers.remove(noAuthenticationHeader);
+        } else {
+          options.headers['Authorization'] = 'Bearer $_jwt';
+        }
+        return options;
+      },
+    );
+  }
+
+  // sign-in
+
   Future<void> signIn(AuthenticationBody body) async {
-    dynamic rawResponse;
+    Response<Map<String, dynamic>> rawResponse;
     try {
-      rawResponse = await _shallow.dio
-          .post<dynamic>('/authentication', data: body.toJson());
+      rawResponse = await _shallow.dio.post<Map<String, dynamic>>(
+        '/authentication',
+        data: body.toJson(),
+        options: Options(
+          headers: <String, dynamic>{noAuthenticationHeader: true},
+        ),
+      );
     } on DioError catch (e) {
       if (e.response.statusCode == HttpStatus.unauthorized) {
         throw InvalidCredentialsException();
@@ -31,9 +52,7 @@ class ShallowAuthentication {
       rethrow;
     }
 
-    final response = AuthenticationResponse.fromJson(
-      rawResponse.data as Map<String, dynamic>,
-    );
+    final response = AuthenticationResponse.fromJson(rawResponse.data);
     await signInWithJwt(response.accessToken);
   }
 
@@ -50,6 +69,24 @@ class ShallowAuthentication {
     final payloadString = String.fromCharCodes(base64Decode(jwt.split('.')[1]));
     final payloadJson = json.decode(payloadString) as Map<String, dynamic>;
     return Id<User>(payloadJson['userId'] as String);
+  }
+
+  // sign-out
+
+  Future<void> signOut() async {
+    try {
+      await _shallow.dio.delete<void>('/authentication');
+    } on DioError catch (e) {
+      if (e.response.statusCode == HttpStatus.unauthorized) {
+        // We were signed out already, e.g., because our JWT-token was no longer
+        // valid.
+        return;
+      }
+      rethrow;
+    } finally {
+      _jwt = null;
+      _currentUserId = null;
+    }
   }
 }
 
