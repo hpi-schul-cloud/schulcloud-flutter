@@ -9,29 +9,29 @@ class CoursesPage extends StatelessWidget {
 
   static final sortFilterConfig = SortFilter<Course>(
     sorters: {
-      'name': Sorter<Course>.name(
+      'name': Sorter.name(
         (s) => s.general_entity_property_name,
         selector: (course) => course.name,
       ),
-      'createdAt': Sorter<Course>.simple(
+      'createdAt': Sorter.simple(
         (s) => s.general_entity_property_createdAt,
         selector: (course) => course.createdAt,
       ),
-      'updatedAt': Sorter<Course>.simple(
+      'updatedAt': Sorter.simple(
         (s) => s.general_entity_property_updatedAt,
         selector: (course) => course.updatedAt,
       ),
-      'color': Sorter<Course>.simple(
+      'color': Sorter.simple(
         (s) => s.course_course_property_color,
         selector: (course) => course.color.hsv.hue,
       ),
     },
     defaultSorter: 'name',
     filters: {
-      'more': FlagsFilter<Course>(
+      'more': FlagsFilter(
         (s) => s.general_entity_property_more,
         filters: {
-          'isArchived': FlagFilter<Course>(
+          'isArchived': FlagFilter(
             (s) => s.general_entity_property_isArchived,
             selector: (course) => course.isArchived,
             defaultSelection: false,
@@ -53,6 +53,7 @@ class CoursesPage extends StatelessWidget {
         actions: <Widget>[SortFilterIconButton(showSortFilterSheet)],
       ),
       emptyStateTextGetter: (s) => s.course_coursesPage_empty,
+      emptyStateAsset: 'courses',
       filteredEmptyStateTextGetter: (s) => s.course_coursesPage_emptyFiltered,
       builder: (_, course, __, ___) {
         return Padding(

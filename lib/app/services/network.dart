@@ -219,13 +219,13 @@ class NetworkService {
     assert(queryParameters != null);
     assert(followRedirects != null);
 
+    final uri = _createRequestUrl(url, queryParameters);
+
     http.Response response;
-    logger.v('Network: $method $url');
     try {
       response = await _makeCall(
         method,
-        url,
-        queryParameters: queryParameters,
+        uri,
         headers: headers,
         body: body,
         followRedirects: followRedirects,
@@ -264,7 +264,7 @@ class NetworkService {
         className: 'none',
       );
     }
-    logger.w('Network ${response.statusCode}: $method $url', error);
+    logger.w('Network ${response.statusCode}: $method $uri', error);
 
     if (response.statusCode == HttpStatus.unauthorized) {
       services.banners.add(Banners.tokenExpired);
@@ -311,29 +311,18 @@ class NetworkService {
 
   Future<http.Response> _makeCall(
     String method,
-    String url, {
-    Map<String, String> queryParameters = const {},
+    Uri url, {
     Map<String, String> headers,
     dynamic body,
     bool followRedirects = true,
   }) async {
     assert(method != null);
     assert(url != null);
-    assert(queryParameters != null);
     assert(followRedirects != null);
 
-    var uri = Uri.parse(url);
-    if (uri.queryParameters.isNotEmpty) {
-      assert(
-        queryParameters.isEmpty,
-        'Please add query parameters either via the queryParameters argument '
-        'or via the provided url, but not both!',
-      );
-    } else {
-      uri = uri.replace(queryParameters: queryParameters);
-    }
+    logger.v('Network: $method $url');
 
-    final request = http.Request(method, uri)
+    final request = http.Request(method, url)
       ..followRedirects = followRedirects;
 
     // ignore: parameter_assignments
@@ -355,6 +344,20 @@ class NetworkService {
       return await http.Response.fromStream(streamedResponse);
     } finally {
       client.close();
+    }
+  }
+
+  Uri _createRequestUrl(String url, Map<String, String> queryParameters) {
+    final uri = Uri.parse(url);
+    if (uri.queryParameters.isNotEmpty) {
+      assert(
+        queryParameters.isEmpty,
+        'Please add query parameters either via the queryParameters argument '
+        'or via the provided url, but not both!',
+      );
+      return uri;
+    } else {
+      return uri.replace(queryParameters: queryParameters);
     }
   }
 }

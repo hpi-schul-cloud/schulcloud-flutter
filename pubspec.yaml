@@ -59,7 +59,7 @@ dependencies:
   sentry: ^4.0.1
   sentry_flutter: ^4.0.1
   share: ">=0.6.5+4 <2.0.0"
-  swipeable_page_route: ^0.1.3
+  swipeable_page_route: ^0.1.5
   streaming_shared_preferences: ^1.0.1
   time_machine: ^0.9.13
   uni_links: ^0.4.0
@@ -89,9 +89,7 @@ flutter:
   uses-material-design: true
 
   assets:
-    - assets/empty_states/default.svg
-    - assets/empty_states/broken_pen.svg
-    - assets/empty_states/files.flr
+    - assets/empty_states/
     - assets/icon_signOut.svg
     - assets/file_thumbnails/
     - assets/sloth_error.svg

@@ -82,6 +82,22 @@ class Assignment implements Entity<Assignment> {
   static Future<Assignment> fetch(Id<Assignment> id) async =>
       Assignment.fromJson(await services.api.get('homework/$id').json);
 
+  static Future<List<Assignment>> fetchList({
+    Id<Course> courseId,
+    bool notArchivedByUser = false,
+  }) async {
+    assert(notArchivedByUser != null);
+
+    final jsonList = await services.api.get(
+      'homework',
+      queryParameters: {
+        if (courseId != null) 'courseId': courseId.value,
+        if (notArchivedByUser) 'archived[\$ne]': services.storage.userId.value,
+      },
+    ).parseJsonList();
+    return jsonList.map((data) => Assignment.fromJson(data)).toList();
+  }
+
   // used before: 3, 4
 
   @override

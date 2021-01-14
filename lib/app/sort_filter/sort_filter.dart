@@ -275,17 +275,23 @@ class SortFilterIconButton extends StatelessWidget {
 }
 
 class SortFilterEmptyState extends StatelessWidget {
-  const SortFilterEmptyState(this.showSortFilterSheet, {@required this.text})
-      : assert(showSortFilterSheet != null),
-        assert(text != null);
+  const SortFilterEmptyState(
+    this.showSortFilterSheet, {
+    @required this.text,
+    this.asset = 'default',
+  })  : assert(showSortFilterSheet != null),
+        assert(text != null),
+        assert(asset != null);
 
   final VoidCallback showSortFilterSheet;
   final String text;
+  final String asset;
 
   @override
   Widget build(BuildContext context) {
     return EmptyStatePage(
       text: text,
+      asset: asset,
       actions: <Widget>[
         SecondaryButton(
           onPressed: showSortFilterSheet,
@@ -358,12 +364,14 @@ class SortFilterPage<E extends Entity<E>> extends SortFilterWidget<E> {
     @required this.collection,
     @required this.appBarBuilder,
     @required this.emptyStateTextGetter,
+    this.emptyStateAsset = 'default',
     @required this.filteredEmptyStateTextGetter,
     @required this.builder,
   })  : assert(config != null),
         assert(collection != null),
         assert(appBarBuilder != null),
         assert(emptyStateTextGetter != null),
+        assert(emptyStateAsset != null),
         assert(filteredEmptyStateTextGetter != null),
         assert(builder != null),
         super(initialSelection ?? config.defaultSelection);
@@ -372,6 +380,7 @@ class SortFilterPage<E extends Entity<E>> extends SortFilterWidget<E> {
   final Collection<E> collection;
   final SortFilterAppBarBuilder appBarBuilder;
   final L10nStringGetter emptyStateTextGetter;
+  final String emptyStateAsset;
   final L10nStringGetter filteredEmptyStateTextGetter;
   final SortFilterWidgetBuilder<E> builder;
 
@@ -396,6 +405,7 @@ class _SortFilterPageState<E extends Entity<E>> extends State<SortFilterPage<E>>
           filteredEmptyStateBuilder: (_) => SortFilterEmptyState(
             showSortFilterSheet,
             text: widget.filteredEmptyStateTextGetter(s),
+            asset: widget.emptyStateAsset,
           ),
           builder: (_, entities, __) {
             return CustomScrollView(
