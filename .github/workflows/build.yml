@@ -4,7 +4,7 @@ on:
   push:
   pull_request:
   schedule:
-    - cron: "0 3-22/3 * * *"
+    - cron: "0 3-22/6 * * *"
 
 env:
   JAVA_VERSION: 12.x
@@ -29,17 +29,32 @@ jobs:
           channel: ${{ env.FLUTTER_CHANNEL }}
           flutter-version: ${{ env.FLUTTER_VERSION }}
 
-      - name: Install dependencies
+      - name: "api: Install dependencies"
+        working-directory: ./api
         run: flutter pub get
-
-      - name: Run code generator(s)
+      - name: "api: Run code generator(s)"
+        working-directory: ./api
         run: |
           flutter pub run intl_utils:generate
           flutter pub run build_runner build
 
-      - name: Remove obsolete files
+      - name: "api: Remove obsolete files"
+        working-directory: ./api
+        run: rm -rf ./.dart_tool/pub/bin/build_runner
+
+      - name: "app: Install dependencies"
+        working-directory: ./app
+        run: flutter pub get
+      - name: "app: Run code generator(s)"
+        working-directory: ./app
         run: |
-          rm -rf ./.dart_tool/pub/bin/build_runner
+          flutter pub run intl_utils:generate
+          flutter pub run build_runner build
+
+      - name: "app: Remove obsolete files"
+        working-directory: ./app
+        run: rm -rf ./.dart_tool/pub/bin/build_runner
+
       - name: Persist current state
         uses: actions/upload-artifact@v1
         with:
@@ -68,6 +83,7 @@ jobs:
           path: .
 
       - name: Run linter
+        working-directory: ./app
         run: flutter analyze > flutter_analyze_report.txt
         continue-on-error: true
 
@@ -79,14 +95,14 @@ jobs:
       - name: Install ruby gems
         run: |
           gem install bundler
-          bundle install --without documentation
+          bundle config set without 'documentation'
+          bundle install
         if: github.event_name == 'pull_request'
       - name: Run danger on generated report
-        uses: MeilCli/danger-action@v5
+        run: |
+          gem install danger --version ">= 6.0.0"
+          danger --dangerfile=Dangerfile --danger_id="danger-pr"
         if: github.event_name == 'pull_request'
-        with:
-          danger_file: Dangerfile
-          danger_id: "danger-pr"
         env:
           DANGER_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -113,6 +129,7 @@ jobs:
           path: .
 
       - name: Run API tests
+        working-directory: ./app
         # Limit concurrency to prevent 429 errors.
         run: flutter test --concurrency 1 --name "^/.+$"
         env:
@@ -146,8 +163,9 @@ jobs:
           name: source
           path: .
 
-      # https://github.com/flutter/flutter/issues/58247
-      - run: |
+      - working-directory: ./app
+        # https://github.com/flutter/flutter/issues/58247
+        run: |
           flutter build apk --target=lib/main_${{ matrix.flavor }}.dart --flavor=${{ matrix.flavor }} --debug
           flutter build apk --target=lib/main_${{ matrix.flavor }}.dart --flavor=${{ matrix.flavor }}
         env:
@@ -157,7 +175,7 @@ jobs:
         uses: actions/upload-artifact@v1
         with:
           name: apk-${{ matrix.flavor }}
-          path: build/app/outputs/apk/${{ matrix.flavor }}/release
+          path: app/build/app/outputs/apk/${{ matrix.flavor }}/release
 
   # TODO(JonasWanke): enable screenshots when this issue is fixed: https://github.com/flutter/flutter/issues/36244
   # generate-screenshots:
@@ -236,8 +254,10 @@ jobs:
           path: .
 
       - name: Store Google Play credentials in a file
+        working-directory: ./app
         run: echo "${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_KEY }}" | base64 --decode > ./android/fastlane/googlePlay-serviceAccount.json
       - name: Store Google Play upload key in a file
+        working-directory: ./app
         run: echo "${{ secrets.GOOGLE_PLAY_UPLOAD_KEY }}" | base64 --decode > ./android/upload.keystore.jks
 
       - id: unicorn
@@ -246,6 +266,7 @@ jobs:
         with:
           repo-token: "${{ secrets.GITHUB_TOKEN }}"
       - name: Build AAB
+        working-directory: ./app
         run: |
           flutter build appbundle \
             --flavor=sc \
@@ -260,4 +281,4 @@ jobs:
         uses: maierj/fastlane-action@v1.4.0
         with:
           lane: uploadCanary
-          subdirectory: android
+          subdirectory: app/android

@@ -46,7 +46,7 @@ unicorn {
                 if (git.flow.currentBranch(this) !is Git.Flow.MasterBranch)
                     return@gitHubAction
 
-                val serviceAccountFile = File("./android/fastlane/googlePlay-serviceAccount.json")
+                val serviceAccountFile = File("./app/android/fastlane/googlePlay-serviceAccount.json")
                 val credentials = GoogleCredentials.fromStream(serviceAccountFile.inputStream())
                     .createScoped("https://www.googleapis.com/auth/androidpublisher")
                 val releases = Google.Play.getReleases(credentials, "org.schulcloud.android", "internal")
@@ -71,7 +71,7 @@ unicorn {
                         Locale.US to "Canary deployment of commit ${commit.name}:\n${commit.fullMessage}",
                         Locale.GERMANY to "Canary-Deployment von Commit ${commit.name}:\n${commit.fullMessage}"
                     ),
-                    directory = projectDir.resolve("android/fastlane")
+                    directory = projectDir.resolve("app/android/fastlane")
                 )
             }
         }
