@@ -37,7 +37,7 @@ android {
     defaultConfig {
         applicationId "org.schulcloud.android"
         minSdkVersion 21
-        targetSdkVersion 28
+        targetSdkVersion 29
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
     }
