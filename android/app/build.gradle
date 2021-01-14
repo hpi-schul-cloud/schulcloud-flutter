@@ -27,7 +27,7 @@ apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
 android {
     compileSdkVersion 28
     // TODO(JonasWanke): https://github.com/flutter/flutter/issues/53657
-    ndkVersion '21.3.6528147'
+    ndkVersion '22.0.7026061'
 
     lintOptions {
         disable 'InvalidPackage'
