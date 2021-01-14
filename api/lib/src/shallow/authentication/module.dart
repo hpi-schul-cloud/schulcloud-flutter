@@ -2,9 +2,10 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
-import 'package:meta/meta.dart';
+import 'package:oxidized/oxidized.dart';
 
 import '../entity.dart';
+import '../errors.dart';
 import '../shallow.dart';
 import '../user.dart';
 import 'data.dart';
@@ -35,7 +36,7 @@ class ShallowAuthentication {
 
   // sign-in
 
-  Future<void> signIn(AuthenticationBody body) async {
+  Future<Result<void, ShallowError>> signIn(AuthenticationBody body) async {
     Response<Map<String, dynamic>> rawResponse;
     try {
       rawResponse = await _shallow.dio.post<Map<String, dynamic>>(
@@ -47,13 +48,14 @@ class ShallowAuthentication {
       );
     } on DioError catch (e) {
       if (e.response.statusCode == HttpStatus.unauthorized) {
-        throw InvalidCredentialsException();
+        return Result.err(InvalidCredentialsError());
       }
       rethrow;
     }
 
     final response = AuthenticationResponse.fromJson(rawResponse.data);
     await signInWithJwt(response.accessToken);
+    return Result.ok(null);
   }
 
   Future<void> signInWithJwt(String jwt) async {
@@ -73,22 +75,24 @@ class ShallowAuthentication {
 
   // sign-out
 
-  Future<void> signOut() async {
+  Future<Result<void, ShallowError>> signOut() async {
     try {
       await _shallow.dio.delete<void>('/authentication');
     } on DioError catch (e) {
       if (e.response.statusCode == HttpStatus.unauthorized) {
         // We were signed out already, e.g., because our JWT-token was no longer
         // valid.
-        return;
+      } else {
+        rethrow;
       }
-      rethrow;
     } finally {
       _jwt = null;
       _currentUserId = null;
     }
+    return Result.ok(null);
   }
 }
 
-@immutable
-class InvalidCredentialsException implements Exception {}
+class InvalidCredentialsError extends ShallowError {
+  const InvalidCredentialsError() : super('Invalid credentials');
+}

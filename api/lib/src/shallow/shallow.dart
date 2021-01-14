@@ -1,10 +1,8 @@
-import 'dart:convert';
-
 import 'package:dio/dio.dart';
 
 import 'authentication/module.dart';
-import 'entity.dart';
-import 'user.dart';
+import 'collection.dart';
+import 'course/data.dart';
 
 class Shallow {
   Shallow({
@@ -15,6 +13,12 @@ class Shallow {
     this.dio.options.baseUrl = apiRoot;
     _authentication = ShallowAuthentication(this);
     this.dio.interceptors.add(authentication.dioInterceptor);
+
+    _courses = ShallowCollection(
+      shallow: this,
+      path: '/courses',
+      entityFromJson: (it) => Course.fromJson(it),
+    );
   }
 
   final Dio dio;
@@ -22,29 +26,7 @@ class Shallow {
 
   ShallowAuthentication _authentication;
   ShallowAuthentication get authentication => _authentication;
+
+  ShallowCollection<Course> _courses;
+  ShallowCollection<Course> get courses => _courses;
 }
-
-abstract class ShallowCollection<E> {
-  ShallowCollection(Shallow shallow) : _shallow = shallow;
-
-  final Shallow _shallow;
-}
-
-void main(List<String> args) {
-  // final api = …;
-
-  // api.currentUser
-
-  // api.courses
-  // .where()
-  // .fetch()
-  // with pagination
-
-  // await api.courses.get(Id<Course>(''));
-
-  // await api.courses.set(Course(''));
-  // await api.courses.add(Course(''));
-}
-
-// shallow
-// Schul-cloud of the Hpi's Api whose Level is LOW
