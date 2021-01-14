@@ -1,0 +1,24 @@
+name: api
+description: A client-side wrapper around the HPI Schul-Cloud API.
+version: 0.0.1
+homepage: https://github.com/hpi-schul-cloud/schulcloud-flutter/tree/main/api
+
+environment:
+  sdk: ">=2.7.0 <3.0.0"
+
+dependencies:
+  collection: ^1.14.13
+  dio: ^3.0.10
+  freezed_annotation: ^0.12.0
+  intl: ^0.16.1
+  json_annotation: ^3.1.1
+  meta: ^1.1.8
+  rxdart: ^0.24.1
+  time_machine: ^0.9.13
+
+dev_dependencies:
+  build_runner: ^1.10.2
+  extra_pedantic: ^1.2.0
+  freezed: ^0.12.6
+  json_serializable: ^3.5.1
+  test: ^1.6.0
