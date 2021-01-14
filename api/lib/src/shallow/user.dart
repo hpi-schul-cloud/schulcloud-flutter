@@ -8,7 +8,7 @@ part 'user.g.dart';
 @freezed
 abstract class User implements ShallowEntity<User>, _$User {
   const factory User({
-    @required Id<User> id,
+    @required @JsonKey(name: '_id') Id<User> id,
   }) = _User;
   factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);
   const User._();

@@ -1,7 +1,9 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:time_machine/time_machine.dart';
 
 import '../entity.dart';
 import '../user.dart';
+import '../utils.dart';
 
 part 'data.freezed.dart';
 part 'data.g.dart';
@@ -40,11 +42,11 @@ abstract class AuthenticationResponse implements _$AuthenticationResponse {
 @freezed
 abstract class Account implements ShallowEntity<Account>, _$Account {
   const factory Account({
-    @JsonKey(name: '_id') Id<Account> id,
+    @required @JsonKey(name: '_id') Id<Account> id,
+    @InstantConverter() Instant createdAt,
+    @InstantConverter() Instant updatedAt,
     @JsonKey(name: 'isActivated') bool isActivated,
-    String createdAt,
-    String lasttriedFailedLogin,
-    String updatedAt,
+    @InstantConverter() Instant lasttriedFailedLogin,
     Id<User> userId,
     String username,
   }) = _Account;
