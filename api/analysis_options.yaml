@@ -6,6 +6,7 @@ analyzer:
     implicit-dynamic: false
   exclude:
     - build/**
+    - lib/**.freezed.dart
     - lib/**.g.dart
     - lib/generated/**
 

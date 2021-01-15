@@ -2,7 +2,7 @@ import 'package:dio/dio.dart';
 
 import 'authentication/module.dart';
 import 'collection.dart';
-import 'course/data.dart';
+import 'course.dart';
 
 class Shallow {
   Shallow({

@@ -5,11 +5,16 @@ import 'package:time_machine/time_machine_text_patterns.dart';
 class InstantConverter implements JsonConverter<Instant, String> {
   const InstantConverter();
 
+  @override
+  Instant fromJson(String json) => FancyInstant.fromJson(json);
+  @override
+  String toJson(Instant data) => data?.toJson();
+}
+
+extension FancyInstant on Instant {
   static final _pattern = InstantPattern.extendedIso;
 
-  @override
-  Instant fromJson(String json) =>
+  static Instant fromJson(String json) =>
       json == null ? null : _pattern.parse(json).value;
-  @override
-  String toJson(Instant data) => data == null ? null : _pattern.format(data);
+  String toJson() => this == null ? null : _pattern.format(this);
 }
