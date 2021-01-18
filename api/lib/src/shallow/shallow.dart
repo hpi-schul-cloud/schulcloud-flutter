@@ -1,7 +1,6 @@
 import 'package:dio/dio.dart';
 
 import 'authentication/module.dart';
-import 'collection.dart';
 import 'course.dart';
 
 class Shallow {
@@ -14,11 +13,7 @@ class Shallow {
     _authentication = ShallowAuthentication(this);
     this.dio.interceptors.add(authentication.dioInterceptor);
 
-    _courses = ShallowCollection(
-      shallow: this,
-      path: '/courses',
-      entityFromJson: (it) => Course.fromJson(it),
-    );
+    _courses = CourseCollection(this);
   }
 
   final Dio dio;
@@ -27,6 +22,6 @@ class Shallow {
   ShallowAuthentication _authentication;
   ShallowAuthentication get authentication => _authentication;
 
-  ShallowCollection<Course> _courses;
-  ShallowCollection<Course> get courses => _courses;
+  CourseCollection _courses;
+  CourseCollection get courses => _courses;
 }

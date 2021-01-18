@@ -1,11 +1,34 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:time_machine/time_machine.dart';
 
+import 'collection.dart';
 import 'entity.dart';
+import 'shallow.dart';
 import 'user.dart';
 import 'utils.dart';
 
 part 'course.freezed.dart';
+
+class CourseCollection extends ShallowCollection<Course, CourseField> {
+  const CourseCollection(Shallow shallow) : super(shallow);
+
+  @override
+  String get path => '/courses';
+  @override
+  Course entityFromJson(Map<String, dynamic> json) => Course.fromJson(json);
+}
+
+enum CourseField {
+  id,
+  createdAt,
+  updatedAt,
+  name,
+  description,
+  color,
+  startsAt,
+  endsAt,
+  isArchived,
+}
 
 @freezed
 abstract class Course implements ShallowEntity<Course>, _$Course {

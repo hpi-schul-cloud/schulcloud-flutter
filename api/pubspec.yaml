@@ -10,6 +10,7 @@ dependencies:
   basics: ^0.4.0+1
   collection: ^1.14.13
   dio: ^3.0.10
+  enum_to_string: ^1.0.14
   freezed_annotation: ^0.12.0
   intl: ^0.16.1
   json_annotation: ^3.1.1

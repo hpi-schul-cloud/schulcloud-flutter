@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:dio/dio.dart';
+import 'package:enum_to_string/enum_to_string.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:oxidized/oxidized.dart';
 
@@ -10,22 +11,12 @@ import 'shallow.dart';
 
 part 'collection.freezed.dart';
 
-typedef EntityFromJson<E extends ShallowEntity<E>> = E Function(
-  Map<String, dynamic> json,
-);
-
-class ShallowCollection<E extends ShallowEntity<E>> {
-  ShallowCollection({
-    @required this.shallow,
-    @required this.path,
-    @required this.entityFromJson,
-  })  : assert(shallow != null),
-        assert(path != null),
-        assert(entityFromJson != null);
+abstract class ShallowCollection<E extends ShallowEntity<E>, F> {
+  const ShallowCollection(this.shallow) : assert(shallow != null);
 
   final Shallow shallow;
-  final String path;
-  final EntityFromJson<E> entityFromJson;
+  String get path;
+  E entityFromJson(Map<String, dynamic> json);
 
   Future<Result<E, ShallowError>> get(Id<E> id) async {
     assert(id != null);
@@ -48,10 +39,27 @@ class ShallowCollection<E extends ShallowEntity<E>> {
     return Result.ok(entity);
   }
 
-  Future<Result<PaginatedResponse<E>, ShallowError>> list() async {
+  Future<Result<PaginatedResponse<E>, ShallowError>> list({
+    Map<F, SortOrder> sortedBy = const {},
+    int limit,
+    int skip = 0,
+  }) async {
+    assert(sortedBy != null);
+    assert(limit == null || limit > 0);
+    assert(skip == null || skip >= 0);
+
     Response<Map<String, dynamic>> rawResponse;
     try {
-      rawResponse = await shallow.dio.get<Map<String, dynamic>>(path);
+      rawResponse = await shallow.dio.get<Map<String, dynamic>>(
+        path,
+        queryParameters: <String, dynamic>{
+          for (final entry in sortedBy.entries)
+            '\$sort[${EnumToString.convertToString(entry.key)}]':
+                entry.value.queryValue,
+          if (limit != null) r'$limit': limit,
+          if (skip != null) r'$skip': skip,
+        },
+      );
     } on DioError catch (e) {
       switch (e.response.statusCode) {
         case HttpStatus.unauthorized:
@@ -72,6 +80,17 @@ class ShallowCollection<E extends ShallowEntity<E>> {
           .toList(),
     );
     return Result.ok(paginatedResponse);
+  }
+}
+
+enum SortOrder { ascending, descending }
+
+extension on SortOrder {
+  int get queryValue {
+    return {
+      SortOrder.ascending: 1,
+      SortOrder.descending: -1,
+    }[this];
   }
 }
 
