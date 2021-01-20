@@ -81,6 +81,9 @@ jobs:
         with:
           name: source
           path: .
+      - name: "Install dependencies"
+        working-directory: ./app
+        run: flutter pub get
 
       - name: Run linter
         working-directory: ./app
@@ -128,6 +131,9 @@ jobs:
         with:
           name: source
           path: .
+      - name: "Install dependencies"
+        working-directory: ./api
+        run: dart pub get
 
       - name: Run tests
         working-directory: ./api
@@ -163,6 +169,9 @@ jobs:
         with:
           name: source
           path: .
+      - name: "Install dependencies"
+        working-directory: ./app
+        run: flutter pub get
 
       - working-directory: ./app
         # https://github.com/flutter/flutter/issues/58247
@@ -248,11 +257,15 @@ jobs:
         with:
           channel: ${{ env.FLUTTER_CHANNEL }}
           flutter-version: ${{ env.FLUTTER_VERSION }}
+
       - name: Checkout source
         uses: actions/download-artifact@v1
         with:
           name: source
           path: .
+      - name: "Install dependencies"
+        working-directory: ./app
+        run: flutter pub get
 
       - name: Store Google Play credentials in a file
         working-directory: ./app
