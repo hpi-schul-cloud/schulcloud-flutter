@@ -41,3 +41,6 @@ void main() {
   });
 }
 */
+
+// The test runner complains if it doesn't find a main function.
+void main() {}
