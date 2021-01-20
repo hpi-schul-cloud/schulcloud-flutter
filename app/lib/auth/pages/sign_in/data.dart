@@ -36,21 +36,3 @@ class SignInResponse {
   final String accessToken;
   final String userId;
 }
-
-@immutable
-class UserResponse {
-  const UserResponse({
-    @required this.userId,
-    @required this.email,
-  })  : assert(userId != null),
-        assert(email != null);
-
-  UserResponse.fromJson(Map<String, dynamic> data)
-      : this(
-          userId: data['_id'],
-          email: data['email'],
-        );
-
-  final String userId;
-  final String email;
-}
