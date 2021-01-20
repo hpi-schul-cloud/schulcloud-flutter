@@ -3,6 +3,7 @@ import 'package:dio/dio.dart';
 import 'authentication/module.dart';
 import 'course.dart';
 import 'news.dart';
+import 'user.dart';
 
 class Shallow {
   Shallow({
@@ -16,6 +17,7 @@ class Shallow {
 
     _courses = CourseCollection(this);
     _news = ArticleCollection(this);
+    _users = UserCollection(this);
   }
 
   final Dio dio;
@@ -29,4 +31,7 @@ class Shallow {
 
   ArticleCollection _news;
   ArticleCollection get news => _news;
+
+  UserCollection _users;
+  UserCollection get users => _users;
 }
