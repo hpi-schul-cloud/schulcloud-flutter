@@ -12,7 +12,7 @@ part 'me.freezed.dart';
 @freezed
 abstract class Me implements ShallowEntity<Me>, _$Me {
   const factory Me({
-    @required PartialEntityMetadata<Me> metadata,
+    @required FullEntityMetadata<Me> metadata,
     @required Id<School> schoolId,
     @required String firstName,
     @required String lastName,
@@ -33,7 +33,7 @@ abstract class Me implements ShallowEntity<Me>, _$Me {
 
   factory Me.fromJson(Map<String, dynamic> json) {
     return Me(
-      metadata: EntityMetadata.partialFromJson(json),
+      metadata: EntityMetadata.fullFromJson(json),
       schoolId: Id<School>.fromJson(json['schoolId'] as String),
       firstName: json['firstName'] as String,
       lastName: json['lastName'] as String,
