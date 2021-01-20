@@ -5,5 +5,6 @@ export 'src/shallow/collection/module.dart';
 export 'src/shallow/course.dart';
 export 'src/shallow/entity.dart';
 export 'src/shallow/news.dart';
+export 'src/shallow/school.dart';
 export 'src/shallow/shallow.dart';
 export 'src/shallow/user.dart';

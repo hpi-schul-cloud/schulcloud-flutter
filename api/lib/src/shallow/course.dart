@@ -4,6 +4,7 @@ import 'package:time_machine/time_machine.dart';
 import 'collection/filtering.dart';
 import 'collection/module.dart';
 import 'entity.dart';
+import 'school.dart';
 import 'shallow.dart';
 import 'user.dart';
 import 'utils.dart';
@@ -26,6 +27,7 @@ class CourseCollection extends ShallowCollection<Course, CourseFilterProperty,
 abstract class Course implements ShallowEntity<Course>, _$Course {
   const factory Course({
     @required FullEntityMetadata<Course> metadata,
+    @required Id<School> schoolId,
     @required String name,
     String description,
     @required Color color,
@@ -33,7 +35,7 @@ abstract class Course implements ShallowEntity<Course>, _$Course {
     @required Instant endsAt,
     @Default(<Id<User>>[]) List<Id<User>> userIds,
     @Default(<Id<User>>[]) List<Id<User>> teacherIds,
-    // TODO(JonasWanke): classIds, substitutionIds, ltiToolIds, isCopyFrom, features, schoolId, times
+    // TODO(JonasWanke): classIds, substitutionIds, ltiToolIds, isCopyFrom, features, times
     @required bool isArchived,
   }) = _Course;
   const Course._();
@@ -41,6 +43,7 @@ abstract class Course implements ShallowEntity<Course>, _$Course {
   factory Course.fromJson(Map<String, dynamic> json) {
     return Course(
       metadata: EntityMetadata.fullFromJson(json),
+      schoolId: Id<School>.fromJson(json['schoolId'] as String),
       name: json['name'] as String,
       description: (json['description'] as String).blankToNull,
       color: Color.fromJson(json['color'] as String),
@@ -62,6 +65,7 @@ abstract class Course implements ShallowEntity<Course>, _$Course {
   Map<String, dynamic> toJson() {
     return <String, dynamic>{
       ...metadata.toJson(),
+      'schoolId': schoolId.toJson(),
       'name': name,
       'description': description,
       'color': color.toJson(),

@@ -3,6 +3,7 @@ import 'package:time_machine/time_machine.dart';
 
 import 'collection/module.dart';
 import 'entity.dart';
+import 'school.dart';
 import 'shallow.dart';
 import 'user.dart';
 import 'utils.dart';
@@ -26,6 +27,7 @@ class ArticleCollection
 abstract class Article implements ShallowEntity<Article>, _$Article {
   const factory Article({
     @required FullEntityMetadata<Article> metadata,
+    @required Id<School> schoolId,
     @required Instant publishedAt,
     @required Id<User> creatorId,
     Id<User> updaterId,
@@ -38,6 +40,7 @@ abstract class Article implements ShallowEntity<Article>, _$Article {
   factory Article.fromJson(Map<String, dynamic> json) {
     return Article(
       metadata: EntityMetadata.fullFromJson(json),
+      schoolId: Id<School>.fromJson(json['schoolId'] as String),
       publishedAt: FancyInstant.fromJson(json['displayAt'] as String),
       creatorId: Id<User>.orNull(json['creatorId'] as String),
       updaterId: Id<User>.orNull(json['updaterId'] as String),
@@ -48,6 +51,7 @@ abstract class Article implements ShallowEntity<Article>, _$Article {
   Map<String, dynamic> toJson() {
     return <String, dynamic>{
       ...metadata.toJson(),
+      'schoolId': schoolId.toJson(),
       'displayAt': publishedAt.toJson(),
       'creatorId': creatorId.toJson(),
       'updaterId': updaterId.toJson(),

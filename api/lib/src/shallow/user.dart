@@ -3,6 +3,7 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 import 'collection/filtering.dart';
 import 'collection/module.dart';
 import 'entity.dart';
+import 'school.dart';
 import 'shallow.dart';
 import 'utils.dart';
 
@@ -24,19 +25,21 @@ class UserCollection
 abstract class User implements ShallowEntity<User>, _$User {
   const factory User({
     @required PartialEntityMetadata<User> metadata,
+    @required Id<School> schoolId,
     @required String firstName,
     @required String lastName,
     @required String fullName,
     @required String displayName,
     @required String avatarInitials,
     @required Color avatarBackgroundColor,
-    // TODO(JonasWanke): roles, schoolId
+    // TODO(JonasWanke): roles
   }) = _User;
   const User._();
 
   factory User.fromJson(Map<String, dynamic> json) {
     return User(
       metadata: EntityMetadata.partialFromJson(json),
+      schoolId: Id<School>.fromJson(json['schoolId'] as String),
       firstName: json['firstName'] as String,
       lastName: json['lastName'] as String,
       fullName: json['fullName'] as String,
@@ -49,6 +52,7 @@ abstract class User implements ShallowEntity<User>, _$User {
   Map<String, dynamic> toJson() {
     return <String, dynamic>{
       ...metadata.toJson(),
+      'schoolId': schoolId.toJson(),
       'firstName': firstName,
       'lastName': lastName,
       'fullName': fullName,
