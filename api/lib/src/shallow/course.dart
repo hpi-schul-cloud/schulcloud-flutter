@@ -10,8 +10,8 @@ import 'utils.dart';
 
 part 'course.freezed.dart';
 
-class CourseCollection
-    extends ShallowCollection<Course, CourseFilterProperties, CourseField> {
+class CourseCollection extends ShallowCollection<Course, CourseFilterProperty,
+    CourseSortProperty> {
   const CourseCollection(Shallow shallow) : super(shallow);
 
   @override
@@ -19,20 +19,18 @@ class CourseCollection
   @override
   Course entityFromJson(Map<String, dynamic> json) => Course.fromJson(json);
   @override
-  CourseFilterProperties createFilterProperty() => CourseFilterProperties();
+  CourseFilterProperty createFilterProperty() => CourseFilterProperty();
 }
 
 @freezed
 abstract class Course implements ShallowEntity<Course>, _$Course {
   const factory Course({
-    @required @JsonKey(name: '_id') Id<Course> id,
-    @InstantConverter() Instant createdAt,
-    @InstantConverter() Instant updatedAt,
+    @required FullEntityMetadata<Course> metadata,
     @required String name,
     String description,
-    Color color,
-    @InstantConverter() Instant startsAt,
-    @InstantConverter() Instant endsAt,
+    @required Color color,
+    @required Instant startsAt,
+    @required Instant endsAt,
     @Default(<Id<User>>[]) List<Id<User>> userIds,
     @Default(<Id<User>>[]) List<Id<User>> teacherIds,
     // TODO(JonasWanke): classIds, substitutionIds, ltiToolIds, isCopyFrom, features, schoolId, times
@@ -41,17 +39,13 @@ abstract class Course implements ShallowEntity<Course>, _$Course {
   const Course._();
 
   factory Course.fromJson(Map<String, dynamic> json) {
-    return _$_Course(
-      id: Id.fromJson(json['_id'] as String),
-      createdAt: FancyInstant.fromJson(json['createdAt'] as String),
-      updatedAt: FancyInstant.fromJson(json['updatedAt'] as String),
+    return Course(
+      metadata: EntityMetadata.fullFromJson(json),
       name: json['name'] as String,
       description: (json['description'] as String).blankToNull,
-      color: json['color'] == null
-          ? null
-          : Color.fromJson(json['color'] as String),
-      startsAt: FancyInstant.fromJson(json['startsAt'] as String),
-      endsAt: FancyInstant.fromJson(json['endsAt'] as String),
+      color: Color.fromJson(json['color'] as String),
+      startsAt: FancyInstant.fromJson(json['startDate'] as String),
+      endsAt: FancyInstant.fromJson(json['untilDate'] as String),
       userIds: (json['userIds'] as List<dynamic>)
               ?.cast<String>()
               ?.map((it) => Id<User>.fromJson(it))
@@ -67,14 +61,12 @@ abstract class Course implements ShallowEntity<Course>, _$Course {
   }
   Map<String, dynamic> toJson() {
     return <String, dynamic>{
-      '_id': id.toJson(),
-      'createdAt': createdAt.toJson(),
-      'updatedAt': updatedAt.toJson(),
+      ...metadata.toJson(),
       'name': name,
       'description': description,
-      'color': color?.toJson(),
-      'startsAt': startsAt.toJson(),
-      'endsAt': endsAt.toJson(),
+      'color': color.toJson(),
+      'startDate': startsAt.toJson(),
+      'untilDate': endsAt.toJson(),
       'userIds': userIds.map((e) => e.toJson()).toList(),
       'teacherIds': teacherIds.map((e) => e.toJson()).toList(),
       'isArchived': isArchived,
@@ -83,8 +75,8 @@ abstract class Course implements ShallowEntity<Course>, _$Course {
 }
 
 @immutable
-class CourseFilterProperties {
-  const CourseFilterProperties();
+class CourseFilterProperty {
+  const CourseFilterProperty();
 
   ComparableFilterProperty<Course, Instant> get createdAt =>
       ComparableFilterProperty('createdAt');
@@ -102,7 +94,7 @@ class CourseFilterProperties {
       ComparableFilterProperty('endsAt');
 }
 
-enum CourseField {
+enum CourseSortProperty {
   id,
   createdAt,
   updatedAt,

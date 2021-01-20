@@ -11,7 +11,7 @@ part 'news.freezed.dart';
 
 /// News articles don't seem to support filters or sorting.
 class ArticleCollection
-    extends ShallowCollection<Article, ArticleFilterProperties, void> {
+    extends ShallowCollection<Article, ArticleFilterProperty, void> {
   const ArticleCollection(Shallow shallow) : super(shallow);
 
   @override
@@ -19,16 +19,14 @@ class ArticleCollection
   @override
   Article entityFromJson(Map<String, dynamic> json) => Article.fromJson(json);
   @override
-  ArticleFilterProperties createFilterProperty() => ArticleFilterProperties();
+  ArticleFilterProperty createFilterProperty() => ArticleFilterProperty();
 }
 
 @freezed
 abstract class Article implements ShallowEntity<Article>, _$Article {
   const factory Article({
-    @required @JsonKey(name: '_id') Id<Article> id,
-    @InstantConverter() Instant createdAt,
-    @InstantConverter() Instant updatedAt,
-    @InstantConverter() Instant publishedAt,
+    @required FullEntityMetadata<Article> metadata,
+    @required Instant publishedAt,
     @required Id<User> creatorId,
     Id<User> updaterId,
     @required String title,
@@ -38,10 +36,8 @@ abstract class Article implements ShallowEntity<Article>, _$Article {
   const Article._();
 
   factory Article.fromJson(Map<String, dynamic> json) {
-    return _$_Article(
-      id: Id.fromJson(json['_id'] as String),
-      createdAt: FancyInstant.fromJson(json['createdAt'] as String),
-      updatedAt: FancyInstant.fromJson(json['updatedAt'] as String),
+    return Article(
+      metadata: EntityMetadata.fullFromJson(json),
       publishedAt: FancyInstant.fromJson(json['displayAt'] as String),
       creatorId: Id<User>.orNull(json['creatorId'] as String),
       updaterId: Id<User>.orNull(json['updaterId'] as String),
@@ -51,9 +47,7 @@ abstract class Article implements ShallowEntity<Article>, _$Article {
   }
   Map<String, dynamic> toJson() {
     return <String, dynamic>{
-      '_id': id.toJson(),
-      'createdAt': createdAt.toJson(),
-      'updatedAt': updatedAt.toJson(),
+      ...metadata.toJson(),
       'displayAt': publishedAt.toJson(),
       'creatorId': creatorId.toJson(),
       'updaterId': updaterId.toJson(),
@@ -64,6 +58,6 @@ abstract class Article implements ShallowEntity<Article>, _$Article {
 }
 
 @immutable
-class ArticleFilterProperties {
-  const ArticleFilterProperties();
+class ArticleFilterProperty {
+  const ArticleFilterProperty();
 }

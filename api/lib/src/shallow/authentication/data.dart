@@ -42,15 +42,31 @@ abstract class AuthenticationResponse implements _$AuthenticationResponse {
 @freezed
 abstract class Account implements ShallowEntity<Account>, _$Account {
   const factory Account({
-    @required @JsonKey(name: '_id') Id<Account> id,
-    @InstantConverter() Instant createdAt,
-    @InstantConverter() Instant updatedAt,
-    @JsonKey(name: 'isActivated') bool isActivated,
-    @InstantConverter() Instant lasttriedFailedLogin,
+    @required FullEntityMetadata<Account> metadata,
+    bool isActivated,
+    Instant lasttriedFailedLogin,
     Id<User> userId,
     String username,
   }) = _Account;
-  factory Account.fromJson(Map<String, dynamic> json) =>
-      _$AccountFromJson(json);
   const Account._();
+
+  factory Account.fromJson(Map<String, dynamic> json) {
+    return Account(
+      metadata: EntityMetadata.fullFromJson(json),
+      isActivated: json['isActivated'] as bool,
+      lasttriedFailedLogin:
+          FancyInstant.fromJson(json['lasttriedFailedLogin'] as String),
+      userId: Id<User>.fromJson(json['userId'] as String),
+      username: json['username'] as String,
+    );
+  }
+  Map<String, dynamic> toJson() {
+    return <String, dynamic>{
+      ...metadata.toJson(),
+      'isActivated': isActivated,
+      'lasttriedFailedLogin': lasttriedFailedLogin?.toJson(),
+      'userId': userId.toJson(),
+      'username': username,
+    };
+  }
 }

@@ -13,7 +13,7 @@ import '../shallow.dart';
 part 'module.freezed.dart';
 
 abstract class ShallowCollection<E extends ShallowEntity<E>, FilterProperty,
-    Field> {
+    SortProperty> {
   const ShallowCollection(this.shallow) : assert(shallow != null);
 
   final Shallow shallow;
@@ -44,7 +44,7 @@ abstract class ShallowCollection<E extends ShallowEntity<E>, FilterProperty,
 
   Future<Result<PaginatedResponse<E>, ShallowError>> list({
     WhereBuilder<FilterProperty> where,
-    Map<Field, SortOrder> sortedBy = const {},
+    Map<SortProperty, SortOrder> sortedBy = const {},
     int limit,
     int skip = 0,
   }) async {
@@ -89,7 +89,7 @@ abstract class ShallowCollection<E extends ShallowEntity<E>, FilterProperty,
   }
 }
 
-typedef WhereBuilder<FilterProperty> = Filter Function(FilterProperty);
+typedef WhereBuilder<FilterProperty> = Filter Function(FilterProperty it);
 
 enum SortOrder { ascending, descending }
 
