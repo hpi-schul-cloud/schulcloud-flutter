@@ -6,8 +6,8 @@ import 'package:oxidized/oxidized.dart';
 
 import '../entity.dart';
 import '../errors.dart';
+import '../services/user.dart';
 import '../shallow.dart';
-import '../user.dart';
 import 'data.dart';
 
 class ShallowAuthentication {

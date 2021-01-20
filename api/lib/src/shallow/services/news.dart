@@ -1,12 +1,12 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:time_machine/time_machine.dart';
 
-import 'collection/module.dart';
-import 'entity.dart';
+import '../collection/module.dart';
+import '../entity.dart';
+import '../shallow.dart';
+import '../utils.dart';
 import 'school.dart';
-import 'shallow.dart';
 import 'user.dart';
-import 'utils.dart';
 
 part 'news.freezed.dart';
 

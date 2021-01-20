@@ -2,7 +2,7 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:time_machine/time_machine.dart';
 
 import '../entity.dart';
-import '../user.dart';
+import '../services/user.dart';
 import '../utils.dart';
 
 part 'data.freezed.dart';

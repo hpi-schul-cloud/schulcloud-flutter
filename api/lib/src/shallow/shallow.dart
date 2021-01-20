@@ -1,10 +1,10 @@
 import 'package:dio/dio.dart';
 
 import 'authentication/module.dart';
-import 'course.dart';
-import 'news.dart';
-import 'school.dart';
-import 'user.dart';
+import 'services/course.dart';
+import 'services/news.dart';
+import 'services/school.dart';
+import 'services/user.dart';
 
 class Shallow {
   Shallow({

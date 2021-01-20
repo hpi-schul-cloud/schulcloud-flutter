@@ -1,11 +1,11 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
-import 'collection/filtering.dart';
-import 'collection/module.dart';
-import 'entity.dart';
+import '../collection/filtering.dart';
+import '../collection/module.dart';
+import '../entity.dart';
+import '../shallow.dart';
+import '../utils.dart';
 import 'school.dart';
-import 'shallow.dart';
-import 'utils.dart';
 
 part 'user.freezed.dart';
 
