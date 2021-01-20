@@ -11,7 +11,7 @@ jobs:
         with:
           config_path: .github/labels.yml
         env:
-          GITHUB_TOKEN: "${{ secrets.BOT_TOKEN }}"
+          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
 
   assign-author:
     name: Assign author
@@ -20,4 +20,4 @@ jobs:
     steps:
       - uses: samspills/assign-pr-to-author@v1.0
         with:
-          repo-token: "${{ secrets.BOT_TOKEN }}"
+          repo-token: "${{ secrets.GITHUB_TOKEN }}"
