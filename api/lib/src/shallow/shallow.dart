@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 
 import 'authentication/module.dart';
 import 'course.dart';
+import 'news.dart';
 
 class Shallow {
   Shallow({
@@ -14,6 +15,7 @@ class Shallow {
     this.dio.interceptors.add(authentication.dioInterceptor);
 
     _courses = CourseCollection(this);
+    _news = ArticleCollection(this);
   }
 
   final Dio dio;
@@ -24,4 +26,7 @@ class Shallow {
 
   CourseCollection _courses;
   CourseCollection get courses => _courses;
+
+  ArticleCollection _news;
+  ArticleCollection get news => _news;
 }
