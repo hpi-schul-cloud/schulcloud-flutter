@@ -1,7 +1,8 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:time_machine/time_machine.dart';
 
-import 'collection.dart';
+import 'collection/filtering.dart';
+import 'collection/module.dart';
 import 'entity.dart';
 import 'shallow.dart';
 import 'user.dart';
@@ -9,25 +10,16 @@ import 'utils.dart';
 
 part 'course.freezed.dart';
 
-class CourseCollection extends ShallowCollection<Course, CourseField> {
+class CourseCollection
+    extends ShallowCollection<Course, CourseFilterProperties, CourseField> {
   const CourseCollection(Shallow shallow) : super(shallow);
 
   @override
   String get path => '/courses';
   @override
   Course entityFromJson(Map<String, dynamic> json) => Course.fromJson(json);
-}
-
-enum CourseField {
-  id,
-  createdAt,
-  updatedAt,
-  name,
-  description,
-  color,
-  startsAt,
-  endsAt,
-  isArchived,
+  @override
+  CourseFilterProperties createFilterProperty() => CourseFilterProperties();
 }
 
 @freezed
@@ -88,4 +80,36 @@ abstract class Course implements ShallowEntity<Course>, _$Course {
       'isArchived': isArchived,
     };
   }
+}
+
+@immutable
+class CourseFilterProperties {
+  const CourseFilterProperties();
+
+  ComparableFilterProperty<Course, Instant> get createdAt =>
+      ComparableFilterProperty('createdAt');
+  ComparableFilterProperty<Course, Instant> get updatedAt =>
+      ComparableFilterProperty('updatedAt');
+  ComparableFilterProperty<Course, String> get name =>
+      ComparableFilterProperty('name');
+  ComparableFilterProperty<Course, String> get description =>
+      ComparableFilterProperty('description');
+  ComparableFilterProperty<Course, Color> get color =>
+      ComparableFilterProperty('color');
+  ComparableFilterProperty<Course, Instant> get startsAt =>
+      ComparableFilterProperty('startsAt');
+  ComparableFilterProperty<Course, Instant> get endsAt =>
+      ComparableFilterProperty('endsAt');
+}
+
+enum CourseField {
+  id,
+  createdAt,
+  updatedAt,
+  name,
+  description,
+  color,
+  startsAt,
+  endsAt,
+  isArchived,
 }

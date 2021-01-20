@@ -1,22 +1,25 @@
 import 'dart:io';
 
+import 'package:api/shallow.dart';
 import 'package:dio/dio.dart';
 import 'package:enum_to_string/enum_to_string.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:oxidized/oxidized.dart';
 
-import 'entity.dart';
-import 'errors.dart';
-import 'shallow.dart';
+import '../entity.dart';
+import '../errors.dart';
+import '../shallow.dart';
 
-part 'collection.freezed.dart';
+part 'module.freezed.dart';
 
-abstract class ShallowCollection<E extends ShallowEntity<E>, F> {
+abstract class ShallowCollection<E extends ShallowEntity<E>, FilterProperty,
+    Field> {
   const ShallowCollection(this.shallow) : assert(shallow != null);
 
   final Shallow shallow;
   String get path;
   E entityFromJson(Map<String, dynamic> json);
+  FilterProperty createFilterProperty();
 
   Future<Result<E, ShallowError>> get(Id<E> id) async {
     assert(id != null);
@@ -40,7 +43,8 @@ abstract class ShallowCollection<E extends ShallowEntity<E>, F> {
   }
 
   Future<Result<PaginatedResponse<E>, ShallowError>> list({
-    Map<F, SortOrder> sortedBy = const {},
+    WhereBuilder<FilterProperty> where,
+    Map<Field, SortOrder> sortedBy = const {},
     int limit,
     int skip = 0,
   }) async {
@@ -48,11 +52,14 @@ abstract class ShallowCollection<E extends ShallowEntity<E>, F> {
     assert(limit == null || limit > 0);
     assert(skip == null || skip >= 0);
 
+    final builtWhere = where?.call(createFilterProperty())?.build() ?? [];
+
     Response<Map<String, dynamic>> rawResponse;
     try {
       rawResponse = await shallow.dio.get<Map<String, dynamic>>(
         path,
         queryParameters: <String, dynamic>{
+          for (final filter in builtWhere) filter.queryKey: filter.queryValue,
           for (final entry in sortedBy.entries)
             '\$sort[${EnumToString.convertToString(entry.key)}]':
                 entry.value.queryValue,
@@ -71,7 +78,6 @@ abstract class ShallowCollection<E extends ShallowEntity<E>, F> {
     }
 
     final paginatedResponse = PaginatedResponse(
-      total: rawResponse.data['total'] as int,
       limit: rawResponse.data['limit'] as int,
       skip: rawResponse.data['skip'] as int,
       items: (rawResponse.data['data'] as List<dynamic>)
@@ -82,6 +88,8 @@ abstract class ShallowCollection<E extends ShallowEntity<E>, F> {
     return Result.ok(paginatedResponse);
   }
 }
+
+typedef WhereBuilder<FilterProperty> = Filter Function(FilterProperty);
 
 enum SortOrder { ascending, descending }
 
@@ -97,7 +105,9 @@ extension on SortOrder {
 @freezed
 abstract class PaginatedResponse<T> implements _$PaginatedResponse<T> {
   const factory PaginatedResponse({
-    @required int total,
+    // The API provides a `total` field, but that doesn't always return the
+    // correct number…
+    // @required int total,
     @required int limit,
     @required int skip,
     @required List<T> items,
