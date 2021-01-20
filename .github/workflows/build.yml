@@ -108,7 +108,7 @@ jobs:
         env:
           DANGER_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-  test-api:
+  api-test:
     name: "api: tests"
     needs: install
     runs-on: ubuntu-latest
@@ -129,10 +129,10 @@ jobs:
           name: source
           path: .
 
-      - name: Run API tests
+      - name: Run tests
         working-directory: ./api
         # Limit concurrency to prevent 429 errors.
-        run: flutter test --concurrency 1 --name "^/.+$"
+        run: dart pub run test --concurrency 1
         env:
           SC_AT_TEACHER_EMAIL: ${{ secrets.API_TEST_TEACHER_EMAIL }}
           SC_AT_TEACHER_PASSWORD: ${{ secrets.API_TEST_TEACHER_PASSWORD }}
