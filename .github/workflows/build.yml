@@ -29,19 +29,19 @@ jobs:
           channel: ${{ env.FLUTTER_CHANNEL }}
           flutter-version: ${{ env.FLUTTER_VERSION }}
 
-      # - name: "api: Install dependencies"
-      #   working-directory: ./api
-      #   run: flutter pub get
-      # - name: "api: Run code generator(s)"
-      #   working-directory: ./api
-      #   run: |
-      #     flutter pub run intl_utils:generate
-      #     flutter pub run build_runner build
+      # API
+      - name: "api: Install dependencies"
+        working-directory: ./api
+        run: flutter pub get
+      - name: "api: Run code generator(s)"
+        working-directory: ./api
+        run: flutter pub run build_runner build
 
-      # - name: "api: Remove obsolete files"
-      #   working-directory: ./api
-      #   run: rm -rf ./.dart_tool/pub/bin/build_runner
+      - name: "api: Remove obsolete files"
+        working-directory: ./api
+        run: rm -rf ./.dart_tool/pub/bin/build_runner
 
+      # App
       - name: "app: Install dependencies"
         working-directory: ./app
         run: flutter pub get
