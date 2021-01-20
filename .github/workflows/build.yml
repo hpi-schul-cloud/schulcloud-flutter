@@ -112,7 +112,6 @@ jobs:
     name: Run API tests
     needs: install
     runs-on: ubuntu-latest
-    if: "false" # github.event_name == 'push' || github.event_name == 'schedule'
     steps:
       - name: Install Java
         uses: actions/setup-java@v1
@@ -131,7 +130,7 @@ jobs:
           path: .
 
       - name: Run API tests
-        working-directory: ./app
+        working-directory: ./api
         # Limit concurrency to prevent 429 errors.
         run: flutter test --concurrency 1 --name "^/.+$"
         env:

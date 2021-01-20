@@ -37,9 +37,9 @@ class ShallowAuthentication {
   // sign-in
 
   Future<Result<void, ShallowError>> signIn(AuthenticationBody body) async {
-    Response<Map<String, dynamic>> rawResponse;
+    Response<dynamic> rawResponse;
     try {
-      rawResponse = await _shallow.dio.post<Map<String, dynamic>>(
+      rawResponse = await _shallow.dio.post<dynamic>(
         '/authentication',
         data: body.toJson(),
         options: Options(
@@ -47,13 +47,16 @@ class ShallowAuthentication {
         ),
       );
     } on DioError catch (e) {
+      print(e);
       if (e.response.statusCode == HttpStatus.unauthorized) {
         return Result.err(InvalidCredentialsError());
       }
       rethrow;
     }
+    print(rawResponse);
 
-    final response = AuthenticationResponse.fromJson(rawResponse.data);
+    final response = AuthenticationResponse.fromJson(
+        rawResponse.data as Map<String, dynamic>);
     await signInWithJwt(response.accessToken);
     return Result.ok(null);
   }
