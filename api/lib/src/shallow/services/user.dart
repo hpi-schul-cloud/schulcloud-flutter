@@ -5,6 +5,7 @@ import '../collection/module.dart';
 import '../entity.dart';
 import '../shallow.dart';
 import '../utils.dart';
+import 'role.dart';
 import 'school.dart';
 
 part 'user.freezed.dart';
@@ -32,7 +33,7 @@ abstract class User implements ShallowEntity<User>, _$User {
     @required String displayName,
     @required String avatarInitials,
     @required Color avatarBackgroundColor,
-    // TODO(JonasWanke): roles
+    @required List<Id<Role>> roleIds,
   }) = _User;
   const User._();
 
@@ -47,6 +48,10 @@ abstract class User implements ShallowEntity<User>, _$User {
       avatarInitials: json['avatarInitials'] as String,
       avatarBackgroundColor:
           Color.fromJson(json['avatarBackgroundColor'] as String),
+      roleIds: (json['roles'] as List<dynamic>)
+          .cast<String>()
+          .map((it) => Id<Role>.fromJson(it))
+          .toList(),
     );
   }
   Map<String, dynamic> toJson() {
@@ -59,6 +64,7 @@ abstract class User implements ShallowEntity<User>, _$User {
       'displayName': displayName,
       'avatarInitials': avatarInitials,
       'avatarBackgroundColor': avatarBackgroundColor.toJson(),
+      'roles': roleIds.map((it) => it.toJson()).toList(),
     };
   }
 }

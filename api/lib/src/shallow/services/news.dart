@@ -33,7 +33,7 @@ abstract class Article implements ShallowEntity<Article>, _$Article {
     Id<User> updaterId,
     @required String title,
     @required String content,
-    // TODO(JonasWanke): schoolId, target, targetModel, source, externalId, sourceDescription
+    // TODO(JonasWanke): target, targetModel, source, externalId, sourceDescription
   }) = _Article;
   const Article._();
 

@@ -1,7 +1,12 @@
+import 'dart:io';
+
 import 'package:dio/dio.dart';
+import 'package:oxidized/oxidized.dart';
 
 import 'authentication/module.dart';
+import 'errors.dart';
 import 'services/course.dart';
+import 'services/me.dart';
 import 'services/news.dart';
 import 'services/school.dart';
 import 'services/user.dart';
@@ -30,6 +35,23 @@ class Shallow {
 
   CourseCollection _courses;
   CourseCollection get courses => _courses;
+
+  Future<Result<Me, ShallowError>> me() async {
+    Response<Map<String, dynamic>> response;
+    try {
+      response = await dio.get<Map<String, dynamic>>('/me');
+    } on DioError catch (e) {
+      switch (e.response.statusCode) {
+        case HttpStatus.unauthorized:
+          return Result.err(UnauthorizedError());
+        case HttpStatus.notFound:
+          return Result.err(NotFoundError());
+      }
+      rethrow;
+    }
+
+    return Result.ok(Me.fromJson(response.data));
+  }
 
   ArticleCollection _news;
   ArticleCollection get news => _news;
