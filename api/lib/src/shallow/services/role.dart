@@ -8,7 +8,7 @@ import '../shallow.dart';
 part 'role.freezed.dart';
 
 class RoleCollection
-    extends ShallowCollection<Role, RoleFilterProperties, void> {
+    extends ShallowCollection<Role, RoleFilterProperty, RoleSortProperty> {
   const RoleCollection(Shallow shallow) : super(shallow);
 
   @override
@@ -16,7 +16,7 @@ class RoleCollection
   @override
   Role entityFromJson(Map<String, dynamic> json) => Role.fromJson(json);
   @override
-  RoleFilterProperties createFilterProperty() => RoleFilterProperties();
+  RoleFilterProperty createFilterProperty() => RoleFilterProperty();
 }
 
 @freezed
@@ -71,14 +71,14 @@ abstract class Role implements ShallowEntity<Role>, _$Role {
 }
 
 @immutable
-class RoleFilterProperties {
-  const RoleFilterProperties();
+class RoleFilterProperty {
+  const RoleFilterProperty();
 
   ComparableFilterProperty<Role, String> get name =>
       ComparableFilterProperty('name');
 }
 
-enum RoleField { id, name }
+enum RoleSortProperty { id, name }
 
 @immutable
 class Permission {

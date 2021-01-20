@@ -11,7 +11,7 @@ import 'school.dart';
 part 'user.freezed.dart';
 
 class UserCollection
-    extends ShallowCollection<User, UserFilterProperties, void> {
+    extends ShallowCollection<User, UserFilterProperty, UserSortProperty> {
   const UserCollection(Shallow shallow) : super(shallow);
 
   @override
@@ -19,7 +19,7 @@ class UserCollection
   @override
   User entityFromJson(Map<String, dynamic> json) => User.fromJson(json);
   @override
-  UserFilterProperties createFilterProperty() => UserFilterProperties();
+  UserFilterProperty createFilterProperty() => UserFilterProperty();
 }
 
 @freezed
@@ -70,8 +70,8 @@ abstract class User implements ShallowEntity<User>, _$User {
 }
 
 @immutable
-class UserFilterProperties {
-  const UserFilterProperties();
+class UserFilterProperty {
+  const UserFilterProperty();
 
   ComparableFilterProperty<User, String> get firstName =>
       ComparableFilterProperty('firstName');
@@ -79,4 +79,4 @@ class UserFilterProperties {
       ComparableFilterProperty('lastName');
 }
 
-enum UserField { id, firstName, lastName }
+enum UserSortProperty { id, firstName, lastName }
