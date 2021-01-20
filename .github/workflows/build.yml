@@ -32,10 +32,10 @@ jobs:
       # API
       - name: "api: Install dependencies"
         working-directory: ./api
-        run: flutter pub get
+        run: dart pub get
       - name: "api: Run code generator(s)"
         working-directory: ./api
-        run: flutter pub run build_runner build
+        run: dart pub run build_runner build
 
       - name: "api: Remove obsolete files"
         working-directory: ./api
