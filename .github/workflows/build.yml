@@ -61,8 +61,8 @@ jobs:
           name: source
           path: .
 
-  lint:
-    name: Lint
+  app-lint:
+    name: "app: lint"
     needs: install
     runs-on: ubuntu-latest
     steps:
@@ -109,7 +109,7 @@ jobs:
           DANGER_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   test-api:
-    name: Run API tests
+    name: "api: tests"
     needs: install
     runs-on: ubuntu-latest
     steps:
@@ -139,8 +139,8 @@ jobs:
           SC_AT_STUDENT_EMAIL: ${{ secrets.API_TEST_STUDENT_EMAIL }}
           SC_AT_STUDENT_PASSWORD: ${{ secrets.API_TEST_STUDENT_PASSWORD }}
 
-  build:
-    name: Build
+  build-app:
+    name: "app: build"
     needs: install
     runs-on: ubuntu-latest
     strategy:
@@ -229,8 +229,8 @@ jobs:
   #         name: tmp-screenshots
   #         path: /tmp/screenshots
 
-  deploy-canary:
-    name: Deploy canary
+  app-deploy-canary:
+    name: "app: deploy canary"
     needs: install
     runs-on: ubuntu-latest
     strategy:
