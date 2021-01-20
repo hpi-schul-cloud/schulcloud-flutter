@@ -26,7 +26,7 @@ class ArticleCollection
 @freezed
 abstract class Article implements ShallowEntity<Article>, _$Article {
   const factory Article({
-    @required FullEntityMetadata<Article> metadata,
+    @required EntityMetadata<Article> metadata,
     @required Id<School> schoolId,
     @required Instant publishedAt,
     @required Id<User> creatorId,
@@ -39,7 +39,7 @@ abstract class Article implements ShallowEntity<Article>, _$Article {
 
   factory Article.fromJson(Map<String, dynamic> json) {
     return Article(
-      metadata: EntityMetadata.fullFromJson(json),
+      metadata: EntityMetadata.fromJson(json),
       schoolId: Id<School>.fromJson(json['schoolId'] as String),
       publishedAt: FancyInstant.fromJson(json['displayAt'] as String),
       creatorId: Id<User>.orNull(json['creatorId'] as String),

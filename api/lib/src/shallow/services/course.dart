@@ -26,7 +26,7 @@ class CourseCollection extends ShallowCollection<Course, CourseFilterProperty,
 @freezed
 abstract class Course implements ShallowEntity<Course>, _$Course {
   const factory Course({
-    @required FullEntityMetadata<Course> metadata,
+    @required EntityMetadata<Course> metadata,
     @required Id<School> schoolId,
     @required String name,
     String description,
@@ -42,7 +42,7 @@ abstract class Course implements ShallowEntity<Course>, _$Course {
 
   factory Course.fromJson(Map<String, dynamic> json) {
     return Course(
-      metadata: EntityMetadata.fullFromJson(json),
+      metadata: EntityMetadata.fromJson(json),
       schoolId: Id<School>.fromJson(json['schoolId'] as String),
       name: json['name'] as String,
       description: (json['description'] as String).blankToNull,

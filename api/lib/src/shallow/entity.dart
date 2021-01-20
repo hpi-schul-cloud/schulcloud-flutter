@@ -4,36 +4,44 @@ import 'package:time_machine/time_machine.dart';
 
 import 'utils.dart';
 
-part 'entity.freezed.dart';
-
 abstract class ShallowEntity<E extends ShallowEntity<E>> {
   const ShallowEntity();
 
-  EntityMetadata<E> get metadata;
+  PartialEntityMetadata<E> get metadata;
 }
 
-// Users are missing the `createdAt` and `updatedAt` properties…
+// Some entities are missing the `createdAt` and `updatedAt` properties…
 
-@freezed
-abstract class EntityMetadata<E extends ShallowEntity<E>>
-    implements _$EntityMetadata<E> {
-  const factory EntityMetadata.partial(Id<E> id) = PartialEntityMetadata;
-  const factory EntityMetadata.full(
+class PartialEntityMetadata<E extends ShallowEntity<E>> {
+  const PartialEntityMetadata(this.id) : assert(id != null);
+
+  factory PartialEntityMetadata.fromJson(Map<String, dynamic> json) =>
+      PartialEntityMetadata<E>(Id.fromJson(json['_id'] as String));
+
+  Map<String, dynamic> toJson() => <String, dynamic>{'_id': id.toJson()};
+
+  final Id<E> id;
+
+  @override
+  bool operator ==(dynamic other) =>
+      other is PartialEntityMetadata<E> && other.id == id;
+  @override
+  int get hashCode => id.hashCode;
+}
+
+class EntityMetadata<E extends ShallowEntity<E>>
+    extends PartialEntityMetadata<E> {
+  const EntityMetadata(
     Id<E> id, {
-    @required Instant createdAt,
-    @required Instant updatedAt,
-  }) = FullEntityMetadata;
-  const EntityMetadata._();
+    @required this.createdAt,
+    @required this.updatedAt,
+  })  : assert(createdAt != null),
+        assert(updatedAt != null),
+        super(id);
 
-  static PartialEntityMetadata<E> partialFromJson<E extends ShallowEntity<E>>(
-    Map<String, dynamic> json,
-  ) =>
-      PartialEntityMetadata(Id.fromJson(json['_id'] as String));
-  static FullEntityMetadata<E> fullFromJson<E extends ShallowEntity<E>>(
-    Map<String, dynamic> json,
-  ) {
+  factory EntityMetadata.fromJson(Map<String, dynamic> json) {
     final createdAt = FancyInstant.fromJson(json['createdAt'] as String);
-    return FullEntityMetadata(
+    return EntityMetadata<E>(
       Id.fromJson(json['_id'] as String),
       createdAt: createdAt,
       // Some entities always set `updatedAt` (sometimes to the same value as
@@ -43,16 +51,28 @@ abstract class EntityMetadata<E extends ShallowEntity<E>>
     );
   }
 
+  @override
   Map<String, dynamic> toJson() {
-    return map(
-      partial: (it) => <String, dynamic>{'_id': it.id.toJson()},
-      full: (it) => <String, dynamic>{
-        '_id': it.id.toJson(),
-        'createdAt': it.createdAt.toJson(),
-        'updatedAt': it.updatedAt.toJson(),
-      },
-    );
+    return <String, dynamic>{
+      ...super.toJson(),
+      'createdAt': createdAt.toJson(),
+      'updatedAt': updatedAt.toJson(),
+    };
   }
+
+  final Instant createdAt;
+  final Instant updatedAt;
+
+  @override
+  bool operator ==(dynamic other) {
+    return super == other &&
+        other is EntityMetadata<E> &&
+        other.createdAt == createdAt &&
+        other.updatedAt == updatedAt;
+  }
+
+  @override
+  int get hashCode => super.hashCode ^ createdAt.hashCode ^ updatedAt.hashCode;
 }
 
 @immutable

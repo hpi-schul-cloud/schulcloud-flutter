@@ -22,7 +22,7 @@ class RoleCollection
 @freezed
 abstract class Role implements ShallowEntity<Role>, _$Role {
   const factory Role({
-    @required FullEntityMetadata<Role> metadata,
+    @required EntityMetadata<Role> metadata,
     @required String name,
     @required String displayName,
     @required List<Id<Role>> roleIds,
@@ -32,7 +32,7 @@ abstract class Role implements ShallowEntity<Role>, _$Role {
 
   factory Role.fromJson(Map<String, dynamic> json) {
     return Role(
-      metadata: EntityMetadata.fullFromJson(json),
+      metadata: EntityMetadata.fromJson(json),
       name: json['name'] as String,
       displayName: json['displayName'] as String,
       roleIds: (json['roles'] as List<dynamic>)

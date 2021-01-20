@@ -24,7 +24,7 @@ class SchoolCollection extends ShallowCollection<School, SchoolFilterProperty,
 @freezed
 abstract class School implements ShallowEntity<School>, _$School {
   const factory School({
-    @required FullEntityMetadata<School> metadata,
+    @required EntityMetadata<School> metadata,
     @required String name,
     @required SchoolYearsInfo years,
     @required bool isTeamCreationByStudentsEnabled,
@@ -38,7 +38,7 @@ abstract class School implements ShallowEntity<School>, _$School {
 
   factory School.fromJson(Map<String, dynamic> json) {
     return School(
-      metadata: EntityMetadata.fullFromJson(json),
+      metadata: EntityMetadata.fromJson(json),
       name: json['name'] as String,
       years: SchoolYearsInfo.fromJson(json['years'] as Map<String, dynamic>),
       isTeamCreationByStudentsEnabled:
@@ -142,7 +142,7 @@ abstract class SchoolYear implements ShallowEntity<SchoolYear>, _$SchoolYear {
 
   factory SchoolYear.fromJson(Map<String, dynamic> json) {
     return SchoolYear(
-      metadata: EntityMetadata.partialFromJson(json),
+      metadata: PartialEntityMetadata.fromJson(json),
       name: json['name'] as String,
       startsAt: FancyLocalDate.fromJson(json['startDate'] as String),
       endsAt: FancyLocalDate.fromJson(json['endDate'] as String),

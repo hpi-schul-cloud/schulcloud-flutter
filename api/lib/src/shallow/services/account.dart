@@ -10,7 +10,7 @@ part 'account.freezed.dart';
 @freezed
 abstract class Account implements ShallowEntity<Account>, _$Account {
   const factory Account({
-    @required FullEntityMetadata<Account> metadata,
+    @required EntityMetadata<Account> metadata,
     @required bool isActivated,
     Instant lasttriedFailedLogin,
     @required Id<User> userId,
@@ -20,7 +20,7 @@ abstract class Account implements ShallowEntity<Account>, _$Account {
 
   factory Account.fromJson(Map<String, dynamic> json) {
     return Account(
-      metadata: EntityMetadata.fullFromJson(json),
+      metadata: EntityMetadata.fromJson(json),
       isActivated: json['activated'] as bool,
       lasttriedFailedLogin:
           FancyInstant.fromJson(json['lasttriedFailedLogin'] as String),

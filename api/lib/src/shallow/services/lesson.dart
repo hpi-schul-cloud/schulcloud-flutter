@@ -23,7 +23,7 @@ class LessonCollection
 @freezed
 abstract class Lesson implements ShallowEntity<Lesson>, _$Lesson {
   const factory Lesson({
-    @required FullEntityMetadata<Lesson> metadata,
+    @required EntityMetadata<Lesson> metadata,
     @required String name,
     @required bool isHidden,
     @required int position,
@@ -35,7 +35,7 @@ abstract class Lesson implements ShallowEntity<Lesson>, _$Lesson {
 
   factory Lesson.fromJson(Map<String, dynamic> json) {
     return Lesson(
-      metadata: EntityMetadata.fullFromJson(json),
+      metadata: EntityMetadata.fromJson(json),
       name: json['name'] as String,
       isHidden: json['hidden'] as bool ?? false,
       position: json['position'] as int,
@@ -89,7 +89,7 @@ abstract class Content implements ShallowEntity<Content>, _$Content {
 
   factory Content.fromJson(Map<String, dynamic> json) {
     return Content(
-      metadata: EntityMetadata.partialFromJson(json),
+      metadata: PartialEntityMetadata.fromJson(json),
       title: json['title'] as String,
       isHidden: json['hidden'] as bool ?? false,
       component: Component.fromJson(json),

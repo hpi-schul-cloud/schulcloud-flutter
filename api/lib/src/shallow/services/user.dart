@@ -39,7 +39,7 @@ abstract class User implements ShallowEntity<User>, _$User {
 
   factory User.fromJson(Map<String, dynamic> json) {
     return User(
-      metadata: EntityMetadata.partialFromJson(json),
+      metadata: PartialEntityMetadata.fromJson(json),
       schoolId: Id<School>.fromJson(json['schoolId'] as String),
       firstName: json['firstName'] as String,
       lastName: json['lastName'] as String,
