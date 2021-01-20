@@ -6,6 +6,7 @@ import 'package:oxidized/oxidized.dart';
 import 'authentication/module.dart';
 import 'errors.dart';
 import 'services/course.dart';
+import 'services/lesson.dart';
 import 'services/me.dart';
 import 'services/news.dart';
 import 'services/school.dart';
@@ -22,6 +23,7 @@ class Shallow {
     this.dio.interceptors.add(authentication.dioInterceptor);
 
     _courses = CourseCollection(this);
+    _lessons = LessonCollection(this);
     _news = ArticleCollection(this);
     _users = UserCollection(this);
     _schools = SchoolCollection(this);
@@ -52,6 +54,9 @@ class Shallow {
 
     return Result.ok(Me.fromJson(response.data));
   }
+
+  LessonCollection _lessons;
+  LessonCollection get lessons => _lessons;
 
   ArticleCollection _news;
   ArticleCollection get news => _news;
