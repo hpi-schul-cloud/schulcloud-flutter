@@ -12,7 +12,7 @@ abstract class Account implements ShallowEntity<Account>, _$Account {
   const factory Account({
     @required EntityMetadata<Account> metadata,
     @required bool isActivated,
-    Instant lasttriedFailedLogin,
+    Instant lastTriedFailedLogin,
     @required Id<User> userId,
     @required String username,
   }) = _Account;
@@ -22,7 +22,7 @@ abstract class Account implements ShallowEntity<Account>, _$Account {
     return Account(
       metadata: EntityMetadata.fromJson(json),
       isActivated: json['activated'] as bool,
-      lasttriedFailedLogin:
+      lastTriedFailedLogin:
           FancyInstant.fromJson(json['lasttriedFailedLogin'] as String),
       userId: Id<User>.fromJson(json['userId'] as String),
       username: json['username'] as String,
@@ -32,7 +32,7 @@ abstract class Account implements ShallowEntity<Account>, _$Account {
     return <String, dynamic>{
       ...metadata.toJson(),
       'activated': isActivated,
-      'lasttriedFailedLogin': lasttriedFailedLogin?.toJson(),
+      'lasttriedFailedLogin': lastTriedFailedLogin?.toJson(),
       'userId': userId.toJson(),
       'username': username,
     };
