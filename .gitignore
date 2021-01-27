@@ -9,6 +9,7 @@ local/
 android/fastlane/googlePlay-serviceAccount.json
 
 # Generated dart files.
+*.freezed.dart
 *.g.dart
 lib/generated/**
 

@@ -349,7 +349,7 @@ class NexboardComponent extends Component {
 
   @override
   bool operator ==(Object other) =>
-      other is EtherpadComponent &&
+      other is NexboardComponent &&
       url == other.url &&
       description == other.description;
   @override
