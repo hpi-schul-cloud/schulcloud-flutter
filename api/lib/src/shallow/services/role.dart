@@ -20,13 +20,13 @@ class RoleCollection
 }
 
 @freezed
-abstract class Role implements ShallowEntity<Role>, _$Role {
+class Role with _$Role implements ShallowEntity<Role> {
   const factory Role({
-    @required EntityMetadata<Role> metadata,
-    @required String name,
-    @required String displayName,
-    @required List<Id<Role>> roleIds,
-    @required List<Permission> permissions,
+    required EntityMetadata<Role> metadata,
+    required String name,
+    required String displayName,
+    required List<Id<Role>> roleIds,
+    required List<Permission> permissions,
   }) = _Role;
   const Role._();
 
@@ -66,7 +66,7 @@ abstract class Role implements ShallowEntity<Role>, _$Role {
     Role.demoTeacherId,
     Role.demoStudentId
   ];
-  // TODO(marcelgarus): Don't hardcode role id.
+  // TODO(marcelgarus): Don't hardcode role ID.
   static bool isDemo(Id<Role> roleId) => _demoIds.contains(roleId);
 }
 
@@ -82,7 +82,7 @@ enum RoleSortProperty { id, name }
 
 @immutable
 class Permission {
-  const Permission(this.name) : assert(name != null);
+  const Permission(this.name);
 
   factory Permission.fromJson(String json) => Permission(json);
   String toJson() => name;

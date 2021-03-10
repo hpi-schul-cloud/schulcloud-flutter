@@ -1,5 +1,4 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:time_machine/time_machine.dart';
 
 import '../collection/filtering.dart';
 import '../collection/module.dart';
@@ -22,16 +21,16 @@ class SchoolCollection extends ShallowCollection<School, SchoolFilterProperty,
 }
 
 @freezed
-abstract class School implements ShallowEntity<School>, _$School {
+class School with _$School implements ShallowEntity<School> {
   const factory School({
-    @required EntityMetadata<School> metadata,
-    @required String name,
-    @required SchoolYearsInfo years,
-    @required bool isTeamCreationByStudentsEnabled,
-    @required bool isExperimental,
-    @required bool isPilot,
-    @required bool isInMaintenance,
-    @required bool isExternal,
+    required EntityMetadata<School> metadata,
+    required String name,
+    required SchoolYearsInfo years,
+    required bool isTeamCreationByStudentsEnabled,
+    required bool isExperimental,
+    required bool isPilot,
+    required bool isInMaintenance,
+    required bool isExternal,
     // TODO(JonasWanke): fileStorageType, system, purpose, features, storageProvider, customYears, documentBaseDir, documentBaseDirType, rssFeeds, federalState, ldapSchoolIdentifier
   }) = _School;
   const School._();
@@ -43,8 +42,8 @@ abstract class School implements ShallowEntity<School>, _$School {
       years: SchoolYearsInfo.fromJson(json['years'] as Map<String, dynamic>),
       isTeamCreationByStudentsEnabled:
           json['isTeamCreationByStudentsEnabled'] as bool,
-      isExperimental: json['experimental'] as bool,
-      isPilot: json['pilot'] as bool,
+      isExperimental: json['experimental'] as bool? ?? false,
+      isPilot: json['pilot'] as bool? ?? false,
       isInMaintenance: json['inMaintenance'] as bool,
       isExternal: json['isExternal'] as bool,
     );
@@ -67,9 +66,9 @@ abstract class School implements ShallowEntity<School>, _$School {
 class SchoolFilterProperty {
   const SchoolFilterProperty();
 
-  ComparableFilterProperty<School, Instant> get createdAt =>
+  ComparableFilterProperty<School, DateTime> get createdAt =>
       ComparableFilterProperty('createdAt');
-  ComparableFilterProperty<School, Instant> get updatedAt =>
+  ComparableFilterProperty<School, DateTime> get updatedAt =>
       ComparableFilterProperty('updatedAt');
   ComparableFilterProperty<School, String> get name =>
       ComparableFilterProperty('name');
@@ -87,13 +86,13 @@ enum SchoolSortProperty {
 }
 
 @freezed
-abstract class SchoolYearsInfo implements _$SchoolYearsInfo {
+class SchoolYearsInfo with _$SchoolYearsInfo {
   const factory SchoolYearsInfo({
-    @required List<SchoolYear> years,
-    @required Id<SchoolYear> activeId,
-    @required Id<SchoolYear> defaultId,
-    @required Id<SchoolYear> previousId,
-    @required Id<SchoolYear> nextId,
+    required List<SchoolYear> years,
+    required Id<SchoolYear> activeId,
+    required Id<SchoolYear> defaultId,
+    required Id<SchoolYear> previousId,
+    required Id<SchoolYear> nextId,
   }) = _SchoolYearsInfo;
   const SchoolYearsInfo._();
 
@@ -131,12 +130,14 @@ abstract class SchoolYearsInfo implements _$SchoolYearsInfo {
 }
 
 @freezed
-abstract class SchoolYear implements ShallowEntity<SchoolYear>, _$SchoolYear {
+class SchoolYear with _$SchoolYear implements ShallowEntity<SchoolYear> {
+  @Assert('startsAt.isValidDate')
+  @Assert('endsAt.isValidDate')
   const factory SchoolYear({
-    @required PartialEntityMetadata<SchoolYear> metadata,
-    @required String name,
-    @required LocalDate startsAt,
-    @required LocalDate endsAt,
+    required PartialEntityMetadata<SchoolYear> metadata,
+    required String name,
+    required DateTime startsAt,
+    required DateTime endsAt,
   }) = _SchoolYear;
   const SchoolYear._();
 
@@ -144,16 +145,16 @@ abstract class SchoolYear implements ShallowEntity<SchoolYear>, _$SchoolYear {
     return SchoolYear(
       metadata: PartialEntityMetadata.fromJson(json),
       name: json['name'] as String,
-      startsAt: FancyLocalDate.fromJson(json['startDate'] as String),
-      endsAt: FancyLocalDate.fromJson(json['endDate'] as String),
+      startsAt: FancyDateTime.parseApiDate(json['startDate'] as String),
+      endsAt: FancyDateTime.parseApiDate(json['endDate'] as String),
     );
   }
   Map<String, dynamic> toJson() {
     return <String, dynamic>{
       ...metadata.toJson(),
       'name': name,
-      'startDate': startsAt.toJson(),
-      'endDate': endsAt.toJson(),
+      'startDate': startsAt.toIso8601String(),
+      'endDate': endsAt.toIso8601String(),
     };
   }
 }

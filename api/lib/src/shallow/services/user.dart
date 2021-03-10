@@ -23,17 +23,17 @@ class UserCollection
 }
 
 @freezed
-abstract class User implements ShallowEntity<User>, _$User {
+class User with _$User implements ShallowEntity<User> {
   const factory User({
-    @required PartialEntityMetadata<User> metadata,
-    @required Id<School> schoolId,
-    @required String firstName,
-    @required String lastName,
-    @required String fullName,
-    @required String displayName,
-    @required String avatarInitials,
-    @required Color avatarBackgroundColor,
-    @required List<Id<Role>> roleIds,
+    required PartialEntityMetadata<User> metadata,
+    required Id<School> schoolId,
+    required String firstName,
+    required String lastName,
+    required String fullName,
+    required String displayName,
+    required String avatarInitials,
+    required Color avatarBackgroundColor,
+    required List<Id<Role>> roleIds,
   }) = _User;
   const User._();
 

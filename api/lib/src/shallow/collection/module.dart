@@ -1,20 +1,18 @@
-import 'dart:io';
-
-import 'package:api/shallow.dart';
-import 'package:dio/dio.dart';
 import 'package:enum_to_string/enum_to_string.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:oxidized/oxidized.dart';
 
 import '../entity.dart';
-import '../errors.dart';
+import '../network.dart';
 import '../shallow.dart';
+import '../utils.dart';
+import 'filtering.dart';
 
 part 'module.freezed.dart';
 
 abstract class ShallowCollection<E extends ShallowEntity<E>, FilterProperty,
     SortProperty> {
-  const ShallowCollection(this.shallow) : assert(shallow != null);
+  const ShallowCollection(this.shallow);
 
   final Shallow shallow;
   String get path;
@@ -22,41 +20,24 @@ abstract class ShallowCollection<E extends ShallowEntity<E>, FilterProperty,
   FilterProperty createFilterProperty();
 
   Future<Result<E, ShallowError>> get(Id<E> id) async {
-    assert(id != null);
-
-    Response<Map<String, dynamic>> rawResponse;
-    try {
-      rawResponse =
-          await shallow.dio.get<Map<String, dynamic>>('$path/${id.value}');
-    } on DioError catch (e) {
-      switch (e.response.statusCode) {
-        case HttpStatus.unauthorized:
-          return Result.err(UnauthorizedError());
-        case HttpStatus.notFound:
-          return Result.err(NotFoundError());
-      }
-      rethrow;
-    }
-
-    final entity = entityFromJson(rawResponse.data);
-    return Result.ok(entity);
+    return shallow.dio
+        .makeRequest<Map<String, dynamic>>((it) => it.get('$path/${id.value}'))
+        .map((it) => entityFromJson(it.data!));
   }
 
   Future<Result<PaginatedResponse<E>, ShallowError>> list({
-    WhereBuilder<FilterProperty> where,
+    WhereBuilder<FilterProperty>? where,
     Map<SortProperty, SortOrder> sortedBy = const {},
-    int limit,
-    int skip = 0,
-  }) async {
-    assert(sortedBy != null);
+    int? limit,
+    int? skip = 0,
+  }) {
     assert(limit == null || limit > 0);
     assert(skip == null || skip >= 0);
 
-    final builtWhere = where?.call(createFilterProperty())?.build() ?? [];
+    final builtWhere = where?.call(createFilterProperty()).build() ?? [];
 
-    Response<Map<String, dynamic>> rawResponse;
-    try {
-      rawResponse = await shallow.dio.get<Map<String, dynamic>>(
+    final rawResponse = shallow.dio.makeRequest<Map<String, dynamic>>(
+      (it) => it.get<Map<String, dynamic>>(
         path,
         queryParameters: <String, dynamic>{
           for (final filter in builtWhere) filter.queryKey: filter.queryValue,
@@ -66,26 +47,18 @@ abstract class ShallowCollection<E extends ShallowEntity<E>, FilterProperty,
           if (limit != null) r'$limit': limit,
           if (skip != null) r'$skip': skip,
         },
-      );
-    } on DioError catch (e) {
-      switch (e.response.statusCode) {
-        case HttpStatus.unauthorized:
-          return Result.err(UnauthorizedError());
-        case HttpStatus.notFound:
-          return Result.err(NotFoundError());
-      }
-      rethrow;
-    }
-
-    final paginatedResponse = PaginatedResponse(
-      limit: rawResponse.data['limit'] as int,
-      skip: rawResponse.data['skip'] as int,
-      items: (rawResponse.data['data'] as List<dynamic>)
-          .cast<Map<String, dynamic>>()
-          .map(entityFromJson)
-          .toList(),
+      ),
     );
-    return Result.ok(paginatedResponse);
+    return rawResponse.map((it) {
+      return PaginatedResponse(
+        limit: it.data!['limit'] as int,
+        skip: it.data!['skip'] as int,
+        items: (it.data!['data'] as List<dynamic>)
+            .cast<Map<String, dynamic>>()
+            .map(entityFromJson)
+            .toList(),
+      );
+    });
   }
 }
 
@@ -95,21 +68,25 @@ enum SortOrder { ascending, descending }
 
 extension on SortOrder {
   int get queryValue {
-    return {
-      SortOrder.ascending: 1,
-      SortOrder.descending: -1,
-    }[this];
+    switch (this) {
+      case SortOrder.ascending:
+        return 1;
+      case SortOrder.descending:
+        return -1;
+    }
   }
 }
 
 @freezed
-abstract class PaginatedResponse<T> implements _$PaginatedResponse<T> {
+class PaginatedResponse<T> with _$PaginatedResponse<T> {
+  @Assert('total >= 0')
+  @Assert('skip >= 0')
   const factory PaginatedResponse({
     // The API provides a `total` field, but that doesn't always return the
     // correct number…
-    // @required int total,
-    @required int limit,
-    @required int skip,
-    @required List<T> items,
+    // required int total,
+    required int limit,
+    required int skip,
+    required List<T> items,
   }) = _PaginatedResponse<T>;
 }

@@ -1,5 +1,4 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:time_machine/time_machine.dart';
 
 import '../collection/filtering.dart';
 import '../collection/module.dart';
@@ -24,19 +23,21 @@ class CourseCollection extends ShallowCollection<Course, CourseFilterProperty,
 }
 
 @freezed
-abstract class Course implements ShallowEntity<Course>, _$Course {
+class Course with _$Course implements ShallowEntity<Course> {
+  @Assert('startsAt.isValidDateTime')
+  @Assert('endsAt.isValidDateTime')
   const factory Course({
-    @required EntityMetadata<Course> metadata,
-    @required Id<School> schoolId,
-    @required String name,
-    String description,
-    @required Color color,
-    @required Instant startsAt,
-    @required Instant endsAt,
+    required EntityMetadata<Course> metadata,
+    required Id<School> schoolId,
+    required String name,
+    String? description,
+    required Color color,
+    required DateTime startsAt,
+    DateTime? endsAt,
     @Default(<Id<User>>[]) List<Id<User>> userIds,
     @Default(<Id<User>>[]) List<Id<User>> teacherIds,
     // TODO(JonasWanke): classIds, substitutionIds, ltiToolIds, isCopyFrom, features, times
-    @required bool isArchived,
+    required bool isArchived,
   }) = _Course;
   const Course._();
 
@@ -45,21 +46,22 @@ abstract class Course implements ShallowEntity<Course>, _$Course {
       metadata: EntityMetadata.fromJson(json),
       schoolId: Id<School>.fromJson(json['schoolId'] as String),
       name: json['name'] as String,
-      description: (json['description'] as String).blankToNull,
+      description: (json['description'] as String?).blankToNull,
       color: Color.fromJson(json['color'] as String),
-      startsAt: FancyInstant.fromJson(json['startDate'] as String),
-      endsAt: FancyInstant.fromJson(json['untilDate'] as String),
-      userIds: (json['userIds'] as List<dynamic>)
+      startsAt: FancyDateTime.parseApiDateTime(json['startDate'] as String),
+      endsAt:
+          FancyDateTime.parseNullableApiDateTime(json['untilDate'] as String?),
+      userIds: (json['userIds'] as List<dynamic>?)
               ?.cast<String>()
-              ?.map((it) => Id<User>.fromJson(it))
-              ?.toList() ??
+              .map((it) => Id<User>.fromJson(it))
+              .toList() ??
           [],
-      teacherIds: (json['teacherIds'] as List<dynamic>)
+      teacherIds: (json['teacherIds'] as List<dynamic>?)
               ?.cast<String>()
-              ?.map((it) => Id<User>.fromJson(it))
-              ?.toList() ??
+              .map((it) => Id<User>.fromJson(it))
+              .toList() ??
           [],
-      isArchived: json['isArchived'] as bool ?? false,
+      isArchived: json['isArchived'] as bool? ?? false,
     );
   }
   Map<String, dynamic> toJson() {
@@ -69,8 +71,8 @@ abstract class Course implements ShallowEntity<Course>, _$Course {
       'name': name,
       'description': description,
       'color': color.toJson(),
-      'startDate': startsAt.toJson(),
-      'untilDate': endsAt.toJson(),
+      'startDate': startsAt.toIso8601String(),
+      'untilDate': endsAt?.toIso8601String(),
       'userIds': userIds.map((e) => e.toJson()).toList(),
       'teacherIds': teacherIds.map((e) => e.toJson()).toList(),
       'isArchived': isArchived,
@@ -82,9 +84,9 @@ abstract class Course implements ShallowEntity<Course>, _$Course {
 class CourseFilterProperty {
   const CourseFilterProperty();
 
-  ComparableFilterProperty<Course, Instant> get createdAt =>
+  ComparableFilterProperty<Course, DateTime> get createdAt =>
       ComparableFilterProperty('createdAt');
-  ComparableFilterProperty<Course, Instant> get updatedAt =>
+  ComparableFilterProperty<Course, DateTime> get updatedAt =>
       ComparableFilterProperty('updatedAt');
   ComparableFilterProperty<Course, String> get name =>
       ComparableFilterProperty('name');
@@ -92,9 +94,9 @@ class CourseFilterProperty {
       ComparableFilterProperty('description');
   ComparableFilterProperty<Course, Color> get color =>
       ComparableFilterProperty('color');
-  ComparableFilterProperty<Course, Instant> get startsAt =>
+  ComparableFilterProperty<Course, DateTime> get startsAt =>
       ComparableFilterProperty('startsAt');
-  ComparableFilterProperty<Course, Instant> get endsAt =>
+  ComparableFilterProperty<Course, DateTime> get endsAt =>
       ComparableFilterProperty('endsAt');
 }
 

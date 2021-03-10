@@ -1,5 +1,4 @@
 import 'package:api/shallow.dart';
-import 'package:meta/meta.dart';
 import 'package:oxidized/oxidized.dart';
 import 'package:test/test.dart';
 
@@ -53,15 +52,15 @@ void main() {
 
 void _expectUser(
   Result<User, ShallowError> result, {
-  @required Id<User> id,
-  @required Id<School> schoolId,
-  @required String firstName,
-  @required String lastName,
-  @required String fullName,
-  @required String displayName,
-  @required String avatarInitials,
-  @required Color avatarBackgroundColor,
-  @required List<Id<Role>> roleIds,
+  required Id<User> id,
+  required Id<School> schoolId,
+  required String firstName,
+  required String lastName,
+  required String fullName,
+  required String displayName,
+  required String avatarInitials,
+  required Color avatarBackgroundColor,
+  required List<Id<Role>> roleIds,
 }) {
   expect(result, isA<Ok<User, ShallowError>>());
 

@@ -1,6 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:meta/meta.dart';
-import 'package:time_machine/time_machine.dart';
 
 import 'utils.dart';
 
@@ -13,7 +12,7 @@ abstract class ShallowEntity<E extends ShallowEntity<E>> {
 // Some entities are missing the `createdAt` and `updatedAt` properties…
 
 class PartialEntityMetadata<E extends ShallowEntity<E>> {
-  const PartialEntityMetadata(this.id) : assert(id != null);
+  const PartialEntityMetadata(this.id);
 
   factory PartialEntityMetadata.fromJson(Map<String, dynamic> json) =>
       PartialEntityMetadata<E>(Id.fromJson(json['_id'] as String));
@@ -31,23 +30,26 @@ class PartialEntityMetadata<E extends ShallowEntity<E>> {
 
 class EntityMetadata<E extends ShallowEntity<E>>
     extends PartialEntityMetadata<E> {
-  const EntityMetadata(
+  EntityMetadata(
     Id<E> id, {
-    @required this.createdAt,
-    @required this.updatedAt,
-  })  : assert(createdAt != null),
-        assert(updatedAt != null),
+    required this.createdAt,
+    required this.updatedAt,
+  })   : assert(createdAt.isValidDateTime),
+        assert(updatedAt.isValidDateTime),
         super(id);
 
   factory EntityMetadata.fromJson(Map<String, dynamic> json) {
-    final createdAt = FancyInstant.fromJson(json['createdAt'] as String);
+    final createdAt =
+        FancyDateTime.parseApiDateTime(json['createdAt'] as String);
+    // Some entities always set `updatedAt` (sometimes to the same value as
+    // `createdAt`), others don't…
+    final updatedAt = json['updatedAt'] != null
+        ? FancyDateTime.parseApiDateTime(json['updatedAt'] as String)
+        : createdAt;
     return EntityMetadata<E>(
       Id.fromJson(json['_id'] as String),
       createdAt: createdAt,
-      // Some entities always set `updatedAt` (sometimes to the same value as
-      // `createdAt`), others don't…
-      updatedAt:
-          FancyInstant.fromJson(json['updatedAt'] as String) ?? createdAt,
+      updatedAt: updatedAt,
     );
   }
 
@@ -55,13 +57,13 @@ class EntityMetadata<E extends ShallowEntity<E>>
   Map<String, dynamic> toJson() {
     return <String, dynamic>{
       ...super.toJson(),
-      'createdAt': createdAt.toJson(),
-      'updatedAt': updatedAt.toJson(),
+      'createdAt': createdAt.toIso8601String(),
+      'updatedAt': updatedAt.toIso8601String(),
     };
   }
 
-  final Instant createdAt;
-  final Instant updatedAt;
+  final DateTime createdAt;
+  final DateTime updatedAt;
 
   @override
   bool operator ==(dynamic other) {
@@ -77,9 +79,11 @@ class EntityMetadata<E extends ShallowEntity<E>>
 
 @immutable
 class Id<E extends ShallowEntity<E>> {
-  const Id(this.value) : assert(value != null);
-  factory Id.orNull(String value) => value == null ? null : Id<E>(value);
+  const Id(this.value);
   factory Id.fromJson(String json) => Id(json);
+
+  static Id<E>? orNull<E extends ShallowEntity<E>>(String? value) =>
+      value == null ? null : Id<E>(value);
 
   final String value;
 

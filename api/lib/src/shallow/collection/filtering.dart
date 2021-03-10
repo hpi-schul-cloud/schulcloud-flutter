@@ -25,7 +25,7 @@ abstract class SimpleOrOrFilter extends Filter {
 
 abstract class SimpleFilter extends Filter
     implements SimpleOrAndFilter, SimpleOrOrFilter {
-  const SimpleFilter(this.propertyName) : assert(propertyName != null);
+  const SimpleFilter(this.propertyName);
 
   final String propertyName;
 
@@ -37,10 +37,9 @@ abstract class SimpleFilter extends Filter
 
 class ComparisonFilter extends SimpleFilter {
   const ComparisonFilter(String propertyName, this.operatorString, this.value)
-      : assert(value != null),
-        super(propertyName);
+      : super(propertyName);
 
-  final String operatorString;
+  final String? operatorString;
   final dynamic value;
 
   @override
@@ -57,9 +56,7 @@ class ComparisonFilter extends SimpleFilter {
 
 class InFilter extends SimpleFilter {
   const InFilter(String propertyName, this.operatorString, this.values)
-      : assert(operatorString != null),
-        assert(values != null),
-        super(propertyName);
+      : super(propertyName);
 
   final String operatorString;
   final List<dynamic> values;
@@ -75,8 +72,7 @@ class InFilter extends SimpleFilter {
 
 class AndFilter extends SimpleOrAndFilter {
   AndFilter(List<SimpleOrAndFilter> filters)
-      : assert(filters != null),
-        filters = _flattenFilters(filters);
+      : filters = _flattenFilters(filters);
 
   static List<SimpleFilter> _flattenFilters(List<SimpleOrAndFilter> filters) {
     return filters
@@ -93,9 +89,7 @@ class AndFilter extends SimpleOrAndFilter {
 }
 
 class OrFilter extends SimpleOrOrFilter {
-  OrFilter(List<SimpleOrOrFilter> filters)
-      : assert(filters != null),
-        filters = _flattenFilters(filters);
+  OrFilter(List<SimpleOrOrFilter> filters) : filters = _flattenFilters(filters);
 
   static List<SimpleFilter> _flattenFilters(List<SimpleOrOrFilter> filters) {
     return filters
@@ -125,10 +119,7 @@ class OrFilter extends SimpleOrOrFilter {
 
 @immutable
 class BuiltFilter {
-  const BuiltFilter(this.propertyName, this.operators, this.value)
-      : assert(propertyName != null),
-        assert(operators != null),
-        assert(value != null);
+  const BuiltFilter(this.propertyName, this.operators, this.value);
 
   final String propertyName;
   final List<String> operators;
@@ -147,7 +138,7 @@ class BuiltFilter {
 
 @immutable
 abstract class FilterProperty<E extends ShallowEntity<E>> {
-  const FilterProperty(this.name) : assert(name != null);
+  const FilterProperty(this.name);
 
   final String name;
 }

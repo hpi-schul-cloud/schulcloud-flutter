@@ -3,7 +3,7 @@ export 'src/shallow/authentication/module.dart';
 export 'src/shallow/collection/filtering.dart';
 export 'src/shallow/collection/module.dart';
 export 'src/shallow/entity.dart';
-export 'src/shallow/errors.dart';
+export 'src/shallow/network.dart';
 export 'src/shallow/services/account.dart';
 export 'src/shallow/services/course.dart';
 export 'src/shallow/services/lesson.dart';

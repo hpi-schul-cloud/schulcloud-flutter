@@ -1,5 +1,4 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:time_machine/time_machine.dart';
 
 import '../entity.dart';
 import '../services/user.dart';
@@ -8,13 +7,16 @@ import '../utils.dart';
 part 'account.freezed.dart';
 
 @freezed
-abstract class Account implements ShallowEntity<Account>, _$Account {
+class Account with _$Account implements ShallowEntity<Account> {
+  @Assert(
+    'lastTriedFailedLogin == null || lastTriedFailedLogin.isValidDateTime',
+  )
   const factory Account({
-    @required EntityMetadata<Account> metadata,
-    @required bool isActivated,
-    Instant lastTriedFailedLogin,
-    @required Id<User> userId,
-    @required String username,
+    required EntityMetadata<Account> metadata,
+    required bool isActivated,
+    DateTime? lastTriedFailedLogin,
+    required Id<User> userId,
+    required String username,
   }) = _Account;
   const Account._();
 
@@ -22,8 +24,8 @@ abstract class Account implements ShallowEntity<Account>, _$Account {
     return Account(
       metadata: EntityMetadata.fromJson(json),
       isActivated: json['activated'] as bool,
-      lastTriedFailedLogin:
-          FancyInstant.fromJson(json['lasttriedFailedLogin'] as String),
+      lastTriedFailedLogin: FancyDateTime.parseApiDateTime(
+          json['lasttriedFailedLogin'] as String),
       userId: Id<User>.fromJson(json['userId'] as String),
       username: json['username'] as String,
     );
@@ -32,7 +34,7 @@ abstract class Account implements ShallowEntity<Account>, _$Account {
     return <String, dynamic>{
       ...metadata.toJson(),
       'activated': isActivated,
-      'lasttriedFailedLogin': lastTriedFailedLogin?.toJson(),
+      'lasttriedFailedLogin': lastTriedFailedLogin?.toIso8601String(),
       'userId': userId.toJson(),
       'username': username,
     };

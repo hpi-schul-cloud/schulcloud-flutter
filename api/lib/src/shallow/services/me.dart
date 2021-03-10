@@ -10,23 +10,23 @@ import 'school.dart';
 part 'me.freezed.dart';
 
 @freezed
-abstract class Me implements ShallowEntity<Me>, _$Me {
+class Me with _$Me implements ShallowEntity<Me> {
   const factory Me({
-    @required EntityMetadata<Me> metadata,
-    @required Id<School> schoolId,
-    @required String firstName,
-    @required String lastName,
-    @required String fullName,
-    @required String displayName,
-    @required String avatarInitials,
-    @required Color avatarBackgroundColor,
+    required EntityMetadata<Me> metadata,
+    required Id<School> schoolId,
+    required String firstName,
+    required String lastName,
+    required String fullName,
+    required String displayName,
+    required String avatarInitials,
+    required Color avatarBackgroundColor,
     // Additional properties compared to [User]:
-    @required Id<Account> accountId,
-    @required String emailAddress,
-    @required Locale locale,
-    @required List<Role> roles, // `/users` only contains their IDs
-    @required List<Permission> permissions,
-    @required bool isExternallyManaged,
+    required Id<Account> accountId,
+    required String emailAddress,
+    required Locale locale,
+    required List<Role> roles, // `/users` only contains their IDs
+    required List<Permission> permissions,
+    required bool isExternallyManaged,
     // TODO(JonasWanke): consent, forcePasswordChange, children, parents, features, preferences
   }) = _Me;
   const Me._();

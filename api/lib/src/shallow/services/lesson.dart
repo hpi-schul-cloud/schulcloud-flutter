@@ -21,14 +21,14 @@ class LessonCollection
 }
 
 @freezed
-abstract class Lesson implements ShallowEntity<Lesson>, _$Lesson {
+class Lesson with _$Lesson implements ShallowEntity<Lesson> {
   const factory Lesson({
-    @required EntityMetadata<Lesson> metadata,
-    @required String name,
-    @required bool isHidden,
-    @required int position,
-    @required Id<Course> courseId,
-    @required List<Content> contents,
+    required EntityMetadata<Lesson> metadata,
+    required String name,
+    required bool isHidden,
+    required int position,
+    required Id<Course> courseId,
+    required List<Content> contents,
     // TODO(JonasWanke): materialIds, isCopyFrom, date, time
   }) = _Lesson;
   const Lesson._();
@@ -37,7 +37,7 @@ abstract class Lesson implements ShallowEntity<Lesson>, _$Lesson {
     return Lesson(
       metadata: EntityMetadata.fromJson(json),
       name: json['name'] as String,
-      isHidden: json['hidden'] as bool ?? false,
+      isHidden: json['hidden'] as bool? ?? false,
       position: json['position'] as int,
       courseId: Id<Course>.fromJson(json['courseId'] as String),
       contents: (json['contents'] as List<dynamic>)
@@ -77,12 +77,12 @@ class LessonFilterProperty {
 enum LessonSortProperty { id, name, hidden, position }
 
 @freezed
-abstract class Content implements ShallowEntity<Content>, _$Content {
+class Content with _$Content implements ShallowEntity<Content> {
   const factory Content({
-    @required PartialEntityMetadata<Content> metadata,
-    @required String title,
-    @required bool isHidden,
-    @required Component component,
+    required PartialEntityMetadata<Content> metadata,
+    required String title,
+    required bool isHidden,
+    required Component component,
     // TODO(JonasWanke): user
   }) = _Content;
   const Content._();
@@ -91,7 +91,7 @@ abstract class Content implements ShallowEntity<Content>, _$Content {
     return Content(
       metadata: PartialEntityMetadata.fromJson(json),
       title: json['title'] as String,
-      isHidden: json['hidden'] as bool ?? false,
+      isHidden: json['hidden'] as bool? ?? false,
       component: Component.fromJson(json),
     );
   }
@@ -109,17 +109,17 @@ abstract class Content implements ShallowEntity<Content>, _$Content {
 }
 
 @freezed
-abstract class Component implements _$Component {
+class Component with _$Component {
   const factory Component.unsupported() = UnsupportedComponent;
   const factory Component.etherpad({
-    @required String title,
-    @required String description,
-    @required Uri url,
+    required String title,
+    required String description,
+    required Uri url,
   }) = EtherpadComponent;
   const factory Component.geoGebra(String materialId) = GeoGebraComponent;
   const factory Component.nexboard({
-    @required Uri url,
-    @required String description,
+    required Uri url,
+    required String description,
   }) = NexboardComponent;
   const factory Component.resources(List<Resource> resources) =
       ResourcesComponent;
@@ -144,8 +144,7 @@ abstract class Component implements _$Component {
         );
       case 'resources':
         return Component.resources(
-          ((content ?? <String, dynamic>{})['resources'] as List<dynamic> ??
-                  <dynamic>[])
+          (content['resources'] as List<dynamic>? ?? <dynamic>[])
               .cast<Map<String, dynamic>>()
               .map((it) => Resource.fromJson(it))
               .toList(),
@@ -191,12 +190,12 @@ abstract class Component implements _$Component {
 }
 
 @freezed
-abstract class Resource implements _$Resource {
+class Resource with _$Resource {
   const factory Resource({
-    @required Uri url,
-    @required String title,
-    @required String description,
-    @required String client,
+    required Uri url,
+    required String title,
+    required String description,
+    required String client,
   }) = _Resource;
   const Resource._();
 
