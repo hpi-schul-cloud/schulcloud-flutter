@@ -22,6 +22,9 @@ class PartialEntityMetadata<E extends ShallowEntity<E>> {
   final Id<E> id;
 
   @override
+  String toString() => 'PartialEntityMetadata(id: $id)';
+
+  @override
   bool operator ==(dynamic other) =>
       other is PartialEntityMetadata<E> && other.id == id;
   @override
@@ -64,6 +67,10 @@ class EntityMetadata<E extends ShallowEntity<E>>
 
   final DateTime createdAt;
   final DateTime updatedAt;
+
+  @override
+  String toString() =>
+      'EntityMetadata(id: $id, createdAt: $createdAt, updatedAt: $updatedAt)';
 
   @override
   bool operator ==(dynamic other) {
