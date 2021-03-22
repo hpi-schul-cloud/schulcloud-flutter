@@ -1,11 +1,11 @@
-import 'package:basics/basics.dart';
+import 'package:dartx/dartx.dart';
 import 'package:meta/meta.dart';
 
 @immutable
 class Color {
-  const Color(this.value) : assert(value != null);
+  const Color(this.value);
   factory Color.fromJson(String json) =>
-      Color(int.parse(json.withoutPrefix('#').padLeft(8, 'f'), radix: 16));
+      Color(int.parse(json.removePrefix('#').padLeft(8, 'f'), radix: 16));
 
   final int value;
 

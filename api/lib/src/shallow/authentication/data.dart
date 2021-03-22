@@ -6,10 +6,10 @@ part 'data.freezed.dart';
 part 'data.g.dart';
 
 @Freezed(unionKey: 'strategy')
-abstract class AuthenticationBody implements _$AuthenticationBody {
+class AuthenticationBody with _$AuthenticationBody {
   const factory AuthenticationBody.local({
-    @required @JsonKey(name: 'username') String emailAddress,
-    @required String password,
+    @JsonKey(name: 'username') required String emailAddress,
+    required String password,
 
     /// When this is set, the user will remain logged in for longer when
     /// inactive.
@@ -26,10 +26,10 @@ abstract class AuthenticationBody implements _$AuthenticationBody {
 }
 
 @freezed
-abstract class AuthenticationResponse implements _$AuthenticationResponse {
+class AuthenticationResponse with _$AuthenticationResponse {
   const factory AuthenticationResponse({
-    @required String accessToken,
-    @required Account account,
+    required String accessToken,
+    required Account account,
   }) = _AuthenticationResponse;
   factory AuthenticationResponse.fromJson(Map<String, dynamic> json) =>
       _$AuthenticationResponseFromJson(json);

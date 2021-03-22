@@ -1,5 +1,4 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:time_machine/time_machine.dart';
 
 import '../collection/module.dart';
 import '../entity.dart';
@@ -24,15 +23,16 @@ class ArticleCollection
 }
 
 @freezed
-abstract class Article implements ShallowEntity<Article>, _$Article {
+class Article with _$Article implements ShallowEntity<Article> {
+  @Assert('publishedAt.isValidDateTime')
   const factory Article({
-    @required EntityMetadata<Article> metadata,
-    @required Id<School> schoolId,
-    @required Instant publishedAt,
-    @required Id<User> creatorId,
-    Id<User> updaterId,
-    @required String title,
-    @required String content,
+    required EntityMetadata<Article> metadata,
+    required Id<School> schoolId,
+    required DateTime publishedAt,
+    required Id<User> creatorId,
+    Id<User>? updaterId,
+    required String title,
+    required String content,
     // TODO(JonasWanke): target, targetModel, source, externalId, sourceDescription
   }) = _Article;
   const Article._();
@@ -41,9 +41,9 @@ abstract class Article implements ShallowEntity<Article>, _$Article {
     return Article(
       metadata: EntityMetadata.fromJson(json),
       schoolId: Id<School>.fromJson(json['schoolId'] as String),
-      publishedAt: FancyInstant.fromJson(json['displayAt'] as String),
-      creatorId: Id<User>.orNull(json['creatorId'] as String),
-      updaterId: Id<User>.orNull(json['updaterId'] as String),
+      publishedAt: FancyDateTime.parseApiDateTime(json['displayAt'] as String),
+      creatorId: Id<User>.fromJson(json['creatorId'] as String),
+      updaterId: Id.orNull<User>(json['updaterId'] as String?),
       title: json['title'] as String,
       content: json['content'] as String,
     );
@@ -52,9 +52,9 @@ abstract class Article implements ShallowEntity<Article>, _$Article {
     return <String, dynamic>{
       ...metadata.toJson(),
       'schoolId': schoolId.toJson(),
-      'displayAt': publishedAt.toJson(),
+      'displayAt': publishedAt.toIso8601String(),
       'creatorId': creatorId.toJson(),
-      'updaterId': updaterId.toJson(),
+      'updaterId': updaterId?.toJson(),
       'title': title,
       'content': content,
     };

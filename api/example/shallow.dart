@@ -1,7 +1,7 @@
 import 'package:api/shallow.dart';
 import 'package:dio/dio.dart';
 
-// ignore_for_file: avoid_print
+// ignore_for_file: avoid_print, unused_import
 
 Future<void> main(List<String> args) async {
   final shallow = Shallow(
@@ -16,12 +16,14 @@ Future<void> main(List<String> args) async {
   //   ),
   // );
 
-  await shallow.authentication.signIn(
-    AuthenticationBody.local(
-      emailAddress: 'your-email-address',
-      password: r'your-password',
-    ),
-  );
+  await shallow.authentication
+      .signIn(
+        AuthenticationBody.local(
+          emailAddress: 'your-email-address',
+          password: r'your-password',
+        ),
+      )
+      .unwrap();
   print('Signed in as:\n${shallow.authentication.currentUserId}\n');
 
   final courses = await shallow.courses.list(
@@ -36,7 +38,8 @@ Future<void> main(List<String> args) async {
     where: (it) => it.courseId.equals(lessonCourseId),
   );
   print(
-      'Lessons of course $lessonCourseId:\n${lessons.unwrap().items.join('\n')}\n');
+    'Lessons of course $lessonCourseId:\n${lessons.unwrap().items.join('\n')}\n',
+  );
 
   final me = await shallow.me();
   print('Me:\n${me.unwrap()}\n');
