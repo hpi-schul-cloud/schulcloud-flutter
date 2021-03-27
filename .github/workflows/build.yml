@@ -16,30 +16,17 @@ jobs:
     name: Install Flutter & dependencies
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v1
+      - uses: actions/checkout@v1
 
       - name: Install Java
         uses: actions/setup-java@v1
         with:
           java-version: ${{ env.JAVA_VERSION }}
-      - name: Install Flutter (stable)
+      - name: Install Flutter
         uses: subosito/flutter-action@v1
         with:
           channel: ${{ env.FLUTTER_CHANNEL }}
           flutter-version: ${{ env.FLUTTER_VERSION }}
-
-      # API
-      - name: 'api: Install dependencies'
-        working-directory: ./api
-        run: dart pub get
-      - name: 'api: Run code generator(s)'
-        working-directory: ./api
-        run: dart pub run build_runner build
-
-      - name: 'api: Remove obsolete files'
-        working-directory: ./api
-        run: rm -rf ./.dart_tool/pub/bin/build_runner
 
       # App
       # - name: "app: Install dependencies"
@@ -71,7 +58,7 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: ${{ env.JAVA_VERSION }}
-      - name: Install Flutter (stable)
+      - name: Install Flutter
         uses: subosito/flutter-action@v1
         with:
           channel: ${{ env.FLUTTER_CHANNEL }}
@@ -114,32 +101,26 @@ jobs:
 
   api-test:
     name: 'api: tests'
-    needs: install
     runs-on: ubuntu-latest
     steps:
-      - name: Install Java
-        uses: actions/setup-java@v1
+      - uses: actions/checkout@v2
+
+      - uses: actions/setup-java@v1
         with:
           java-version: ${{ env.JAVA_VERSION }}
-      - name: Install Flutter (stable)
-        uses: subosito/flutter-action@v1
+      - uses: subosito/flutter-action@v1
         with:
           channel: ${{ env.FLUTTER_CHANNEL }}
           flutter-version: ${{ env.FLUTTER_VERSION }}
 
-      - name: Checkout source
-        uses: actions/download-artifact@v1
-        with:
-          name: source
-          path: .
-      - name: 'Install dependencies'
+      - run: dart pub get
         working-directory: ./api
-        run: dart pub get
+      - run: dart pub run build_runner build
+        working-directory: ./api
 
-      - name: Run tests
+      # Limit concurrency to prevent 429 errors.
+      - run: dart pub run test --concurrency 1
         working-directory: ./api
-        # Limit concurrency to prevent 429 errors.
-        run: dart pub run test --concurrency 1
         env:
           SC_AT_TEACHER_EMAIL: ${{ secrets.API_TEST_TEACHER_EMAIL }}
           SC_AT_TEACHER_PASSWORD: ${{ secrets.API_TEST_TEACHER_PASSWORD }}
@@ -160,7 +141,7 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: ${{ env.JAVA_VERSION }}
-      - name: Install Flutter (stable)
+      - name: Install Flutter
         uses: subosito/flutter-action@v1
         with:
           channel: ${{ env.FLUTTER_CHANNEL }}
@@ -204,7 +185,7 @@ jobs:
   #       uses: actions/setup-java@v1
   #       with:
   #         java-version: ${{ env.JAVA_VERSION }}
-  #     - name: Install Flutter (stable)
+  #     - name: Install Flutter
   #       uses: subosito/flutter-action@v1
   #       with:
   #         channel: ${{ env.FLUTTER_CHANNEL }}
@@ -255,7 +236,7 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: ${{ env.JAVA_VERSION }}
-      - name: Install Flutter (stable)
+      - name: Install Flutter
         uses: subosito/flutter-action@v1
         with:
           channel: ${{ env.FLUTTER_CHANNEL }}
