@@ -66,6 +66,7 @@ class _AboutSection extends StatelessWidget {
           ListTile(
             leading: Icon(Icons.people_outline),
             title: Text(s.settings_about_contributors),
+            // Ordered by their last name.
             subtitle: Text([
               'Marcel Garus',
               'Andrea Nathansen',
