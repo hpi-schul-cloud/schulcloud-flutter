@@ -3,8 +3,8 @@ name: Build & Lint
 on:
   push:
   pull_request:
-  schedule:
-    - cron: '0 4 * * *'
+  # schedule:
+  #   - cron: '0 4 * * *'
 
 env:
   JAVA_VERSION: 12.x
